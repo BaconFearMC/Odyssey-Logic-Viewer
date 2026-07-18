@@ -45,15 +45,63 @@
     --shadow: 0 2px 6px rgba(0,0,0,0.12);
     --shadow-hover: 0 6px 16px rgba(0,0,0,0.16);
   }
+  html[data-theme="dark"]{
+    --bg: #1b1c1f;
+    --bg-panel: #232427;
+    --bg-chip: #2b2c30;
+    --border: #35363a;
+    --gold: #e6c200;
+    --gold-light: #4a4325;
+    --red: #ff4d5e;
+    --text: #dcdcdc;
+    --text-dim: #9a9a9a;
+    --or-line: #e6c200;
+    --moonrock: #b494f0;
+    --moonrock-bg: #2f2740;
+    --moonrock-border: #45355e;
+    --worldpeace: #4fd6b0;
+    --worldpeace-bg: #1e332c;
+    --worldpeace-border: #2b4a40;
+    --subarea: #e0a94a;
+    --subarea-bg: #3a2e17;
+    --subarea-border: #55431f;
+    --danger: #ff4d5e;
+    --shadow: 0 2px 6px rgba(0,0,0,0.35);
+    --shadow-hover: 0 6px 16px rgba(0,0,0,0.45);
+  }
   *{box-sizing:border-box;}
+  html{ transition: background 0.15s ease; }
   body{
     margin:0;
     background: var(--bg);
     color:var(--text);
     font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
     padding:32px 20px 80px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
   }
   .icon-svg{ width:1em; height:1em; display:inline-block; vertical-align:-0.15em; object-fit:contain; }
+
+  .theme-toggle{
+    display:flex; align-items:center; gap:8px;
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:6px 14px;
+    margin:0 0 20px;
+    cursor:pointer;
+    font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
+    font-size:13px;
+    font-weight:700;
+    color:var(--text);
+    box-shadow:var(--shadow);
+    transition:background 0.15s ease, box-shadow 0.15s ease;
+  }
+  .theme-toggle:hover{ box-shadow:var(--shadow-hover); }
+  .theme-toggle .icon-svg{ width:15px; height:15px; }
+
   h1{
     font-family: "FontDB", 'Segoe UI', system-ui, sans-serif;
     font-weight:700;
@@ -62,6 +110,7 @@
     color:var(--gold);
     display:flex;
     align-items:center;
+    justify-content:center;
     gap:10px;
   }
   h1 .icon-svg{ width:26px; height:26px; color:var(--gold); }
@@ -72,8 +121,9 @@
 
   .kingdom-pager{
     display:flex; align-items:center; gap:16px;
+    width:100%;
     max-width:1400px;
-    margin-bottom:24px;
+    margin:0 0 24px;
     background:var(--bg-panel);
     border:1px solid var(--border);
     border-radius:10px;
@@ -136,7 +186,9 @@
     display:grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap:14px;
+    width:100%;
     max-width:1400px;
+    justify-content:center;
   }
   .moon-card{
     background:var(--bg-panel);
@@ -145,6 +197,7 @@
     padding:14px 16px 12px;
     position:relative;
     box-shadow:var(--shadow);
+    text-align:left;
     transition:transform 0.15s ease, box-shadow 0.15s ease;
   }
   .moon-card:hover{
@@ -236,10 +289,13 @@
     visibility:visible;
   }
   footer{
-    max-width:1400px; margin-top:40px; padding-top:16px;
+    width:100%;
+    max-width:1400px; margin:40px auto 0; padding-top:16px;
     border-top:1px solid var(--border);
     font-size:12px; color:var(--text-dim); line-height:1.7;
+    text-align:left;
   }
+  footer h3{ text-align:left; }
   footer code{ background:var(--bg-chip); border:1px solid var(--border); padding:1px 6px; border-radius:4px; color:var(--gold); }
   footer h3{ color:var(--text); font-family:"FontDB", 'Segoe UI', system-ui, sans-serif; font-size:13px; margin:18px 0 4px; }
   .icon-ref-grid{
@@ -252,33 +308,39 @@
   }
   .icon-ref-grid code{ font-size:11px; }
 </style>
+<script>
+  // Applied immediately (before paint) so switching pages / reloading
+  // doesn't flash the light theme first.
+  (function(){
+    try{
+      const saved = localStorage.getItem("smoTheme");
+      if(saved === "dark") document.documentElement.setAttribute("data-theme", "dark");
+    }catch(e){ /* localStorage unavailable (e.g. file:// in some browsers) */ }
+  })();
+</script>
 </head>
 <body>
 
-<h1><img class="icon-svg" src="icon/ui-star.png" alt="">Power Moon Requirement Charts</h1>
-<p class="subtitle">Reads every kingdom straight out of the <code>/logic/</code> folder — everything else (icons, OR/AND layout, badges, kingdom &amp; moon order) is derived automatically.</p>
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+  <span class="icon-svg" id="themeToggleIcon" aria-hidden="true"></span>
+  <span id="themeToggleLabel">Dark mode</span>
+</button>
 
-<div id="loadStatus" class="load-status">Loading kingdoms from /logic/…</div>
+<h1><img class="icon-svg" src="icon/ui-star.png" alt="" onerror="this.style.display='none'">Power Moon Requirement Charts</h1>
+
+<div id="loadStatus" class="load-status"></div>
 
 <div class="kingdom-pager" id="kingdomPager">
-  <button class="pager-arrow" id="pagerPrev" aria-label="Previous kingdom"><img class="icon-svg" src="icon/ui-chevron-left.png" alt=""></button>
+  <button class="pager-arrow" id="pagerPrev" aria-label="Previous kingdom"><img class="icon-svg" src="icon/ui-chevron-left.png" alt="" onerror="this.outerHTML='&lt;span&gt;&amp;larr;&lt;/span&gt;'"></button>
   <div class="pager-center">
     <div class="pager-name" id="pagerName">—</div>
     <div class="pager-dots" id="pagerDots"></div>
   </div>
-  <button class="pager-arrow" id="pagerNext" aria-label="Next kingdom"><img class="icon-svg" src="icon/ui-chevron-right.png" alt=""></button>
+  <button class="pager-arrow" id="pagerNext" aria-label="Next kingdom"><img class="icon-svg" src="icon/ui-chevron-right.png" alt="" onerror="this.outerHTML='&lt;span&gt;&amp;rarr;&lt;/span&gt;'"></button>
 </div>
 <div class="grid" id="grid"></div>
 
 <footer>
-  <h3>How this stays rinse-and-repeat for all 17 kingdoms</h3>
-  Every export file already contains a <code>logicTokens</code> table (token → display name → category) and a
-  <code>moonAccess</code> table (<code>requirement_expr</code>, <code>from_node_id</code>, <code>shine_info_is_moon_rock</code>, etc).
-  This page reads both directly — it builds the icon manifest from <code>logicTokens</code> and turns each moon's
-  <code>requirement_expr</code> into OR/AND chips by splitting on <code>|</code> and <code>&amp;</code> (respecting parentheses),
-  the same way Timer Challenge 2 becomes 7 separate option-chips. Drop a new kingdom file in <code>/logic/</code> and its
-  moons appear as a new tab — nothing in this file needs editing.
-
   <h3>Kingdom folder, no index file needed</h3>
   There's no <code>index.json</code> to maintain anymore. The kingdom list, filenames, and correct story order are all
   baked into the <code>KINGDOM_MANIFEST</code> list at the top of the script below — e.g. <code>{ file: "cap_kingdom", name: "Cap Kingdom" }</code>.
@@ -404,6 +466,35 @@
 
 <script>
 /* =========================================================
+   DARK MODE TOGGLE — persists via localStorage under "smoTheme".
+   Inline SVGs used for the sun/moon glyph so the toggle never
+   depends on an /icon/ file existing.
+   ========================================================= */
+const SUN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg>';
+const MOON_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.7A8.5 8.5 0 0 1 9.3 3.5a8.5 8.5 0 1 0 11.2 11.2z"/></svg>';
+
+function applyThemeToggleUI(isDark){
+  document.getElementById("themeToggleIcon").innerHTML = isDark ? SUN_SVG : MOON_SVG;
+  document.getElementById("themeToggleLabel").textContent = isDark ? "Light mode" : "Dark mode";
+}
+
+function setTheme(isDark){
+  document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+  applyThemeToggleUI(isDark);
+  try{ localStorage.setItem("smoTheme", isDark ? "dark" : "light"); }
+  catch(e){ /* localStorage unavailable — theme just won't persist */ }
+}
+
+document.getElementById("themeToggle").addEventListener("click", () => {
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  setTheme(!isDark);
+});
+
+// Sync the button's icon/label with whatever theme the pre-paint
+// script (in <head>) already applied.
+applyThemeToggleUI(document.documentElement.getAttribute("data-theme") === "dark");
+
+/* =========================================================
    PLACEHOLDER STYLING — color shown behind the item's initials
    until real art exists in /icon/. Keyed by category. No emoji
    is used anywhere on this page; the fallback is a plain
@@ -434,6 +525,11 @@ function kebab(str){
     .replace(/'/g,"")
     .replace(/[^a-z0-9]+/g,"-")
     .replace(/(^-|-$)/g,"");
+}
+// Alternate filename shape with no separators at all, e.g. "Chain Chomp" -> "chainchomp".
+// Some icon sets (including hand-picked datamine art) use this instead of kebab-case.
+function squash(str){
+  return str.toLowerCase().replace(/[^a-z0-9]/g,"");
 }
 
 /* =========================================================
@@ -489,15 +585,23 @@ function sortKingdomNames(names){
 let ICON_MANIFEST = {
   // Always present: synthetic token used by the Secret Path override,
   // not part of the game's own logic-token table.
-  PaintingAccess: { filename:"painting-access.png", label:"Painting Access", color:"#8a4f78" },
+  PaintingAccess: { filenames:["painting-access.png", "paintingaccess.png"], label:"Painting Access", color:"#8a4f78" },
 };
 
 function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
     if (ICON_MANIFEST[t.token]) return; // don't clobber an already-known token
     const color = (CATEGORY_STYLE[t.category] || {}).color || "#34406e";
+    const squashed = squash(t.display_name);
+    // Try a few filename conventions in order, since icon sets in the wild
+    // are named inconsistently (some prefixed + no separators, some plain
+    // kebab-case). First match found in /icon/ wins; see makeIcon().
+    const candidates = [];
+    if(t.category === "Capture") candidates.push("capture" + squashed + ".png");
+    candidates.push(squashed + ".png");
+    candidates.push(kebab(t.display_name) + ".png");
     ICON_MANIFEST[t.token] = {
-      filename: kebab(t.display_name) + ".png",
+      filenames: candidates,
       label: t.display_name,
       color: color,
     };
@@ -662,7 +766,11 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
 
 function setStatus(text, isError){
   const el = document.getElementById("loadStatus");
-  el.textContent = text;
+  if(!el) return;
+  // Only surface errors on the page itself; routine "loaded N kingdoms"
+  // status is left out of the UI (still useful during dev — see console).
+  console.log(text);
+  el.textContent = isError ? text : "";
   el.className = "load-status" + (isError ? " error" : "");
 }
 
@@ -709,9 +817,16 @@ function makeIcon(token){
   } else {
     const img = document.createElement("img");
     img.className = "icon";
-    img.src = "icon/" + info.filename;
+    let attempt = 0;
+    img.src = "icon/" + info.filenames[attempt];
     img.alt = info.label;
     img.onerror = function(){
+      attempt++;
+      if(attempt < info.filenames.length){
+        // Try the next filename convention before giving up.
+        img.src = "icon/" + info.filenames[attempt];
+        return;
+      }
       const fb = document.createElement("div");
       fb.className = "icon-fallback";
       fb.style.setProperty("--icon-color", info.color || "#34406e");
@@ -746,7 +861,7 @@ function buildMoonCard(moon){
       const el = document.createElement("div");
       el.className = "badge " + b.toLowerCase();
       el.title = info.label;
-      el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '">';
+      el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '" onerror="this.style.display=\'none\'">';
       badgeRow.appendChild(el);
     });
     card.appendChild(badgeRow);
@@ -755,7 +870,7 @@ function buildMoonCard(moon){
   if(moon.subarea){
     const pin = document.createElement("div");
     pin.className = "subarea-pin";
-    pin.innerHTML = '<img class="icon-svg" src="icon/ui-map-pin.png" alt="">' + moon.subarea;
+    pin.innerHTML = '<img class="icon-svg" src="icon/ui-map-pin.png" alt="" onerror="this.style.display=\'none\'">' + moon.subarea;
     card.appendChild(pin);
   }
 
