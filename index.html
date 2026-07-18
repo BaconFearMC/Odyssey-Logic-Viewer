@@ -255,18 +255,18 @@
 </head>
 <body>
 
-<h1><img class="icon-svg" src="Icon/ui-star.png" alt="">Power Moon Requirement Charts</h1>
+<h1><img class="icon-svg" src="icon/ui-star.png" alt="">Power Moon Requirement Charts</h1>
 <p class="subtitle">Reads every kingdom straight out of the <code>/logic/</code> folder — everything else (icons, OR/AND layout, badges, kingdom &amp; moon order) is derived automatically.</p>
 
 <div id="loadStatus" class="load-status">Loading kingdoms from /logic/…</div>
 
 <div class="kingdom-pager" id="kingdomPager">
-  <button class="pager-arrow" id="pagerPrev" aria-label="Previous kingdom"><img class="icon-svg" src="Icon/ui-chevron-left.png" alt=""></button>
+  <button class="pager-arrow" id="pagerPrev" aria-label="Previous kingdom"><img class="icon-svg" src="icon/ui-chevron-left.png" alt=""></button>
   <div class="pager-center">
     <div class="pager-name" id="pagerName">—</div>
     <div class="pager-dots" id="pagerDots"></div>
   </div>
-  <button class="pager-arrow" id="pagerNext" aria-label="Next kingdom"><img class="icon-svg" src="Icon/ui-chevron-right.png" alt=""></button>
+  <button class="pager-arrow" id="pagerNext" aria-label="Next kingdom"><img class="icon-svg" src="icon/ui-chevron-right.png" alt=""></button>
 </div>
 <div class="grid" id="grid"></div>
 
@@ -281,8 +281,8 @@
 
   <h3>Kingdom folder, no index file needed</h3>
   There's no <code>index.json</code> to maintain anymore. The kingdom list, filenames, and correct story order are all
-  baked into the <code>KINGDOM_MANIFEST</code> list at the top of the script below — e.g. <code>{ file: "cap", name: "Cap Kingdom" }</code>.
-  On page load, it simply requests <code>logic/cap.json</code>, <code>logic/cascade.json</code>, <code>logic/sand.json</code>, etc.
+  baked into the <code>KINGDOM_MANIFEST</code> list at the top of the script below — e.g. <code>{ file: "cap_kingdom", name: "Cap Kingdom" }</code>.
+  On page load, it simply requests <code>logic/cap_kingdom.json</code>, <code>logic/cascade_kingdom.json</code>, <code>logic/sand_kingdom.json</code>, etc.
   straight down that list; any kingdom whose file isn't there yet is silently skipped (no error), so you can fill in the
   folder gradually. To add a kingdom that isn't in the list, add one entry to <code>KINGDOM_MANIFEST</code> (and drop the
   matching file in <code>/logic/</code>) — its tab order is whatever position you put it in the list.
@@ -300,13 +300,13 @@
   its neighbors.
 
   <h3>Icon art</h3>
-  Put files in <code>/Icon/</code> named after the Capture or Ability's own display name, in kebab-case (e.g. Chain Chomp →
+  Put files in <code>/icon/</code> named after the Capture or Ability's own display name, in kebab-case (e.g. Chain Chomp →
   <code>chain-chomp.png</code>, T-Rex → <code>t-rex.png</code>, Ground Pound → <code>ground-pound.png</code>). Until a
   matching file exists, a colored placeholder chip with the item's initials shows instead (no emoji, ever) — nothing
   breaks, and dropping in real art later needs zero code changes.
 
   <h3>Capture icon reference — all 52</h3>
-  Expected <code>/Icon/</code> filename for every Capture in the game, generated the same way the page itself generates
+  Expected <code>/icon/</code> filename for every Capture in the game, generated the same way the page itself generates
   it (lowercase, spaces → hyphens, apostrophes dropped). Save your art under these exact names and it'll be picked up
   automatically.
   <div class="icon-ref-grid">
@@ -366,7 +366,7 @@
 
   <h3>Movement &amp; Ability icon reference — 21 (fill these in)</h3>
   Same idea, for the 21 non-Capture abilities (Triple Jump, Ground Pound, Cap Throw, etc.). Numbered placeholders below —
-  fill in the name and its <code>/Icon/</code> filename will follow the same kebab-case pattern as the captures above.
+  fill in the name and its <code>/icon/</code> filename will follow the same kebab-case pattern as the captures above.
   <div class="icon-ref-grid">
     <div><code>01</code> _______________ → <code>________.png</code></div>
     <div><code>02</code> _______________ → <code>________.png</code></div>
@@ -394,8 +394,8 @@
   <h3>Putting this on GitHub</h3>
   Suggested repo layout:<br>
   <code>index.html</code> — this file<br>
-  <code>Icon/*.png</code> — your Capture/Ability icon art<br>
-  <code>logic/cap.json</code>, <code>logic/cascade.json</code>, ... — your raw export files, unmodified, named to match
+  <code>icon/*.png</code> — your Capture/Ability icon art<br>
+  <code>logic/cap_kingdom.json</code>, <code>logic/cascade_kingdom.json</code>, ... — your raw export files, unmodified, named to match
   <code>KINGDOM_MANIFEST</code><br>
   When this page is opened over <code>http(s)://</code> (which GitHub Pages does, but a double-clicked local file does not),
   it automatically fetches each file in <code>/logic/</code> — so once it's pushed and Pages is turned on (repo Settings →
@@ -405,7 +405,7 @@
 <script>
 /* =========================================================
    PLACEHOLDER STYLING — color shown behind the item's initials
-   until real art exists in /Icon/. Keyed by category. No emoji
+   until real art exists in /icon/. Keyed by category. No emoji
    is used anywhere on this page; the fallback is a plain
    colored monogram chip (see makeFallbackIcon below).
    ========================================================= */
@@ -444,23 +444,23 @@ function kebab(str){
    Reorder this array to change the tab order.
    ========================================================= */
 const KINGDOM_MANIFEST = [
-  { file:"cap",         name:"Cap Kingdom" },
-  { file:"cascade",     name:"Cascade Kingdom" },
-  { file:"sand",        name:"Sand Kingdom" },
-  { file:"lake",        name:"Lake Kingdom" },
-  { file:"wooded",      name:"Wooded Kingdom" },
-  { file:"cloud",       name:"Cloud Kingdom" },
-  { file:"lost",        name:"Lost Kingdom" },
-  { file:"metro",       name:"Metro Kingdom" },
-  { file:"snow",        name:"Snow Kingdom" },
-  { file:"seaside",     name:"Seaside Kingdom" },
-  { file:"luncheon",    name:"Luncheon Kingdom" },
-  { file:"ruined",      name:"Ruined Kingdom" },
-  { file:"bowsers",     name:"Bowser's Kingdom" },
-  { file:"moon",        name:"Moon Kingdom" },
-  { file:"mushroom",    name:"Mushroom Kingdom" },
-  { file:"dark_side",   name:"Dark Side" },
-  { file:"darker_side", name:"Darker Side" },
+  { file:"cap_kingdom",         name:"Cap Kingdom" },
+  { file:"cascade_kingdom",     name:"Cascade Kingdom" },
+  { file:"sand_kingdom",        name:"Sand Kingdom" },
+  { file:"lake_kingdom",        name:"Lake Kingdom" },
+  { file:"wooded_kingdom",      name:"Wooded Kingdom" },
+  { file:"cloud_kingdom",       name:"Cloud Kingdom" },
+  { file:"lost_kingdom",        name:"Lost Kingdom" },
+  { file:"metro_kingdom",       name:"Metro Kingdom" },
+  { file:"snow_kingdom",        name:"Snow Kingdom" },
+  { file:"seaside_kingdom",     name:"Seaside Kingdom" },
+  { file:"luncheon_kingdom",    name:"Luncheon Kingdom" },
+  { file:"ruined_kingdom",      name:"Ruined Kingdom" },
+  { file:"bowser_s_kingdom",    name:"Bowser's Kingdom" },
+  { file:"moon_kingdom",        name:"Moon Kingdom" },
+  { file:"mushroom_kingdom",    name:"Mushroom Kingdom" },
+  { file:"dark_side",           name:"Dark Side" },
+  { file:"darker_side",         name:"Darker Side" },
 ];
 
 // name -> position in the manifest, used to sort tabs regardless of load order.
@@ -646,7 +646,7 @@ let KINGDOM_ORDER = [];
 function loadKingdomFile(fileData, sourceLabel, forcedName){
   const ws = fileData.workspace;
   // forcedName (from KINGDOM_MANIFEST, keyed off the filename) always wins so
-  // "cap.json" is Cap Kingdom regardless of what the file's own "kingdom"
+  // "cap_kingdom.json" is Cap Kingdom regardless of what the file's own "kingdom"
   // field says. Manual file-picker loads fall back to the file's own field.
   const kingdomName = forcedName || fileData.kingdom || sourceLabel;
   mergeTokensIntoManifest(ws.logicTokens);
@@ -709,7 +709,7 @@ function makeIcon(token){
   } else {
     const img = document.createElement("img");
     img.className = "icon";
-    img.src = "Icon/" + info.filename;
+    img.src = "icon/" + info.filename;
     img.alt = info.label;
     img.onerror = function(){
       const fb = document.createElement("div");
@@ -746,7 +746,7 @@ function buildMoonCard(moon){
       const el = document.createElement("div");
       el.className = "badge " + b.toLowerCase();
       el.title = info.label;
-      el.innerHTML = '<img class="icon-svg" src="Icon/' + info.file + '" alt="' + info.label + '">';
+      el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '">';
       badgeRow.appendChild(el);
     });
     card.appendChild(badgeRow);
@@ -755,7 +755,7 @@ function buildMoonCard(moon){
   if(moon.subarea){
     const pin = document.createElement("div");
     pin.className = "subarea-pin";
-    pin.innerHTML = '<img class="icon-svg" src="Icon/ui-map-pin.png" alt="">' + moon.subarea;
+    pin.innerHTML = '<img class="icon-svg" src="icon/ui-map-pin.png" alt="">' + moon.subarea;
     card.appendChild(pin);
   }
 
