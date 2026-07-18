@@ -3,38 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <title>Power Moon Requirement Charts</title>
+<link rel="stylesheet" href="font-setting.css">
+<style>
+  /* Ensure the custom fonts are treated as required, not optional, once the
+     /font/ folder is present in the repo (see font-setting.css). */
+  @font-face{
+    font-family:"FontEB";
+    src:url("font/FOT-RodinNTLGPro-EB.otf") format("opentype");
+    font-display:swap;
+  }
+  @font-face{
+    font-family:"FontDB";
+    src:url("font/FOT-RodinNTLGPro-DB.otf") format("opentype");
+    font-display:swap;
+  }
+</style>
 <style>
   :root{
-    --bg: #0e1326;
-    --bg-panel: #161d38;
-    --bg-chip: #1f2a4d;
-    --border: #2c3a67;
-    --gold: #f2b632;
-    --text: #e8ebf6;
-    --text-dim: #8d96b8;
-    --or-line: #45528a;
-    --moonrock: #c98bff;
-    --worldpeace: #57d9c4;
-    --subarea: #ff9f5a;
-    --danger: #ff6b6b;
+    /* Palette lifted from the SMO Randomizer menu (index.css / layoutex):
+       light warm-gray page, white panels, gold + red accents. */
+    --bg: #e9e8e8;
+    --bg-panel: #ffffff;
+    --bg-chip: #f5f4f2;
+    --border: #e2e2e2;
+    --gold: #B59D00;
+    --gold-light: #f3ecc9;
+    --red: #F80026;
+    --text: #525252;
+    --text-dim: #898989;
+    --or-line: #b59d00;
+    --moonrock: #7a4fc9;
+    --moonrock-bg: #efe8fb;
+    --moonrock-border: #d9c8f5;
+    --worldpeace: #1f8a72;
+    --worldpeace-bg: #e4f5f0;
+    --worldpeace-border: #bfe6db;
+    --subarea: #a5680f;
+    --subarea-bg: #fdf1de;
+    --subarea-border: #f0d9ac;
+    --danger: #F80026;
+    --shadow: 0 2px 6px rgba(0,0,0,0.12);
+    --shadow-hover: 0 6px 16px rgba(0,0,0,0.16);
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    background:
-      radial-gradient(ellipse at 20% -10%, #24306a 0%, transparent 55%),
-      var(--bg);
+    background: var(--bg);
     color:var(--text);
-    font-family:'Segoe UI', system-ui, sans-serif;
+    font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
     padding:32px 20px 80px;
   }
+  .icon-svg{ width:1em; height:1em; display:inline-block; vertical-align:-0.15em; object-fit:contain; }
   h1{
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: "FontDB", 'Segoe UI', system-ui, sans-serif;
     font-weight:700;
     font-size:28px;
     margin:0 0 4px;
     color:var(--gold);
+    display:flex;
+    align-items:center;
+    gap:10px;
   }
+  h1 .icon-svg{ width:26px; height:26px; color:var(--gold); }
   .subtitle{color:var(--text-dim); font-size:14px; margin:0 0 20px;}
 
   .load-status{ font-size:12.5px; color:var(--text-dim); margin-bottom:20px; }
@@ -46,25 +76,26 @@
     margin-bottom:24px;
     background:var(--bg-panel);
     border:1px solid var(--border);
-    border-radius:16px;
+    border-radius:10px;
     padding:14px 18px;
-    box-shadow:0 6px 20px rgba(0,0,0,0.25);
+    box-shadow:var(--shadow);
   }
   .pager-arrow{
     flex:0 0 auto;
     width:40px; height:40px;
     border-radius:50%;
-    background:var(--bg-chip);
-    border:1px solid var(--border);
-    color:var(--text);
-    font-size:18px;
+    background:var(--red);
+    border:none;
+    color:#fff;
     line-height:1;
     cursor:pointer;
     display:flex; align-items:center; justify-content:center;
-    transition:transform 0.15s ease, border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+    transition:transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   }
+  .pager-arrow .icon-svg{ width:16px; height:16px; }
   .pager-arrow:hover{
-    border-color:var(--gold); color:var(--gold);
+    background:var(--gold);
+    box-shadow:2px 2px 6px rgba(0,0,0,0.25);
     transform:scale(1.08);
   }
   .pager-arrow:active{ transform:scale(0.95); }
@@ -75,7 +106,7 @@
     min-width:0;
   }
   .pager-name{
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: "FontDB", 'Segoe UI', system-ui, sans-serif;
     font-size:20px; font-weight:700;
     color:var(--gold);
     text-align:center;
@@ -95,7 +126,7 @@
     border:none; padding:0; cursor:pointer;
     transition:transform 0.15s ease, background 0.15s ease, width 0.15s ease;
   }
-  .pager-dot:hover{ background:var(--or-line); transform:scale(1.3); }
+  .pager-dot:hover{ background:var(--gold-light); transform:scale(1.3); }
   .pager-dot.active{
     background:var(--gold);
     width:20px; border-radius:4px;
@@ -110,15 +141,15 @@
   .moon-card{
     background:var(--bg-panel);
     border:1px solid var(--border);
-    border-radius:12px;
+    border-radius:8px;
     padding:14px 16px 12px;
     position:relative;
-    transition:border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow:var(--shadow);
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
   }
   .moon-card:hover{
-    border-color:var(--or-line);
     transform:translateY(-2px);
-    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    box-shadow:var(--shadow-hover);
   }
   .moon-name{
     font-size:14px;
@@ -126,6 +157,7 @@
     margin:0 0 8px;
     padding-right:70px;
     line-height:1.3;
+    color:var(--text);
   }
   .badges{
     position:absolute;
@@ -135,24 +167,25 @@
   .badge{
     width:22px; height:22px; border-radius:6px;
     display:flex; align-items:center; justify-content:center;
-    font-size:12px;
     border:1px solid var(--border);
   }
-  .badge.moonrock{ background:#2a1d40; color:var(--moonrock); border-color:#4a3373;}
-  .badge.worldpeace{ background:#123531; color:var(--worldpeace); border-color:#1f5850;}
+  .badge .icon-svg{ width:13px; height:13px; }
+  .badge.moonrock{ background:var(--moonrock-bg); color:var(--moonrock); border-color:var(--moonrock-border);}
+  .badge.worldpeace{ background:var(--worldpeace-bg); color:var(--worldpeace); border-color:var(--worldpeace-border);}
   .subarea-pin{
     display:flex; align-items:center; gap:6px;
     font-size:11.5px; color:var(--subarea);
-    background:#3a2410; border:1px solid #5c3a18;
+    background:var(--subarea-bg); border:1px solid var(--subarea-border);
     padding:3px 8px; border-radius:6px;
     margin-bottom:8px; width:fit-content;
   }
+  .subarea-pin .icon-svg{ width:11px; height:11px; }
   .options-row{
     display:flex; align-items:center; gap:6px; flex-wrap:wrap;
   }
   .free-tag{ font-size:12px; color:var(--text-dim); font-style:italic; }
   .or-sep{
-    font-size:10px; color:var(--or-line); font-weight:700;
+    font-size:10px; color:var(--gold); font-weight:700;
     text-transform:uppercase; letter-spacing:0.5px;
   }
   .option-chip{
@@ -163,11 +196,14 @@
     padding:5px 7px;
   }
   .and-plus{ font-size:11px; color:var(--text-dim); margin:0 1px; }
-  .icon{ width:36px; height:36px; border-radius:8px; object-fit:cover; display:block; }
+  .icon{ width:36px; height:36px; border-radius:8px; object-fit:cover; display:block; border:1px solid var(--border); }
   .icon-fallback{
     width:36px; height:36px; border-radius:8px;
     display:flex; align-items:center; justify-content:center;
-    font-size:20px; background:var(--icon-color, #34406e);
+    font-size:12px; font-weight:700; letter-spacing:0.2px;
+    font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
+    color:#fff;
+    background:var(--icon-color, #34406e);
     border:1px solid var(--border);
   }
   .icon-wrap{
@@ -179,8 +215,8 @@
     bottom:calc(100% + 6px);
     left:50%;
     transform:translateX(-50%);
-    background:#05070f;
-    color:var(--text);
+    background:#525252;
+    color:#fff;
     border:1px solid var(--border);
     padding:4px 8px;
     border-radius:6px;
@@ -192,7 +228,7 @@
     transition:opacity 0.1s ease;
     pointer-events:none;
     z-index:30;
-    box-shadow:0 4px 12px rgba(0,0,0,0.4);
+    box-shadow:0 4px 12px rgba(0,0,0,0.25);
   }
   .icon-wrap:hover .icon-tooltip,
   .icon-wrap:focus-visible .icon-tooltip{
@@ -204,8 +240,8 @@
     border-top:1px solid var(--border);
     font-size:12px; color:var(--text-dim); line-height:1.7;
   }
-  footer code{ background:var(--bg-chip); padding:1px 6px; border-radius:4px; color:var(--gold); }
-  footer h3{ color:var(--text); font-size:13px; margin:18px 0 4px; }
+  footer code{ background:var(--bg-chip); border:1px solid var(--border); padding:1px 6px; border-radius:4px; color:var(--gold); }
+  footer h3{ color:var(--text); font-family:"FontDB", 'Segoe UI', system-ui, sans-serif; font-size:13px; margin:18px 0 4px; }
   .icon-ref-grid{
     display:grid;
     grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
@@ -219,18 +255,18 @@
 </head>
 <body>
 
-<h1>⭐ Power Moon Requirement Charts</h1>
+<h1><img class="icon-svg" src="Icon/ui-star.png" alt="">Power Moon Requirement Charts</h1>
 <p class="subtitle">Reads every kingdom straight out of the <code>/logic/</code> folder — everything else (icons, OR/AND layout, badges, kingdom &amp; moon order) is derived automatically.</p>
 
 <div id="loadStatus" class="load-status">Loading kingdoms from /logic/…</div>
 
 <div class="kingdom-pager" id="kingdomPager">
-  <button class="pager-arrow" id="pagerPrev" aria-label="Previous kingdom">‹</button>
+  <button class="pager-arrow" id="pagerPrev" aria-label="Previous kingdom"><img class="icon-svg" src="Icon/ui-chevron-left.png" alt=""></button>
   <div class="pager-center">
     <div class="pager-name" id="pagerName">—</div>
     <div class="pager-dots" id="pagerDots"></div>
   </div>
-  <button class="pager-arrow" id="pagerNext" aria-label="Next kingdom">›</button>
+  <button class="pager-arrow" id="pagerNext" aria-label="Next kingdom"><img class="icon-svg" src="Icon/ui-chevron-right.png" alt=""></button>
 </div>
 <div class="grid" id="grid"></div>
 
@@ -266,8 +302,8 @@
   <h3>Icon art</h3>
   Put files in <code>/Icon/</code> named after the Capture or Ability's own display name, in kebab-case (e.g. Chain Chomp →
   <code>chain-chomp.png</code>, T-Rex → <code>t-rex.png</code>, Ground Pound → <code>ground-pound.png</code>). Until a
-  matching file exists, a colored placeholder chip with an emoji shows instead — nothing breaks, and dropping in real
-  art later needs zero code changes.
+  matching file exists, a colored placeholder chip with the item's initials shows instead (no emoji, ever) — nothing
+  breaks, and dropping in real art later needs zero code changes.
 
   <h3>Capture icon reference — all 52</h3>
   Expected <code>/Icon/</code> filename for every Capture in the game, generated the same way the page itself generates
@@ -368,36 +404,30 @@
 
 <script>
 /* =========================================================
-   PLACEHOLDER STYLING — emoji + color shown until real art
-   exists in /Icon/. Keyed by category, with a few nicer
-   per-name overrides for common captures/movement.
+   PLACEHOLDER STYLING — color shown behind the item's initials
+   until real art exists in /Icon/. Keyed by category. No emoji
+   is used anywhere on this page; the fallback is a plain
+   colored monogram chip (see makeFallbackIcon below).
    ========================================================= */
 const CATEGORY_STYLE = {
-  "Movement":         { emoji:"🤸", color:"#243a5a" },
-  "CapThrow":         { emoji:"🎯", color:"#1e3a4a" },
-  "Capture":          { emoji:"🎮", color:"#2f4a2e" },
-  "Kingdom Access":   { emoji:"🗺️", color:"#5a4a23" },
-  "world_peace":      { emoji:"☮️", color:"#123531" },
-  "moon_rock_active": { emoji:"🌑", color:"#2a1d40" },
-  "Logic":            { emoji:"✅", color:"#333333" },
-  "Special":          { emoji:"🖼️", color:"#4a2e42" },
+  "Movement":         { color:"#4a6fa5" },
+  "CapThrow":         { color:"#3f7f95" },
+  "Capture":          { color:"#4f7a4d" },
+  "Kingdom Access":   { color:"#a5822f" },
+  "world_peace":      { color:"#1f8a72" },
+  "moon_rock_active": { color:"#7a4fc9" },
+  "Logic":            { color:"#5c5c5c" },
+  "Special":          { color:"#8a4f78" },
 };
-const NAME_EMOJI = {
-  "Chain Chomp":"⛓️", "Big Chain Chomp":"⛓️", "Broode's Chain Chomp":"⛓️",
-  "T-Rex":"🦖", "Yoshi":"🦕", "Binoculars":"🔭", "Bullet Bill":"🚀", "Banzai Bill":"🚀",
-  "Moe-Eye":"👓", "Cactus":"🌵", "Goomba":"🍄", "Paragoomba":"🍄",
-  "Knucklotec's Fist":"👊", "Mini Rocket":"🚀", "Glydon":"🦎", "Lakitu":"☁️",
-  "Zipper":"🤐", "Cheep Cheep":"🐟", "Cheep Cheep (Snow Kingdom)":"🐟",
-  "Poison Piranha Plant":"☠️", "Fire Piranha Plant":"🔥", "Uproot":"🌱",
-  "Fire Bro":"🔥", "Sherm":"🚗", "Coin Coffer":"💰", "Tree":"🌳", "Boulder":"🪨",
-  "Tropical Wiggler":"🐛", "Pole":"📍", "Manhole":"🕳️", "Taxi":"🚕", "RC Car":"🎮",
-  "Ty-foo":"🌀", "Shiverian Racer":"🛷", "Gushen":"💧", "Lava Bubble":"🔥",
-  "Volbonan":"⚡", "Hammer Bro":"🔨", "Meat":"🍖", "Pokio":"🐦", "Jizo":"🗿",
-  "Bowser Statue":"🗿", "Parabones":"🦴", "Chargin' Chuck":"🏈", "Bowser":"🐢",
-  "Letter":"✉️", "Frog":"🐸", "Spark Pylon":"⚡", "Dive":"🤿", "Ground Pound":"⬇️",
-  "Ground Pound Jump":"⬇️", "Wall Jump":"🧗", "Climb":"🧗", "Ledge Grab":"🖐️",
-  "Roll":"🎳", "Spin":"🌀", "Vault":"🤸", "Painting Access":"🖼️",
-};
+
+// Turns a display name into a short (1-2 letter) monogram for the
+// fallback icon chip, e.g. "Chain Chomp" -> "CC", "Frog" -> "FR".
+function initialsFor(label){
+  const words = (label || "?").replace(/[^A-Za-z0-9\s]/g, "").trim().split(/\s+/).filter(Boolean);
+  if(words.length === 0) return "?";
+  if(words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+}
 
 function kebab(str){
   return str.toLowerCase()
@@ -459,20 +489,17 @@ function sortKingdomNames(names){
 let ICON_MANIFEST = {
   // Always present: synthetic token used by the Secret Path override,
   // not part of the game's own logic-token table.
-  PaintingAccess: { filename:"painting-access.png", label:"Painting Access", emoji:"🖼️", color:"#4a2e42" },
+  PaintingAccess: { filename:"painting-access.png", label:"Painting Access", color:"#8a4f78" },
 };
 
 function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
     if (ICON_MANIFEST[t.token]) return; // don't clobber an already-known token
-    const style = NAME_EMOJI[t.display_name]
-      ? { emoji: NAME_EMOJI[t.display_name], color: (CATEGORY_STYLE[t.category] || {}).color || "#34406e" }
-      : (CATEGORY_STYLE[t.category] || { emoji:"❓", color:"#34406e" });
+    const color = (CATEGORY_STYLE[t.category] || {}).color || "#34406e";
     ICON_MANIFEST[t.token] = {
       filename: kebab(t.display_name) + ".png",
       label: t.display_name,
-      emoji: style.emoji,
-      color: style.color,
+      color: color,
     };
   });
 }
@@ -688,7 +715,7 @@ function makeIcon(token){
       const fb = document.createElement("div");
       fb.className = "icon-fallback";
       fb.style.setProperty("--icon-color", info.color || "#34406e");
-      fb.textContent = info.emoji || "?";
+      fb.textContent = initialsFor(info.label);
       img.replaceWith(fb);
     };
     wrap.appendChild(img);
@@ -715,11 +742,11 @@ function buildMoonCard(moon){
     const badgeRow = document.createElement("div");
     badgeRow.className = "badges";
     moon.badges.forEach(b=>{
-      const info = b === "moonRock" ? {label:"Moon Rock", emoji:"🌑"} : {label:"World Peace", emoji:"☮️"};
+      const info = b === "moonRock" ? {label:"Moon Rock", file:"badge-moon-rock.png"} : {label:"World Peace", file:"badge-world-peace.png"};
       const el = document.createElement("div");
       el.className = "badge " + b.toLowerCase();
       el.title = info.label;
-      el.textContent = info.emoji;
+      el.innerHTML = '<img class="icon-svg" src="Icon/' + info.file + '" alt="' + info.label + '">';
       badgeRow.appendChild(el);
     });
     card.appendChild(badgeRow);
@@ -728,7 +755,7 @@ function buildMoonCard(moon){
   if(moon.subarea){
     const pin = document.createElement("div");
     pin.className = "subarea-pin";
-    pin.innerHTML = "📍 " + moon.subarea;
+    pin.innerHTML = '<img class="icon-svg" src="Icon/ui-map-pin.png" alt="">' + moon.subarea;
     card.appendChild(pin);
   }
 
