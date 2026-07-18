@@ -40,15 +40,66 @@
   .load-status{ font-size:12.5px; color:var(--text-dim); margin-bottom:20px; }
   .load-status.error{ color:var(--danger); }
 
-  .kingdom-select{
-    display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;
+  .kingdom-pager{
+    display:flex; align-items:center; gap:16px;
+    max-width:1400px;
+    margin-bottom:24px;
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:14px 18px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.25);
   }
-  .kingdom-select button{
-    background:var(--bg-chip); border:1px solid var(--border); color:var(--text);
-    padding:8px 16px; border-radius:999px; cursor:pointer; font-size:13px;
+  .pager-arrow{
+    flex:0 0 auto;
+    width:40px; height:40px;
+    border-radius:50%;
+    background:var(--bg-chip);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-size:18px;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform 0.15s ease, border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
   }
-  .kingdom-select button.active{
-    border-color:var(--gold); color:var(--gold); background:#2a2410;
+  .pager-arrow:hover{
+    border-color:var(--gold); color:var(--gold);
+    transform:scale(1.08);
+  }
+  .pager-arrow:active{ transform:scale(0.95); }
+  .pager-center{
+    flex:1 1 auto;
+    display:flex; flex-direction:column; align-items:center;
+    gap:10px;
+    min-width:0;
+  }
+  .pager-name{
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size:20px; font-weight:700;
+    color:var(--gold);
+    text-align:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:100%;
+    transition:opacity 0.15s ease;
+  }
+  .pager-dots{
+    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+    justify-content:center;
+  }
+  .pager-dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--border);
+    border:none; padding:0; cursor:pointer;
+    transition:transform 0.15s ease, background 0.15s ease, width 0.15s ease;
+  }
+  .pager-dot:hover{ background:var(--or-line); transform:scale(1.3); }
+  .pager-dot.active{
+    background:var(--gold);
+    width:20px; border-radius:4px;
+    transform:none;
   }
   .grid{
     display:grid;
@@ -62,6 +113,12 @@
     border-radius:12px;
     padding:14px 16px 12px;
     position:relative;
+    transition:border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .moon-card:hover{
+    border-color:var(--or-line);
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
   }
   .moon-name{
     font-size:14px;
@@ -99,23 +156,23 @@
     text-transform:uppercase; letter-spacing:0.5px;
   }
   .option-chip{
-    display:flex; align-items:center; gap:2px;
+    display:flex; align-items:center; gap:3px;
     background:var(--bg-chip);
     border:1px solid var(--border);
     border-radius:8px;
-    padding:4px 6px;
+    padding:5px 7px;
   }
   .and-plus{ font-size:11px; color:var(--text-dim); margin:0 1px; }
-  .icon{ width:26px; height:26px; border-radius:6px; object-fit:cover; display:block; }
+  .icon{ width:36px; height:36px; border-radius:8px; object-fit:cover; display:block; }
   .icon-fallback{
-    width:26px; height:26px; border-radius:6px;
+    width:36px; height:36px; border-radius:8px;
     display:flex; align-items:center; justify-content:center;
-    font-size:14px; background:var(--icon-color, #34406e);
+    font-size:20px; background:var(--icon-color, #34406e);
     border:1px solid var(--border);
   }
   .icon-wrap{
     position:relative; display:inline-flex;
-    width:26px; height:26px;
+    width:36px; height:36px;
   }
   .icon-tooltip{
     position:absolute;
@@ -167,7 +224,14 @@
 
 <div id="loadStatus" class="load-status">Loading kingdoms from /logic/…</div>
 
-<div class="kingdom-select" id="kingdomSelect"></div>
+<div class="kingdom-pager" id="kingdomPager">
+  <button class="pager-arrow" id="pagerPrev" aria-label="Previous kingdom">‹</button>
+  <div class="pager-center">
+    <div class="pager-name" id="pagerName">—</div>
+    <div class="pager-dots" id="pagerDots"></div>
+  </div>
+  <button class="pager-arrow" id="pagerNext" aria-label="Next kingdom">›</button>
+</div>
 <div class="grid" id="grid"></div>
 
 <footer>
@@ -703,27 +767,46 @@ function buildMoonCard(moon){
   return card;
 }
 
+let currentKingdomIndex = 0;
+
 function renderKingdom(name){
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
   (KINGDOMS[name] || []).forEach(moon => grid.appendChild(buildMoonCard(moon)));
-  document.querySelectorAll(".kingdom-select button").forEach(btn=>{
-    btn.classList.toggle("active", btn.dataset.kingdom === name);
+
+  currentKingdomIndex = KINGDOM_ORDER.indexOf(name);
+
+  const nameEl = document.getElementById("pagerName");
+  if(nameEl) nameEl.textContent = name;
+
+  document.querySelectorAll(".pager-dot").forEach(dot=>{
+    dot.classList.toggle("active", dot.dataset.kingdom === name);
   });
 }
 
 function rebuildKingdomTabs(){
   KINGDOM_ORDER = sortKingdomNames(KINGDOM_ORDER);
-  const select = document.getElementById("kingdomSelect");
-  select.innerHTML = "";
+  const dots = document.getElementById("pagerDots");
+  dots.innerHTML = "";
   KINGDOM_ORDER.forEach(name => {
-    const btn = document.createElement("button");
-    btn.textContent = name;
-    btn.dataset.kingdom = name;
-    btn.onclick = () => renderKingdom(name);
-    select.appendChild(btn);
+    const dot = document.createElement("button");
+    dot.className = "pager-dot";
+    dot.dataset.kingdom = name;
+    dot.title = name;
+    dot.setAttribute("aria-label", name);
+    dot.onclick = () => renderKingdom(name);
+    dots.appendChild(dot);
   });
 }
+
+function goToRelativeKingdom(delta){
+  if(KINGDOM_ORDER.length === 0) return;
+  const next = (currentKingdomIndex + delta + KINGDOM_ORDER.length) % KINGDOM_ORDER.length;
+  renderKingdom(KINGDOM_ORDER[next]);
+}
+
+document.getElementById("pagerPrev").onclick = () => goToRelativeKingdom(-1);
+document.getElementById("pagerNext").onclick = () => goToRelativeKingdom(1);
 
 async function init(){
   const autoloaded = await tryAutoload();
