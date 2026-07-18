@@ -100,7 +100,7 @@
     transition:background 0.15s ease, box-shadow 0.15s ease;
   }
   .theme-toggle:hover{ box-shadow:var(--shadow-hover); }
-  .theme-toggle .icon-svg{ width:15px; height:15px; }
+  .theme-toggle .icon-svg{ width:20.25px; height:20.25px; }
 
   h1{
     font-family: "FontDB", 'Segoe UI', system-ui, sans-serif;
@@ -113,7 +113,7 @@
     justify-content:center;
     gap:10px;
   }
-  h1 .icon-svg{ width:26px; height:26px; color:var(--gold); }
+  h1 .icon-svg{ width:35.1px; height:35.1px; color:var(--gold); }
   .subtitle{color:var(--text-dim); font-size:14px; margin:0 0 20px;}
 
   .load-status{ font-size:12.5px; color:var(--text-dim); margin-bottom:20px; }
@@ -142,7 +142,7 @@
     display:flex; align-items:center; justify-content:center;
     transition:transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   }
-  .pager-arrow .icon-svg{ width:16px; height:16px; }
+  .pager-arrow .icon-svg{ width:21.6px; height:21.6px; }
   .pager-arrow:hover{
     background:var(--gold);
     box-shadow:2px 2px 6px rgba(0,0,0,0.25);
@@ -208,7 +208,7 @@
     font-size:14px;
     font-weight:600;
     margin:0 0 8px;
-    padding-right:70px;
+    padding-right:95px;
     line-height:1.3;
     color:var(--text);
   }
@@ -218,11 +218,11 @@
     display:flex; gap:4px;
   }
   .badge{
-    width:22px; height:22px; border-radius:6px;
+    width:29.7px; height:29.7px; border-radius:8px;
     display:flex; align-items:center; justify-content:center;
     border:1px solid var(--border);
   }
-  .badge .icon-svg{ width:13px; height:13px; }
+  .badge .icon-svg{ width:17.55px; height:17.55px; }
   .badge.moonrock{ background:var(--moonrock-bg); color:var(--moonrock); border-color:var(--moonrock-border);}
   .badge.worldpeace{ background:var(--worldpeace-bg); color:var(--worldpeace); border-color:var(--worldpeace-border);}
   .subarea-pin{
@@ -232,7 +232,7 @@
     padding:3px 8px; border-radius:6px;
     margin-bottom:8px; width:fit-content;
   }
-  .subarea-pin .icon-svg{ width:11px; height:11px; }
+  .subarea-pin .icon-svg{ width:14.85px; height:14.85px; }
   .options-row{
     display:flex; align-items:center; gap:6px; flex-wrap:wrap;
   }
@@ -249,11 +249,11 @@
     padding:5px 7px;
   }
   .and-plus{ font-size:11px; color:var(--text-dim); margin:0 1px; }
-  .icon{ width:36px; height:36px; border-radius:8px; object-fit:cover; display:block; border:1px solid var(--border); }
+  .icon{ width:48.6px; height:48.6px; border-radius:8px; object-fit:cover; display:block; border:1px solid var(--border); }
   .icon-fallback{
-    width:36px; height:36px; border-radius:8px;
+    width:48.6px; height:48.6px; border-radius:8px;
     display:flex; align-items:center; justify-content:center;
-    font-size:12px; font-weight:700; letter-spacing:0.2px;
+    font-size:16px; font-weight:700; letter-spacing:0.2px;
     font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
     color:#fff;
     background:var(--icon-color, #34406e);
@@ -261,7 +261,7 @@
   }
   .icon-wrap{
     position:relative; display:inline-flex;
-    width:36px; height:36px;
+    width:48.6px; height:48.6px;
   }
   .icon-tooltip{
     position:absolute;
@@ -691,6 +691,20 @@ function parseMoon(row, nodeMap){
 
   const badges = [];
   if(String(row.shine_info_is_moon_rock).toLowerCase() === "true") badges.push("moonRock");
+
+  // World Peace can show up two ways in an export: (a) as a literal token
+  // inside requirement_expr, filtered out below, or (b) as a standalone
+  // boolean flag field (same pattern as shine_info_is_moon_rock) with no
+  // token in the expression at all — e.g. postgame-only moons that are
+  // otherwise "free". Scan for any *_world_peace* flag key (but not the
+  // *_token field, handled separately below) so both shapes are caught
+  // regardless of the exact field name a given export uses.
+  Object.keys(row).forEach(key => {
+    if(!/world_peace/i.test(key) || /token/i.test(key)) return;
+    const v = row[key];
+    const truthy = v === true || v === 1 || /^(true|1|yes)$/i.test(String(v).trim());
+    if(truthy && !badges.includes("worldPeace")) badges.push("worldPeace");
+  });
 
   dnf = dnf.map(group => group.filter(tok => {
     if(row.moon_rock_token && tok === row.moon_rock_token){
