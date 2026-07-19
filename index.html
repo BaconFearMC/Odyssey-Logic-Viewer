@@ -73,6 +73,7 @@
   html{ transition: background 0.15s ease; }
   body{
     margin:0;
+    position:relative;
     background: var(--bg);
     color:var(--text);
     font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
@@ -85,6 +86,8 @@
   .icon-svg{ width:1em; height:1em; display:inline-block; vertical-align:-0.15em; object-fit:contain; }
 
   .theme-toggle{
+    position:absolute;
+    top:24px; right:24px;
     display:flex; align-items:center; gap:8px;
     background:var(--bg-panel);
     border:1px solid var(--border);
@@ -98,6 +101,7 @@
     color:var(--text);
     box-shadow:var(--shadow);
     transition:background 0.15s ease, box-shadow 0.15s ease;
+    z-index:20;
   }
   .theme-toggle:hover{ box-shadow:var(--shadow-hover); }
   .theme-toggle .icon-svg{ width:20.25px; height:20.25px; }
@@ -233,8 +237,17 @@
     margin-bottom:8px; width:fit-content;
   }
   .subarea-pin .icon-svg{ width:14.85px; height:14.85px; }
+  .checkpoint-pin{
+    display:flex; align-items:center; gap:6px;
+    font-size:11.5px; color:var(--gold);
+    background:var(--gold-light); border:1px solid var(--gold-light);
+    padding:3px 8px; border-radius:6px;
+    margin-bottom:8px; width:fit-content;
+  }
+  .checkpoint-pin .icon-svg{ width:14.85px; height:14.85px; }
   .options-row{
     display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+    max-width:100%;
   }
   .free-tag{ font-size:12px; color:var(--text-dim); font-style:italic; }
   .or-sep{
@@ -243,6 +256,9 @@
   }
   .option-chip{
     display:flex; align-items:center; gap:3px;
+    flex-wrap:wrap;
+    max-width:100%;
+    min-width:0;
     background:var(--bg-chip);
     border:1px solid var(--border);
     border-radius:8px;
@@ -588,6 +604,17 @@ let ICON_MANIFEST = {
   PaintingAccess: { filenames:["painting-access.png", "paintingaccess.png"], label:"Painting Access", color:"#8a4f78" },
 };
 
+// Movement/CapThrow ("ability") icon sets found in the wild are commonly
+// named "Ability" + PascalCase-token (e.g. AbilityTripleJump.png), matching
+// the token names already used in logicTokens almost verbatim — except a
+// couple of moves that get abbreviated in that naming scheme. Those two
+// exceptions are called out explicitly; everything else is derived from
+// the token itself.
+const ABILITY_FILENAME_OVERRIDES = {
+  GroundPound: "AbilityGP",
+  GroundPoundJump: "AbilityGPJump",
+};
+
 function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
     if (ICON_MANIFEST[t.token]) return; // don't clobber an already-known token
@@ -598,6 +625,10 @@ function mergeTokensIntoManifest(logicTokens){
     // kebab-case). First match found in /icon/ wins; see makeIcon().
     const candidates = [];
     if(t.category === "Capture") candidates.push("capture" + squashed + ".png");
+    if(t.token_type === "ability"){
+      const abilityFile = ABILITY_FILENAME_OVERRIDES[t.token] || ("Ability" + t.token);
+      candidates.push(abilityFile + ".png");
+    }
     candidates.push(squashed + ".png");
     candidates.push(kebab(t.display_name) + ".png");
     ICON_MANIFEST[t.token] = {
@@ -680,10 +711,100 @@ function crossProduct(a, b){
 }
 
 /* =========================================================
-   MOON PARSER — turns one moonAccess row into the render
-   shape: { name, orGroups, subarea, badges }
+   CHECKPOINT LOOKUP — for every node in a kingdom, work out
+   which Checkpoint node (node_type === "checkpoint") a player
+   would realistically be closest to / arrive from, so each
+   moon card can say "tracked from <Checkpoint Name>".
+
+   This does a multi-source breadth-first search that starts
+   at every checkpoint node simultaneously and walks forward
+   along routeEdges (skipping edges whose requirement_expr is
+   the literal "impossible" — those are one-way-blocked
+   directions, e.g. the reverse of an exit-only pipe). The
+   first checkpoint to reach a given node (fewest hops) is
+   recorded as that node's checkpoint.
+
+   Subarea stages (Mysterious Clouds, 8-Bit Chasm Lifts, etc.)
+   are only connected to the overworld via matching entrance_id
+   pairs (a "home_entrance" node in the overworld stage and a
+   "substage_entrance" node in the subarea stage share the same
+   entrance_id) — there usually isn't an explicit routeEdge
+   between them, since that link is implicit in the game itself.
+   Those pairs are bridged here so checkpoints can "reach" into
+   subareas too.
    ========================================================= */
-function parseMoon(row, nodeMap){
+function buildCheckpointLookup(nodes, edges){
+  const displayNameOf = {};
+  (nodes || []).forEach(n => { displayNameOf[n.node_id] = n.display_name; });
+
+  const adj = {};
+  const addEdge = (from, to) => {
+    if(!from || !to) return;
+    (adj[from] = adj[from] || []).push(to);
+  };
+
+  (edges || []).forEach(e => {
+    if(!e.from_node_id || !e.to_node_id) return;
+    if((e.requirement_expr || "").trim().toLowerCase() === "impossible") return;
+    addEdge(e.from_node_id, e.to_node_id);
+    if(String(e.bidirectional).toLowerCase() === "true"){
+      addEdge(e.to_node_id, e.from_node_id);
+    }
+  });
+
+  // Bridge overworld <-> subarea via matching entrance_id (implicit pipe link).
+  const byEntranceId = {};
+  (nodes || []).forEach(n => {
+    if(!n.entrance_id) return;
+    if(n.node_type !== "home_entrance" && n.node_type !== "substage_entrance") return;
+    (byEntranceId[n.entrance_id] = byEntranceId[n.entrance_id] || []).push(n.node_id);
+  });
+  Object.values(byEntranceId).forEach(nodeIds => {
+    for(let i = 0; i < nodeIds.length; i++){
+      for(let j = 0; j < nodeIds.length; j++){
+        if(i === j) continue;
+        addEdge(nodeIds[i], nodeIds[j]);
+      }
+    }
+  });
+
+  const checkpointOf = {};
+  const queue = [];
+  (nodes || []).forEach(n => {
+    if(n.node_type === "checkpoint"){
+      checkpointOf[n.node_id] = n.node_id;
+      queue.push(n.node_id);
+    }
+  });
+
+  let qi = 0;
+  while(qi < queue.length){
+    const cur = queue[qi++];
+    const origin = checkpointOf[cur];
+    (adj[cur] || []).forEach(next => {
+      if(!(next in checkpointOf)){
+        checkpointOf[next] = origin;
+        queue.push(next);
+      }
+    });
+  }
+
+  const lookup = {};
+  Object.keys(checkpointOf).forEach(nodeId => {
+    const cpId = checkpointOf[nodeId];
+    let name = displayNameOf[cpId] || cpId;
+    // Strip the trailing "(objXXX)" the editor appends to checkpoint names.
+    name = name.replace(/\s*\([^)]*\)\s*$/, "");
+    lookup[nodeId] = name;
+  });
+  return lookup;
+}
+
+/* =========================================================
+   MOON PARSER — turns one moonAccess row into the render
+   shape: { name, orGroups, subarea, badges, checkpoint }
+   ========================================================= */
+function parseMoon(row, nodeMap, checkpointLookup){
   let dnf = exprToDNF(row.requirement_expr);
   if(row.state_requirement_expr && row.state_requirement_expr.trim()){
     dnf = crossProduct(dnf, exprToDNF(row.state_requirement_expr));
@@ -722,6 +843,8 @@ function parseMoon(row, nodeMap){
   const node = nodeMap[row.from_node_id];
   if(node && node.area_scope === "subarea") subarea = node.stage_display_name;
 
+  const checkpoint = (checkpointLookup && checkpointLookup[row.from_node_id]) || null;
+
   if(/^Secret Path/i.test(row.moon_name)){
     dnf = [["PaintingAccess"]];
   }
@@ -732,6 +855,7 @@ function parseMoon(row, nodeMap){
     name: row.moon_name,
     orGroups: isFree ? [] : dnf,
     subarea,
+    checkpoint,
     badges,
     hintIdx: Number.isNaN(hintIdx) ? null : hintIdx,
   };
@@ -772,7 +896,9 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   const nodeMap = {};
   (ws.logicNodes || []).forEach(n => { nodeMap[n.node_id] = n; });
 
-  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap)));
+  const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
+
+  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup)));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons;
@@ -886,6 +1012,13 @@ function buildMoonCard(moon){
     pin.className = "subarea-pin";
     pin.innerHTML = '<img class="icon-svg" src="icon/ui-map-pin.png" alt="" onerror="this.style.display=\'none\'">' + moon.subarea;
     card.appendChild(pin);
+  }
+
+  if(moon.checkpoint){
+    const cpPin = document.createElement("div");
+    cpPin.className = "checkpoint-pin";
+    cpPin.innerHTML = '<img class="icon-svg" src="icon/ui-checkpoint.png" alt="" onerror="this.style.display=\'none\'">Tracked from: ' + moon.checkpoint;
+    card.appendChild(cpPin);
   }
 
   const row = document.createElement("div");
