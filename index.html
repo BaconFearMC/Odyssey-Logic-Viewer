@@ -198,7 +198,7 @@
     background:var(--bg-panel);
     border:1px solid var(--border);
     border-radius:8px;
-    padding:14px 16px 12px;
+    padding:14px 16px 34px;
     position:relative;
     box-shadow:var(--shadow);
     text-align:left;
@@ -237,14 +237,27 @@
     margin-bottom:8px; width:fit-content;
   }
   .subarea-pin .icon-svg{ width:14.85px; height:14.85px; }
-  .checkpoint-pin{
-    display:flex; align-items:center; gap:6px;
-    font-size:11.5px; color:var(--gold);
-    background:var(--gold-light); border:1px solid var(--gold-light);
-    padding:3px 8px; border-radius:6px;
-    margin-bottom:8px; width:fit-content;
+  .checkpoint-info{
+    position:absolute;
+    bottom:10px; right:10px;
+    width:22px; height:22px;
+    display:inline-flex; align-items:center; justify-content:center;
+    cursor:help;
   }
-  .checkpoint-pin .icon-svg{ width:14.85px; height:14.85px; }
+  .checkpoint-info img{
+    width:20px; height:20px;
+    object-fit:contain;
+    opacity:0.7;
+    transition:opacity 0.15s ease;
+  }
+  .checkpoint-info:hover img,
+  .checkpoint-info:focus-visible img{ opacity:1; }
+  .checkpoint-info .icon-tooltip{
+    bottom:calc(100% + 6px);
+    left:auto;
+    right:0;
+    transform:none;
+  }
   .options-row{
     display:flex; align-items:center; gap:6px; flex-wrap:wrap;
     max-width:100%;
@@ -300,7 +313,9 @@
     box-shadow:0 4px 12px rgba(0,0,0,0.25);
   }
   .icon-wrap:hover .icon-tooltip,
-  .icon-wrap:focus-visible .icon-tooltip{
+  .icon-wrap:focus-visible .icon-tooltip,
+  .checkpoint-info:hover .icon-tooltip,
+  .checkpoint-info:focus-visible .icon-tooltip{
     opacity:1;
     visibility:visible;
   }
@@ -615,6 +630,21 @@ const ABILITY_FILENAME_OVERRIDES = {
   GroundPoundJump: "AbilityGPJump",
 };
 
+// A handful of Captures use a real /icon/ filename that doesn't follow the
+// mechanical "capture" + squash(display_name) pattern (fan nicknames, a
+// shortened name, or no "capture" prefix at all) — these are the exact
+// filenames from the footer's own Capture icon reference table below.
+const CAPTURE_FILENAME_OVERRIDES = {
+  ElectricWire: "capturepylon",
+  BreedaWanwan: "capturegoldenchainchomp",
+  TRex: "trex",
+  BazookaElectric: "capturerocket",
+  GotogotonLake: "capturepuzzlepartlake",
+  PukupukuSnow: "capturesnowcheepcheep",
+  Hosui: "gushen",
+  GotogotonCity: "capturepuzzlepartmetro",
+};
+
 function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
     if (ICON_MANIFEST[t.token]) return; // don't clobber an already-known token
@@ -624,7 +654,10 @@ function mergeTokensIntoManifest(logicTokens){
     // are named inconsistently (some prefixed + no separators, some plain
     // kebab-case). First match found in /icon/ wins; see makeIcon().
     const candidates = [];
-    if(t.category === "Capture") candidates.push("capture" + squashed + ".png");
+    if(t.category === "Capture"){
+      if(CAPTURE_FILENAME_OVERRIDES[t.token]) candidates.push(CAPTURE_FILENAME_OVERRIDES[t.token] + ".png");
+      candidates.push("capture" + squashed + ".png");
+    }
     if(t.token_type === "ability"){
       const abilityFile = ABILITY_FILENAME_OVERRIDES[t.token] || ("Ability" + t.token);
       candidates.push(abilityFile + ".png");
@@ -1015,10 +1048,29 @@ function buildMoonCard(moon){
   }
 
   if(moon.checkpoint){
-    const cpPin = document.createElement("div");
-    cpPin.className = "checkpoint-pin";
-    cpPin.innerHTML = '<img class="icon-svg" src="icon/ui-checkpoint.png" alt="" onerror="this.style.display=\'none\'">Tracked from: ' + moon.checkpoint;
-    card.appendChild(cpPin);
+    // Strip a trailing "Checkpoint" word for the tooltip text per request
+    // (e.g. "Stone Bridge Checkpoint" -> "Stone Bridge"), independent of
+    // the "(objXXX)" suffix already stripped when the lookup was built.
+    const shortName = moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "");
+    const label = "Tracked from: " + shortName;
+
+    const info = document.createElement("span");
+    info.className = "checkpoint-info";
+    info.tabIndex = 0; // keyboard-focusable, same pattern as makeIcon()
+    info.setAttribute("aria-label", label);
+
+    const img = document.createElement("img");
+    img.src = "icon/infocheckpoint.png";
+    img.alt = "";
+    img.onerror = function(){ this.style.display = "none"; };
+    info.appendChild(img);
+
+    const tip = document.createElement("span");
+    tip.className = "icon-tooltip";
+    tip.textContent = label;
+    info.appendChild(tip);
+
+    card.appendChild(info);
   }
 
   const row = document.createElement("div");
