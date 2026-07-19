@@ -198,7 +198,7 @@
     background:var(--bg-panel);
     border:1px solid var(--border);
     border-radius:8px;
-    padding:14px 16px 34px;
+    padding:14px 16px 66px;
     position:relative;
     box-shadow:var(--shadow);
     text-align:left;
@@ -229,25 +229,23 @@
   .badge .icon-svg{ width:17.55px; height:17.55px; }
   .badge.moonrock{ background:var(--moonrock-bg); color:var(--moonrock); border-color:var(--moonrock-border);}
   .badge.worldpeace{ background:var(--worldpeace-bg); color:var(--worldpeace); border-color:var(--worldpeace-border);}
-  .subarea-pin{
-    display:flex; align-items:center; gap:6px;
-    font-size:11.5px; color:var(--subarea);
-    background:var(--subarea-bg); border:1px solid var(--subarea-border);
-    padding:3px 8px; border-radius:6px;
-    margin-bottom:8px; width:fit-content;
-  }
-  .subarea-pin .icon-svg{ width:14.85px; height:14.85px; }
+  /* Checkpoint icon and Subarea icon share this exact same slot/size (bottom-right
+     of the card) — a moon shows one or the other, never both. Sized to match the
+     Captures' icon (.icon, 48.6px) per request. Hover/focus reveals the name via
+     the shared .icon-tooltip, same interaction pattern as the requirement icons. */
   .checkpoint-info{
     position:absolute;
     bottom:10px; right:10px;
-    width:22px; height:22px;
+    width:48.6px; height:48.6px;
     display:inline-flex; align-items:center; justify-content:center;
     cursor:help;
   }
   .checkpoint-info img{
-    width:20px; height:20px;
-    object-fit:contain;
-    opacity:0.7;
+    width:48.6px; height:48.6px;
+    border-radius:8px;
+    object-fit:cover;
+    border:1px solid var(--border);
+    opacity:0.85;
     transition:opacity 0.15s ease;
   }
   .checkpoint-info:hover img,
@@ -457,6 +455,37 @@
     <div><code>52</code> Yoshi → <code>captureyoshi.png</code></div>
   </div>
 
+  <h3>Kingdom Access icon reference — all 16</h3>
+  Expected <code>/icon/</code> filename for every "Kingdom Access" token, generated the same way as the Captures above.
+  <div class="icon-ref-grid">
+    <div><code>01</code> Cap Kingdom Access → <code>capkingdomaccess.png</code></div>
+    <div><code>02</code> Cascade Kingdom Access → <code>cascadekingdomaccess.png</code></div>
+    <div><code>03</code> Sand Kingdom Access → <code>sandkingdomaccess.png</code></div>
+    <div><code>04</code> Lake Kingdom Access → <code>lakekingdomaccess.png</code></div>
+    <div><code>05</code> Wooded Kingdom Access → <code>woodedkingdomaccess.png</code></div>
+    <div><code>06</code> Cloud Kingdom Access → <code>cloudkingdomaccess.png</code></div>
+    <div><code>07</code> Lost Kingdom Access → <code>lostkingdomaccess.png</code></div>
+    <div><code>08</code> Metro Kingdom Access → <code>metrokingdomaccess.png</code></div>
+    <div><code>09</code> Snow Kingdom Access → <code>snowkingdomaccess.png</code></div>
+    <div><code>10</code> Seaside Kingdom Access → <code>seasidekingdomaccess.png</code></div>
+    <div><code>11</code> Luncheon Kingdom Access → <code>luncheonkingdomaccess.png</code></div>
+    <div><code>12</code> Ruined Kingdom Access → <code>ruinedkingdomaccess.png</code></div>
+    <div><code>13</code> Moon Kingdom Access → <code>moonkingdomaccess.png</code></div>
+    <div><code>14</code> Mushroom Kingdom Kingdom Access → <code>mushroomkingdomkingdomaccess.png</code></div>
+    <div><code>15</code> Dark Side Access → <code>darksideaccess.png</code></div>
+    <div><code>16</code> Darker Side Access → <code>darkersideaccess.png</code></div>
+  </div>
+
+  <h3>Checkpoint &amp; Subarea icon reference</h3>
+  A moon card shows exactly one of these in the bottom-right corner, at the same size as a Capture icon. If the moon
+  is inside a subarea (e.g. Mysterious Clouds, 8-Bit Chasm Lifts), it shows the Subarea picture and hovering/focusing
+  reveals that subarea's name; otherwise it shows the regular Checkpoint icon, and hovering/focusing reveals which
+  Checkpoint the moon is tracked from. Neither name is shown persistently anymore.
+  <div class="icon-ref-grid">
+    <div><code>Checkpoint</code> → <code>infocheckpoint.png</code></div>
+    <div><code>Subarea</code> → <code>infosubarea.png</code></div>
+  </div>
+
   <h3>Movement &amp; Ability icon reference — 21 (fill these in)</h3>
   Same idea, for the 21 non-Capture abilities (Triple Jump, Ground Pound, Cap Throw, etc.). Numbered placeholders below —
   fill in the name and its <code>/icon/</code> filename will follow the same kebab-case pattern as the captures above.
@@ -645,6 +674,30 @@ const CAPTURE_FILENAME_OVERRIDES = {
   GotogotonCity: "capturepuzzlepartmetro",
 };
 
+// "Kingdom Access" tokens (unlocking a kingdom from the Odyssey), keyed by the
+// token's display_name exactly as it appears in the logicTokens table. These
+// already match the plain squash(display_name) pattern used elsewhere, but are
+// spelled out explicitly here (same reasoning as CAPTURE_FILENAME_OVERRIDES)
+// so the mapping is guaranteed regardless of category/token-type quirks.
+const KINGDOM_ACCESS_FILENAME_OVERRIDES = {
+  "Cap Kingdom Access": "capkingdomaccess",
+  "Cascade Kingdom Access": "cascadekingdomaccess",
+  "Sand Kingdom Access": "sandkingdomaccess",
+  "Lake Kingdom Access": "lakekingdomaccess",
+  "Wooded Kingdom Access": "woodedkingdomaccess",
+  "Cloud Kingdom Access": "cloudkingdomaccess",
+  "Lost Kingdom Access": "lostkingdomaccess",
+  "Metro Kingdom Access": "metrokingdomaccess",
+  "Snow Kingdom Access": "snowkingdomaccess",
+  "Seaside Kingdom Access": "seasidekingdomaccess",
+  "Luncheon Kingdom Access": "luncheonkingdomaccess",
+  "Ruined Kingdom Access": "ruinedkingdomaccess",
+  "Moon Kingdom Access": "moonkingdomaccess",
+  "Mushroom Kingdom Kingdom Access": "mushroomkingdomkingdomaccess",
+  "Dark Side Access": "darksideaccess",
+  "Darker Side Access": "darkersideaccess",
+};
+
 function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
     if (ICON_MANIFEST[t.token]) return; // don't clobber an already-known token
@@ -657,6 +710,9 @@ function mergeTokensIntoManifest(logicTokens){
     if(t.category === "Capture"){
       if(CAPTURE_FILENAME_OVERRIDES[t.token]) candidates.push(CAPTURE_FILENAME_OVERRIDES[t.token] + ".png");
       candidates.push("capture" + squashed + ".png");
+    }
+    if(t.category === "Kingdom Access" && KINGDOM_ACCESS_FILENAME_OVERRIDES[t.display_name]){
+      candidates.push(KINGDOM_ACCESS_FILENAME_OVERRIDES[t.display_name] + ".png");
     }
     if(t.token_type === "ability"){
       const abilityFile = ABILITY_FILENAME_OVERRIDES[t.token] || ("Ability" + t.token);
@@ -1040,14 +1096,30 @@ function buildMoonCard(moon){
     card.appendChild(badgeRow);
   }
 
+  // Subarea and Checkpoint share one slot (bottom-right of the card, same size
+  // as a Capture icon). A moon inside a subarea shows the Subarea picture there
+  // instead of the Checkpoint — the name only appears on hover/focus, it's no
+  // longer displayed persistently. A moon with no subarea falls back to the
+  // regular Checkpoint icon, same as before.
   if(moon.subarea){
-    const pin = document.createElement("div");
-    pin.className = "subarea-pin";
-    pin.innerHTML = '<img class="icon-svg" src="icon/ui-map-pin.png" alt="" onerror="this.style.display=\'none\'">' + moon.subarea;
-    card.appendChild(pin);
-  }
+    const info = document.createElement("span");
+    info.className = "checkpoint-info";
+    info.tabIndex = 0; // keyboard-focusable, same pattern as makeIcon()
+    info.setAttribute("aria-label", moon.subarea);
 
-  if(moon.checkpoint){
+    const img = document.createElement("img");
+    img.src = "icon/infosubarea.png";
+    img.alt = "";
+    img.onerror = function(){ this.style.display = "none"; };
+    info.appendChild(img);
+
+    const tip = document.createElement("span");
+    tip.className = "icon-tooltip";
+    tip.textContent = moon.subarea;
+    info.appendChild(tip);
+
+    card.appendChild(info);
+  } else if(moon.checkpoint){
     // Strip a trailing "Checkpoint" word for the tooltip text per request
     // (e.g. "Stone Bridge Checkpoint" -> "Stone Bridge"), independent of
     // the "(objXXX)" suffix already stripped when the lookup was built.
