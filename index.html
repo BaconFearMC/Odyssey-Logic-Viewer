@@ -822,6 +822,116 @@ function crossProduct(a, b){
    Those pairs are bridged here so checkpoints can "reach" into
    subareas too.
    ========================================================= */
+/* =========================================================
+   NODE REACHABILITY — figures out the *actual* set of ways a
+   player could reach any given node, expressed as a DNF (OR of
+   AND-groups of tokens), by walking the same routeEdges graph
+   used above but this time carrying the token cost of each edge
+   along with it instead of throwing it away.
+
+   Why this exists: a moon's own requirement_expr only describes
+   what's needed once you're already standing at its from_node_id.
+   It says nothing about whether that from_node_id is reachable
+   in the first place. E.g. in Cap Kingdom, "Good Evening, Captain
+   Toad!" has requirement_expr "free", but its from_node_id
+   (CapWorldHomeStage::checkpoint::obj381) is itself only reachable
+   from the other checkpoint via Frog (or an advanced trick chain) —
+   see edge_user_0120. Reporting that moon as "Free" without folding
+   in the path cost is wrong; this function computes the path cost
+   so parseMoon() can combine ("AND") it with the moon's own local
+   requirement.
+
+   Implementation: a worklist/fixpoint BFS seeded at every
+   node_type === "stage_start" node with DNF [[]] (free). For each
+   edge, the DNF required to reach `to` via this edge is
+   crossProduct(reach[from], edgeDNF) — i.e. "however you got to
+   `from`, AND whatever this edge itself demands". Multiple routes
+   into the same node OR together. Edges marked "impossible" are
+   skipped entirely, matching buildCheckpointLookup's convention.
+   Overworld<->subarea entrance pairs are bridged for free, same as
+   buildCheckpointLookup. Dominated options (a strictly-harder
+   superset of an already-available option) are pruned via
+   simplifyDNF so results stay small and readable.
+   ========================================================= */
+function simplifyDNF(dnf){
+  const norm = dnf.map(g => Array.from(new Set(g)).sort());
+  const keyOf = g => g.join("\u0001");
+  const seen = new Set();
+  const uniq = [];
+  norm.forEach(g => {
+    const k = keyOf(g);
+    if(seen.has(k)) return;
+    seen.add(k);
+    uniq.push(g);
+  });
+  const isSuperset = (a, b) => b.every(tok => a.includes(tok)); // a contains all of b
+  return uniq.filter((g, i) => !uniq.some((other, j) => {
+    if(i === j) return false;
+    if(other.length >= g.length) return false; // only pruned by a *strictly smaller* option
+    return isSuperset(g, other);
+  }));
+}
+function buildNodeReachability(nodes, edges){
+  const adj = {}; // from_node_id -> [{ to, dnf }]
+  const addEdge = (from, to, dnf) => {
+    if(!from || !to) return;
+    (adj[from] = adj[from] || []).push({ to, dnf });
+  };
+
+  (edges || []).forEach(e => {
+    if(!e.from_node_id || !e.to_node_id) return;
+    if((e.requirement_expr || "").trim().toLowerCase() === "impossible") return;
+    const edgeDNF = exprToDNF(e.requirement_expr);
+    addEdge(e.from_node_id, e.to_node_id, edgeDNF);
+    if(String(e.bidirectional).toLowerCase() === "true"){
+      addEdge(e.to_node_id, e.from_node_id, edgeDNF);
+    }
+  });
+
+  // Bridge overworld <-> subarea via matching entrance_id (implicit pipe,
+  // free) — same pairing logic as buildCheckpointLookup.
+  const byEntranceId = {};
+  (nodes || []).forEach(n => {
+    if(!n.entrance_id) return;
+    if(n.node_type !== "home_entrance" && n.node_type !== "substage_entrance") return;
+    (byEntranceId[n.entrance_id] = byEntranceId[n.entrance_id] || []).push(n.node_id);
+  });
+  Object.values(byEntranceId).forEach(nodeIds => {
+    for(let i = 0; i < nodeIds.length; i++){
+      for(let j = 0; j < nodeIds.length; j++){
+        if(i === j) continue;
+        addEdge(nodeIds[i], nodeIds[j], [[]]);
+      }
+    }
+  });
+
+  const reach = {};
+  const queue = [];
+  (nodes || []).forEach(n => {
+    if(n.node_type === "stage_start"){
+      reach[n.node_id] = [[]];
+      queue.push(n.node_id);
+    }
+  });
+
+  let qi = 0, guard = 0;
+  while(qi < queue.length && guard++ < 20000){
+    const cur = queue[qi++];
+    (adj[cur] || []).forEach(({ to, dnf: edgeDNF }) => {
+      const viaThisEdge = simplifyDNF(crossProduct(reach[cur], edgeDNF));
+      const existing = reach[to];
+      const merged = existing ? simplifyDNF(existing.concat(viaThisEdge)) : viaThisEdge;
+      const changed = !existing || merged.length !== existing.length
+        || JSON.stringify(merged) !== JSON.stringify(existing);
+      if(changed){
+        reach[to] = merged;
+        queue.push(to); // re-propagate downstream now that this node got easier/new
+      }
+    });
+  }
+  return reach;
+}
+
 function buildCheckpointLookup(nodes, edges){
   const displayNameOf = {};
   (nodes || []).forEach(n => { displayNameOf[n.node_id] = n.display_name; });
@@ -893,10 +1003,28 @@ function buildCheckpointLookup(nodes, edges){
    MOON PARSER — turns one moonAccess row into the render
    shape: { name, orGroups, subarea, badges, checkpoint }
    ========================================================= */
-function parseMoon(row, nodeMap, checkpointLookup){
+function parseMoon(row, nodeMap, checkpointLookup, reachability){
   let dnf = exprToDNF(row.requirement_expr);
   if(row.state_requirement_expr && row.state_requirement_expr.trim()){
     dnf = crossProduct(dnf, exprToDNF(row.state_requirement_expr));
+  }
+
+  // Fold in whatever it actually takes to reach this moon's from_node_id in
+  // the first place (see buildNodeReachability above). Without this, a moon
+  // whose *local* requirement_expr is "free" gets shown as unconditionally
+  // free even when the checkpoint/entrance it's tracked from is itself
+  // gated behind an ability (e.g. Cap Kingdom's "Good Evening, Captain
+  // Toad!" is locally free but its checkpoint requires Frog or a trick).
+  // If a from_node_id has no entry at all in `reachability`, the node
+  // wasn't reached by the graph walk from any stage_start (usually just
+  // means the graph doesn't model that connection yet) — leave the local
+  // requirement as-is rather than blanking it out, so missing graph data
+  // doesn't silently hide moons.
+  if(reachability){
+    const pathDNF = reachability[row.from_node_id];
+    if(pathDNF && pathDNF.length){
+      dnf = simplifyDNF(crossProduct(dnf, pathDNF));
+    }
   }
 
   const badges = [];
@@ -938,6 +1066,7 @@ function parseMoon(row, nodeMap, checkpointLookup){
     dnf = [["PaintingAccess"]];
   }
 
+  dnf = simplifyDNF(dnf);
   const isFree = dnf.every(g => g.length === 0);
   const hintIdx = parseInt(row.shine_info_hint_idx, 10);
   return {
@@ -1773,8 +1902,9 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   (ws.logicNodes || []).forEach(n => { nodeMap[n.node_id] = n; });
 
   const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
+  const reachability = buildNodeReachability(ws.logicNodes || [], ws.routeEdges || []);
 
-  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup)));
+  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, reachability)));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons;
