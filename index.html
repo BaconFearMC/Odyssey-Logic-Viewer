@@ -335,6 +335,10 @@
     padding:5px 7px;
   }
   .and-plus{ font-size:11px; color:var(--text-dim); margin:0 1px; }
+  .free-chip{
+    font-size:12px; font-style:italic; color:var(--text-dim);
+    padding:8px 10px;
+  }
   .icon{ width:48.6px; height:48.6px; border-radius:8px; object-fit:cover; display:block; border:1px solid var(--border); }
   .icon-fallback{
     width:48.6px; height:48.6px; border-radius:8px;
@@ -757,8 +761,43 @@ const KINGDOM_ACCESS_FILENAME_OVERRIDES = {
   "Darker Side Access": "darkersideaccess",
 };
 
+// Which kingdom each KingdomAccess_* token actually unlocks. Used so that
+// e.g. KingdomAccess_Bowsers reads as "Free" on a Bowser's Kingdom moon
+// (you're already in Bowser's Kingdom — that's not a real requirement) but
+// still reads as a real requirement icon on a moon in any *other* kingdom
+// (e.g. KingdomAccess_Sand appearing on a Bowser's Kingdom moon).
+const KINGDOM_ACCESS_TOKEN_TO_KINGDOM = {
+  "KingdomAccess_Cap": "Cap Kingdom",
+  "KingdomAccess_Cascade": "Cascade Kingdom",
+  "KingdomAccess_Sand": "Sand Kingdom",
+  "KingdomAccess_Wooded": "Wooded Kingdom",
+  "KingdomAccess_Lake": "Lake Kingdom",
+  "KingdomAccess_Cloud": "Cloud Kingdom",
+  "KingdomAccess_Lost": "Lost Kingdom",
+  "KingdomAccess_Metro": "Metro Kingdom",
+  "KingdomAccess_Seaside": "Seaside Kingdom",
+  "KingdomAccess_Snow": "Snow Kingdom",
+  "KingdomAccess_Luncheon": "Luncheon Kingdom",
+  "KingdomAccess_Ruined": "Ruined Kingdom",
+  "KingdomAccess_Bowsers": "Bowser's Kingdom",
+  "KingdomAccess_Moon": "Moon Kingdom",
+  "KingdomAccess_Mushroom": "Mushroom Kingdom",
+  "KingdomAccess_Dark": "Dark Side",
+  "KingdomAccess_Darker": "Darker Side",
+};
+
+// Tokens the logic export itself flags as always_unlocked (Single Jump,
+// Cap Return Jump, ...) — base moveset everyone has from the start, so a
+// branch that only needs one of these isn't a real requirement; it reads
+// as "Free" instead of showing the token's icon. Populated per-kingdom-file
+// load from that file's logicTokens rows (see mergeTokensIntoManifest).
+const ALWAYS_UNLOCKED_TOKENS = {};
+
 function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
+    const truthy = t.always_unlocked === true || t.always_unlocked === 1 ||
+      /^(true|1|yes)$/i.test(String(t.always_unlocked).trim());
+    if(truthy) ALWAYS_UNLOCKED_TOKENS[t.token] = true;
     if (ICON_MANIFEST[t.token]) return; // don't clobber an already-known token
     const color = (CATEGORY_STYLE[t.category] || {}).color || "#34406e";
     const squashed = squash(t.display_name);
@@ -972,7 +1011,7 @@ function tiersForGroups(dnf, difficultyField){
   return raw.map(t => TIER_ORDER.includes(t) ? t : "unrated");
 }
 
-function parseMoon(row, nodeMap, checkpointLookup){
+function parseMoon(row, nodeMap, checkpointLookup, kingdomName){
   let dnf = exprToDNF(row.requirement_expr);
   let tiers = tiersForGroups(dnf, row.difficulty);
   if(row.state_requirement_expr && row.state_requirement_expr.trim()){
@@ -1009,6 +1048,17 @@ function parseMoon(row, nodeMap, checkpointLookup){
     }
     if(row.world_peace_token && tok === row.world_peace_token){
       if(!badges.includes("worldPeace")) badges.push("worldPeace");
+      return false;
+    }
+    // Base moveset the player always has (Single Jump, etc.) — not a real
+    // requirement, so it's dropped rather than shown as a token/icon.
+    if(ALWAYS_UNLOCKED_TOKENS[tok]) return false;
+    // "Access to the kingdom you're already standing in" isn't a real
+    // requirement either — e.g. KingdomAccess_Bowsers on a Bowser's
+    // Kingdom moon. Access to a *different* kingdom (a cross-kingdom
+    // moon, like KingdomAccess_Sand showing up in Bowser's Kingdom) is
+    // still a genuine requirement and stays shown.
+    if(KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] && KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] === kingdomName){
       return false;
     }
     return true;
@@ -1873,7 +1923,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
 
   const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
 
-  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup)));
+  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName)));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons;
@@ -2077,6 +2127,16 @@ function buildMoonCard(moon){
         sep.className = "or-sep " + lane.tier;
         sep.textContent = "or";
         optsEl.appendChild(sep);
+      }
+      // A branch can end up with no tokens after filtering out things like
+      // Single Jump or "access to the kingdom you're already in" — that
+      // branch is genuinely free, so say so instead of showing an empty chip.
+      if(andGroup.length === 0){
+        const chip = document.createElement("div");
+        chip.className = "option-chip free-chip";
+        chip.textContent = "Free";
+        optsEl.appendChild(chip);
+        return;
       }
       const chip = document.createElement("div");
       chip.className = "option-chip";
