@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kingdom": "Cascade Kingdom",
-  "savedAt": "2026-07-01T05:30:06.853Z",
+  "savedAt": "2026-08-24T19:44:41.425Z",
   "workspace": {
-    "schemaVersion": 1,
-    "loadedAt": "2026-06-04T06:06:49.078Z",
+    "schemaVersion": 2,
+    "loadedAt": "2026-08-24T19:24:13.810Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -135,6 +135,23 @@
         "source_archive",
         "source_file",
         "notes"
+      ],
+      "captureGates": [
+        "gate_id",
+        "kingdom",
+        "logic_stage",
+        "edge_id",
+        "source_capture_token",
+        "replacement_capture_token",
+        "difficulty",
+        "match_mode",
+        "minimum_count",
+        "notes"
+      ],
+      "captureGateObjects": [
+        "gate_id",
+        "placement_stage",
+        "object_id"
       ]
     },
     "logicNodes": [
@@ -1145,6 +1162,24 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_2",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Dark Side Hint Art",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -1278,10 +1313,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
+        "option_scenarios": "2,3,4,5"
       },
       {
         "edge_id": "edge_user_0171",
@@ -1323,10 +1358,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": "4,5"
+        "option_scenarios": "4,5,3,2"
       },
       {
         "edge_id": "edge_user_0174",
@@ -1489,7 +1524,7 @@
         "edge_type": "human_route",
         "difficulty": "casual",
         "option_scenarios": "4,5",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor."
       },
@@ -1534,7 +1569,7 @@
         "edge_type": "human_route",
         "difficulty": "casual",
         "option_scenarios": "4,5",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor."
       },
@@ -1619,10 +1654,10 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj597",
         "to_node_id": "WaterfallWorldHomeStage::place::new_place",
-        "requirement_expr": "Wanwan",
+        "requirement_expr": "Wanwan | SingleJump",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;glitched",
         "option_scenarios": "1",
         "bidirectional": "true",
         "source": "editor",
@@ -1634,10 +1669,10 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "to_node_id": "WaterfallWorldHomeStage::place::new_place",
-        "requirement_expr": "Wanwan",
+        "requirement_expr": "Wanwan | TRex",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
@@ -1657,6 +1692,96 @@
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0124."
+      },
+      {
+        "edge_id": "edge_user_0722",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::Lift2D::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0170.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0723",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0173.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0724",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::CapAppearExEnt::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0002.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0725",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::WindBlowExStart::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0209.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0732",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::start",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0466",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_2",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4"
       }
     ],
     "moonAccess": [
@@ -1769,7 +1894,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "Wanwan | TRex",
+        "requirement_expr": "Wanwan | TRex | WanwanBig",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2057,7 +2182,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "WanwanBig | TRex | NeutralThrow",
+        "requirement_expr": "WanwanBig | TRex | SingleJump",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2249,7 +2374,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump | SingleJump",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2281,8 +2406,8 @@
         "shine_info_scenario_name": "滝つぼの宝箱",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:1928:216",
-        "difficulty": "casual",
-        "option_scenarios": "2,3,4,5"
+        "difficulty": "casual;glitched",
+        "option_scenarios": "2,3,4,5;2,3,4,5,1"
       },
       {
         "moon_id": "WaterfallWorldHomeStage:2455:217",
@@ -2345,7 +2470,7 @@
         "flags": "ShineFlag_Story | ShineFlag_Multi",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
         "state_requirement_expr": "",
-        "requirement_expr": "BreedaWanwan",
+        "requirement_expr": "BreedaWanwan | KingdomAccess_Cascade",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2378,7 +2503,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:21:218",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4,5;2,3,4,5"
       },
       {
         "moon_id": "Lift2DExStage:6784:221",
@@ -5105,6 +5230,78 @@
         "can_start_with_seed": "false",
         "aliases": "Darker Side",
         "notes": "Requires being able to reach the Darker Side."
+      },
+      {
+        "token": "Swing",
+        "token_type": "ability",
+        "display_name": "Swing",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swing",
+        "notes": ""
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       }
     ],
     "rooms": [
@@ -5287,6 +5484,8 @@
         "notes": "No ScenarioInfo.byml in archive."
       }
     ],
+    "captureGates": [],
+    "captureGateObjects": [],
     "nodePositions": {
       "CapAppearExStage::stage_change::CapAppearExEnt::raw": {
         "x": 1620,
@@ -5349,60 +5548,60 @@
         "y": 538.3366893705322
       },
       "WaterfallWorldHomeStage::checkpoint::obj1724": {
-        "x": 922,
-        "y": 690
+        "x": 830.5365853658536,
+        "y": 708.2926829268292
       },
       "WaterfallWorldHomeStage::checkpoint::obj2832": {
-        "x": 1494,
-        "y": 1332
+        "x": 1679.9936825844286,
+        "y": 241.6535562142003
       },
       "WaterfallWorldHomeStage::checkpoint::obj3139": {
-        "x": 2232,
-        "y": 1332
+        "x": 1688.0438340238486,
+        "y": 74.65369648441026
       },
       "WaterfallWorldHomeStage::checkpoint::obj597": {
-        "x": 2154,
-        "y": 476
+        "x": 1603.8679101517782,
+        "y": 1430.1572430295544
       },
       "WaterfallWorldHomeStage::checkpoint::obj601": {
-        "x": 428,
-        "y": 1546
+        "x": 375.3783705515155,
+        "y": 1382.5081408070016
       },
       "WaterfallWorldHomeStage::entrance::CapAppearExEnt::home_in": {
-        "x": 692,
-        "y": 956
+        "x": 231.03464677469503,
+        "y": 356.82836176493515
       },
       "WaterfallWorldHomeStage::entrance::CapAppearExExit::home_out": {
         "x": 1015.7986095770699,
         "y": 514.0213847299824
       },
       "WaterfallWorldHomeStage::entrance::Lift2D::home_in": {
-        "x": 922,
-        "y": 844
+        "x": 463.1585365853658,
+        "y": 247.96341463414626
       },
       "WaterfallWorldHomeStage::entrance::Lift2DExit::home_out": {
         "x": 1554.8853521718177,
         "y": 912.8228245191037
       },
       "WaterfallWorldHomeStage::entrance::RexPoppunEx::home_in": {
-        "x": 2232,
-        "y": 1486
+        "x": 2018.2771858765518,
+        "y": 99.92753367966861
       },
       "WaterfallWorldHomeStage::entrance::WanwanExGoal::home_out": {
         "x": 561.1545814322637,
         "y": 364.09812338356426
       },
       "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in": {
-        "x": 1152,
-        "y": 844
+        "x": 225.17073170731692,
+        "y": 251.0121951219511
       },
       "WaterfallWorldHomeStage::entrance::WindBlowExGoal::home_out": {
         "x": 809.2013901512946,
         "y": 1362.985123228061
       },
       "WaterfallWorldHomeStage::entrance::WindBlowExStart::home_in": {
-        "x": 922,
-        "y": 956
+        "x": 469.2560975609755,
+        "y": 355.3902439024389
       },
       "WaterfallWorldHomeStage::stage_change::CapAppearExEnt::raw": {
         "x": 100,
@@ -5413,12 +5612,12 @@
         "y": 2728
       },
       "WaterfallWorldHomeStage::stage_change::Come::raw": {
-        "x": 1494,
-        "y": 1486
+        "x": 2026.6336999412308,
+        "y": 347.594324573923
       },
       "WaterfallWorldHomeStage::stage_change::Go::raw": {
-        "x": 692,
-        "y": 844
+        "x": 737.4270764560061,
+        "y": 416.12181844247533
       },
       "WaterfallWorldHomeStage::stage_change::Lift2D::raw": {
         "x": 510,
@@ -5457,12 +5656,12 @@
         "y": 2432
       },
       "WaterfallWorldHomeStage::start": {
-        "x": 100,
-        "y": 100
+        "x": 1540.561338597074,
+        "y": 1068.212390740127
       },
       "WaterfallWorldHomeStage::event::MoonRockActive_Cascade": {
-        "x": 428,
-        "y": 1700
+        "x": 146.41817362764664,
+        "y": 1070.3497116722501
       },
       "WindBlowExStage::stage_change::WindBlowExGoal::raw": {
         "x": 1620,
@@ -5481,24 +5680,24 @@
         "y": 565.7894686566166
       },
       "WaterfallWorldHomeStage::place::new_place": {
-        "x": 428,
-        "y": 2056
+        "x": 1214.4374073037536,
+        "y": 1226.3540005118402
       },
       "moon:WaterfallWorldHomeStage:1717:204": {
-        "x": 768,
-        "y": 1602
+        "x": 83.30343007915553,
+        "y": 1437.0923482849603
       },
       "moon:WaterfallWorldHomeStage:214:205": {
-        "x": 100,
-        "y": 2058
+        "x": 1206.531877032583,
+        "y": 1464.44290360189
       },
       "moon:WaterfallWorldHomeStage:407:206": {
-        "x": 1492,
-        "y": 476
+        "x": 984.5859273928837,
+        "y": 1376.2806382825427
       },
       "moon:WaterfallWorldHomeStage:1033:207": {
-        "x": 1166,
-        "y": 1334
+        "x": 2034.7822022520206,
+        "y": 213.93333636525108
       },
       "moon:WaterfallWorldHomeStage:1526:208": {
         "x": 100,
@@ -5509,40 +5708,40 @@
         "y": 1764
       },
       "moon:WaterfallWorldHomeStage:2490:210": {
-        "x": 1904,
-        "y": 1334
+        "x": 2021.9985970213686,
+        "y": 0
       },
       "moon:WaterfallWorldHomeStage:1119:211": {
-        "x": 1756,
-        "y": 638
+        "x": 46.51734115196223,
+        "y": 662.88329925543
       },
       "moon:WaterfallWorldHomeStage:124:212": {
-        "x": 364,
-        "y": 476
+        "x": 1719.2022978862242,
+        "y": 899.3319225043363
       },
       "moon:WaterfallWorldHomeStage:1027:213": {
-        "x": 364,
-        "y": 908
+        "x": 358.6882161415622,
+        "y": 936.2269529668197
       },
       "moon:WaterfallWorldHomeStage:1028:214": {
-        "x": 364,
-        "y": 800
+        "x": 314.6097210789287,
+        "y": 729.6188525374735
       },
       "moon:WaterfallWorldHomeStage:1029:215": {
-        "x": 768,
-        "y": 1386
+        "x": 115.67441860465112,
+        "y": 1211.5813953488373
       },
       "moon:WaterfallWorldHomeStage:1928:216": {
-        "x": 364,
-        "y": 584
+        "x": 1727.3538637685094,
+        "y": 790.9435356072396
       },
       "moon:WaterfallWorldHomeStage:2455:217": {
-        "x": 100,
-        "y": 638
+        "x": 331.67900477462877,
+        "y": 643.6507074335275
       },
       "moon:WaterfallWorldHomeStage:21:218": {
-        "x": 100,
-        "y": 1440
+        "x": 1013.1365266987641,
+        "y": 1645.1276832336343
       },
       "moon:Lift2DExStage:6784:221": {
         "x": 941.9230738414462,
@@ -5569,12 +5768,12 @@
         "y": 603.1249958352419
       },
       "moon:WaterfallWorldHomeStage:2618:669": {
-        "x": 1756,
-        "y": 530
+        "x": 310.49245798731874,
+        "y": 476.6154871682909
       },
       "moon:WaterfallWorldHomeStage:2691:670": {
-        "x": 768,
-        "y": 1494
+        "x": 490.3588813334006,
+        "y": 1787.2577150121633
       },
       "moon:WindBlowExStage:167:673": {
         "x": 737.5025635955996,
@@ -5585,48 +5784,48 @@
         "y": 431.5384636810545
       },
       "moon:WaterfallWorldHomeStage:2741:708": {
-        "x": 100,
-        "y": 530
+        "x": 1148.5482088499398,
+        "y": 90.01450282710263
       },
       "moon:WaterfallWorldHomeStage:2778:770": {
-        "x": 1756,
-        "y": 746
+        "x": 47.72957342818427,
+        "y": 774.0585480692955
       },
       "moon:WaterfallWorldHomeStage:2819:822": {
-        "x": 100,
-        "y": 854
+        "x": 1809.3995381814898,
+        "y": 540.3473702492278
       },
       "moon:WaterfallWorldHomeStage:2821:823": {
-        "x": 1756,
-        "y": 854
+        "x": 1810.117322004796,
+        "y": 654.8512346548879
       },
       "moon:WaterfallWorldHomeStage:2823:825": {
         "x": 100,
         "y": 1656
       },
       "moon:WaterfallWorldHomeStage:2824:826": {
-        "x": 1492,
-        "y": 692
+        "x": 84.69444536045154,
+        "y": 575.1308550907127
       },
       "moon:WaterfallWorldHomeStage:2898:866": {
         "x": 100,
         "y": 1548
       },
       "moon:WaterfallWorldHomeStage:2947:894": {
-        "x": 1492,
-        "y": 908
+        "x": 963.1325898660989,
+        "y": 183.93678517161362
       },
       "moon:WaterfallWorldHomeStage:2423:906": {
-        "x": 1492,
-        "y": 800
+        "x": 31.304997569027137,
+        "y": 899.0301696563372
       },
       "moon:WaterfallWorldHomeStage:3110:1004": {
-        "x": 364,
-        "y": 692
+        "x": 320.40630172443457,
+        "y": 562.0230468044078
       },
       "moon:WaterfallWorldHomeStage:3208:1041": {
-        "x": 100,
-        "y": 746
+        "x": 327.19528303692783,
+        "y": 811.4421195704194
       },
       "moon:TrexPoppunExStage:169:1115": {
         "x": 823.5714285714286,
@@ -5637,12 +5836,16 @@
         "y": 174.68750045838533
       },
       "moon:WaterfallWorldHomeStage:3284:1145": {
-        "x": 1492,
-        "y": 584
+        "x": 94.25510653368315,
+        "y": 460.52430269732184
       },
       "moon:WaterfallWorldHomeStage:3523:1167": {
-        "x": 768,
-        "y": 1710
+        "x": 100.45382585751975,
+        "y": 1860.395778364116
+      },
+      "WaterfallWorldHomeStage::place::new_place_2": {
+        "x": 681.0064509114986,
+        "y": 1326.254391236338
       }
     }
   }

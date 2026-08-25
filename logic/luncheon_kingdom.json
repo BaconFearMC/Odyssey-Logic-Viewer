@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kingdom": "Luncheon Kingdom",
-  "savedAt": "2026-07-14T23:35:45.749Z",
+  "savedAt": "2026-08-14T21:49:33.888Z",
   "workspace": {
-    "schemaVersion": 1,
-    "loadedAt": "2026-06-04T06:06:49.078Z",
+    "schemaVersion": 2,
+    "loadedAt": "2026-08-14T20:24:18.663Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -135,6 +135,23 @@
         "source_archive",
         "source_file",
         "notes"
+      ],
+      "captureGates": [
+        "gate_id",
+        "kingdom",
+        "logic_stage",
+        "edge_id",
+        "source_capture_token",
+        "replacement_capture_token",
+        "difficulty",
+        "match_mode",
+        "minimum_count",
+        "notes"
+      ],
+      "captureGateObjects": [
+        "gate_id",
+        "placement_stage",
+        "object_id"
       ]
     },
     "logicNodes": [
@@ -2387,6 +2404,24 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "LavaWorldHomeStage::place::new_place_8",
+        "kingdom": "Luncheon Kingdom",
+        "stage": "LavaWorldHomeStage",
+        "stage_display_name": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Meat Multi Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2576,21 +2611,6 @@
         "area_scope": "overworld",
         "from_node_id": "LavaWorldHomeStage::place::new_place",
         "to_node_id": "LavaWorldHomeStage::checkpoint::obj4619",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0466",
-        "kingdom": "Luncheon Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "LavaWorldHomeStage::checkpoint::obj4074",
-        "to_node_id": "LavaWorldHomeStage::checkpoint::obj1061",
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
@@ -3604,6 +3624,36 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0473.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0720",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::checkpoint::obj1061",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_8",
+        "requirement_expr": "CarryMeat",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0721",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::checkpoint::obj4117",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_8",
+        "requirement_expr": "Bubble",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4,5"
       }
     ],
     "moonAccess": [
@@ -4340,7 +4390,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LavaWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Bubble | KingdomAccess_Luncheon",
         "world_peace_token": "WorldPeace_Luncheon",
         "moon_rock_token": "MoonRockActive_Luncheon",
         "access_type": "primary",
@@ -4372,7 +4422,7 @@
         "shine_info_scenario_name": "塩つぶ丘の すみっこ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldHomeStage:2584:256",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -4669,7 +4719,7 @@
         "stage": "LavaWorldHomeStage",
         "stage_display_name": "Luncheon Kingdom",
         "area_scope": "overworld",
-        "moon_name": "Bon AppÃ©tit, Captain Toad!",
+        "moon_name": "Bon Appétit, Captain Toad!",
         "runtime_shine_key": "LavaWorldHomeStage:4125:265",
         "obj_id": "4125",
         "uid": "265",
@@ -5204,7 +5254,7 @@
         "flags": "ShineFlag_Story",
         "from_node_id": "LavaWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Bubble | KingdomAccess_Luncheon",
         "world_peace_token": "WorldPeace_Luncheon",
         "moon_rock_token": "MoonRockActive_Luncheon",
         "access_type": "primary",
@@ -5236,7 +5286,7 @@
         "shine_info_scenario_name": "料理をねらう ブルーダルズ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldHomeStage:1097:291",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -5250,9 +5300,9 @@
         "obj_id": "1725",
         "uid": "292",
         "flags": "ShineFlag_Story | ShineFlag_Multi",
-        "from_node_id": "LavaWorldHomeStage::checkpoint::obj1061",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_8",
         "state_requirement_expr": "",
-        "requirement_expr": "CarryMeat",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Luncheon",
         "moon_rock_token": "MoonRockActive_Luncheon",
         "access_type": "primary",
@@ -8408,6 +8458,66 @@
         "can_start_with_seed": "false",
         "aliases": "Swing",
         "notes": ""
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       }
     ],
     "rooms": [
@@ -8957,6 +9067,8 @@
         "notes": "No ScenarioInfo.byml in archive."
       }
     ],
+    "captureGates": [],
+    "captureGateObjects": [],
     "nodePositions": {
       "CapAppearLavaLiftExStage::stage_change::LavaLiftEx::raw": {
         "x": 120,
@@ -9087,8 +9199,8 @@
         "y": 414.8380587045646
       },
       "LavaWorldHomeStage::checkpoint::obj1061": {
-        "x": 428,
-        "y": 3392
+        "x": 562.5514732858329,
+        "y": 3400.305678167011
       },
       "LavaWorldHomeStage::checkpoint::obj2292": {
         "x": 426.5359116022099,
@@ -9357,6 +9469,14 @@
       "LavaWorldCaveZone::start": {
         "x": 155.19337016574588,
         "y": 1652.9116022099447
+      },
+      "LavaWorldHomeStage::place::new_place_3": {
+        "x": 1407.3317616903753,
+        "y": 2226.8088610928517
+      },
+      "LavaWorldHomeStage::place::new_place_8": {
+        "x": 253.07702446778381,
+        "y": 3552.335979919825
       },
       "moon:LavaWorldHomeStage:5616:240": {
         "x": 1166,
@@ -9629,10 +9749,6 @@
       "moon:LavaWorldFenceLiftExStage:999:1101": {
         "x": 1368.9473682229209,
         "y": 186.33504499131283
-      },
-      "LavaWorldHomeStage::place::new_place_3": {
-        "x": 700,
-        "y": 360
       }
     }
   }

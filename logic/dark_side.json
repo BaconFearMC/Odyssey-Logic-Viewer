@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kingdom": "Dark Side",
-  "savedAt": "2026-07-02T04:41:22.291Z",
+  "savedAt": "2026-08-24T19:45:02.879Z",
   "workspace": {
-    "schemaVersion": 1,
-    "loadedAt": "2026-06-04T06:06:49.078Z",
+    "schemaVersion": 2,
+    "loadedAt": "2026-08-24T19:24:13.810Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -135,6 +135,23 @@
         "source_archive",
         "source_file",
         "notes"
+      ],
+      "captureGates": [
+        "gate_id",
+        "kingdom",
+        "logic_stage",
+        "edge_id",
+        "source_capture_token",
+        "replacement_capture_token",
+        "difficulty",
+        "match_mode",
+        "minimum_count",
+        "notes"
+      ],
+      "captureGateObjects": [
+        "gate_id",
+        "placement_stage",
+        "object_id"
       ]
     },
     "logicNodes": [
@@ -2243,10 +2260,10 @@
         "area_scope": "subarea",
         "from_node_id": "BikeSteelNoCapExStage::entrance::BikeSteelNoCapEx::sub_near",
         "to_node_id": "BikeSteelNoCapExStage::entrance::BikeSteelNoCapEx_Exit::sub_far",
-        "requirement_expr": "LongJump | RollBoost",
+        "requirement_expr": "(LongJump & RollBoost) | RollBoost | LongJump",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;advanced",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -3014,7 +3031,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Luncheon & GroundPound)",
+        "requirement_expr": "(KingdomAccess_Luncheon & GroundPound & @LavaWorldHomeStage::place::new_place)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3254,7 +3271,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Lake & GroundPound)",
+        "requirement_expr": "(KingdomAccess_Lake & GroundPound & @LakeWorldTownZone::checkpoint::obj693)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3302,7 +3319,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Snow & GroundPound)",
+        "requirement_expr": "(KingdomAccess_Snow & GroundPound & Byugo) | (Vault & NeutralThrow & KingdomAccess_Snow & GroundPound) | (KingdomAccess_Snow & Dive & GroundPound) | (KingdomAccess_Snow & TripleJump & GroundPound)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3334,7 +3351,7 @@
         "shine_info_scenario_name": "月の国 裏で見つけた お宝写真 ５",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "Special1WorldHomeStage:486:1129",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;advanced;advanced",
         "option_scenarios": ""
       },
       {
@@ -3350,7 +3367,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Metro & GroundPound)",
+        "requirement_expr": "(KingdomAccess_Metro & GroundPound & @CityWorldHomeStage::checkpoint::obj3996 & @CityWorldHomeStage::checkpoint::obj3994)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3446,7 +3463,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Cascade & GroundPound)",
+        "requirement_expr": "(KingdomAccess_Cascade & GroundPound & @WaterfallWorldHomeStage::place::new_place_2)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -5018,6 +5035,66 @@
         "can_start_with_seed": "false",
         "aliases": "Swing",
         "notes": ""
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       }
     ],
     "rooms": [
@@ -5397,6 +5474,8 @@
         "notes": "No ScenarioInfo.byml in archive."
       }
     ],
+    "captureGates": [],
+    "captureGateObjects": [],
     "nodePositions": {
       "BikeSteelNoCapExStage::stage_change::BikeSteelNoCapEx::raw": {
         "x": 1620,

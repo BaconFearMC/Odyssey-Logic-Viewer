@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kingdom": "Sand Kingdom",
-  "savedAt": "2026-07-15T02:14:10.478Z",
+  "savedAt": "2026-08-24T19:27:51.378Z",
   "workspace": {
-    "schemaVersion": 1,
-    "loadedAt": "2026-06-04T06:06:49.078Z",
+    "schemaVersion": 2,
+    "loadedAt": "2026-08-24T19:24:13.810Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -135,6 +135,23 @@
         "source_archive",
         "source_file",
         "notes"
+      ],
+      "captureGates": [
+        "gate_id",
+        "kingdom",
+        "logic_stage",
+        "edge_id",
+        "source_capture_token",
+        "replacement_capture_token",
+        "difficulty",
+        "match_mode",
+        "minimum_count",
+        "notes"
+      ],
+      "captureGateObjects": [
+        "gate_id",
+        "placement_stage",
+        "object_id"
       ]
     },
     "logicNodes": [
@@ -677,24 +694,6 @@
         "z": "250.000",
         "scenario_indices": "0;1;2;3;4;7;8;9",
         "notes": "Links to SandWorldMeganeExStage. StageData anchor UnitConfigName=DokanStageChange."
-      },
-      {
-        "node_id": "SandWorldHomeStage::entrance::arijigoku1::home_in",
-        "kingdom": "Sand Kingdom",
-        "stage": "SandWorldHomeStage",
-        "stage_display_name": "Sand Kingdom",
-        "area_scope": "overworld",
-        "node_type": "home_entrance",
-        "source": "EntranceDB",
-        "entrance_id": "arijigoku1",
-        "side": "home_in",
-        "obj_id": "obj3153",
-        "display_name": "Home entrance: arijigoku1",
-        "x": "-5850.000",
-        "y": "-900.000",
-        "z": "-19350.000",
-        "scenario_indices": "0;1;2;3;4;7;8;9",
-        "notes": "Links to SandWorldPressExStage. StageData anchor UnitConfigName=DokanStageChange."
       },
       {
         "node_id": "SandWorldHomeStage::entrance::arijigoku2::home_out",
@@ -3683,6 +3682,60 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_6",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Jaxi Access",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldKillerExStage::place::new_place",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldKillerExStage",
+        "stage_display_name": "Bullet Bill Maze",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Rooftop",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldKillerExStage::place::new_place_2",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldKillerExStage",
+        "stage_display_name": "Bullet Bill Maze",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Bullet Bill Side Path Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -3692,14 +3745,14 @@
         "area_scope": "subarea",
         "from_node_id": "SandWorldKillerExStage::entrance::doukutu1::sub_near",
         "to_node_id": "SandWorldKillerExStage::entrance::doukutu2::sub_far",
-        "requirement_expr": "Killer | (Backflip & WallJump) | (WallJump & LedgeGrab) | (WallJump & Dive) | (GroundPoundJump & Dive) | (GroundPoundJump & WallJump) | (SideFlip & Dive) | (SideFlip & WallJump) | (Backflip & Dive) | (Spin & WallJump) | (Spin & Dive) | (TripleJump & Dive) | (TripleJump & WallJump) | (Vault & Dive & NeutralThrow) | (Vault & Backflip & NeutralThrow) | (Vault & SideFlip & NeutralThrow) | (DoubleJump & Vault & LedgeGrab & NeutralThrow) | (TripleJump & LedgeGrab) | (TripleJump & Vault & NeutralThrow) | (Vault & WallJump & NeutralThrow) | (UpThrow & Vault & Dive) | (UpThrow & Vault & Backflip) | (Vault & SideFlip & UpThrow) | (DoubleJump & Vault & LedgeGrab & UpThrow) | (TripleJump & Vault & UpThrow) | (Vault & WallJump & UpThrow)",
+        "requirement_expr": "Killer",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4,5"
       },
       {
         "edge_id": "edge_user_0012",
@@ -3707,13 +3760,13 @@
         "area_scope": "subarea",
         "from_node_id": "SandWorldKillerExStage::entrance::doukutu2::sub_far",
         "to_node_id": "SandWorldKillerExStage::entrance::doukutu1::sub_near",
-        "requirement_expr": "Backflip | LedgeGrab | Dive | GroundPoundJump | SideFlip | Spin | TripleJump | Vault | WallJump",
+        "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0011.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3725,10 +3778,10 @@
         "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3740,10 +3793,10 @@
         "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0013.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3755,10 +3808,10 @@
         "requirement_expr": "Hosui",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3770,10 +3823,10 @@
         "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0015.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3785,10 +3838,25 @@
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0701",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldPressExStage::entrance::arijigoku::sub_near",
+        "to_node_id": "SandWorldPressExStage::entrance::arijigoku1::sub_far",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
         "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Ceiling drop lands in the same chamber as the start pipe; they are one coupled interface.",
         "option_scenarios": ""
       },
       {
@@ -3800,10 +3868,10 @@
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3815,10 +3883,10 @@
         "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0018.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3830,10 +3898,10 @@
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3845,10 +3913,10 @@
         "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0020.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3860,10 +3928,10 @@
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3875,10 +3943,10 @@
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "expert",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0024.",
-        "difficulty": "expert",
         "option_scenarios": ""
       },
       {
@@ -3890,10 +3958,10 @@
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3905,10 +3973,10 @@
         "requirement_expr": "BazookaElectric",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0053.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3920,10 +3988,10 @@
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3935,10 +4003,10 @@
         "requirement_expr": "BazookaElectric",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0022.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3950,10 +4018,10 @@
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -4100,7 +4168,7 @@
         "requirement_expr": "(Killer & WallJump & Dive) | (WallJump & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "advanced",
+        "difficulty": "advanced;expert",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -4116,10 +4184,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "3,4,5,6,7",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4,5,6,7"
       },
       {
         "edge_id": "edge_user_0180",
@@ -4131,10 +4199,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0136."
+        "notes": "Reverse of edge_user_0136.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0126",
@@ -4146,10 +4214,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0212",
@@ -4161,10 +4229,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0213",
@@ -4176,10 +4244,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0214",
@@ -4191,10 +4259,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0215",
@@ -4206,10 +4274,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0216",
@@ -4221,10 +4289,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "3,4,5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4,5"
       },
       {
         "edge_id": "edge_user_0217",
@@ -4236,10 +4304,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0218",
@@ -4251,10 +4319,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0217."
+        "notes": "Reverse of edge_user_0217.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0219",
@@ -4266,10 +4334,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0220",
@@ -4281,10 +4349,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0221",
@@ -4296,10 +4364,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0220."
+        "notes": "Reverse of edge_user_0220.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0222",
@@ -4311,10 +4379,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "5"
       },
       {
         "edge_id": "edge_user_0223",
@@ -4326,10 +4394,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0224",
@@ -4341,10 +4409,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0223."
+        "notes": "Reverse of edge_user_0223.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0225",
@@ -4356,10 +4424,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0226",
@@ -4371,10 +4439,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0227",
@@ -4386,10 +4454,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0226."
+        "notes": "Reverse of edge_user_0226.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0228",
@@ -4401,10 +4469,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0229",
@@ -4416,10 +4484,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0230",
@@ -4431,10 +4499,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0231",
@@ -4446,10 +4514,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0230."
+        "notes": "Reverse of edge_user_0230.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0232",
@@ -4461,10 +4529,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "5"
       },
       {
         "edge_id": "edge_user_0233",
@@ -4476,10 +4544,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0234",
@@ -4491,10 +4559,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0233."
+        "notes": "Reverse of edge_user_0233.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0235",
@@ -4506,25 +4574,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
-      },
-      {
-        "edge_id": "edge_user_0236",
-        "kingdom": "Sand Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "SandWorldHomeStage::checkpoint::obj98",
-        "to_node_id": "SandWorldHomeStage::entrance::arijigoku1::home_in",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "5"
       },
       {
         "edge_id": "edge_user_0237",
@@ -4536,10 +4589,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0238",
@@ -4551,10 +4604,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0237."
+        "notes": "Reverse of edge_user_0237.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0239",
@@ -4566,10 +4619,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced",
-        "option_scenarios": "3,4,5;1,2,3,4,5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4,5;1,2,3,4,5"
       },
       {
         "edge_id": "edge_user_0240",
@@ -4581,10 +4634,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced;casual",
-        "option_scenarios": "1;3,4,5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1;3,4,5"
       },
       {
         "edge_id": "edge_user_0241",
@@ -4596,10 +4649,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "3,4,5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4,5"
       },
       {
         "edge_id": "edge_user_0242",
@@ -4611,10 +4664,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "expert",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,3,4,5"
       },
       {
         "edge_id": "edge_user_0243",
@@ -4626,10 +4679,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "3,4,5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4,5"
       },
       {
         "edge_id": "edge_user_0244",
@@ -4641,10 +4694,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "3,4,5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4,5"
       },
       {
         "edge_id": "edge_user_0245",
@@ -4656,10 +4709,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "5;1,2,3,4,5;1,2,3,4,5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "5;1,2,3,4,5;1,2,3,4,5"
       },
       {
         "edge_id": "edge_user_0246",
@@ -4671,10 +4724,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "5",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "5"
       },
       {
         "edge_id": "edge_user_0247",
@@ -4686,10 +4739,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "5"
       },
       {
         "edge_id": "edge_user_0248",
@@ -4701,10 +4754,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0249",
@@ -4716,10 +4769,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0250",
@@ -4731,10 +4784,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0249."
+        "notes": "Reverse of edge_user_0249.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0251",
@@ -4746,10 +4799,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "5",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0246."
+        "notes": "Reverse of edge_user_0246.",
+        "option_scenarios": "5"
       },
       {
         "edge_id": "edge_user_0252",
@@ -4761,10 +4814,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "3,4,5",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4,5"
       },
       {
         "edge_id": "edge_user_0253",
@@ -4776,10 +4829,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced;advanced;casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0026",
@@ -4791,10 +4844,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0027",
@@ -4806,10 +4859,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0350",
@@ -4992,21 +5045,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0362",
-        "kingdom": "Sand Kingdom",
-        "area_scope": "subarea",
-        "from_node_id": "SandWorldMeganeExStage::entrance::wall::sub_far",
-        "to_node_id": "SandWorldMeganeExStage::entrance::wall::sub_near",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0363",
         "kingdom": "Sand Kingdom",
         "area_scope": "subarea",
@@ -5097,41 +5135,11 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0615",
-        "kingdom": "Sand Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "SandWorldHomeStage::checkpoint::obj530",
-        "to_node_id": "SandWorldHomeStage::entrance::run00return::home_in",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0616",
         "kingdom": "Sand Kingdom",
         "area_scope": "overworld",
         "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
         "to_node_id": "SandWorldHomeStage::entrance::aaa::home_in",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": "2,3,4,5"
-      },
-      {
-        "edge_id": "edge_user_0617",
-        "kingdom": "Sand Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
-        "to_node_id": "SandWorldHomeStage::entrance::run00return::home_in",
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
@@ -5157,10 +5165,55 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0619",
+        "edge_id": "edge_user_0375",
         "kingdom": "Sand Kingdom",
         "area_scope": "overworld",
-        "from_node_id": "SandWorldHomeStage::entrance::run00return::home_in",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj530",
+        "to_node_id": "SandWorldHomeStage::place::new_place_6",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0376",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
+        "to_node_id": "SandWorldHomeStage::place::new_place_6",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0379",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::place::new_place_6",
+        "to_node_id": "SandWorldHomeStage::entrance::run00return::home_in",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0380",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::place::new_place_6",
         "to_node_id": "SandWorldHomeStage::checkpoint::obj530",
         "requirement_expr": "impossible",
         "requirement_notes": "",
@@ -5168,7 +5221,157 @@
         "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
+        "notes": "Reverse of edge_user_0375.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0615",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldMeganeExStage::entrance::wall::sub_near",
+        "to_node_id": "SandWorldMeganeExStage::entrance::wall::sub_far",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0617",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldMeganeExStage::entrance::wall::sub_far",
+        "to_node_id": "SandWorldMeganeExStage::entrance::wall::sub_near",
+        "requirement_expr": "NeutralThrow",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
         "notes": "Reverse of edge_user_0615.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0722",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldKillerExStage::entrance::doukutu1::sub_near",
+        "to_node_id": "SandWorldKillerExStage::place::new_place",
+        "requirement_expr": "(Backflip & WallJump) | (WallJump & LedgeGrab) | (WallJump & Dive) | (GroundPoundJump & Dive) | (GroundPoundJump & WallJump) | (SideFlip & Dive) | (SideFlip & WallJump) | (Backflip & Dive) | (Spin & WallJump) | (Spin & Dive) | (TripleJump & Dive) | (TripleJump & WallJump) | (Vault & Dive & NeutralThrow) | (Vault & Backflip & NeutralThrow) | (Vault & SideFlip & NeutralThrow) | (Vault & LedgeGrab & NeutralThrow) | (TripleJump & LedgeGrab) | (TripleJump & Vault & NeutralThrow) | (Vault & WallJump & NeutralThrow) | (Vault & Dive & UpThrow) | (Vault & Backflip & UpThrow) | (Vault & SideFlip & UpThrow) | (Vault & LedgeGrab & UpThrow) | (TripleJump & Vault & UpThrow) | (Vault & WallJump & UpThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0723",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldKillerExStage::entrance::doukutu1::sub_near",
+        "to_node_id": "SandWorldKillerExStage::place::new_place_2",
+        "requirement_expr": "Killer",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0724",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldKillerExStage::place::new_place",
+        "to_node_id": "SandWorldKillerExStage::entrance::doukutu1::sub_near",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0722.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0725",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldKillerExStage::entrance::doukutu2::sub_far",
+        "to_node_id": "SandWorldKillerExStage::place::new_place",
+        "requirement_expr": "Backflip | Dive | GroundPoundJump | LedgeGrab | SideFlip | Spin | TripleJump | Vault | WallJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0726",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldKillerExStage::place::new_place",
+        "to_node_id": "SandWorldKillerExStage::entrance::doukutu2::sub_far",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0725.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0727",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldKillerExStage::place::new_place",
+        "to_node_id": "SandWorldKillerExStage::place::new_place_2",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0728",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::place::new_place_6",
+        "to_node_id": "SandWorldHomeStage::checkpoint::obj655",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0376.",
+        "option_scenarios": "2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0729",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::entrance::run00return::home_in",
+        "to_node_id": "SandWorldHomeStage::place::new_place_6",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0379.",
         "option_scenarios": ""
       }
     ],
@@ -5217,9 +5420,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "凍える水路を抜けて",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "WaterTubeExStage:3240:35",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "WaterTubeExStage:3240:35"
       },
       {
         "moon_id": "WaterTubeExStage:3706:36",
@@ -5265,9 +5468,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "凍える水路の かくし部屋",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "WaterTubeExStage:3706:36",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "WaterTubeExStage:3706:36"
       },
       {
         "moon_id": "SandWorldHomeStage:3456:493",
@@ -5313,9 +5516,9 @@
         "shine_info_object_name": "ガールクリボー",
         "shine_info_scenario_name": "砂漠のガールフレンド",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3456:493",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3456:493"
       },
       {
         "moon_id": "SandWorldHomeStage:1432:495",
@@ -5361,9 +5564,9 @@
         "shine_info_object_name": "ボムゲートキーパー",
         "shine_info_scenario_name": "さかさピラミッドの対決",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:1432:495",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:1432:495"
       },
       {
         "moon_id": "SandWorldHomeStage:3735:496",
@@ -5409,9 +5612,9 @@
         "shine_info_object_name": "シャインチップ全取得監視者",
         "shine_info_scenario_name": "集めて！ 砂のムーンチップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3735:496",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3735:496"
       },
       {
         "moon_id": "SandWorldHomeStage:1599:497",
@@ -5457,9 +5660,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "アッチーニャ遺跡の塔の上",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:1599:497",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:1599:497"
       },
       {
         "moon_id": "SandWorldHomeStage:1715:498",
@@ -5505,9 +5708,9 @@
         "shine_info_object_name": "スフィンクスクイズ",
         "shine_info_scenario_name": "お見事！ 砂のクイズ大正解",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:1715:498",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:1715:498"
       },
       {
         "moon_id": "SandWorldHomeStage:5206:501",
@@ -5553,9 +5756,9 @@
         "shine_info_object_name": "ジャガータクシーイベント",
         "shine_info_scenario_name": "おかえり！ ライドン・バス",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:5206:501",
         "difficulty": "casual",
-        "option_scenarios": "3,4,5"
+        "option_scenarios": "3,4,5",
+        "__editor_id": "SandWorldHomeStage:5206:501"
       },
       {
         "moon_id": "SandWorldHomeStage:481:502",
@@ -5601,9 +5804,9 @@
         "shine_info_object_name": "魚影",
         "shine_info_scenario_name": "オアシスで フィッシング！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:481:502",
         "difficulty": "casual",
-        "option_scenarios": "3,4,5"
+        "option_scenarios": "3,4,5",
+        "__editor_id": "SandWorldHomeStage:481:502"
       },
       {
         "moon_id": "SandWorldHomeStage:2047:504",
@@ -5649,9 +5852,9 @@
         "shine_info_object_name": "シャインドット_2D",
         "shine_info_scenario_name": "さかさ壁画のヒミツ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:2047:504",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:2047:504"
       },
       {
         "moon_id": "SandWorldKillerTowerZone:42:505",
@@ -5697,9 +5900,9 @@
         "shine_info_object_name": "シャインドット_2D",
         "shine_info_scenario_name": "壁画に かくされたヒミツ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldKillerTowerZone:42:505",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldKillerTowerZone:42:505"
       },
       {
         "moon_id": "SandWorldHomeStage:3999:506",
@@ -5745,9 +5948,9 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "まるい砂丘の てっぺん",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3999:506",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3999:506"
       },
       {
         "moon_id": "SandWorldHomeStage:902:507",
@@ -5762,7 +5965,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SandWorldHomeStage::checkpoint::obj98",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Killer | (Vault & Dive & NeutralThrow) | KingdomAccess_Sand",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -5793,9 +5996,9 @@
         "shine_info_object_name": "木箱",
         "shine_info_scenario_name": "とび出た！ 砂の木箱から",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:902:507",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;casual;advanced",
+        "option_scenarios": "1,2,3,4,5",
+        "__editor_id": "SandWorldHomeStage:902:507"
       },
       {
         "moon_id": "SandWorldHomeStage:4059:508",
@@ -5841,9 +6044,9 @@
         "shine_info_object_name": "砂のワールド壊れパーツ000",
         "shine_info_scenario_name": "かたいブロックの中",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4059:508",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4059:508"
       },
       {
         "moon_id": "SandWorldHomeStage:4002:509",
@@ -5889,9 +6092,9 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "サボテンだって歩きたい！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4002:509",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4002:509"
       },
       {
         "moon_id": "SandWorldHomeStage:4001:510",
@@ -5937,9 +6140,9 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "タクシーの荷物から",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4001:510",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4001:510"
       },
       {
         "moon_id": "SandWorldHomeStage:4000:511",
@@ -5985,9 +6188,9 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "小鳥たちの会議",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4000:511",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4000:511"
       },
       {
         "moon_id": "SandWorldHomeStage:3998:512",
@@ -6033,9 +6236,9 @@
         "shine_info_object_name": "忠犬専用ここ掘れポイント",
         "shine_info_scenario_name": "砂で 見つけたワン！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3998:512",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3998:512"
       },
       {
         "moon_id": "SandWorldHomeStage:4272:513",
@@ -6081,9 +6284,9 @@
         "shine_info_object_name": "帽子ひっかけポイント",
         "shine_info_scenario_name": "ライドン石像の しっぽ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4272:513",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4272:513"
       },
       {
         "moon_id": "SandWorldHomeStage:2188:515",
@@ -6129,9 +6332,9 @@
         "shine_info_object_name": "音符オブジェ(1つ目)",
         "shine_info_scenario_name": "走ってくだって 音符集め",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:2188:515",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:2188:515"
       },
       {
         "moon_id": "SandWorldHomeStage:123:516",
@@ -6146,7 +6349,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SandWorldHomeStage::checkpoint::obj525",
         "state_requirement_expr": "",
-        "requirement_expr": "Killer | Kakku | (TripleJump & Dive) | (Vault & Dive & NeutralThrow) | (LongJump & Vault)",
+        "requirement_expr": "Killer | Kakku | (TripleJump & Dive) | (Vault & Dive & NeutralThrow) | (LongJump & Vault) | KingdomAccess_Sand",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -6177,9 +6380,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "かたむいた石柱の上",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:123:516",
-        "difficulty": "casual;casual;advanced;casual;advanced",
-        "option_scenarios": "1,2,3,4,5;3,4,5"
+        "difficulty": "casual;casual;advanced;casual;advanced;expert",
+        "option_scenarios": "1,2,3,4,5;3,4,5",
+        "__editor_id": "SandWorldHomeStage:123:516"
       },
       {
         "moon_id": "SandWorldHomeStage:536:517",
@@ -6225,9 +6428,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "砂の町を 見はらして",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:536:517",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:536:517"
       },
       {
         "moon_id": "SandWorldHomeStage:576:518",
@@ -6273,9 +6476,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "遺跡の空洞",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:576:518",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:576:518"
       },
       {
         "moon_id": "SandWorldHomeStage:878:519",
@@ -6321,9 +6524,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "キラーで 体あたり！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:878:519",
         "difficulty": "casual",
-        "option_scenarios": "2,3,4,5"
+        "option_scenarios": "2,3,4,5",
+        "__editor_id": "SandWorldHomeStage:878:519"
       },
       {
         "moon_id": "SandWorldHomeStage:980:520",
@@ -6369,9 +6572,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "門の上で かがやく宝",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:980:520",
         "difficulty": "casual;casual;casual;advanced;advanced;expert",
-        "option_scenarios": "1,2,3,4,5;3,4,5;2,3,4,5;1,2;1,2"
+        "option_scenarios": "1,2,3,4,5;3,4,5;2,3,4,5;1,2;1,2",
+        "__editor_id": "SandWorldHomeStage:980:520"
       },
       {
         "moon_id": "SandWorldHomeStage:2230:521",
@@ -6417,9 +6620,9 @@
         "shine_info_object_name": "シャイン【月の石追加版2m】",
         "shine_info_scenario_name": "毒沼の小島",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:2230:521",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:2230:521"
       },
       {
         "moon_id": "SandWorldHomeStage:2888:522",
@@ -6465,9 +6668,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "一本柱に とび乗って",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:2888:522",
         "difficulty": "casual",
-        "option_scenarios": "1,2,3,4,5"
+        "option_scenarios": "1,2,3,4,5",
+        "__editor_id": "SandWorldHomeStage:2888:522"
       },
       {
         "moon_id": "SandWorldHomeStage:3371:523",
@@ -6513,9 +6716,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "流砂の かくし部屋",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3371:523",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3371:523"
       },
       {
         "moon_id": "SandWorldHomeStage:3387:524",
@@ -6561,9 +6764,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "ようこそ！ アッチーニャ！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3387:524",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3387:524"
       },
       {
         "moon_id": "SandWorldHomeStage:3782:525",
@@ -6609,9 +6812,9 @@
         "shine_info_object_name": "音符オブジェ(1つ目)",
         "shine_info_scenario_name": "ヤシの木ジャンプで 音符集め",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3782:525",
         "difficulty": "casual;casual;casual;advanced",
-        "option_scenarios": "1,2,3,4,5"
+        "option_scenarios": "1,2,3,4,5",
+        "__editor_id": "SandWorldHomeStage:3782:525"
       },
       {
         "moon_id": "SandWorldHomeStage:2143:526",
@@ -6657,9 +6860,9 @@
         "shine_info_object_name": "鳥[ワシ]",
         "shine_info_scenario_name": "砂漠の渡り鳥",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:2143:526",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:2143:526"
       },
       {
         "moon_id": "SandWorldHomeStage:3389:530",
@@ -6705,9 +6908,9 @@
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "ライドン遺跡の宝箱",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3389:530",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3389:530"
       },
       {
         "moon_id": "SandWorldHomeStage:4632:531",
@@ -6753,9 +6956,9 @@
         "shine_info_object_name": "帽子掛け（タイマー）",
         "shine_info_scenario_name": "砂の国で チクタク・アスレチック １",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4632:531",
         "difficulty": "casual;advanced",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4632:531"
       },
       {
         "moon_id": "SandWorldHomeStage:1841:532",
@@ -6801,9 +7004,9 @@
         "shine_info_object_name": "コレクトアニマル監視者",
         "shine_info_scenario_name": "砂丘で ヒツジ集め",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:1841:532",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:1841:532"
       },
       {
         "moon_id": "SandWorldHomeStage:1609:533",
@@ -6849,9 +7052,9 @@
         "shine_info_object_name": "フィギュアウォーキングNpc",
         "shine_info_scenario_name": "砂漠で ウォーキング！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:1609:533",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:1609:533"
       },
       {
         "moon_id": "SandWorldHomeStage:4271:534",
@@ -6897,9 +7100,9 @@
         "shine_info_object_name": "帽子ひっかけポイント",
         "shine_info_scenario_name": "噴水に ひっかけて",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4271:534",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4271:534"
       },
       {
         "moon_id": "SandWorldHomeStage:4277:535",
@@ -6945,9 +7148,9 @@
         "shine_info_object_name": "世界旅行NPC",
         "shine_info_scenario_name": "ただいま！ 世界一周",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4277:535",
         "difficulty": "casual",
-        "option_scenarios": "3,4,5"
+        "option_scenarios": "3,4,5",
+        "__editor_id": "SandWorldHomeStage:4277:535"
       },
       {
         "moon_id": "SandWorldHomeStage:4685:536",
@@ -6993,9 +7196,9 @@
         "shine_info_object_name": "鍵付き宝箱",
         "shine_info_scenario_name": "砂の国で チクタク・アスレチック ２",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4685:536",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4685:536"
       },
       {
         "moon_id": "SandWorldHomeStage:5267:538",
@@ -7041,9 +7244,9 @@
         "shine_info_object_name": "コソコソくん(砂ワールド神殿)",
         "shine_info_scenario_name": "石畳を うごめくモノ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:5267:538",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:5267:538"
       },
       {
         "moon_id": "SandWorldHomeStage:4807:539",
@@ -7089,9 +7292,9 @@
         "shine_info_object_name": "帽子掛け（タイマー）",
         "shine_info_scenario_name": "砂の国で チクタク・アスレチック ３",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4807:539",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4807:539"
       },
       {
         "moon_id": "SandWorldHomeStage:4187:540",
@@ -7137,9 +7340,9 @@
         "shine_info_object_name": "砂のワールド壊れパーツ000",
         "shine_info_scenario_name": "東の石柱にて",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4187:540",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4187:540"
       },
       {
         "moon_id": "SandWorldHomeStage:3431:542",
@@ -7185,9 +7388,9 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "目には見えない かがやき",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3431:542",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3431:542"
       },
       {
         "moon_id": "SandWorldHomeStage:4555:544",
@@ -7233,9 +7436,9 @@
         "shine_info_object_name": "世界旅行ピーチ",
         "shine_info_scenario_name": "砂の国で ピーチ姫",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4555:544",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4555:544"
       },
       {
         "moon_id": "SandWorldHomeStage:3433:545",
@@ -7281,9 +7484,9 @@
         "shine_info_object_name": "ステージスイッチ_全滅監視",
         "shine_info_scenario_name": "はがして いたずらポスター",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3433:545",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3433:545"
       },
       {
         "moon_id": "SandWorldHomeStage:3434:546",
@@ -7329,9 +7532,9 @@
         "shine_info_object_name": "シャイン【月の石追加版】",
         "shine_info_scenario_name": "北の柱に とび乗って",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3434:546",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3434:546"
       },
       {
         "moon_id": "SandWorldHomeStage:3437:547",
@@ -7377,9 +7580,9 @@
         "shine_info_object_name": "シャイン【月の石追加版】",
         "shine_info_scenario_name": "ヤシの木で 大ジャンプ！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3437:547",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3437:547"
       },
       {
         "moon_id": "SandWorldHomeStage:3442:550",
@@ -7425,9 +7628,9 @@
         "shine_info_object_name": "シャイン【月の石追加版2m】",
         "shine_info_scenario_name": "峡谷の上空に",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:3442:550",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:3442:550"
       },
       {
         "moon_id": "SandWorldHomeStage:4392:552",
@@ -7473,9 +7676,9 @@
         "shine_info_object_name": "鳥[ワシ]",
         "shine_info_scenario_name": "荒野の渡り鳥",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4392:552",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4392:552"
       },
       {
         "moon_id": "SandWorldHomeStage:4483:553",
@@ -7521,9 +7724,9 @@
         "shine_info_object_name": "ウサギ",
         "shine_info_scenario_name": "砂漠で つかまえたピョン！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:4483:553",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:4483:553"
       },
       {
         "moon_id": "SandWorldKillerExStage:49:554",
@@ -7536,9 +7739,9 @@
         "obj_id": "49",
         "uid": "554",
         "flags": "ShineFlag_None",
-        "from_node_id": "SandWorldKillerExStage::entrance::doukutu2::sub_far",
+        "from_node_id": "SandWorldKillerExStage::place::new_place_2",
         "state_requirement_expr": "",
-        "requirement_expr": "Backflip | Dive | GroundPoundJump | LedgeGrab | SideFlip | Spin | TripleJump | Vault | WallJump",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -7569,9 +7772,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "キラー迷路の わき道",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldKillerExStage:49:554",
-        "difficulty": "advanced",
-        "option_scenarios": ""
+        "difficulty": "casual",
+        "option_scenarios": "",
+        "__editor_id": "SandWorldKillerExStage:49:554"
       },
       {
         "moon_id": "SandWorldKillerExStage:127:555",
@@ -7617,9 +7820,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "キラー迷路を突破！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldKillerExStage:127:555",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldKillerExStage:127:555"
       },
       {
         "moon_id": "SandWorldSphinxExStage:880:556",
@@ -7665,9 +7868,9 @@
         "shine_info_object_name": "音符オブジェ(1つ目)",
         "shine_info_scenario_name": "ライドン・ターン！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldSphinxExStage:880:556",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldSphinxExStage:880:556"
       },
       {
         "moon_id": "SandWorldSphinxExStage:334:557",
@@ -7713,9 +7916,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "ライドン・ドライブ！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldSphinxExStage:334:557",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldSphinxExStage:334:557"
       },
       {
         "moon_id": "SandWorldUnderground000Stage:352:558",
@@ -7761,9 +7964,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "参上！ タワークリボー",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldUnderground000Stage:352:558",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldUnderground000Stage:352:558"
       },
       {
         "moon_id": "SandWorldUnderground001Stage:9:560",
@@ -7778,7 +7981,7 @@
         "flags": "ShineFlag_Story | ShineFlag_Multi",
         "from_node_id": "SandWorldUnderground001Stage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(BossKnuckleHand & Killer)",
+        "requirement_expr": "(BossKnuckleHand & Killer) | Killer",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -7809,9 +8012,9 @@
         "shine_info_object_name": "ボスナックル",
         "shine_info_scenario_name": "砂漠にあいた 大きな穴",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldUnderground001Stage:9:560",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4,5;3,4,5",
+        "__editor_id": "SandWorldUnderground001Stage:9:560"
       },
       {
         "moon_id": "SandWorldMeganeExStage:253:561",
@@ -7857,9 +8060,9 @@
         "shine_info_object_name": "ドクロ看板",
         "shine_info_scenario_name": "とうめいラビリンスの ドクロ看板",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldMeganeExStage:253:561",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldMeganeExStage:253:561"
       },
       {
         "moon_id": "SandWorldMeganeExStage:119:562",
@@ -7905,9 +8108,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "とうめいラビリンスを たどって",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldMeganeExStage:119:562",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldMeganeExStage:119:562"
       },
       {
         "moon_id": "SandWorldPyramid001Stage:265:563",
@@ -7953,9 +8156,9 @@
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "さかさピラミッドの かくし部屋",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldPyramid001Stage:265:563",
         "difficulty": "casual;advanced;casual;casual",
-        "option_scenarios": "1,2,3,4,5"
+        "option_scenarios": "1,2,3,4,5",
+        "__editor_id": "SandWorldPyramid001Stage:265:563"
       },
       {
         "moon_id": "SandWorldShopStage:9:564",
@@ -8001,9 +8204,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "お店の中まで おじゃまします",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldShopStage:9:564",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldShopStage:9:564"
       },
       {
         "moon_id": "SandWorldShopStage:21:565",
@@ -8049,9 +8252,9 @@
         "shine_info_object_name": "ショップ店員",
         "shine_info_scenario_name": "アッチーニャで お買い物",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldShopStage:21:565",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldShopStage:21:565"
       },
       {
         "moon_id": "SandWorldSecretStage:92:566",
@@ -8097,9 +8300,9 @@
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "スフィン・クイズの宝物庫",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldSecretStage:92:566",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldSecretStage:92:566"
       },
       {
         "moon_id": "SandWorldPressExStage:87:567",
@@ -8145,9 +8348,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "氷の洞くつの宝",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldPressExStage:87:567",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldPressExStage:87:567"
       },
       {
         "moon_id": "SandWorldCostumeStage:19:569",
@@ -8193,9 +8396,9 @@
         "shine_info_object_name": "ステージスイッチ_プレイヤーアニメ再生エリア",
         "shine_info_scenario_name": "ノリノリ おどりまショー！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldCostumeStage:19:569",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldCostumeStage:19:569"
       },
       {
         "moon_id": "SandWorldRotateExStage:20:570",
@@ -8241,9 +8444,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "ローリングハウスを 越えて",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldRotateExStage:20:570",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldRotateExStage:20:570"
       },
       {
         "moon_id": "SandWorldRotateExStage:206:571",
@@ -8289,9 +8492,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "ローリングハウスを 見下ろして",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldRotateExStage:206:571",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldRotateExStage:206:571"
       },
       {
         "moon_id": "MeganeLiftExStage:217:572",
@@ -8337,9 +8540,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "とうめいリフトの終点",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MeganeLiftExStage:217:572",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MeganeLiftExStage:217:572"
       },
       {
         "moon_id": "MeganeLiftExStage:315:573",
@@ -8385,9 +8588,9 @@
         "shine_info_object_name": "鍵付き宝箱",
         "shine_info_scenario_name": "とうめいリフトに とび乗って",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MeganeLiftExStage:315:573",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MeganeLiftExStage:315:573"
       },
       {
         "moon_id": "RocketFlowerExStage:302:574",
@@ -8433,9 +8636,9 @@
         "shine_info_object_name": "鍵付き宝箱",
         "shine_info_scenario_name": "急げ！ 沈む巨大遺跡",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "RocketFlowerExStage:302:574",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "RocketFlowerExStage:302:574"
       },
       {
         "moon_id": "RocketFlowerExStage:232:575",
@@ -8481,9 +8684,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "ダッシュ！ ジャンプ！ 巨大遺跡",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "RocketFlowerExStage:232:575",
         "difficulty": "casual;expert",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "RocketFlowerExStage:232:575"
       },
       {
         "moon_id": "SandWorldHomeStage:5320:692",
@@ -8529,9 +8732,9 @@
         "shine_info_object_name": "魚影_キノピオ隊長",
         "shine_info_scenario_name": "釣れた！ キノピオ隊長",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:5320:692",
         "difficulty": "casual",
-        "option_scenarios": "3,4,5"
+        "option_scenarios": "3,4,5",
+        "__editor_id": "SandWorldHomeStage:5320:692"
       },
       {
         "moon_id": "SandWorldHomeStage:5335:712",
@@ -8577,9 +8780,9 @@
         "shine_info_object_name": "フィギュアウォーキングNpc",
         "shine_info_scenario_name": "もっと！ 砂漠で ウォーキング",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:5335:712",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:5335:712"
       },
       {
         "moon_id": "SandWorldKillerTowerZone:210:783",
@@ -8625,9 +8828,9 @@
         "shine_info_object_name": "音符オブジェ2D(1つ目)_2D",
         "shine_info_scenario_name": "壁画の中で 音符集め",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldKillerTowerZone:210:783",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldKillerTowerZone:210:783"
       },
       {
         "moon_id": "SandWorldHomeStage:5364:799",
@@ -8673,9 +8876,9 @@
         "shine_info_object_name": "シャイン【月の石追加版】",
         "shine_info_scenario_name": "流砂に とびこんで",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:5364:799",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:5364:799"
       },
       {
         "moon_id": "SandWorldUnderground001Stage:244:887",
@@ -8721,9 +8924,9 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "かえってきた 結婚指輪",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldUnderground001Stage:244:887",
         "difficulty": "casual",
-        "option_scenarios": "5"
+        "option_scenarios": "5",
+        "__editor_id": "SandWorldUnderground001Stage:244:887"
       },
       {
         "moon_id": "SandWorldHomeStage:5989:893",
@@ -8736,7 +8939,7 @@
         "obj_id": "5989",
         "uid": "893",
         "flags": "ShineFlag_None",
-        "from_node_id": "SandWorldHomeStage::checkpoint::obj98",
+        "from_node_id": "SandWorldHomeStage::place::new_place_6",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Sand",
@@ -8769,9 +8972,9 @@
         "shine_info_object_name": "サボテン",
         "shine_info_scenario_name": "サボテン５本の真ん中に",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:5989:893",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:5989:893"
       },
       {
         "moon_id": "SandWorldHomeStage:6057:910",
@@ -8817,9 +9020,9 @@
         "shine_info_object_name": "キノピオ",
         "shine_info_scenario_name": "砂の国で ナイスミュージック",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:6057:910",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:6057:910"
       },
       {
         "moon_id": "SandWorldHomeStage:6059:924",
@@ -8865,9 +9068,9 @@
         "shine_info_object_name": "かくれんぼ帽子の民",
         "shine_info_scenario_name": "砂の帽子で かくれんぼ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:6059:924",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:6059:924"
       },
       {
         "moon_id": "SandWorldUnderground000Stage:463:953",
@@ -8913,9 +9116,9 @@
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "地下神殿の宝箱",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldUnderground000Stage:463:953",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldUnderground000Stage:463:953"
       },
       {
         "moon_id": "SandWorldHomeStage:6126:965",
@@ -8961,9 +9164,9 @@
         "shine_info_object_name": "ガールクリボー",
         "shine_info_scenario_name": "砂漠の果てのガールフレンド",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:6126:965",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:6126:965"
       },
       {
         "moon_id": "SandWorldUnderground001Stage:321:995",
@@ -9009,9 +9212,9 @@
         "shine_info_object_name": "ミイラ",
         "shine_info_scenario_name": "ミイラの お守り",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldUnderground001Stage:321:995",
         "difficulty": "casual",
-        "option_scenarios": "5"
+        "option_scenarios": "5",
+        "__editor_id": "SandWorldUnderground001Stage:321:995"
       },
       {
         "moon_id": "SandWorldHomeStage:6208:1045",
@@ -9057,9 +9260,9 @@
         "shine_info_object_name": "駆けっこ開始Npc",
         "shine_info_scenario_name": "砂の国 レギュラーカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:6208:1045",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:6208:1045"
       },
       {
         "moon_id": "SandWorldHomeStage:6209:1046",
@@ -9105,9 +9308,9 @@
         "shine_info_object_name": "駆けっこ開始Npc",
         "shine_info_scenario_name": "砂の国 マスターカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:6209:1046",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:6209:1046"
       },
       {
         "moon_id": "SandWorldSlotStage:34:1047",
@@ -9153,9 +9356,9 @@
         "shine_info_object_name": "帽子スロット台座",
         "shine_info_scenario_name": "砂の国で スロットやろっと",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldSlotStage:34:1047",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldSlotStage:34:1047"
       },
       {
         "moon_id": "SandWorldHomeStage:6270:1059",
@@ -9201,9 +9404,9 @@
         "shine_info_object_name": "ジャガータクシーイベント",
         "shine_info_scenario_name": "再会！ ライドン・バス",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:6270:1059",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:6270:1059"
       },
       {
         "moon_id": "SandWorldHomeStage:6244:1096",
@@ -9218,7 +9421,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Bowsers & GroundPound)",
+        "requirement_expr": "(KingdomAccess_Bowsers & GroundPound & @SkyWorldHomeStage::checkpoint::obj2028)",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -9249,9 +9452,9 @@
         "shine_info_object_name": "ヒント写真",
         "shine_info_scenario_name": "砂の国で見つけた お宝写真",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:6244:1096",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4,5",
+        "__editor_id": "SandWorldHomeStage:6244:1096"
       },
       {
         "moon_id": "SandWorldHomeStage:2874:1112",
@@ -9297,9 +9500,9 @@
         "shine_info_object_name": "育つ草種",
         "shine_info_scenario_name": "咲いた！ 広場の種",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:2874:1112",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:2874:1112"
       },
       {
         "moon_id": "SandWorldHomeStage:2875:1113",
@@ -9345,9 +9548,9 @@
         "shine_info_object_name": "育つ草種",
         "shine_info_scenario_name": "咲いた！ アッチーニャ遺跡の種",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:2875:1113",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:2875:1113"
       },
       {
         "moon_id": "SandWorldHomeStage:2876:1114",
@@ -9393,9 +9596,9 @@
         "shine_info_object_name": "育つ草種",
         "shine_info_scenario_name": "咲いた！ ガケ下の種",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldHomeStage:2876:1114",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldHomeStage:2876:1114"
       },
       {
         "moon_id": "SandWorldVibrationStage:15:1136",
@@ -9441,9 +9644,9 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "ブルブル！ 砂の ふるえる床",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SandWorldVibrationStage:15:1136",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SandWorldVibrationStage:15:1136"
       }
     ],
     "logicTokens": [
@@ -9661,6 +9864,18 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Climb",
+        "notes": ""
+      },
+      {
+        "token": "Swing",
+        "token_type": "ability",
+        "display_name": "Swing",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swing",
         "notes": ""
       },
       {
@@ -10230,13 +10445,13 @@
       {
         "token": "StatueKoopa",
         "token_type": "capture",
-        "display_name": "Bowser Statue",
+        "display_name": "Jizo",
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Bowser Statue",
+        "aliases": "Jizo; Bowser Statue",
         "notes": ""
       },
       {
@@ -10336,6 +10551,66 @@
         "notes": ""
       },
       {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
         "token": "WorldPeace_Cap",
         "token_type": "event",
         "display_name": "WorldPeace_Cap",
@@ -10404,7 +10679,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj3428.",
         "notes": "See progression_events.csv for Sand Kingdom."
       },
       {
@@ -10428,7 +10703,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj5126.",
         "notes": "See progression_events.csv for Wooded Kingdom."
       },
       {
@@ -10572,7 +10847,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj583.",
         "notes": "See progression_events.csv for Snow Kingdom."
       },
       {
@@ -10668,7 +10943,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj144.",
         "notes": "See progression_events.csv for Moon Kingdom."
       },
       {
@@ -10777,7 +11052,7 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Cap Kingdom",
-        "notes": "Requires being able to reach the Cap Kingdom (e.g. a hint-art moon that depends on another kingdom)."
+        "notes": "Requires being able to reach the Cap Kingdom. (e.g. a hint-art moon that depends on another kingdom)."
       },
       {
         "token": "KingdomAccess_Cascade",
@@ -10921,7 +11196,7 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Bowser's Kingdom",
-        "notes": "Requires being able to reach Bowser's Kingdom."
+        "notes": "Requires being able to reach the Bowser's Kingdom."
       },
       {
         "token": "KingdomAccess_Moon",
@@ -10970,18 +11245,6 @@
         "can_start_with_seed": "false",
         "aliases": "Darker Side",
         "notes": "Requires being able to reach the Darker Side."
-      },
-      {
-        "token": "Swing",
-        "token_type": "ability",
-        "display_name": "Swing",
-        "category": "Movement",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Swing",
-        "notes": ""
       }
     ],
     "rooms": [
@@ -11033,7 +11296,7 @@
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
         "active_entrance_link_count": "16",
-        "excluded_entrance_link_count": "0",
+        "excluded_entrance_link_count": "5",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link. Includes embedded map SandWorldKillerTowerZone."
       },
@@ -11058,8 +11321,8 @@
         "area_scope": "subarea",
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
-        "active_entrance_link_count": "2",
-        "excluded_entrance_link_count": "0",
+        "active_entrance_link_count": "1",
+        "excluded_entrance_link_count": "1",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
       },
@@ -11085,7 +11348,7 @@
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "false",
         "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "0",
+        "excluded_entrance_link_count": "1",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
       },
@@ -11098,7 +11361,7 @@
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
         "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "0",
+        "excluded_entrance_link_count": "1",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
       },
@@ -11149,7 +11412,7 @@
         "area_scope": "subarea",
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
-        "active_entrance_link_count": "2",
+        "active_entrance_link_count": "1",
         "excluded_entrance_link_count": "0",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
@@ -11176,7 +11439,7 @@
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
         "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "0",
+        "excluded_entrance_link_count": "2",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
       },
@@ -11189,7 +11452,7 @@
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
         "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "0",
+        "excluded_entrance_link_count": "2",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
       },
@@ -11247,42 +11510,6 @@
       }
     ],
     "scenarioMetadata": [
-      {
-        "stage": "MeganeLiftExStage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "The Invisible Maze",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "MeganeLiftExStageMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "RocketFlowerExStage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "Colossal Ruins",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "RocketFlowerExStageMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "SandWorldCostumeStage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "Costume Room",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "SandWorldCostumeStageMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
       {
         "stage": "SandWorldHomeStage",
         "kingdom": "Sand Kingdom",
@@ -11342,6 +11569,114 @@
         "source_archive": "SandWorldHomeStageMap.szs",
         "source_file": "ScenarioInfo.byml",
         "notes": ""
+      },
+      {
+        "stage": "SandWorldUnderground001Stage",
+        "kingdom": "Sand Kingdom",
+        "stage_display_name": "Deepest Underground",
+        "area_scope": "subarea",
+        "scenario_no": "1",
+        "active_layers": "Common",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "SandWorldUnderground001StageMap.szs",
+        "source_file": "ScenarioInfo.byml",
+        "notes": ""
+      },
+      {
+        "stage": "SandWorldUnderground001Stage",
+        "kingdom": "Sand Kingdom",
+        "stage_display_name": "Deepest Underground",
+        "area_scope": "subarea",
+        "scenario_no": "2",
+        "active_layers": "Common",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "SandWorldUnderground001StageMap.szs",
+        "source_file": "ScenarioInfo.byml",
+        "notes": ""
+      },
+      {
+        "stage": "SandWorldUnderground001Stage",
+        "kingdom": "Sand Kingdom",
+        "stage_display_name": "Deepest Underground",
+        "area_scope": "subarea",
+        "scenario_no": "3",
+        "active_layers": "Common",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "SandWorldUnderground001StageMap.szs",
+        "source_file": "ScenarioInfo.byml",
+        "notes": ""
+      },
+      {
+        "stage": "SandWorldUnderground001Stage",
+        "kingdom": "Sand Kingdom",
+        "stage_display_name": "Deepest Underground",
+        "area_scope": "subarea",
+        "scenario_no": "4",
+        "active_layers": "A;Scenario3;Scenario2_3;Scenario1_3",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "SandWorldUnderground001StageMap.szs",
+        "source_file": "ScenarioInfo.byml",
+        "notes": ""
+      },
+      {
+        "stage": "SandWorldUnderground001Stage",
+        "kingdom": "Sand Kingdom",
+        "stage_display_name": "Deepest Underground",
+        "area_scope": "subarea",
+        "scenario_no": "5",
+        "active_layers": "Scenario3",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "SandWorldUnderground001StageMap.szs",
+        "source_file": "ScenarioInfo.byml",
+        "notes": ""
+      },
+      {
+        "stage": "MeganeLiftExStage",
+        "kingdom": "Sand Kingdom",
+        "stage_display_name": "The Invisible Maze",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "MeganeLiftExStageMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "RocketFlowerExStage",
+        "kingdom": "Sand Kingdom",
+        "stage_display_name": "Colossal Ruins",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "RocketFlowerExStageMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "SandWorldCostumeStage",
+        "kingdom": "Sand Kingdom",
+        "stage_display_name": "Costume Room",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "SandWorldCostumeStageMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "SandWorldHomeStage",
+        "kingdom": "Sand Kingdom",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "",
+        "source_archive": "SandWorldHomeTownZoneMap.szs",
+        "source_file": "ScenarioInfo.byml",
+        "notes": "ScenarioInfo type=Array; inspect manually if needed."
       },
       {
         "stage": "SandWorldKillerExStage",
@@ -11488,66 +11823,6 @@
         "notes": "No ScenarioInfo.byml in archive."
       },
       {
-        "stage": "SandWorldUnderground001Stage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "Deepest Underground",
-        "area_scope": "subarea",
-        "scenario_no": "1",
-        "active_layers": "Common",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "SandWorldUnderground001StageMap.szs",
-        "source_file": "ScenarioInfo.byml",
-        "notes": ""
-      },
-      {
-        "stage": "SandWorldUnderground001Stage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "Deepest Underground",
-        "area_scope": "subarea",
-        "scenario_no": "2",
-        "active_layers": "Common",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "SandWorldUnderground001StageMap.szs",
-        "source_file": "ScenarioInfo.byml",
-        "notes": ""
-      },
-      {
-        "stage": "SandWorldUnderground001Stage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "Deepest Underground",
-        "area_scope": "subarea",
-        "scenario_no": "3",
-        "active_layers": "Common",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "SandWorldUnderground001StageMap.szs",
-        "source_file": "ScenarioInfo.byml",
-        "notes": ""
-      },
-      {
-        "stage": "SandWorldUnderground001Stage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "Deepest Underground",
-        "area_scope": "subarea",
-        "scenario_no": "4",
-        "active_layers": "A;Scenario3;Scenario2_3;Scenario1_3",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "SandWorldUnderground001StageMap.szs",
-        "source_file": "ScenarioInfo.byml",
-        "notes": ""
-      },
-      {
-        "stage": "SandWorldUnderground001Stage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "Deepest Underground",
-        "area_scope": "subarea",
-        "scenario_no": "5",
-        "active_layers": "Scenario3",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "SandWorldUnderground001StageMap.szs",
-        "source_file": "ScenarioInfo.byml",
-        "notes": ""
-      },
-      {
         "stage": "SandWorldVibrationStage",
         "kingdom": "Sand Kingdom",
         "stage_display_name": "Rumbling Floor House",
@@ -11570,1052 +11845,586 @@
         "source_archive": "WaterTubeExStageMap.szs",
         "source_file": "",
         "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "SandWorldHomeStage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "Sand Kingdom",
-        "area_scope": "overworld",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "",
-        "source_archive": "SandWorldHomeTownZoneMap.szs",
-        "source_file": "ScenarioInfo.byml",
-        "notes": "ScenarioInfo type=Array; inspect manually if needed."
-      },
-      {
-        "stage": "SandWorldHomeStage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "Sand Kingdom",
-        "area_scope": "overworld",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "",
-        "source_archive": "SandWorldHomeTownZoneMap.szs",
-        "source_file": "ScenarioInfo.byml",
-        "notes": "ScenarioInfo type=Array; inspect manually if needed."
-      },
-      {
-        "stage": "SandWorldHomeStage",
-        "kingdom": "Sand Kingdom",
-        "stage_display_name": "Sand Kingdom",
-        "area_scope": "overworld",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "",
-        "source_archive": "SandWorldKillerTowerZoneMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
       }
     ],
+    "captureGates": [],
+    "captureGateObjects": [],
     "nodePositions": {
-      "MeganeLiftExStage::stage_change::meganelift01::raw": {
-        "x": 120,
-        "y": 1100
-      },
-      "MeganeLiftExStage::stage_change::meganelift02::raw": {
-        "x": 243.0769230769231,
-        "y": 120
-      },
-      "MeganeLiftExStage::entrance::meganelift01::sub_near": {
-        "x": 186.84210372763658,
-        "y": 535.5263104770652
-      },
-      "MeganeLiftExStage::entrance::meganelift02::sub_far": {
-        "x": 770.4453469281661,
-        "y": 534.4736881112458
-      },
-      "RocketFlowerExStage::stage_change::rocket::raw": {
-        "x": 1620,
-        "y": 1100
-      },
-      "RocketFlowerExStage::entrance::rocket::sub_far": {
-        "x": 1595.0091509472443,
-        "y": 872.2322984656424
-      },
-      "RocketFlowerExStage::entrance::rocket::sub_near": {
-        "x": 1278.1249952065991,
-        "y": 823.4374976818799
-      },
-      "SandWorldCostumeStage::stage_change::abc::raw": {
-        "x": 838,
-        "y": 476
-      },
-      "SandWorldCostumeStage::entrance::abc::sub_far": {
-        "x": 413.747275747904,
-        "y": 339.4678627572409
-      },
-      "SandWorldCostumeStage::entrance::abc::sub_near": {
-        "x": 428,
-        "y": 476
-      },
       "SandWorldHomeStage::checkpoint::obj1511": {
-        "x": 428,
-        "y": 3470
+        "x": 743.9495798319329,
+        "y": 910.6239168110918
       },
       "SandWorldHomeStage::checkpoint::obj1595": {
-        "x": 1494,
-        "y": 3418
+        "x": 293.31932773109247,
+        "y": 1060.086689081456
       },
       "SandWorldHomeStage::checkpoint::obj1597": {
-        "x": 428,
-        "y": 1550
+        "x": 1511.630294117647,
+        "y": 311.9237435008665
       },
       "SandWorldHomeStage::checkpoint::obj525": {
-        "x": 1396,
-        "y": 2888
+        "x": 750.2521008403362,
+        "y": 584.0565975736567
       },
       "SandWorldHomeStage::checkpoint::obj530": {
-        "x": 543,
-        "y": 2888
+        "x": 828.4156459363471,
+        "y": 218.4034706557871
       },
       "SandWorldHomeStage::checkpoint::obj5575": {
-        "x": 1494,
-        "y": 1444
+        "x": 1363.6974789915967,
+        "y": 976.0138648180242
       },
       "SandWorldHomeStage::checkpoint::obj655": {
-        "x": 922,
-        "y": 690
+        "x": 1437.2268907563025,
+        "y": 636.3258232235702
       },
       "SandWorldHomeStage::checkpoint::obj98": {
-        "x": 1186,
-        "y": 2246
+        "x": 1085.2941176470588,
+        "y": 511.49046793760834
       },
       "SandWorldHomeStage::checkpoint::obj99": {
-        "x": 2232,
-        "y": 1444
+        "x": 1026.5126050420167,
+        "y": 631.2305025996534
       },
       "SandWorldHomeStage::entrance::EX_2DHosui::home_in": {
-        "x": 1186,
-        "y": 2512
+        "x": 468.73957983193276,
+        "y": 247.3830155979203
       },
       "SandWorldHomeStage::entrance::aaa::home_in": {
-        "x": 428,
-        "y": 3042
+        "x": 1096.8487394957983,
+        "y": 356.9324090121317
       },
       "SandWorldHomeStage::entrance::abc::home_in": {
-        "x": 692,
-        "y": 844
+        "x": 1286.3865546218487,
+        "y": 805.1050259965339
       },
       "SandWorldHomeStage::entrance::anki2::home_in": {
-        "x": 922,
-        "y": 844
+        "x": 360.58823529411757,
+        "y": 858.8214904679376
       },
       "SandWorldHomeStage::entrance::anki2::home_out": {
-        "x": 1740,
-        "y": 4832
-      },
-      "SandWorldHomeStage::entrance::arijigoku1::home_in": {
-        "x": 956,
-        "y": 2400
+        "x": 590.5882352941176,
+        "y": 738.8214904679376
       },
       "SandWorldHomeStage::entrance::arijigoku2::home_out": {
-        "x": 658,
-        "y": 3042
+        "x": 874.2016806722689,
+        "y": 413.2409012131716
       },
       "SandWorldHomeStage::entrance::bar1::home_in": {
-        "x": 1152,
-        "y": 844
+        "x": 1413.1722689075632,
+        "y": 542.3968804159446
       },
       "SandWorldHomeStage::entrance::bar2::home_in": {
-        "x": 692,
-        "y": 956
+        "x": 1611.926449579832,
+        "y": 801.0534478336223
       },
       "SandWorldHomeStage::entrance::biru::home_in": {
-        "x": 922,
-        "y": 956
+        "x": 1787.0268907563025,
+        "y": 613.8083615251301
       },
       "SandWorldHomeStage::entrance::doukutu1::home_in": {
-        "x": 100,
-        "y": 4456
+        "x": 40,
+        "y": 1053.2928942807625
       },
       "SandWorldHomeStage::entrance::hide::home_in": {
-        "x": 1186,
-        "y": 2400
+        "x": 495.0420168067227,
+        "y": 610
       },
       "SandWorldHomeStage::entrance::meganelift01::home_in": {
-        "x": 1494,
-        "y": 3572
+        "x": 1501.3025210084033,
+        "y": 426.89774696707104
       },
       "SandWorldHomeStage::entrance::rocket::home_in": {
-        "x": 2232,
-        "y": 1598
+        "x": 996.0504201680673,
+        "y": 772.4610051993068
       },
       "SandWorldHomeStage::entrance::run00::home_in": {
-        "x": 1416,
-        "y": 2400
+        "x": 1136.4495798319329,
+        "y": 219.9532062391681
       },
       "SandWorldHomeStage::entrance::shindo::home_in": {
-        "x": 1152,
-        "y": 956
+        "x": 1791.1344537815125,
+        "y": 914.5407279029463
       },
       "SandWorldHomeStage::entrance::town::home_in": {
-        "x": 692,
-        "y": 1068
+        "x": 1830.1050420168067,
+        "y": 375.1802426343154
       },
       "SandWorldHomeStage::entrance::wall::home_in": {
-        "x": 922,
-        "y": 1068
+        "x": 350.0840336134454,
+        "y": 738.8214904679376
       },
       "SandWorldHomeStage::stage_change::Come::raw": {
-        "x": 1494,
-        "y": 1598
+        "x": 1151.5546218487395,
+        "y": 981.9584055459272
       },
       "SandWorldHomeStage::stage_change::EX_2DHosui::raw": {
-        "x": 100,
-        "y": 6312
+        "x": 238.73957983193276,
+        "y": 247.3830155979203
       },
       "SandWorldHomeStage::stage_change::EX_2DHosui_Exit::raw": {
-        "x": 510,
-        "y": 6312
+        "x": 468.73949579831935,
+        "y": 376.72443674176776
       },
       "SandWorldHomeStage::stage_change::Go::raw": {
-        "x": 956,
-        "y": 2512
+        "x": 458.07304621848743,
+        "y": 500.9971157712305
       },
       "SandWorldHomeStage::stage_change::Out::raw": {
-        "x": 1740,
-        "y": 6016
+        "x": 148.4033613445378,
+        "y": 533.3102253032929
       },
       "SandWorldHomeStage::stage_change::SandWorldRacemanStart::raw": {
-        "x": 2560,
-        "y": 6016
+        "x": 508.61344537815125,
+        "y": 1036.3084922010398
       },
       "SandWorldHomeStage::stage_change::Under01::raw": {
-        "x": 920,
-        "y": 6016
+        "x": 83.31932773109247,
+        "y": 697.1403812824956
       },
       "SandWorldHomeStage::stage_change::aaa::raw": {
-        "x": 1166,
-        "y": 5128
+        "x": 866.8487394957983,
+        "y": 116.9324090121317
       },
       "SandWorldHomeStage::stage_change::abc::raw": {
-        "x": 1576,
-        "y": 5128
+        "x": 1976.3865546218487,
+        "y": 1045.1050259965339
       },
       "SandWorldHomeStage::stage_change::anki2::raw": {
-        "x": 1986,
-        "y": 5128
+        "x": 130.58823529411757,
+        "y": 858.8214904679376
       },
       "SandWorldHomeStage::stage_change::arijigoku1::raw": {
-        "x": 2806,
-        "y": 5128
+        "x": 1495.9243697478992,
+        "y": 165.92720970537266
       },
       "SandWorldHomeStage::stage_change::arijigoku2::raw": {
-        "x": 100,
-        "y": 5424
+        "x": 1334.201680672269,
+        "y": 53.24090121317158
       },
       "SandWorldHomeStage::stage_change::arijigoku::raw": {
-        "x": 2396,
-        "y": 5128
+        "x": 52.89915966386559,
+        "y": 133.65684575389946
       },
       "SandWorldHomeStage::stage_change::bar1::raw": {
-        "x": 510,
-        "y": 5424
+        "x": 2103.172268907563,
+        "y": 662.3968804159446
       },
       "SandWorldHomeStage::stage_change::bar2::raw": {
-        "x": 920,
-        "y": 5424
+        "x": 2071.926449579832,
+        "y": 321.0534478336223
       },
       "SandWorldHomeStage::stage_change::biru::raw": {
-        "x": 1330,
-        "y": 5424
+        "x": 1327.0268907563025,
+        "y": 1093.80836152513
       },
       "SandWorldHomeStage::stage_change::doukutu1::raw": {
-        "x": 1740,
-        "y": 5424
+        "x": 248.6764705882353,
+        "y": 1173.2928942807625
       },
       "SandWorldHomeStage::stage_change::doukutu2::raw": {
-        "x": 2150,
-        "y": 5424
+        "x": 485.5042016806723,
+        "y": 1170.745233968804
       },
       "SandWorldHomeStage::stage_change::hide::raw": {
-        "x": 2560,
-        "y": 5424
+        "x": 725.0420168067227,
+        "y": 1090
       },
       "SandWorldHomeStage::stage_change::icestart::raw": {
-        "x": 510,
-        "y": 6016
+        "x": 206.1764705882353,
+        "y": 426.56845753899483
       },
       "SandWorldHomeStage::stage_change::meganelift01::raw": {
-        "x": 920,
-        "y": 6312
+        "x": 2191.3025210084033,
+        "y": 1026.897746967071
       },
       "SandWorldHomeStage::stage_change::meganelift02::raw": {
-        "x": 1330,
-        "y": 6312
+        "x": 2439.1596638655465,
+        "y": 657.5563258232236
       },
       "SandWorldHomeStage::stage_change::pyramid01::raw": {
-        "x": 100,
-        "y": 5720
+        "x": 435.1260504201681,
+        "y": 49.58405545927212
       },
       "SandWorldHomeStage::stage_change::pyramid04::raw": {
-        "x": 510,
-        "y": 5720
+        "x": 40,
+        "y": 40
       },
       "SandWorldHomeStage::stage_change::rocket::raw": {
-        "x": 1740,
-        "y": 6312
+        "x": 1686.0504201680674,
+        "y": 1012.4610051993068
       },
       "SandWorldHomeStage::stage_change::run00::raw": {
-        "x": 920,
-        "y": 5720
+        "x": 1596.4495798319329,
+        "y": 40
       },
       "SandWorldHomeStage::stage_change::shindo::raw": {
-        "x": 1330,
-        "y": 5720
+        "x": 2251.1344537815125,
+        "y": 1154.5407279029464
       },
       "SandWorldHomeStage::stage_change::start2::raw": {
-        "x": 1740,
-        "y": 5720
+        "x": 1850,
+        "y": 758.8734835355285
       },
       "SandWorldHomeStage::stage_change::start::raw": {
-        "x": 2150,
-        "y": 6016
+        "x": 1530.5042016806724,
+        "y": 1237.1750433275563
       },
       "SandWorldHomeStage::stage_change::town::raw": {
-        "x": 2150,
-        "y": 5720
+        "x": 2290.1050420168067,
+        "y": 135.1802426343154
       },
       "SandWorldHomeStage::stage_change::wall::raw": {
-        "x": 2560,
-        "y": 5720
+        "x": 1040.0840336134454,
+        "y": 1098.8214904679376
       },
       "SandWorldHomeStage::start": {
-        "x": 100,
-        "y": 100
+        "x": 110,
+        "y": 960
       },
       "SandWorldHomeStage::event::MoonRockActive_Sand": {
-        "x": 1152,
-        "y": 1068
+        "x": 1912.9411764705883,
+        "y": 1144.939358405546
       },
       "SandWorldKillerExStage::stage_change::doukutu1::raw": {
-        "x": 100,
-        "y": 630
+        "x": 1620,
+        "y": 1100
       },
       "SandWorldKillerExStage::stage_change::doukutu2::raw": {
-        "x": 510,
-        "y": 630
+        "x": 807.5,
+        "y": 120
       },
       "SandWorldKillerExStage::entrance::doukutu1::sub_near": {
-        "x": 428,
-        "y": 254
+        "x": 1850,
+        "y": 1100
       },
       "SandWorldKillerExStage::entrance::doukutu2::sub_far": {
-        "x": 428,
-        "y": 100
+        "x": 1037.5,
+        "y": 120
       },
       "SandWorldKillerTowerZone::start": {
-        "x": 428,
-        "y": 5126.726075759716
-      },
-      "SandWorldMeganeExStage::stage_change::anki2::raw": {
-        "x": 910.3682719546741,
-        "y": 994.0540540540541
-      },
-      "SandWorldMeganeExStage::stage_change::megane::raw": {
-        "x": 1530.7648725212464,
-        "y": 1100
-      },
-      "SandWorldMeganeExStage::stage_change::wall::raw": {
-        "x": 1850,
-        "y": 1100
-      },
-      "SandWorldMeganeExStage::entrance::anki2::sub_far": {
-        "x": 1140.3682719546741,
-        "y": 994.0540540540541
-      },
-      "SandWorldMeganeExStage::entrance::anki2::sub_near": {
-        "x": 182.30905471574175,
-        "y": 580.8328972766623
-      },
-      "SandWorldMeganeExStage::entrance::wall::sub_far": {
-        "x": 125.73245202295311,
-        "y": 510.44587924921814
-      },
-      "SandWorldMeganeExStage::entrance::wall::sub_near": {
-        "x": 1014.1105727443437,
-        "y": 577.5721108793682
-      },
-      "SandWorldPressExStage::stage_change::arijigoku1::raw": {
-        "x": 270.0537349523473,
-        "y": 1100
-      },
-      "SandWorldPressExStage::stage_change::arijigoku2::raw": {
-        "x": 120,
-        "y": 120
-      },
-      "SandWorldPressExStage::stage_change::arijigoku::raw": {
-        "x": 40,
-        "y": 1032.6960872833984
-      },
-      "SandWorldPressExStage::entrance::arijigoku2::sub_far": {
-        "x": 1126.9230822663335,
-        "y": 402.69230963651245
-      },
-      "SandWorldPressExStage::entrance::arijigoku::sub_near": {
-        "x": 629.4644444983932,
-        "y": 399.23454529054925
-      },
-      "SandWorldPyramid000Stage::stage_change::pyramid01::raw": {
-        "x": 120,
-        "y": 1100
-      },
-      "SandWorldPyramid000Stage::stage_change::pyramid02::raw": {
-        "x": 1620,
-        "y": 120
-      },
-      "SandWorldPyramid000Stage::start": {
-        "x": 110,
-        "y": 360
-      },
-      "SandWorldPyramid001Stage::stage_change::pyramid03::raw": {
-        "x": 120,
-        "y": 120
-      },
-      "SandWorldPyramid001Stage::stage_change::pyramid04::raw": {
-        "x": 1620,
-        "y": 1100
-      },
-      "SandWorldPyramid001Stage::start": {
-        "x": 110,
-        "y": 360
-      },
-      "SandWorldRotateExStage::stage_change::aa::raw": {
-        "x": 1620,
-        "y": 1041.317365269461
-      },
-      "SandWorldRotateExStage::stage_change::biru::raw": {
-        "x": 1850,
-        "y": 1094.131736526946
-      },
-      "SandWorldRotateExStage::stage_change::birureturn::raw": {
-        "x": 592.4409448818898,
-        "y": 1100
-      },
-      "SandWorldRotateExStage::entrance::biru::sub_near": {
-        "x": 448.43750375875965,
-        "y": 636.5659432166352
-      },
-      "SandWorldRotateExStage::entrance::birureturn::sub_far": {
-        "x": 1163.0659477112415,
-        "y": 614.5559164920331
-      },
-      "SandWorldSecretStage::stage_change::hide::raw": {
-        "x": 980,
-        "y": 120
-      },
-      "SandWorldSecretStage::entrance::hide::sub_far": {
-        "x": 210,
-        "y": 560
-      },
-      "SandWorldSecretStage::entrance::hide::sub_near": {
-        "x": 210,
-        "y": 160
-      },
-      "SandWorldShopStage::stage_change::bar1::raw": {
-        "x": 153.78700067469762,
-        "y": 1100
-      },
-      "SandWorldShopStage::stage_change::bar2::raw": {
-        "x": 120,
-        "y": 974.6864702700044
-      },
-      "SandWorldShopStage::entrance::bar1::sub_far": {
-        "x": 383.78700067469765,
-        "y": 1100
-      },
-      "SandWorldShopStage::entrance::bar1::sub_near": {
-        "x": 433.7870010185706,
-        "y": 532.6923037906723
-      },
-      "SandWorldShopStage::entrance::bar2::sub_far": {
-        "x": 350,
-        "y": 974.6864702700044
-      },
-      "SandWorldShopStage::entrance::bar2::sub_near": {
-        "x": 436.53846213362624,
-        "y": 826.6095461746884
-      },
-      "SandWorldSlotStage::stage_change::town::raw": {
-        "x": 120,
-        "y": 1100
-      },
-      "SandWorldSlotStage::entrance::town::sub_far": {
-        "x": 350,
-        "y": 1100
-      },
-      "SandWorldSlotStage::entrance::town::sub_near": {
-        "x": 607.1428571428571,
-        "y": 414.2857142857142
-      },
-      "SandWorldSphinxExStage::stage_change::aaa::raw": {
-        "x": 1573.632148377125,
-        "y": 1100
-      },
-      "SandWorldSphinxExStage::stage_change::run00::raw": {
-        "x": 1850,
-        "y": 1090.9258896296296
-      },
-      "SandWorldSphinxExStage::stage_change::run00return::raw": {
-        "x": 947.6661514683152,
-        "y": 120
-      },
-      "SandWorldSphinxExStage::entrance::aaa::sub_far": {
-        "x": 1343.632148377125,
-        "y": 1100
-      },
-      "SandWorldSphinxExStage::entrance::aaa::sub_near": {
-        "x": 421.7571406500581,
-        "y": 539.0624952982762
-      },
-      "SandWorldSphinxExStage::entrance::run00::sub_near": {
-        "x": 2.812486444890979,
-        "y": 539.0508839980384
-      },
-      "SandWorldSphinxExStage::entrance::run00return::sub_far": {
-        "x": 1090.1661507348986,
-        "y": 521.562503365858
-      },
-      "SandWorldUnderground000Stage::stage_change::Under01::raw": {
-        "x": 136.7548435171386,
-        "y": 1100
-      },
-      "SandWorldUnderground000Stage::stage_change::Yadokari00::raw": {
-        "x": 1620,
-        "y": 267.43362831858406
-      },
-      "SandWorldUnderground000Stage::stage_change::icestart::raw": {
-        "x": 350,
-        "y": 1069.646017699115
-      },
-      "SandWorldUnderground000Stage::start": {
-        "x": 188.12500065483619,
-        "y": 350.62499992141966
-      },
-      "SandWorldUnderground001Stage::stage_change::Out::raw": {
-        "x": 1620,
-        "y": 541.1324570273002
-      },
-      "SandWorldUnderground001Stage::stage_change::Yadokari00::raw": {
-        "x": 1620,
-        "y": 1100
-      },
-      "SandWorldUnderground001Stage::stage_change::start::raw": {
-        "x": 1850,
-        "y": 605.540950455005
-      },
-      "SandWorldUnderground001Stage::start": {
-        "x": 300.7072387060605,
-        "y": 881.2993470097382
-      },
-      "SandWorldVibrationStage::stage_change::shindo::raw": {
-        "x": 120,
-        "y": 1100
-      },
-      "SandWorldVibrationStage::entrance::shindo::sub_far": {
-        "x": 350,
-        "y": 1100
-      },
-      "SandWorldVibrationStage::entrance::shindo::sub_near": {
-        "x": 450.0000008381903,
-        "y": 1048.4374995678081
-      },
-      "WaterTubeExStage::stage_change::EX_2DHosui::raw": {
-        "x": 980,
-        "y": 120
-      },
-      "WaterTubeExStage::stage_change::EX_2DHosui_Exit::raw": {
-        "x": 980,
-        "y": 236
-      },
-      "WaterTubeExStage::entrance::EX_2DHosui::sub_near": {
-        "x": 202.18749993451638,
-        "y": 410.0000020954758
-      },
-      "WaterTubeExStage::entrance::EX_2DHosui_Exit::sub_far": {
-        "x": 888.1250056839781,
-        "y": 395.937498624844
-      },
-      "SandWorldRotateExStage::place::new_place": {
-        "x": 814.3465915624479,
-        "y": 525.0568197309838
+        "x": 1948.5714285714284,
+        "y": 40
       },
       "SandWorldHomeStage::place::new_place_2": {
-        "x": 428,
-        "y": 3974
-      },
-      "SandWorldHomeStage::place::new_place_3": {
-        "x": 2560,
-        "y": 3418
-      },
-      "SandWorldHomeStage::place::new_place_4": {
-        "x": 838,
-        "y": 4456
-      },
-      "SandWorldHomeStage::place::new_place": {
-        "x": 1576,
-        "y": 4456
-      },
-      "SandWorldHomeStage::place::new_place_5": {
-        "x": 2314,
-        "y": 4456
-      },
-      "SandWorldHomeStage::entrance::run00return::home_in": {
-        "x": 235.2381740062172,
-        "y": 3029.9791387119444
-      },
-      "SandWorldSphinxExStage::entrance::run00::sub_far": {
-        "x": 1620,
-        "y": 1210.9258896296296
-      },
-      "SandWorldSphinxExStage::entrance::run00return::sub_near": {
-        "x": 1177.666151468315,
-        "y": 120
-      },
-      "SandWorldHomeStage::entrance::arijigoku::home_in": {
-        "x": 1485.3886806272108,
-        "y": 2574.3395982274474
-      },
-      "SandWorldPressExStage::entrance::arijigoku1::sub_far": {
-        "x": 575.4417547932392,
-        "y": 609.9779082507621
-      },
-      "SandWorldUnderground001Stage::place::new_place": {
-        "x": 700,
+        "x": 2310,
         "y": 360
       },
+      "SandWorldHomeStage::place::new_place_3": {
+        "x": 1850,
+        "y": 482
+      },
+      "SandWorldHomeStage::place::new_place_4": {
+        "x": 700,
+        "y": 1204
+      },
+      "SandWorldHomeStage::place::new_place": {
+        "x": 700,
+        "y": 1326
+      },
+      "SandWorldHomeStage::place::new_place_5": {
+        "x": 40,
+        "y": 1328
+      },
+      "SandWorldHomeStage::entrance::run00return::home_in": {
+        "x": 2161.8487394957983,
+        "y": 40
+      },
+      "SandWorldHomeStage::entrance::arijigoku::home_in": {
+        "x": 2122.8991596638657,
+        "y": 493.65684575389946
+      },
+      "SandWorldHomeStage::entrance::arijigoku1::home_out": {
+        "x": 2415.924369747899,
+        "y": 525.9272097053727
+      },
       "SandWorldHomeTownZone::start": {
-        "x": 2150,
-        "y": 4832
-      },
-      "SandWorldUnderground000Stage::place::new_place": {
-        "x": 669.0239503737447,
-        "y": 863.1846800572173
-      },
-      "SandWorldUnderground000Stage::place::new_place_2": {
-        "x": 1877.5927200351905,
-        "y": 468.7167031749465
+        "x": 2516.8487394957983,
+        "y": 1242.2703639514732
       },
       "SandWorldHomeStage::entrance::pyramid01::home_in": {
-        "x": 1743.9677986309273,
-        "y": 3171.69451460472
-      },
-      "SandWorldPyramid000Stage::entrance::pyramid01::sub_near": {
-        "x": 350,
-        "y": 1100
-      },
-      "SandWorldPyramid000Stage::entrance::pyramid01::sub_far": {
-        "x": 120,
-        "y": 1220
+        "x": 2045.1260504201682,
+        "y": 1249.5840554592721
       },
       "SandWorldHomeStage::entrance::pyramid04::home_in": {
-        "x": 366.7152964844033,
-        "y": 4110.832129990719
-      },
-      "SandWorldPyramid001Stage::entrance::pyramid04::sub_near": {
-        "x": 1850,
-        "y": 1100
-      },
-      "SandWorldPyramid001Stage::entrance::pyramid04::sub_far": {
-        "x": 1390,
-        "y": 1100
+        "x": 436.1764705882353,
+        "y": 1300.5372616984403
       },
       "SandWorldHomeStage::entrance::Under01::home_in": {
-        "x": 1284.2542107254494,
-        "y": 3241.488858192335
-      },
-      "SandWorldUnderground000Stage::entrance::Under01::sub_near": {
-        "x": 136.7548435171386,
-        "y": 1220
-      },
-      "SandWorldUnderground000Stage::entrance::Under01::sub_far": {
-        "x": 136.7548435171386,
-        "y": 980
+        "x": 543.3193277310925,
+        "y": 457.14038128249564
       },
       "SandWorldHomeStage::entrance::Out::home_in": {
-        "x": 1069.6520401912464,
-        "y": 3157.679341980664
+        "x": 1758.4033613445379,
+        "y": 1373.310225303293
       },
-      "SandWorldUnderground001Stage::entrance::Out::sub_near": {
-        "x": 1347.8714510289633,
-        "y": 293.9040858025479
+      "SandWorldHomeStage::place::new_place_6": {
+        "x": 1160,
+        "y": 1210
       },
-      "SandWorldUnderground001Stage::entrance::Out::sub_far": {
-        "x": 1370.5543778582316,
-        "y": 411.6867604524145
+      "SandWorldKillerExStage::place::new_place": {
+        "x": 908.425605587843,
+        "y": 557.3392765696456
       },
-      "SandWorldUnderground000Stage::entrance::Yadokari00::home_in": {
-        "x": 2390.170902440197,
-        "y": 518.71571797941
-      },
-      "SandWorldUnderground001Stage::entrance::Yadokari00::sub_near": {
-        "x": 553.9911781869282,
-        "y": 708.6474162776295
-      },
-      "SandWorldUnderground001Stage::entrance::Yadokari00::sub_far": {
-        "x": 781.3525092892529,
-        "y": 679.8225961080411
-      },
-      "SandWorldPyramid001Stage::place::new_place": {
-        "x": 770.0731715707315,
-        "y": 631.53285374796
-      },
-      "moon:WaterTubeExStage:3240:35": {
-        "x": 1182.4999988474883,
-        "y": 399.68750234431354
-      },
-      "moon:WaterTubeExStage:3706:36": {
-        "x": 574.6874937528628,
-        "y": 118.75000099535099
+      "SandWorldKillerExStage::place::new_place_2": {
+        "x": 616.8514344750382,
+        "y": 579.5610500428735
       },
       "moon:SandWorldHomeStage:3456:493": {
-        "x": 2020,
-        "y": 2140
+        "x": 2491.5546218487393,
+        "y": 1346.3951473136915
       },
       "moon:SandWorldHomeStage:1432:495": {
-        "x": 100,
-        "y": 3868
+        "x": 436.1764705882353,
+        "y": 412.98093587521663
       },
       "moon:SandWorldHomeStage:3735:496": {
-        "x": 100,
-        "y": 3418
+        "x": 747.1008403361345,
+        "y": 1534.4020797227035
       },
       "moon:SandWorldHomeStage:1599:497": {
-        "x": 1068,
-        "y": 2890
+        "x": 750.2521008403362,
+        "y": 1433.8648180242635
       },
       "moon:SandWorldHomeStage:1715:498": {
-        "x": 2020,
-        "y": 2356
+        "x": 2324.53781512605,
+        "y": 1450
       },
       "moon:SandWorldHomeStage:5206:501": {
-        "x": 100,
-        "y": 4084
+        "x": 576.3025210084033,
+        "y": 424.8700173310225
       },
       "moon:SandWorldHomeStage:481:502": {
-        "x": 100,
-        "y": 1444
+        "x": 1790.126092436975,
+        "y": 199.56672443674177
       },
       "moon:SandWorldHomeStage:2047:504": {
-        "x": 364,
-        "y": 2464
+        "x": 1098.2079621848738,
+        "y": 40
       },
       "moon:SandWorldKillerTowerZone:42:505": {
-        "x": 100,
-        "y": 5130
+        "x": 40,
+        "y": 1430.545929982669
       },
       "moon:SandWorldHomeStage:3999:506": {
-        "x": 1756,
-        "y": 746
+        "x": 1639.7899159663866,
+        "y": 1114.0536117850952
       },
       "moon:SandWorldHomeStage:902:507": {
-        "x": 628,
-        "y": 2464
+        "x": 2422.2268907563025,
+        "y": 40
       },
       "moon:SandWorldHomeStage:4059:508": {
-        "x": 364,
-        "y": 2032
+        "x": 958.2352941176471,
+        "y": 1313.2755632582323
       },
       "moon:SandWorldHomeStage:4002:509": {
-        "x": 100,
-        "y": 2248
+        "x": 2359.285714285714,
+        "y": 260.97053726169844
       },
       "moon:SandWorldHomeStage:4001:510": {
-        "x": 2020,
-        "y": 2032
+        "x": 452.98319327731093,
+        "y": 1450
       },
       "moon:SandWorldHomeStage:4000:511": {
-        "x": 100,
-        "y": 1660
+        "x": 2660.7563025210084,
+        "y": 268.6135181975736
       },
       "moon:SandWorldHomeStage:3998:512": {
-        "x": 364,
-        "y": 908
+        "x": 2166.09243697479,
+        "y": 778.9948006932409
       },
       "moon:SandWorldHomeStage:4272:513": {
-        "x": 768,
-        "y": 3922
+        "x": 1059.3025420168067,
+        "y": 878.5135181975736
       },
       "moon:SandWorldHomeStage:2188:515": {
-        "x": 100,
-        "y": 746
+        "x": 1428.8235294117646,
+        "y": 1409.3406239168112
       },
       "moon:SandWorldHomeStage:123:516": {
-        "x": 1736,
-        "y": 2890
+        "x": 2543.0252100840335,
+        "y": 425.71923743500867
       },
       "moon:SandWorldHomeStage:536:517": {
-        "x": 1492,
-        "y": 476
+        "x": 2690.6512605042017,
+        "y": 672.417677642981
       },
       "moon:SandWorldHomeStage:576:518": {
-        "x": 628,
-        "y": 2032
+        "x": 843.2142857142858,
+        "y": 587.0710571923744
       },
       "moon:SandWorldHomeStage:878:519": {
-        "x": 628,
-        "y": 2140
+        "x": 867.8991596638656,
+        "y": 551.4038128249567
       },
       "moon:SandWorldHomeStage:980:520": {
-        "x": 1904,
-        "y": 1446
+        "x": 1055.9243697478992,
+        "y": 1471.2305025996534
       },
       "moon:SandWorldHomeStage:2230:521": {
-        "x": 1756,
-        "y": 2248
+        "x": 2177.563025210084,
+        "y": 877.9549393414211
       },
       "moon:SandWorldHomeStage:2888:522": {
-        "x": 2232,
-        "y": 3420
+        "x": 691.4285714285714,
+        "y": 379.0121317157712
       },
       "moon:SandWorldHomeStage:3371:523": {
-        "x": 1756,
-        "y": 2032
+        "x": 753.4033613445378,
+        "y": 588.7694974003466
       },
       "moon:SandWorldHomeStage:3387:524": {
-        "x": 1166,
-        "y": 1446
+        "x": 916.3025210084033,
+        "y": 1205.8232235701907
       },
       "moon:SandWorldHomeStage:3782:525": {
-        "x": 768,
-        "y": 1552
+        "x": 2499.0336134453783,
+        "y": 836.0831889081455
       },
       "moon:SandWorldHomeStage:2143:526": {
-        "x": 364,
-        "y": 476
+        "x": 2072.563025210084,
+        "y": 1380.4332755632581
       },
       "moon:SandWorldHomeStage:3389:530": {
-        "x": 100,
-        "y": 2890
+        "x": 874.2016806722689,
+        "y": 316.1698440207972
       },
       "moon:SandWorldHomeStage:4632:531": {
-        "x": 1986,
-        "y": 4458
+        "x": 211.38655462184875,
+        "y": 1534.991334488735
       },
       "moon:SandWorldHomeStage:1841:532": {
-        "x": 1756,
-        "y": 2464
+        "x": 1923.3193277310925,
+        "y": 1480.311958405546
       },
       "moon:SandWorldHomeStage:1609:533": {
-        "x": 2020,
-        "y": 2464
+        "x": 2537.81512605042,
+        "y": 1131.2824956672443
       },
       "moon:SandWorldHomeStage:4271:534": {
-        "x": 1492,
-        "y": 908
+        "x": 2748.310924369748,
+        "y": 1368.902772963605
       },
       "moon:SandWorldHomeStage:4277:535": {
-        "x": 1492,
-        "y": 584
+        "x": 543.4873949579833,
+        "y": 144.43674176776426
       },
       "moon:SandWorldHomeStage:4685:536": {
-        "x": 100,
-        "y": 3526
+        "x": 2002.142857142857,
+        "y": 1625.2686308492202
       },
       "moon:SandWorldHomeStage:5267:538": {
-        "x": 768,
-        "y": 4030
+        "x": 436.1764705882353,
+        "y": 424.8700173310225
       },
       "moon:SandWorldHomeStage:4807:539": {
-        "x": 364,
-        "y": 2356
+        "x": 2597.6470588235297,
+        "y": 157.36568457538993
       },
       "moon:SandWorldHomeStage:4187:540": {
-        "x": 2020,
-        "y": 2248
+        "x": 771.2605042016806,
+        "y": 185.3899480069324
       },
       "moon:SandWorldHomeStage:3431:542": {
-        "x": 768,
-        "y": 3472
+        "x": 1296.3865546218487,
+        "y": 1303.4835355285961
       },
       "moon:SandWorldHomeStage:4555:544": {
-        "x": 100,
-        "y": 3976
+        "x": 519.1596638655462,
+        "y": 512.3396880415944
       },
       "moon:SandWorldHomeStage:3433:545": {
-        "x": 1248,
-        "y": 4458
+        "x": 1324.6218487394958,
+        "y": 1566.672443674177
       },
       "moon:SandWorldHomeStage:3434:546": {
-        "x": 510,
-        "y": 4458
+        "x": 319.5798319327731,
+        "y": 701.7157712305026
       },
       "moon:SandWorldHomeStage:3437:547": {
-        "x": 768,
-        "y": 1444
+        "x": 2861.344537815126,
+        "y": 1032.7729636048527
       },
       "moon:SandWorldHomeStage:3442:550": {
-        "x": 628,
-        "y": 2356
+        "x": 2343.4453781512602,
+        "y": 1604.5580589254766
       },
       "moon:SandWorldHomeStage:4392:552": {
-        "x": 1756,
-        "y": 2140
+        "x": 979.2436974789915,
+        "y": 344.1941074523397
       },
       "moon:SandWorldHomeStage:4483:553": {
-        "x": 364,
-        "y": 692
+        "x": 2709.0336134453783,
+        "y": 856.2738471403812
       },
       "moon:SandWorldKillerExStage:49:554": {
-        "x": 1114.642447448813,
-        "y": 89.29580356702931
+        "x": 236.4079619616997,
+        "y": 585.9250573390633
       },
       "moon:SandWorldKillerExStage:127:555": {
-        "x": 100,
-        "y": 102
-      },
-      "moon:SandWorldSphinxExStage:880:556": {
-        "x": 782.5000055530109,
-        "y": 384.10416675834375
-      },
-      "moon:SandWorldSphinxExStage:334:557": {
-        "x": 787.6342720249112,
-        "y": 678.4606516711667
-      },
-      "moon:SandWorldUnderground000Stage:352:558": {
-        "x": 517.2079945143005,
-        "y": 251.2500011001248
-      },
-      "moon:SandWorldUnderground001Stage:9:560": {
-        "x": 685.0752498749639,
-        "y": 46.82926829268291
-      },
-      "moon:SandWorldMeganeExStage:253:561": {
-        "x": 824.6875059066224,
-        "y": 385.62500222644303
-      },
-      "moon:SandWorldMeganeExStage:119:562": {
-        "x": 408.6154347453721,
-        "y": 371.18243342778345
-      },
-      "moon:SandWorldPyramid001Stage:265:563": {
-        "x": 618.5400034076739,
-        "y": 365
-      },
-      "moon:SandWorldShopStage:9:564": {
-        "x": 791.0422058022627,
-        "y": 820.071085416554
-      },
-      "moon:SandWorldShopStage:21:565": {
-        "x": 760.3846094726458,
-        "y": 543.0769259866172
-      },
-      "moon:SandWorldSecretStage:92:566": {
-        "x": 643.4374943291186,
-        "y": 160.62500034051482
-      },
-      "moon:SandWorldPressExStage:87:567": {
-        "x": 908.4615335679619,
-        "y": 221.10558189351337
-      },
-      "moon:SandWorldCostumeStage:19:569": {
-        "x": 100,
-        "y": 478
-      },
-      "moon:SandWorldRotateExStage:20:570": {
-        "x": 646.5774564785592,
-        "y": 334.67340991763604
-      },
-      "moon:SandWorldRotateExStage:206:571": {
-        "x": 868.205748583282,
-        "y": 331.81967877925405
-      },
-      "moon:MeganeLiftExStage:217:572": {
-        "x": 511.80162254139077,
-        "y": 367.1265291729288
-      },
-      "moon:MeganeLiftExStage:315:573": {
-        "x": 490.30075223881306,
-        "y": 710.5430249083128
-      },
-      "moon:RocketFlowerExStage:302:574": {
-        "x": 1010.7451993716827,
-        "y": 673.9663504644247
-      },
-      "moon:RocketFlowerExStage:232:575": {
-        "x": 1620,
-        "y": 673.3333333333333
+        "x": 577.5,
+        "y": 164.54545454545456
       },
       "moon:SandWorldHomeStage:5320:692": {
-        "x": 768,
-        "y": 1660
+        "x": 2759.6638655462184,
+        "y": 40
       },
       "moon:SandWorldHomeStage:5335:712": {
-        "x": 364,
-        "y": 2248
+        "x": 2767.81512605042,
+        "y": 411.28249566724435
       },
       "moon:SandWorldKillerTowerZone:210:783": {
-        "x": 768,
-        "y": 5130
+        "x": 611.102268907563,
+        "y": 1685.7872187175044
       },
       "moon:SandWorldHomeStage:5364:799": {
-        "x": 628,
-        "y": 2248
-      },
-      "moon:SandWorldUnderground001Stage:244:887": {
-        "x": 350,
-        "y": 364.7522750252781
+        "x": 797.5210084033614,
+        "y": 636.3258232235702
       },
       "moon:SandWorldHomeStage:5989:893": {
-        "x": 1756,
-        "y": 2356
+        "x": 202.98319327731093,
+        "y": 656.7071057192375
       },
       "moon:SandWorldHomeStage:6057:910": {
-        "x": 1756,
-        "y": 638
+        "x": 2996.8067226890753,
+        "y": 611.6984402079722
       },
       "moon:SandWorldHomeStage:6059:924": {
-        "x": 100,
-        "y": 638
-      },
-      "moon:SandWorldUnderground000Stage:463:953": {
-        "x": 864.3201367897664,
-        "y": 458.1802458798022
+        "x": 3035.672268907563,
+        "y": 1519.636048526863
       },
       "moon:SandWorldHomeStage:6126:965": {
-        "x": 364,
-        "y": 2140
-      },
-      "moon:SandWorldUnderground001Stage:321:995": {
-        "x": 940.3990657155108,
-        "y": 206.48175828080394
+        "x": 120,
+        "y": 1697.9722873483533
       },
       "moon:SandWorldHomeStage:6208:1045": {
-        "x": 1834,
-        "y": 3420
+        "x": 1652.310924369748,
+        "y": 1756.3084922010398
       },
       "moon:SandWorldHomeStage:6209:1046": {
-        "x": 1166,
-        "y": 3420
-      },
-      "moon:SandWorldSlotStage:34:1047": {
-        "x": 912.4999968372284,
-        "y": 415.0000013187528
+        "x": 272.3109243697479,
+        "y": 1876.3084922010398
       },
       "moon:SandWorldHomeStage:6270:1059": {
-        "x": 100,
-        "y": 1552
+        "x": 3037.7731092436975,
+        "y": 194.7313691507799
       },
       "moon:SandWorldHomeStage:6244:1096": {
-        "x": 364,
-        "y": 584
+        "x": 1357.3949579831933,
+        "y": 590.1706766031195
       },
       "moon:SandWorldHomeStage:2874:1112": {
-        "x": 1492,
-        "y": 692
+        "x": 1359.4957983193276,
+        "y": 682.1837088388215
       },
       "moon:SandWorldHomeStage:2875:1113": {
-        "x": 364,
-        "y": 800
+        "x": 850.0420168067227,
+        "y": 474.9740034662045
       },
       "moon:SandWorldHomeStage:2876:1114": {
-        "x": 1492,
-        "y": 800
-      },
-      "moon:SandWorldVibrationStage:15:1136": {
-        "x": 791.4285714285713,
-        "y": 1045
+        "x": 1124.0966386554621,
+        "y": 1700
       }
     }
   }

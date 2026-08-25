@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kingdom": "Lake Kingdom",
-  "savedAt": "2026-07-16T19:58:07.731Z",
+  "savedAt": "2026-08-24T01:54:33.945Z",
   "workspace": {
-    "schemaVersion": 1,
-    "loadedAt": "2026-06-04T06:06:49.078Z",
+    "schemaVersion": 2,
+    "loadedAt": "2026-08-24T01:43:27.351Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -135,6 +135,23 @@
         "source_archive",
         "source_file",
         "notes"
+      ],
+      "captureGates": [
+        "gate_id",
+        "kingdom",
+        "logic_stage",
+        "edge_id",
+        "source_capture_token",
+        "replacement_capture_token",
+        "difficulty",
+        "match_mode",
+        "minimum_count",
+        "notes"
+      ],
+      "captureGateObjects": [
+        "gate_id",
+        "placement_stage",
+        "object_id"
       ]
     },
     "logicNodes": [
@@ -1217,13 +1234,13 @@
         "area_scope": "subarea",
         "from_node_id": "FrogPoisonExStage::entrance::LakeWorldMoonEX1b::sub_far",
         "to_node_id": "FrogPoisonExStage::entrance::LakeWorldMoonEX1a::sub_near",
-        "requirement_expr": "Dive | WallJump | Spin | Vault | TripleJump",
+        "requirement_expr": "Dive | WallJump | (Spin & WanwanBig) | Vault | TripleJump | Frog",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0028.",
-        "difficulty": "casual",
+        "difficulty": "advanced;advanced;advanced;advanced;advanced;casual",
         "option_scenarios": ""
       },
       {
@@ -5156,6 +5173,66 @@
         "can_start_with_seed": "false",
         "aliases": "Swing",
         "notes": ""
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       }
     ],
     "rooms": [
@@ -5626,7 +5703,13 @@
         "notes": ""
       }
     ],
+    "captureGates": [],
+    "captureGateObjects": [],
     "nodePositions": {
+      "FastenerExStage::entrance::FastenerEx::sub_far": {
+        "x": 358.05497817590276,
+        "y": 637.8531085820719
+      },
       "FastenerExStage::entrance::FastenerEx::sub_near": {
         "x": 629.0225549297556,
         "y": 660.9022555400317
@@ -5639,81 +5722,13 @@
         "x": 1484.9756169494844,
         "y": 670.3485344789152
       },
+      "GotogotonExStage::entrance::Goton::sub_far": {
+        "x": 120,
+        "y": 1100
+      },
       "GotogotonExStage::entrance::Goton::sub_near": {
         "x": 523.5714285714287,
         "y": 489.2857142857142
-      },
-      "LakeWorldShopStage::entrance::LakeWorldShop::sub_near": {
-        "x": 627.2115469963655,
-        "y": 450.9615440412075
-      },
-      "TrampolineWallCatchExStage::entrance::CapTrampolineA::sub_near": {
-        "x": 719.9999999999998,
-        "y": 627.4390243902438
-      },
-      "TrampolineWallCatchExStage::entrance::CapTrampolineB::sub_far": {
-        "x": 1461.4634146341466,
-        "y": 632.1951219512197
-      },
-      "FastenerExStage::stage_change::FastenerEx::raw": {
-        "x": 1542.857142857143,
-        "y": 1100
-      },
-      "FrogPoisonExStage::stage_change::LakeWorldMoonEX1a::raw": {
-        "x": 1850,
-        "y": 1100
-      },
-      "FrogPoisonExStage::stage_change::LakeWorldMoonEX1b::raw": {
-        "x": 1705.8847077662128,
-        "y": 666.9394435351883
-      },
-      "GotogotonExStage::stage_change::Goton::raw": {
-        "x": 350,
-        "y": 1100
-      },
-      "LakeWorldShopStage::stage_change::LakeWorldShop::raw": {
-        "x": 1850,
-        "y": 1100
-      },
-      "TrampolineWallCatchExStage::stage_change::CapTrampolineA::raw": {
-        "x": 1700,
-        "y": 1100
-      },
-      "TrampolineWallCatchExStage::stage_change::CapTrampolineB::raw": {
-        "x": 350,
-        "y": 120
-      },
-      "moon:TrampolineWallCatchExStage:1117:425": {
-        "x": 1116.7682926829268,
-        "y": 368.47560975609764
-      },
-      "moon:TrampolineWallCatchExStage:1238:426": {
-        "x": 1119.9999999999998,
-        "y": 854.6606306972162
-      },
-      "moon:LakeWorldShopStage:12:430": {
-        "x": 985.8536585365855,
-        "y": 449.26829268292687
-      },
-      "moon:FrogPoisonExStage:4547:431": {
-        "x": 1156.5259743607887,
-        "y": 808.9610410622874
-      },
-      "moon:FrogPoisonExStage:4456:434": {
-        "x": 1157.0689174847334,
-        "y": 508.4191910345902
-      },
-      "moon:GotogotonExStage:269:971": {
-        "x": 969.025974741784,
-        "y": 491.5909093102702
-      },
-      "moon:FastenerExStage:158:1008": {
-        "x": 1079.2105264024722,
-        "y": 552.1428566722941
-      },
-      "moon:FastenerExStage:602:1009": {
-        "x": 1081.8421001984143,
-        "y": 805.4878032310785
       },
       "LakeWorld2DZone::start": {
         "x": 2432,
@@ -5762,6 +5777,14 @@
       "LakeWorldHomeStage::event::MoonRockActive_Lake": {
         "x": 658,
         "y": 468
+      },
+      "LakeWorldShopStage::entrance::LakeWorldShop::sub_far": {
+        "x": 593.7226625465541,
+        "y": 575.9124839764283
+      },
+      "LakeWorldShopStage::entrance::LakeWorldShop::sub_near": {
+        "x": 627.2115469963655,
+        "y": 450.9615440412075
       },
       "LakeWorldTimerAthletic000Zone::start": {
         "x": 428,
@@ -5823,9 +5846,45 @@
         "x": 893.5845424107142,
         "y": 1216.052019391741
       },
+      "TrampolineWallCatchExStage::entrance::CapTrampolineA::sub_near": {
+        "x": 719.9999999999998,
+        "y": 627.4390243902438
+      },
+      "TrampolineWallCatchExStage::entrance::CapTrampolineB::sub_far": {
+        "x": 1461.4634146341466,
+        "y": 632.1951219512197
+      },
+      "FastenerExStage::stage_change::FastenerEx::raw": {
+        "x": 1542.857142857143,
+        "y": 1100
+      },
+      "FrogPoisonExStage::stage_change::LakeWorldMoonEX1a::raw": {
+        "x": 1850,
+        "y": 1100
+      },
+      "FrogPoisonExStage::stage_change::LakeWorldMoonEX1b::raw": {
+        "x": 1705.8847077662128,
+        "y": 666.9394435351883
+      },
+      "GotogotonExStage::stage_change::Goton::raw": {
+        "x": 350,
+        "y": 1100
+      },
+      "LakeWorldShopStage::stage_change::LakeWorldShop::raw": {
+        "x": 1850,
+        "y": 1100
+      },
       "LakeWorldTownZone::stage_change::Go::raw": {
         "x": 428,
         "y": 1752
+      },
+      "TrampolineWallCatchExStage::stage_change::CapTrampolineA::raw": {
+        "x": 1700,
+        "y": 1100
+      },
+      "TrampolineWallCatchExStage::stage_change::CapTrampolineB::raw": {
+        "x": 350,
+        "y": 120
       },
       "LakeWorldHomeStage::place::new_place": {
         "x": 543,
@@ -5915,6 +5974,26 @@
         "x": 2018.7750897074854,
         "y": 2164.6360090388807
       },
+      "moon:TrampolineWallCatchExStage:1117:425": {
+        "x": 1116.7682926829268,
+        "y": 368.47560975609764
+      },
+      "moon:TrampolineWallCatchExStage:1238:426": {
+        "x": 1119.9999999999998,
+        "y": 854.6606306972162
+      },
+      "moon:LakeWorldShopStage:12:430": {
+        "x": 985.8536585365855,
+        "y": 449.26829268292687
+      },
+      "moon:FrogPoisonExStage:4547:431": {
+        "x": 1156.5259743607887,
+        "y": 808.9610410622874
+      },
+      "moon:FrogPoisonExStage:4456:434": {
+        "x": 1157.0689174847334,
+        "y": 508.4191910345902
+      },
       "moon:LakeWorldHomeStage:848:709": {
         "x": 998,
         "y": 370
@@ -5947,6 +6026,18 @@
         "x": 1296,
         "y": 2210
       },
+      "moon:GotogotonExStage:269:971": {
+        "x": 969.025974741784,
+        "y": 491.5909093102702
+      },
+      "moon:FastenerExStage:158:1008": {
+        "x": 1079.2105264024722,
+        "y": 552.1428566722941
+      },
+      "moon:FastenerExStage:602:1009": {
+        "x": 1081.8421001984143,
+        "y": 805.4878032310785
+      },
       "moon:LakeWorldTownZone:1434:1015": {
         "x": 1032,
         "y": 2480
@@ -5966,18 +6057,6 @@
       "moon:LakeWorldTownZone:1487:1166": {
         "x": 1032,
         "y": 2264
-      },
-      "LakeWorldShopStage::entrance::LakeWorldShop::sub_far": {
-        "x": 593.7226625465541,
-        "y": 575.9124839764283
-      },
-      "GotogotonExStage::entrance::Goton::sub_far": {
-        "x": 120,
-        "y": 1100
-      },
-      "FastenerExStage::entrance::FastenerEx::sub_far": {
-        "x": 358.05497817590276,
-        "y": 637.8531085820719
       }
     }
   }

@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kingdom": "Mushroom Kingdom",
-  "savedAt": "2026-07-14T22:41:46.689Z",
+  "savedAt": "2026-08-24T01:56:21.334Z",
   "workspace": {
-    "schemaVersion": 1,
-    "loadedAt": "2026-06-04T06:06:49.078Z",
+    "schemaVersion": 2,
+    "loadedAt": "2026-08-24T01:43:27.351Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -135,6 +135,23 @@
         "source_archive",
         "source_file",
         "notes"
+      ],
+      "captureGates": [
+        "gate_id",
+        "kingdom",
+        "logic_stage",
+        "edge_id",
+        "source_capture_token",
+        "replacement_capture_token",
+        "difficulty",
+        "match_mode",
+        "minimum_count",
+        "notes"
+      ],
+      "captureGateObjects": [
+        "gate_id",
+        "placement_stage",
+        "object_id"
       ]
     },
     "logicNodes": [
@@ -1975,76 +1992,40 @@
         "notes": "Connected from PeachWorldHomeStage."
       },
       {
-        "node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_far",
+        "node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidB::sub_near",
         "kingdom": "Mushroom Kingdom",
         "stage": "PeachWorldPictureBossRaidStage",
         "stage_display_name": "Painting Room: Lord of Lightning",
         "area_scope": "subarea",
         "node_type": "substage_entrance",
         "source": "EntranceDB",
-        "entrance_id": "BossRaidA",
-        "side": "sub_far",
-        "obj_id": "obj32",
-        "display_name": "Substage far side: BossRaidA",
-        "x": "0.000",
-        "y": "0.000",
-        "z": "600.000",
-        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "notes": "Connected from PeachWorldHomeStage."
-      },
-      {
-        "node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_near",
-        "kingdom": "Mushroom Kingdom",
-        "stage": "PeachWorldPictureBossRaidStage",
-        "stage_display_name": "Painting Room: Lord of Lightning",
-        "area_scope": "subarea",
-        "node_type": "substage_entrance",
-        "source": "EntranceDB",
-        "entrance_id": "BossRaidA",
+        "entrance_id": "BossRaidB",
         "side": "sub_near",
-        "obj_id": "obj32",
-        "display_name": "Substage near side: BossRaidA",
+        "obj_id": "obj31",
+        "display_name": "Substage near side: BossRaidB",
         "x": "0.000",
-        "y": "0.000",
-        "z": "600.000",
+        "y": "100.000",
+        "z": "1100.000",
         "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "notes": "Connected from PeachWorldHomeStage."
+        "notes": "Connected from PeachWorldHomeStage. StageData anchor UnitConfigName=DokanStageChange."
       },
       {
-        "node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_far",
+        "node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossB::sub_near",
         "kingdom": "Mushroom Kingdom",
         "stage": "PeachWorldPictureGiantWanderBossStage",
         "stage_display_name": "Painting Room: Mollusque-Lanceur",
         "area_scope": "subarea",
         "node_type": "substage_entrance",
         "source": "EntranceDB",
-        "entrance_id": "GiantWanderBossA",
-        "side": "sub_far",
-        "obj_id": "obj32",
-        "display_name": "Substage far side: GiantWanderBossA",
-        "x": "0.000",
-        "y": "0.000",
-        "z": "600.000",
-        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "notes": "Connected from PeachWorldHomeStage."
-      },
-      {
-        "node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_near",
-        "kingdom": "Mushroom Kingdom",
-        "stage": "PeachWorldPictureGiantWanderBossStage",
-        "stage_display_name": "Painting Room: Mollusque-Lanceur",
-        "area_scope": "subarea",
-        "node_type": "substage_entrance",
-        "source": "EntranceDB",
-        "entrance_id": "GiantWanderBossA",
+        "entrance_id": "GiantWanderBossB",
         "side": "sub_near",
-        "obj_id": "obj32",
-        "display_name": "Substage near side: GiantWanderBossA",
+        "obj_id": "obj31",
+        "display_name": "Substage near side: GiantWanderBossB",
         "x": "0.000",
-        "y": "0.000",
-        "z": "600.000",
+        "y": "100.000",
+        "z": "1100.000",
         "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "notes": "Connected from PeachWorldHomeStage."
+        "notes": "Connected from PeachWorldHomeStage. StageData anchor UnitConfigName=DokanStageChange."
       },
       {
         "node_id": "PeachWorldPictureMofumofuStage::entrance::MofumofuA::sub_far",
@@ -2954,10 +2935,10 @@
         "area_scope": "overworld",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj162",
         "to_node_id": "PeachWorldHomeStage::entrance::BossForestA::home_in",
-        "requirement_expr": "Climb | (NeutralThrow & Vault & WallJump & Dive)",
+        "requirement_expr": "Climb | (NeutralThrow & Vault & WallJump & Dive) | Yoshi",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;advanced",
+        "difficulty": "casual;advanced;advanced",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -3282,22 +3263,7 @@
         "edge_id": "edge_user_0355",
         "kingdom": "Mushroom Kingdom",
         "area_scope": "subarea",
-        "from_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_near",
-        "to_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_far",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0356",
-        "kingdom": "Mushroom Kingdom",
-        "area_scope": "subarea",
-        "from_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_far",
+        "from_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidB::sub_near",
         "to_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidB::sub_far",
         "requirement_expr": "free",
         "requirement_notes": "",
@@ -3312,7 +3278,7 @@
         "edge_id": "edge_user_0357",
         "kingdom": "Mushroom Kingdom",
         "area_scope": "subarea",
-        "from_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_near",
+        "from_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidB::sub_near",
         "to_node_id": "PeachWorldPictureBossRaidStage::stage_change::BossRaidA::raw",
         "requirement_expr": "free",
         "requirement_notes": "",
@@ -3327,7 +3293,7 @@
         "edge_id": "edge_user_0358",
         "kingdom": "Mushroom Kingdom",
         "area_scope": "subarea",
-        "from_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_near",
+        "from_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidB::sub_near",
         "to_node_id": "PeachWorldPictureBossRaidStage::stage_change::BossRaidB::raw",
         "requirement_expr": "free",
         "requirement_notes": "",
@@ -3343,7 +3309,7 @@
         "kingdom": "Mushroom Kingdom",
         "area_scope": "subarea",
         "from_node_id": "PeachWorldPictureBossRaidStage::stage_change::PictureBossRaid::raw",
-        "to_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_near",
+        "to_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidB::sub_near",
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
@@ -3402,22 +3368,7 @@
         "edge_id": "edge_user_0363",
         "kingdom": "Mushroom Kingdom",
         "area_scope": "subarea",
-        "from_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_near",
-        "to_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_far",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0364",
-        "kingdom": "Mushroom Kingdom",
-        "area_scope": "subarea",
-        "from_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_far",
+        "from_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossB::sub_near",
         "to_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossB::sub_far",
         "requirement_expr": "free",
         "requirement_notes": "",
@@ -3432,7 +3383,7 @@
         "edge_id": "edge_user_0365",
         "kingdom": "Mushroom Kingdom",
         "area_scope": "subarea",
-        "from_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_near",
+        "from_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossB::sub_near",
         "to_node_id": "PeachWorldPictureGiantWanderBossStage::stage_change::GiantWanderBossA::raw",
         "requirement_expr": "free",
         "requirement_notes": "",
@@ -3447,7 +3398,7 @@
         "edge_id": "edge_user_0366",
         "kingdom": "Mushroom Kingdom",
         "area_scope": "subarea",
-        "from_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_near",
+        "from_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossB::sub_near",
         "to_node_id": "PeachWorldPictureGiantWanderBossStage::stage_change::GiantWanderBossB::raw",
         "requirement_expr": "free",
         "requirement_notes": "",
@@ -3462,7 +3413,7 @@
         "edge_id": "edge_user_0367",
         "kingdom": "Mushroom Kingdom",
         "area_scope": "subarea",
-        "from_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_near",
+        "from_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossB::sub_near",
         "to_node_id": "PeachWorldPictureGiantWanderBossStage::stage_change::PictureGiantWanderBoss::raw",
         "requirement_expr": "free",
         "requirement_notes": "",
@@ -3583,7 +3534,7 @@
         "kingdom": "Mushroom Kingdom",
         "area_scope": "subarea",
         "from_node_id": "PeachWorldPictureBossRaidStage::entrance::PictureBossRaid::home_in",
-        "to_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_near",
+        "to_node_id": "PeachWorldPictureBossRaidStage::entrance::BossRaidB::sub_near",
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
@@ -3613,7 +3564,7 @@
         "kingdom": "Mushroom Kingdom",
         "area_scope": "subarea",
         "from_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::PictureGiantWanderBoss::home_in",
-        "to_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_near",
+        "to_node_id": "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossB::sub_near",
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
@@ -7601,6 +7552,66 @@
         "can_start_with_seed": "false",
         "aliases": "Swing",
         "notes": ""
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       }
     ],
     "rooms": [
@@ -8480,6 +8491,8 @@
         "notes": "No ScenarioInfo.byml in archive."
       }
     ],
+    "captureGates": [],
+    "captureGateObjects": [],
     "nodePositions": {
       "DotHardExStage::stage_change::PeachWorldEx2a::raw": {
         "x": 120,
@@ -8826,8 +8839,8 @@
         "y": 1065.4794269718536
       },
       "PeachWorldHomeStage::entrance::BossForestA::home_in": {
-        "x": 437.89686946278994,
-        "y": 2019.0927835051546
+        "x": 225.92685706039418,
+        "y": 2075.6181871170365
       },
       "PeachWorldHomeStage::entrance::BossKnuckleA::home_in": {
         "x": 1173.5361965013587,
@@ -8857,19 +8870,11 @@
         "x": 210,
         "y": 160
       },
-      "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_far": {
-        "x": 210,
-        "y": 560
-      },
-      "PeachWorldPictureBossRaidStage::entrance::BossRaidA::sub_near": {
+      "PeachWorldPictureBossRaidStage::entrance::BossRaidB::sub_near": {
         "x": 210,
         "y": 160
       },
-      "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_far": {
-        "x": 210,
-        "y": 560
-      },
-      "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossA::sub_near": {
+      "PeachWorldPictureGiantWanderBossStage::entrance::GiantWanderBossB::sub_near": {
         "x": 210,
         "y": 160
       },
@@ -8901,17 +8906,65 @@
         "x": 620,
         "y": 120
       },
+      "RevengeForestBossStage::entrance::PictureBossForest::sub_near": {
+        "x": 1484.1572347919594,
+        "y": 1109.8876267336727
+      },
+      "RevengeForestBossStage::entrance::PictureBossForest::sub_far": {
+        "x": 1852.0223896155196,
+        "y": 1106.2921348314605
+      },
+      "RevengeBossKnuckleStage::entrance::PictureBossKnuckle::sub_near": {
+        "x": 378.97957938058016,
+        "y": 773.4693254743304
+      },
+      "RevengeBossKnuckleStage::entrance::PictureBossKnuckle::sub_far": {
+        "x": 127.95933314732133,
+        "y": 636.3265555245536
+      },
+      "RevengeBossMagmaStage::entrance::PictureBossMagma::sub_near": {
+        "x": 120,
+        "y": 240
+      },
+      "RevengeBossMagmaStage::entrance::PictureBossMagma::sub_far": {
+        "x": 120.86412217881943,
+        "y": 404.9383017457562
+      },
       "PeachWorldPictureBossRaidStage::entrance::PictureBossRaid::home_in": {
         "x": 620,
         "y": 120
+      },
+      "RevengeBossRaidStage::entrance::PictureBossRaid::sub_near": {
+        "x": 260.9278224669781,
+        "y": 495.4638671875
+      },
+      "RevengeBossRaidStage::entrance::PictureBossRaid::sub_far": {
+        "x": 298.765409493152,
+        "y": 773.5802619839892
       },
       "PeachWorldPictureGiantWanderBossStage::entrance::PictureGiantWanderBoss::home_in": {
         "x": 620,
         "y": 120
       },
+      "RevengeGiantWanderBossStage::entrance::PictureGiantWanderBoss::sub_near": {
+        "x": 1850,
+        "y": 120
+      },
+      "RevengeGiantWanderBossStage::entrance::PictureGiantWanderBoss::sub_far": {
+        "x": 1390,
+        "y": 120
+      },
       "PeachWorldPictureMofumofuStage::entrance::PictureMofumofu::home_in": {
         "x": 499.166739327567,
         "y": 0
+      },
+      "RevengeMofumofuStage::entrance::PictureMofumofu::sub_near": {
+        "x": 350,
+        "y": 1100
+      },
+      "RevengeMofumofuStage::entrance::PictureMofumofu::sub_far": {
+        "x": 120,
+        "y": 1220
       },
       "PeachWorldPictureBossMagmaStage::stage_change::BossMagmaA::raw": {
         "x": 980,
@@ -9124,54 +9177,6 @@
       "moon:PeachWorldCastleStage:131:1152": {
         "x": 941.2797606280739,
         "y": 419.30723345058385
-      },
-      "RevengeBossMagmaStage::entrance::PictureBossMagma::sub_near": {
-        "x": 120,
-        "y": 240
-      },
-      "RevengeBossMagmaStage::entrance::PictureBossMagma::sub_far": {
-        "x": 120.86412217881943,
-        "y": 404.9383017457562
-      },
-      "RevengeBossKnuckleStage::entrance::PictureBossKnuckle::sub_near": {
-        "x": 378.97957938058016,
-        "y": 773.4693254743304
-      },
-      "RevengeBossKnuckleStage::entrance::PictureBossKnuckle::sub_far": {
-        "x": 127.95933314732133,
-        "y": 636.3265555245536
-      },
-      "RevengeBossRaidStage::entrance::PictureBossRaid::sub_near": {
-        "x": 260.9278224669781,
-        "y": 495.4638671875
-      },
-      "RevengeBossRaidStage::entrance::PictureBossRaid::sub_far": {
-        "x": 298.765409493152,
-        "y": 773.5802619839892
-      },
-      "RevengeMofumofuStage::entrance::PictureMofumofu::sub_near": {
-        "x": 350,
-        "y": 1100
-      },
-      "RevengeMofumofuStage::entrance::PictureMofumofu::sub_far": {
-        "x": 120,
-        "y": 1220
-      },
-      "RevengeGiantWanderBossStage::entrance::PictureGiantWanderBoss::sub_near": {
-        "x": 1850,
-        "y": 120
-      },
-      "RevengeGiantWanderBossStage::entrance::PictureGiantWanderBoss::sub_far": {
-        "x": 1390,
-        "y": 120
-      },
-      "RevengeForestBossStage::entrance::PictureBossForest::sub_near": {
-        "x": 1484.1572347919594,
-        "y": 1109.8876267336727
-      },
-      "RevengeForestBossStage::entrance::PictureBossForest::sub_far": {
-        "x": 1852.0223896155196,
-        "y": 1106.2921348314605
       }
     }
   }

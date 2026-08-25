@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kingdom": "Lost Kingdom",
-  "savedAt": "2026-07-02T04:41:12.978Z",
+  "savedAt": "2026-08-24T03:27:04.100Z",
   "workspace": {
-    "schemaVersion": 1,
-    "loadedAt": "2026-06-04T06:06:49.078Z",
+    "schemaVersion": 2,
+    "loadedAt": "2026-08-24T01:43:27.351Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -135,6 +135,23 @@
         "source_archive",
         "source_file",
         "notes"
+      ],
+      "captureGates": [
+        "gate_id",
+        "kingdom",
+        "logic_stage",
+        "edge_id",
+        "source_capture_token",
+        "replacement_capture_token",
+        "difficulty",
+        "match_mode",
+        "minimum_count",
+        "notes"
+      ],
+      "captureGateObjects": [
+        "gate_id",
+        "placement_stage",
+        "object_id"
       ]
     },
     "logicNodes": [
@@ -776,13 +793,13 @@
         "area_scope": "subarea",
         "from_node_id": "ImomuPoisonExStage::entrance::imomu_01::sub_near",
         "to_node_id": "ImomuPoisonExStage::entrance::imomu_02::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "NeutralThrow | Imomu",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "advanced;casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -794,10 +811,10 @@
         "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0038.",
-        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -876,21 +893,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0165",
-        "kingdom": "Lost Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
-        "to_node_id": "ClashWorldHomeStage::entrance::ClashWorldMoonEX2::home_in",
-        "requirement_expr": "Dive | (WallJump & Dive)",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "advanced;casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0166",
         "kingdom": "Lost Kingdom",
         "area_scope": "overworld",
@@ -900,7 +902,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -975,7 +977,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -1080,10 +1082,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "expert",
-        "option_scenarios": "",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0186",
@@ -1094,11 +1096,11 @@
         "requirement_expr": "Vault | KingdomAccess_Lost | Dive | WallJump | TripleJump | (GroundPound & Imomu) | Spin",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;expert;casual;advanced;casual;casual;advanced",
-        "option_scenarios": "",
+        "difficulty": "advanced;expert;advanced;advanced;advanced;casual;advanced",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0191",
@@ -1106,14 +1108,14 @@
         "area_scope": "overworld",
         "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
         "to_node_id": "ClashWorldHomeStage::place::new_place_3",
-        "requirement_expr": "Dive | (WallJump & Dive) | (Backflip & Dive) | WallJump | Vault | (Backflip & LedgeGrab) | (TripleJump & LedgeGrab) | (Spin & LedgeGrab) | (GroundPoundJump & LedgeGrab) | (SideFlip & LedgeGrab)",
+        "requirement_expr": "Dive | (WallJump & Dive) | (Backflip & Dive) | WallJump | (Vault & NeutralThrow) | (Backflip & LedgeGrab) | (TripleJump & LedgeGrab) | (Spin & LedgeGrab) | (GroundPoundJump & LedgeGrab) | (SideFlip & LedgeGrab) | (Vault & UpThrow)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "advanced;casual;casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
-        "option_scenarios": "",
-        "bidirectional": "true",
+        "difficulty": "advanced;casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0192",
@@ -1125,10 +1127,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0193",
@@ -1140,10 +1142,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor."
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0194",
@@ -1155,10 +1157,55 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced",
-        "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
-        "notes": "Reverse of edge_user_0193."
+        "notes": "Reverse of edge_user_0193.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0568",
+        "kingdom": "Lost Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ClashWorldHomeStage::place::new_place",
+        "to_node_id": "ClashWorldHomeStage::checkpoint::obj545",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0188.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0619",
+        "kingdom": "Lost Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ClashWorldHomeStage::entrance::ClashWorldMoonEX2::home_in",
+        "to_node_id": "ClashWorldHomeStage::checkpoint::obj545",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0166.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0165",
+        "kingdom": "Lost Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ClashWorldHomeStage::place::new_place_3",
+        "to_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0191.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -1206,9 +1253,9 @@
         "shine_info_object_name": "キノピオ隊長",
         "shine_info_scenario_name": "ひとやすみ！ キノピオ隊長",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:83:372",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:83:372"
       },
       {
         "moon_id": "ClashWorldHomeStage:1144:373",
@@ -1254,9 +1301,9 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "プロペラ柱のヒミツ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:1144:373",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:1144:373"
       },
       {
         "moon_id": "ClashWorldHomeStage:39:374",
@@ -1302,9 +1349,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "岩の中に とらわれて",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:39:374",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:39:374"
       },
       {
         "moon_id": "ClashWorldHomeStage:54:375",
@@ -1350,9 +1397,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "せり上がる石柱の中",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:54:375",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:54:375"
       },
       {
         "moon_id": "ClashWorldHomeStage:71:376",
@@ -1398,9 +1445,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "プロペラ柱の中心で",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:71:376",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:71:376"
       },
       {
         "moon_id": "ClashWorldHomeStage:111:377",
@@ -1446,9 +1493,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "やどり木の上",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:111:377",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:111:377"
       },
       {
         "moon_id": "ClashWorldHomeStage:142:378",
@@ -1494,9 +1541,9 @@
         "shine_info_object_name": "帽子花グループ",
         "shine_info_scenario_name": "咲かせて 洞くつの花",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:142:378",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced",
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:142:378"
       },
       {
         "moon_id": "ClashWorldHomeStage:492:379",
@@ -1542,9 +1589,9 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "岩山を すすむ道中で",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:492:379",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:492:379"
       },
       {
         "moon_id": "ClashWorldHomeStage:564:380",
@@ -1590,9 +1637,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "ガケっぷちの下に",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:564:380",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:564:380"
       },
       {
         "moon_id": "ClashWorldHomeStage:575:381",
@@ -1638,9 +1685,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "ロス島の空を舞う！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:575:381",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced;expert",
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:575:381"
       },
       {
         "moon_id": "ClashWorldHomeStage:701:382",
@@ -1686,9 +1733,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "のぞきこんで 橋の下",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:701:382",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:701:382"
       },
       {
         "moon_id": "ClashWorldHomeStage:850:383",
@@ -1734,9 +1781,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "とらわれていた宝",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:850:383",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:850:383"
       },
       {
         "moon_id": "ClashWorldHomeStage:920:384",
@@ -1782,9 +1829,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "チョロボン越えて 沼の上",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:920:384",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:920:384"
       },
       {
         "moon_id": "ClashWorldHomeStage:1001:385",
@@ -1830,9 +1877,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "ロス島を一望して",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:1001:385",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:1001:385"
       },
       {
         "moon_id": "ClashWorldHomeStage:70:386",
@@ -1878,9 +1925,9 @@
         "shine_info_object_name": "シャインチップ全取得監視者",
         "shine_info_scenario_name": "集めて！ 密林のムーンチップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:70:386",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:70:386"
       },
       {
         "moon_id": "ClashWorldHomeStage:570:387",
@@ -1926,9 +1973,9 @@
         "shine_info_object_name": "シャインドット_2D",
         "shine_info_scenario_name": "チョロボンよけて 壁の中",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:570:387",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:570:387"
       },
       {
         "moon_id": "ClashWorldHomeStage:595:388",
@@ -1974,9 +2021,9 @@
         "shine_info_object_name": "墜落の鳥",
         "shine_info_scenario_name": "チョウチョの宝",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:595:388",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:595:388"
       },
       {
         "moon_id": "ClashWorldHomeStage:2599:390",
@@ -2022,9 +2069,9 @@
         "shine_info_object_name": "ウサギ",
         "shine_info_scenario_name": "密林で つかまえたピョン！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:2599:390",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:2599:390"
       },
       {
         "moon_id": "ClashWorldHomeStage:616:392",
@@ -2070,9 +2117,9 @@
         "shine_info_object_name": "墜落のワールド壊れパーツ000",
         "shine_info_scenario_name": "誘導して ねらい撃ち",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:616:392",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced",
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:616:392"
       },
       {
         "moon_id": "ClashWorldHomeStage:2560:393",
@@ -2118,9 +2165,9 @@
         "shine_info_object_name": "音符オブジェ(1つ目)",
         "shine_info_scenario_name": "のびて ちぢんで 音符集め",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:2560:393",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced;advanced",
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:2560:393"
       },
       {
         "moon_id": "ClashWorldHomeStage:2620:394",
@@ -2166,9 +2213,9 @@
         "shine_info_object_name": "世界旅行ピーチ",
         "shine_info_scenario_name": "失われた国で ピーチ姫",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:2620:394",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:2620:394"
       },
       {
         "moon_id": "ClashWorldHomeStage:609:395",
@@ -2214,9 +2261,9 @@
         "shine_info_object_name": "シャイン【月の石追加版】",
         "shine_info_scenario_name": "かがやく果実",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:609:395",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:609:395"
       },
       {
         "moon_id": "ClashWorldHomeStage:615:396",
@@ -2262,9 +2309,9 @@
         "shine_info_object_name": "シャイン【月の石追加版】",
         "shine_info_scenario_name": "木の上に とび降りて",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:615:396",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:615:396"
       },
       {
         "moon_id": "ClashWorldShopStage:19:398",
@@ -2310,9 +2357,9 @@
         "shine_info_object_name": "ショップ店員",
         "shine_info_scenario_name": "ロス島で お買い物",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldShopStage:19:398",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldShopStage:19:398"
       },
       {
         "moon_id": "ImomuPoisonExStage:3970:399",
@@ -2358,9 +2405,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "ジャングルを のびて渡って",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ImomuPoisonExStage:3970:399",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ImomuPoisonExStage:3970:399"
       },
       {
         "moon_id": "ImomuPoisonExStage:4857:400",
@@ -2375,7 +2422,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "ImomuPoisonExStage::entrance::imomu_01::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Imomu | NeutralThrow",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2406,9 +2453,9 @@
         "shine_info_object_name": "ステージスイッチ_燭台監視",
         "shine_info_scenario_name": "ジャングルの灯火",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ImomuPoisonExStage:4857:400",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced",
+        "option_scenarios": "",
+        "__editor_id": "ImomuPoisonExStage:4857:400"
       },
       {
         "moon_id": "JangoExStage:211:491",
@@ -2454,9 +2501,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "レスキュー 大成功！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "JangoExStage:211:491",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "JangoExStage:211:491"
       },
       {
         "moon_id": "JangoExStage:226:492",
@@ -2502,9 +2549,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "マグマを 泳ぎ回って",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "JangoExStage:226:492",
         "difficulty": "casual;advanced",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "JangoExStage:226:492"
       },
       {
         "moon_id": "ClashWorldHomeStage:2774:832",
@@ -2550,9 +2597,9 @@
         "shine_info_object_name": "駆けっこ開始Npc",
         "shine_info_scenario_name": "失われた国 レギュラーカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:2774:832",
         "difficulty": "casual",
-        "option_scenarios": "1,2,3,4,5"
+        "option_scenarios": "1,2,3,4,5",
+        "__editor_id": "ClashWorldHomeStage:2774:832"
       },
       {
         "moon_id": "ClashWorldHomeStage:2833:855",
@@ -2598,9 +2645,9 @@
         "shine_info_object_name": "帽子掛け（タイマー）",
         "shine_info_scenario_name": "失われた国で チクタク・アスレチック",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:2833:855",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:2833:855"
       },
       {
         "moon_id": "ClashWorldHomeStage:2862:897",
@@ -2646,9 +2693,9 @@
         "shine_info_object_name": "駆けっこ開始Npc",
         "shine_info_scenario_name": "失われた国 マスターカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:2862:897",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:2862:897"
       },
       {
         "moon_id": "ClashWorldHomeStage:2981:942",
@@ -2694,9 +2741,9 @@
         "shine_info_object_name": "墜落のワールド壊れパーツ000",
         "shine_info_scenario_name": "ロス島の かたい岩",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:2981:942",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:2981:942"
       },
       {
         "moon_id": "ClashWorldHomeStage:2921:943",
@@ -2742,9 +2789,9 @@
         "shine_info_object_name": "帽子の民",
         "shine_info_scenario_name": "シマハナチャンに 出会った！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:2921:943",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:2921:943"
       },
       {
         "moon_id": "ClashWorldHomeStage:3283:1075",
@@ -2790,9 +2837,9 @@
         "shine_info_object_name": "鍵付き宝箱",
         "shine_info_scenario_name": "曲がりくねって お宝発見",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:3283:1075",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced;expert;advanced",
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:3283:1075"
       },
       {
         "moon_id": "ClashWorldHomeStage:3284:1077",
@@ -2838,9 +2885,9 @@
         "shine_info_object_name": "空飛ぶタクシー",
         "shine_info_scenario_name": "空飛ぶタクシー ロス島を通過",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "ClashWorldHomeStage:3284:1077",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "ClashWorldHomeStage:3284:1077"
       }
     ],
     "logicTokens": [
@@ -4379,6 +4426,66 @@
         "can_start_with_seed": "false",
         "aliases": "Swing",
         "notes": ""
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       }
     ],
     "rooms": [
@@ -4511,262 +4618,196 @@
         "notes": "No ScenarioInfo.byml in archive."
       }
     ],
+    "captureGates": [],
+    "captureGateObjects": [],
     "nodePositions": {
       "ClashWorldHomeStage::checkpoint::obj2899": {
-        "x": 428,
-        "y": 1434
+        "x": 179.58188153310104,
+        "y": 432.1820303383897
       },
       "ClashWorldHomeStage::checkpoint::obj543": {
-        "x": 1071,
-        "y": 844
+        "x": 930.1045296167248,
+        "y": 150.87514585764293
       },
       "ClashWorldHomeStage::checkpoint::obj545": {
-        "x": 1494,
-        "y": 1486
+        "x": 369.83133094153834,
+        "y": 502.0512355005574
       },
       "ClashWorldHomeStage::entrance::ClashWorldMoonEX2::home_in": {
-        "x": 593.9563256862675,
-        "y": 1587.7809918553066
+        "x": 1134.2544576872353,
+        "y": 745.1605076847629
       },
       "ClashWorldHomeStage::entrance::Kinopio::home_in": {
-        "x": 1494,
-        "y": 1640
+        "x": 470.1699303135888,
+        "y": 341.91699136522755
       },
       "ClashWorldHomeStage::entrance::imomu_01::home_in": {
-        "x": 1186,
-        "y": 998
-      },
-      "ClashWorldHomeStage::entrance::imomu_02::home_out": {
-        "x": 1441.5131667719213,
-        "y": 946.9967146361837
+        "x": 1452.7526132404182,
+        "y": 727.2112018669778
       },
       "ClashWorldHomeStage::stage_change::ClashStart1::raw": {
-        "x": 920,
-        "y": 2016
+        "x": 1463.205574912892,
+        "y": 923.8973162193699
       },
       "ClashWorldHomeStage::stage_change::ClashWorldMoonEX2::raw": {
-        "x": 1330,
-        "y": 2016
+        "x": 867.4216027874564,
+        "y": 575.0525087514586
       },
       "ClashWorldHomeStage::stage_change::Kinopio::raw": {
-        "x": 100,
-        "y": 2016
+        "x": 240.1699303135888,
+        "y": 581.9169913652275
       },
       "ClashWorldHomeStage::stage_change::imomu_01::raw": {
-        "x": 1740,
-        "y": 2016
+        "x": 1682.7526132404182,
+        "y": 727.2112018669778
       },
       "ClashWorldHomeStage::stage_change::imomu_02::raw": {
-        "x": 2150,
-        "y": 2016
+        "x": 1124.71031358885,
+        "y": 710.3600504084014
       },
       "ClashWorldHomeStage::start": {
-        "x": 100,
-        "y": 100
+        "x": 110,
+        "y": 240
       },
       "ClashWorldHomeStage::event::MoonRockActive_Lost": {
-        "x": 100,
-        "y": 254
-      },
-      "ClashWorldShopStage::stage_change::Kinopio::raw": {
         "x": 1620,
-        "y": 238.59939759036143
-      },
-      "ClashWorldShopStage::stage_change::kinopio::raw": {
-        "x": 1620,
-        "y": 120
-      },
-      "ClashWorldShopStage::entrance::Kinopio::sub_far": {
-        "x": 867.6470588235293,
-        "y": 295.0699858256556
-      },
-      "ClashWorldShopStage::entrance::Kinopio::sub_near": {
-        "x": 867.3076855492662,
-        "y": 465.52247607409254
-      },
-      "ImomuPoisonExStage::stage_change::imomu_01::raw": {
-        "x": 1620,
-        "y": 1100
-      },
-      "ImomuPoisonExStage::stage_change::imomu_02::raw": {
-        "x": 120,
-        "y": 120
-      },
-      "ImomuPoisonExStage::entrance::imomu_01::sub_near": {
-        "x": 433.45864639364305,
-        "y": 415.4135341813171
-      },
-      "ImomuPoisonExStage::entrance::imomu_02::sub_far": {
-        "x": 1207.8947449159757,
-        "y": 427.89473973978266
-      },
-      "JangoExStage::stage_change::ClashWorldMoonEX2::raw": {
-        "x": 1620,
-        "y": 1100
-      },
-      "JangoExStage::entrance::ClashWorldMoonEX2::sub_far": {
-        "x": 704.1176470588234,
-        "y": 488.23529411764696
-      },
-      "JangoExStage::entrance::ClashWorldMoonEX2::sub_near": {
-        "x": 693.6363579756462,
-        "y": 317.3283101028327
+        "y": 262.9404900816803
       },
       "ClashWorldHomeStage::stage_change::Start::raw": {
-        "x": 510,
-        "y": 2016
+        "x": 1114.45606271777,
+        "y": 879.5035220536755
       },
       "ClashWorldHomeStage::place::new_place": {
-        "x": 1771.8823529411766,
-        "y": 1295.5294117647059
+        "x": 700,
+        "y": 360
       },
       "ClashWorldHomeStage::place::new_place_2": {
-        "x": 889.1914316026542,
-        "y": 1701.5151581094306
+        "x": 905.8937009803063,
+        "y": 455.1006179911286
       },
       "ClashWorldHomeStage::place::new_place_3": {
-        "x": 659.1988537918166,
-        "y": 1882.347194455551
+        "x": 675.893533552198,
+        "y": 743.9501473756086
       },
       "moon:ClashWorldHomeStage:83:372": {
-        "x": 364,
-        "y": 630
+        "x": 710.5923344947735,
+        "y": 128.0046674445741
       },
       "moon:ClashWorldHomeStage:1144:373": {
-        "x": 628,
-        "y": 1062
+        "x": 511.95121951219505,
+        "y": 227.56126021003502
       },
       "moon:ClashWorldHomeStage:39:374": {
-        "x": 1526,
-        "y": 738
+        "x": 1269.8606271777003,
+        "y": 276.6627771295216
       },
       "moon:ClashWorldHomeStage:54:375": {
-        "x": 628,
-        "y": 738
+        "x": 1264.6341463414633,
+        "y": 121.14352392065344
       },
       "moon:ClashWorldHomeStage:71:376": {
-        "x": 628,
-        "y": 630
+        "x": 302.9268292682927,
+        "y": 107.56126021003502
       },
       "moon:ClashWorldHomeStage:111:377": {
-        "x": 2076.823529411765,
-        "y": 1263.4117647058822
+        "x": 1113.1010452961673,
+        "y": 477.78296382730457
       },
       "moon:ClashWorldHomeStage:142:378": {
-        "x": 100,
-        "y": 2314
+        "x": 566.3759588889421,
+        "y": 1033.9631402814143
       },
       "moon:ClashWorldHomeStage:492:379": {
-        "x": 1790,
-        "y": 954
+        "x": 297.70034843205576,
+        "y": 719.1365227537923
       },
       "moon:ClashWorldHomeStage:564:380": {
-        "x": 1526,
-        "y": 630
+        "x": 1651.3937282229965,
+        "y": 137.15285880980164
       },
       "moon:ClashWorldHomeStage:575:381": {
-        "x": 1834,
-        "y": 1488
+        "x": 255.8885017421603,
+        "y": 1100
       },
       "moon:ClashWorldHomeStage:701:382": {
-        "x": 628,
-        "y": 846
+        "x": 1295.9930313588852,
+        "y": 613.9323220536755
       },
       "moon:ClashWorldHomeStage:850:383": {
-        "x": 1522.5217391304348,
-        "y": 849.4782608695652
+        "x": 1343.0662020905925,
+        "y": 455.0525087514586
       },
       "moon:ClashWorldHomeStage:920:384": {
-        "x": 768,
-        "y": 1436
+        "x": 40,
+        "y": 700.8401400233372
       },
       "moon:ClashWorldHomeStage:1001:385": {
-        "x": 1166,
-        "y": 1434
+        "x": 1003.3449477351917,
+        "y": 263.08051341890314
       },
       "moon:ClashWorldHomeStage:70:386": {
-        "x": 364,
-        "y": 954
+        "x": 40,
+        "y": 40
       },
       "moon:ClashWorldHomeStage:570:387": {
-        "x": 100,
-        "y": 1436
+        "x": 240.20905923344947,
+        "y": 820.8401400233372
       },
       "moon:ClashWorldHomeStage:595:388": {
-        "x": 938.8235294117644,
-        "y": 1921.5294117647059
+        "x": 120,
+        "y": 921.3302217036173
       },
       "moon:ClashWorldHomeStage:2599:390": {
-        "x": 1526,
-        "y": 1062
+        "x": 1661.9512195121952,
+        "y": 40
       },
       "moon:ClashWorldHomeStage:616:392": {
-        "x": 364,
-        "y": 738
+        "x": 1526.02787456446,
+        "y": 627.514585764294
       },
       "moon:ClashWorldHomeStage:2560:393": {
-        "x": 364,
-        "y": 1062
+        "x": 1045.226480836237,
+        "y": 40
       },
       "moon:ClashWorldHomeStage:2620:394": {
-        "x": 1166,
-        "y": 1542
+        "x": 1322.2299651567944,
+        "y": 1028.821470245041
       },
       "moon:ClashWorldHomeStage:609:395": {
-        "x": 1526,
-        "y": 954
+        "x": 1593.2654355400696,
+        "y": 424.43893768961493
       },
       "moon:ClashWorldHomeStage:615:396": {
-        "x": 628,
-        "y": 954
-      },
-      "moon:ClashWorldShopStage:19:398": {
-        "x": 1252.779728297898,
-        "y": 464.16083480280156
-      },
-      "moon:ImomuPoisonExStage:3970:399": {
-        "x": 845.0000068231633,
-        "y": 261.53846153846155
-      },
-      "moon:ImomuPoisonExStage:4857:400": {
-        "x": 838.4210452759365,
-        "y": 605.4210535107887
-      },
-      "moon:JangoExStage:211:491": {
-        "x": 1080.4510559235036,
-        "y": 169.36931556524206
-      },
-      "moon:JangoExStage:226:492": {
-        "x": 1112.1875082497454,
-        "y": 463.75000334799876
+        "x": 726.3066202090592,
+        "y": 250.29171528588097
       },
       "moon:ClashWorldHomeStage:2774:832": {
-        "x": 364,
-        "y": 846
+        "x": 1724.5644599303137,
+        "y": 923.8973162193699
       },
       "moon:ClashWorldHomeStage:2833:855": {
-        "x": 1790,
-        "y": 846
+        "x": 809.8954703832752,
+        "y": 827.7012835472578
       },
       "moon:ClashWorldHomeStage:2862:897": {
-        "x": 1790,
-        "y": 738
+        "x": 1724.5644599303137,
+        "y": 1043.89731621937
       },
       "moon:ClashWorldHomeStage:2981:942": {
-        "x": 2054,
-        "y": 846
+        "x": 1996.4111498257842,
+        "y": 160.02333722287048
       },
       "moon:ClashWorldHomeStage:2921:943": {
-        "x": 1790,
-        "y": 630
+        "x": 1996.4111498257842,
+        "y": 480
       },
       "moon:ClashWorldHomeStage:3283:1075": {
-        "x": 100,
-        "y": 846
+        "x": 882.9965156794424,
+        "y": 937.6196032672112
       },
       "moon:ClashWorldHomeStage:3284:1077": {
-        "x": 1790,
-        "y": 1062
+        "x": 1484.1114982578397,
+        "y": 822.193698949825
       }
     }
   }

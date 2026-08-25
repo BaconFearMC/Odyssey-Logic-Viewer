@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kingdom": "Seaside Kingdom",
-  "savedAt": "2026-07-16T19:55:22.731Z",
+  "savedAt": "2026-08-24T19:34:05.127Z",
   "workspace": {
-    "schemaVersion": 1,
-    "loadedAt": "2026-06-04T06:06:49.078Z",
+    "schemaVersion": 2,
+    "loadedAt": "2026-08-24T19:24:13.810Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -135,6 +135,23 @@
         "source_archive",
         "source_file",
         "notes"
+      ],
+      "captureGates": [
+        "gate_id",
+        "kingdom",
+        "logic_stage",
+        "edge_id",
+        "source_capture_token",
+        "replacement_capture_token",
+        "difficulty",
+        "match_mode",
+        "minimum_count",
+        "notes"
+      ],
+      "captureGateObjects": [
+        "gate_id",
+        "placement_stage",
+        "object_id"
       ]
     },
     "logicNodes": [
@@ -2207,6 +2224,42 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SeaWorldHomeStage::place::new_place_4",
+        "kingdom": "Seaside Kingdom",
+        "stage": "SeaWorldHomeStage",
+        "stage_display_name": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "On the Cliff Overlooking the Beach Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SeaWorldHomeStage::place::new_place_5",
+        "kingdom": "Seaside Kingdom",
+        "stage": "SeaWorldHomeStage",
+        "stage_display_name": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Seed Moons",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2276,13 +2329,13 @@
         "area_scope": "subarea",
         "from_node_id": "ReflectBombExStage::entrance::SeaWorldMoonEX1a::sub_near",
         "to_node_id": "ReflectBombExStage::entrance::SeaWorldMoonEX1b::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "Tsukkun | SingleJump",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -2939,7 +2992,7 @@
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "advanced",
         "option_scenarios": "",
         "bidirectional": "true",
         "source": "editor",
@@ -2985,7 +3038,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
+        "option_scenarios": "2,3,4,5",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor."
@@ -3321,21 +3374,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0338",
-        "kingdom": "Seaside Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "SeaWorldUnderGlassZone::checkpoint::obj153",
-        "to_node_id": "SeaWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0339",
         "kingdom": "Seaside Kingdom",
         "area_scope": "overworld",
@@ -3379,6 +3417,96 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0375",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::start",
+        "to_node_id": "SeaWorldHomeStage::place::new_place_4",
+        "requirement_expr": "Hosui | (Vault & Dive & WallJump & NeutralThrow) | (UpThrow & Dive & GroundPoundJump & WallJump & Vault) | (UpThrow & Dive & SideFlip & Vault & WallJump) | (UpThrow & Dive & Backflip & Vault & WallJump) | (TripleJump & NeutralThrow & Vault & WallJump & LedgeGrab)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;expert;expert;expert;expert",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0376",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::place::new_place",
+        "to_node_id": "SeaWorldHomeStage::place::new_place_4",
+        "requirement_expr": "Kakku",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0615",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
+        "to_node_id": "SeaWorldHomeStage::place::new_place_5",
+        "requirement_expr": "Hosui | KingdomAccess_Seaside | (Vault & WallJump & NeutralThrow) | Dive | (Backflip & WallJump & NeutralThrow) | (Backflip & Vault & NeutralThrow) | (GroundPoundJump & Vault & NeutralThrow) | (GroundPoundJump & Vault & UpThrow) | (GroundPoundJump & WallJump & HammerBros) | (SideFlip & WallJump & NeutralThrow) | (SideFlip & Vault & NeutralThrow) | (SideFlip & Vault & UpThrow) | (Backflip & Vault & UpThrow) | (Spin & Vault & NeutralThrow) | (Spin & Vault & UpThrow) | (Spin & WallJump & NeutralThrow) | (TripleJump & Vault & NeutralThrow) | (TripleJump & Vault & UpThrow) | (TripleJump & WallJump & NeutralThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0625",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_4",
+        "to_node_id": "SeaWorldHomeStage::place::new_place",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0376.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0338",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::start",
+        "to_node_id": "SeaWorldHomeStage::stage_change::Go::raw",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0707",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::stage_change::Go::raw",
+        "to_node_id": "SeaWorldHomeStage::start",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0338.",
+        "option_scenarios": "1,2,3,4,5"
       }
     ],
     "moonAccess": [
@@ -3395,7 +3523,7 @@
         "flags": "ShineFlag_Story | ShineFlag_Multi",
         "from_node_id": "SeaWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "Hosui",
+        "requirement_expr": "Hosui | KingdomAccess_Seaside",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -3428,7 +3556,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SeaWorldHomeStage:1277:437",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4,5;2,3,4,5"
       },
       {
         "moon_id": "SeaWorldHomeStage:382:438",
@@ -3969,7 +4097,7 @@
         "obj_id": "1558",
         "uid": "449",
         "flags": "ShineFlag_None",
-        "from_node_id": "SeaWorldHomeStage::place::new_place",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_4",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Seaside",
@@ -4002,9 +4130,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "浜辺を臨む ガケの上",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "SeaWorldHomeStage:1558:449",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "SeaWorldHomeStage:1558:449"
       },
       {
         "moon_id": "SeaWorldHomeStage:2097:450",
@@ -4019,7 +4147,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SeaWorldHomeStage::checkpoint::obj2264",
         "state_requirement_expr": "",
-        "requirement_expr": "(DownThrow & NeutralThrow) | GroundPound | Pukupuku",
+        "requirement_expr": "DownThrow | GroundPound | Pukupuku | NeutralThrow",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -4113,7 +4241,7 @@
         "obj_id": "2248",
         "uid": "452",
         "flags": "ShineFlag_None",
-        "from_node_id": "SeaWorldHomeStage::checkpoint::obj2264",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_3",
         "state_requirement_expr": "",
         "requirement_expr": "Hosui",
         "world_peace_token": "WorldPeace_Seaside",
@@ -4595,7 +4723,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SeaWorld2DLargeZone::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Crouch",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -5411,7 +5539,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "ReflectBombExStage::entrance::SeaWorldMoonEX1a::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Tsukkun | SingleJump",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -5443,7 +5571,7 @@
         "shine_info_scenario_name": "突いて！ 転がして！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "ReflectBombExStage:2157:487",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": "1,2,3,4,5"
       },
       {
@@ -6323,7 +6451,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
         "state_requirement_expr": "",
-        "requirement_expr": "(GroundPound & KingdomAccess_Metro)",
+        "requirement_expr": "(GroundPound & KingdomAccess_Metro & @CityWorldHomeStage::checkpoint::obj3994)",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -6369,7 +6497,7 @@
         "obj_id": "1831",
         "uid": "1103",
         "flags": "ShineFlag_None",
-        "from_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_5",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Seaside",
@@ -6417,7 +6545,7 @@
         "obj_id": "1973",
         "uid": "1104",
         "flags": "ShineFlag_None",
-        "from_node_id": "SeaWorldHomeStage::start",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_5",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Seaside",
@@ -6465,7 +6593,7 @@
         "obj_id": "2225",
         "uid": "1105",
         "flags": "ShineFlag_None",
-        "from_node_id": "SeaWorldHomeStage::start",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_5",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Seaside",
@@ -6513,7 +6641,7 @@
         "obj_id": "3104",
         "uid": "1106",
         "flags": "ShineFlag_None",
-        "from_node_id": "SeaWorldHomeStage::start",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_5",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Seaside",
@@ -8327,6 +8455,66 @@
         "can_start_with_seed": "false",
         "aliases": "Swing",
         "notes": ""
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       }
     ],
     "rooms": [
@@ -9306,6 +9494,8 @@
         "notes": ""
       }
     ],
+    "captureGates": [],
+    "captureGateObjects": [],
     "nodePositions": {
       "CloudExStage::stage_change::SeaWorldEX2::raw": {
         "x": 308.7651714879611,
@@ -9456,8 +9646,8 @@
         "y": 5314
       },
       "SeaWorldHomeStage::stage_change::Go::raw": {
-        "x": 996.1630161830357,
-        "y": 4837.183611188617
+        "x": 457.6348353794642,
+        "y": 0
       },
       "SeaWorldHomeStage::stage_change::SeaWorldEX2::raw": {
         "x": 1330,
@@ -9679,6 +9869,22 @@
         "x": 1740,
         "y": 6202
       },
+      "SeaWorldHomeStage::place::new_place_2": {
+        "x": 1055.9958519247234,
+        "y": 338.04844596388466
+      },
+      "SeaWorldHomeStage::place::new_place_3": {
+        "x": 807.8091799219796,
+        "y": 950.6637565442273
+      },
+      "SeaWorldHomeStage::place::new_place_4": {
+        "x": 3.921556659773387,
+        "y": 609.2156264361213
+      },
+      "SeaWorldHomeStage::place::new_place_5": {
+        "x": 2034.9166853365982,
+        "y": 539.5022561484003
+      },
       "moon:SeaWorldHomeStage:1277:437": {
         "x": 97.3033570707514,
         "y": 206.20223004630444
@@ -9728,20 +9934,20 @@
         "y": 3182
       },
       "moon:SeaWorldHomeStage:1558:449": {
-        "x": 1904,
-        "y": 3182
+        "x": 0,
+        "y": 1030.2185454480657
       },
       "moon:SeaWorldHomeStage:2097:450": {
-        "x": 1396,
-        "y": 1630
+        "x": 1399.7406788104174,
+        "y": 1426.7581395340837
       },
       "moon:SeaWorldHomeStage:2112:451": {
         "x": 998,
         "y": 1684
       },
       "moon:SeaWorldHomeStage:2248:452": {
-        "x": 2064,
-        "y": 1684
+        "x": 934.4320072757046,
+        "y": 1205.5947554544814
       },
       "moon:SeaWorldHomeStage:2268:453": {
         "x": 100,
@@ -9772,16 +9978,16 @@
         "y": 1012
       },
       "moon:SeaWorldHomeStage:1955:464": {
-        "x": 100,
-        "y": 2732
+        "x": 32.66828369681272,
+        "y": 2804.319232241041
       },
       "moon:SeaWorld2DLargeZone:13:466": {
         "x": 1506,
         "y": 2784
       },
       "moon:SeaWorld2DLargeZone:365:467": {
-        "x": 838,
-        "y": 2730
+        "x": 960.9235461572238,
+        "y": 2710.0665062304115
       },
       "moon:SeaWorld2DSmallZone:18:468": {
         "x": 1904,
@@ -9848,8 +10054,8 @@
         "y": 168.33915558603968
       },
       "moon:ReflectBombExStage:2157:487": {
-        "x": 1105.526310947628,
-        "y": 720.0000056467558
+        "x": 1108.0199852025003,
+        "y": 729.975037522463
       },
       "moon:ReflectBombExStage:2083:488": {
         "x": 1116.4285714285716,
@@ -9928,28 +10134,28 @@
         "y": 796
       },
       "moon:SeaWorldHomeStage:1831:1103": {
-        "x": 1166,
-        "y": 1138.6345479574547
+        "x": 2395.43193125701,
+        "y": 409.86089729080237
       },
       "moon:SeaWorldHomeStage:1973:1104": {
-        "x": 100,
-        "y": 316
+        "x": 2421.568687289369,
+        "y": 523.0588953354779
       },
       "moon:SeaWorldHomeStage:2225:1105": {
-        "x": 100,
-        "y": 424
+        "x": 2104.3602590665505,
+        "y": 197.45290584950877
       },
       "moon:SeaWorldHomeStage:3104:1106": {
-        "x": 768,
-        "y": 370
+        "x": 2309.668413136242,
+        "y": 288.11241182864165
       },
       "moon:SeaWorldUtsuboCaveStage:681:1107": {
         "x": 656.5384549122944,
         "y": 173.49771883781807
       },
       "moon:SeaWorldHomeStage:3153:1120": {
-        "x": 2294,
-        "y": 904
+        "x": 2325.172100182667,
+        "y": 899.0124840621464
       },
       "moon:SeaWorldVibrationStage:15:1135": {
         "x": 1213.7500091677066,
@@ -9962,14 +10168,6 @@
       "moon:SeaWorldHomeStage:4391:1163": {
         "x": 998,
         "y": 2008
-      },
-      "SeaWorldHomeStage::place::new_place_2": {
-        "x": 1055.9958519247234,
-        "y": 338.04844596388466
-      },
-      "SeaWorldHomeStage::place::new_place_3": {
-        "x": 706.4803077781593,
-        "y": 917.4411554022149
       }
     }
   }

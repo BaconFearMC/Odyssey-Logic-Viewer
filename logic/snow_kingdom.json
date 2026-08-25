@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kingdom": "Snow Kingdom",
-  "savedAt": "2026-07-14T23:26:41.193Z",
+  "savedAt": "2026-08-24T17:44:08.341Z",
   "workspace": {
-    "schemaVersion": 1,
-    "loadedAt": "2026-06-04T06:06:49.078Z",
+    "schemaVersion": 2,
+    "loadedAt": "2026-08-24T17:29:03.123Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -135,6 +135,23 @@
         "source_archive",
         "source_file",
         "notes"
+      ],
+      "captureGates": [
+        "gate_id",
+        "kingdom",
+        "logic_stage",
+        "edge_id",
+        "source_capture_token",
+        "replacement_capture_token",
+        "difficulty",
+        "match_mode",
+        "minimum_count",
+        "notes"
+      ],
+      "captureGateObjects": [
+        "gate_id",
+        "placement_stage",
+        "object_id"
       ]
     },
     "logicNodes": [
@@ -214,7 +231,7 @@
         "node_id": "IceWalkerExStage::stage_change::FigureWalker::raw",
         "kingdom": "Snow Kingdom",
         "stage": "IceWalkerExStage",
-        "stage_display_name": "Shards in the Cold Room",
+        "stage_display_name": "Koopa Walking in Snow",
         "area_scope": "subarea",
         "node_type": "stage_change",
         "source": "StageData",
@@ -232,7 +249,7 @@
         "node_id": "IceWalkerExStage::start",
         "kingdom": "Snow Kingdom",
         "stage": "IceWalkerExStage",
-        "stage_display_name": "Shards in the Cold Room",
+        "stage_display_name": "Koopa Walking in Snow",
         "area_scope": "subarea",
         "node_type": "stage_start",
         "source": "generated",
@@ -250,7 +267,7 @@
         "node_id": "IceWalkerExStage::entrance::FigureWalker::sub_far",
         "kingdom": "Snow Kingdom",
         "stage": "IceWalkerExStage",
-        "stage_display_name": "Shards in the Cold Room",
+        "stage_display_name": "Koopa Walking in Snow",
         "area_scope": "subarea",
         "node_type": "substage_entrance",
         "source": "EntranceDB",
@@ -268,7 +285,7 @@
         "node_id": "IceWalkerExStage::entrance::FigureWalker::sub_near",
         "kingdom": "Snow Kingdom",
         "stage": "IceWalkerExStage",
-        "stage_display_name": "Shards in the Cold Room",
+        "stage_display_name": "Koopa Walking in Snow",
         "area_scope": "subarea",
         "node_type": "substage_entrance",
         "source": "EntranceDB",
@@ -4175,7 +4192,7 @@
         "moon_id": "IceWalkerExStage:18:877",
         "kingdom": "Snow Kingdom",
         "stage": "IceWalkerExStage",
-        "stage_display_name": "Shards in the Cold Room",
+        "stage_display_name": "Koopa Walking in Snow",
         "area_scope": "subarea",
         "moon_name": "Walking on Ice!",
         "runtime_shine_key": "IceWalkerExStage:18:877",
@@ -4223,7 +4240,7 @@
         "moon_id": "IceWalkerExStage:19:878",
         "kingdom": "Snow Kingdom",
         "stage": "IceWalkerExStage",
-        "stage_display_name": "Shards in the Cold Room",
+        "stage_display_name": "Koopa Walking in Snow",
         "area_scope": "subarea",
         "moon_name": "Even More Walking on Ice!",
         "runtime_shine_key": "IceWalkerExStage:19:878",
@@ -4712,7 +4729,7 @@
         "flags": "ShineFlag_Story | ShineFlag_Multi",
         "from_node_id": "SnowWorldLobby001Stage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "Yukimaru",
+        "requirement_expr": "Yukimaru | KingdomAccess_Snow",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -4745,7 +4762,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SnowWorldLobby001Stage:331:1020",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4,5;2,3,4,5"
       },
       {
         "moon_id": "SnowWorldCostumeStage:450:1030",
@@ -4952,7 +4969,7 @@
         "flags": "ShineFlag_Story",
         "from_node_id": "SnowWorldByugoZone::start",
         "state_requirement_expr": "",
-        "requirement_expr": "Byugo | Vault | Dive | TripleJump",
+        "requirement_expr": "Byugo | (Vault & NeutralThrow) | Dive | TripleJump",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -4983,7 +5000,7 @@
         "shine_info_object_name": "ステージスイッチ_全滅監視_全滅監視_全滅監視_全滅監視_全滅監視_全滅監視",
         "shine_info_scenario_name": "突風の関門",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced;advanced;advanced",
+        "difficulty": "casual;advanced;advanced;expert",
         "option_scenarios": "",
         "__editor_id": "SnowWorldTownStage:532:18"
       },
@@ -5368,7 +5385,7 @@
         "shine_info_scenario_name": "ツララを眺める高台",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "difficulty": "casual",
-        "option_scenarios": "",
+        "option_scenarios": "4,5",
         "__editor_id": "SnowWorldIcicleZone:412:699"
       },
       {
@@ -5416,7 +5433,7 @@
         "shine_info_scenario_name": "クレバスの水たまりで",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "difficulty": "casual",
-        "option_scenarios": "2,3,4,5",
+        "option_scenarios": "4,5",
         "__editor_id": "SnowWorldGabuzouZone:280:701"
       },
       {
@@ -5464,7 +5481,7 @@
         "shine_info_scenario_name": "氷上のジャンプチャレンジ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "difficulty": "casual",
-        "option_scenarios": "2,3,4,5",
+        "option_scenarios": "4,5",
         "__editor_id": "SnowWorldByugoZone:272:703"
       },
       {
@@ -5512,7 +5529,7 @@
         "shine_info_scenario_name": "氷の下を うごめくモノ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "difficulty": "casual",
-        "option_scenarios": "2,3,4,5",
+        "option_scenarios": "4,5",
         "__editor_id": "SnowWorldBalconyZone:281:704"
       },
       {
@@ -7244,6 +7261,66 @@
         "can_start_with_seed": "false",
         "aliases": "Swing",
         "notes": ""
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       }
     ],
     "rooms": [
@@ -7263,7 +7340,7 @@
       {
         "stage": "IceWalkerExStage",
         "kingdom": "Snow Kingdom",
-        "stage_display_name": "Shards in the Cold Room",
+        "stage_display_name": "Koopa Walking in Snow",
         "stage_start_node_id": "IceWalkerExStage::start",
         "area_scope": "subarea",
         "listed_in_stage_warp": "true",
@@ -7459,7 +7536,7 @@
       {
         "stage": "IceWalkerExStage",
         "kingdom": "Snow Kingdom",
-        "stage_display_name": "Shards in the Cold Room",
+        "stage_display_name": "Koopa Walking in Snow",
         "area_scope": "subarea",
         "scenario_no": "",
         "active_layers": "",
@@ -7709,6 +7786,8 @@
         "notes": "No ScenarioInfo.byml in archive."
       }
     ],
+    "captureGates": [],
+    "captureGateObjects": [],
     "nodePositions": {
       "ByugoPuzzleExStage::stage_change::ByugoPuzzle::raw": {
         "x": 100,
@@ -8207,8 +8286,8 @@
         "y": 1178
       },
       "moon:SnowWorldLobby001Stage:331:1020": {
-        "x": 100,
-        "y": 478
+        "x": 17.22095768626143,
+        "y": 479.47820449456935
       },
       "moon:SnowWorldCostumeStage:450:1030": {
         "x": 1620,
