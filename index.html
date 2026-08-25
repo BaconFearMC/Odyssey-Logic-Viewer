@@ -44,6 +44,22 @@
     --danger: #F80026;
     --shadow: 0 2px 6px rgba(0,0,0,0.12);
     --shadow-hover: 0 6px 16px rgba(0,0,0,0.16);
+    /* Difficulty tiers — one alternate path (OR-branch) through a moon's
+       requirement_expr can be casual, advanced, expert, or (rarely) a
+       glitched/OOB trick. Each tier gets its own color so a card never
+       makes an "advanced" route look interchangeable with a "casual" one. */
+    --tier-casual: #1f8a4c;
+    --tier-casual-bg: #e7f5ec;
+    --tier-casual-border: #c6e6d2;
+    --tier-advanced: #a5680f;
+    --tier-advanced-bg: #fdf1de;
+    --tier-advanced-border: #f0d9ac;
+    --tier-expert: #c9302c;
+    --tier-expert-bg: #fbe7e6;
+    --tier-expert-border: #f2c4c2;
+    --tier-glitched: #7a4fc9;
+    --tier-glitched-bg: #efe8fb;
+    --tier-glitched-border: #d9c8f5;
   }
   html[data-theme="dark"]{
     --bg: #1b1c1f;
@@ -68,6 +84,18 @@
     --danger: #ff4d5e;
     --shadow: 0 2px 6px rgba(0,0,0,0.35);
     --shadow-hover: 0 6px 16px rgba(0,0,0,0.45);
+    --tier-casual: #4fd68a;
+    --tier-casual-bg: #1e3327;
+    --tier-casual-border: #2b4a37;
+    --tier-advanced: #e0a94a;
+    --tier-advanced-bg: #3a2e17;
+    --tier-advanced-border: #55431f;
+    --tier-expert: #ff6b6b;
+    --tier-expert-bg: #3a1f1f;
+    --tier-expert-border: #552b2b;
+    --tier-glitched: #b494f0;
+    --tier-glitched-bg: #2f2740;
+    --tier-glitched-border: #45355e;
   }
   *{box-sizing:border-box;}
   html{ transition: background 0.15s ease; }
@@ -265,6 +293,37 @@
     font-size:10px; color:var(--gold); font-weight:700;
     text-transform:uppercase; letter-spacing:0.5px;
   }
+  /* ---- Difficulty tier lanes -------------------------------------------
+     Each moon can be reached by several alternate routes (OR-branches),
+     and every route belongs to exactly one difficulty tier: Casual,
+     Advanced, or Expert (plus the rare Glitched trick). Instead of mixing
+     every route into one "or"-chain, each tier that actually has a route
+     gets its own labeled lane, colored consistently everywhere it shows
+     up so the three (or four) tiers stay visually distinct at a glance. */
+  .tier-stack{ display:flex; flex-direction:column; gap:6px; width:100%; }
+  .tier-lane{ display:flex; align-items:flex-start; gap:8px; }
+  .tier-pill{
+    flex:0 0 auto;
+    font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;
+    padding:3px 7px; border-radius:20px; border:1px solid;
+    line-height:1.4; white-space:nowrap; margin-top:2px;
+  }
+  .tier-lane.casual .tier-pill{ color:var(--tier-casual); background:var(--tier-casual-bg); border-color:var(--tier-casual-border); }
+  .tier-lane.advanced .tier-pill{ color:var(--tier-advanced); background:var(--tier-advanced-bg); border-color:var(--tier-advanced-border); }
+  .tier-lane.expert .tier-pill{ color:var(--tier-expert); background:var(--tier-expert-bg); border-color:var(--tier-expert-border); }
+  .tier-lane.glitched .tier-pill{ color:var(--tier-glitched); background:var(--tier-glitched-bg); border-color:var(--tier-glitched-border); }
+  .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); }
+  .tier-options{
+    display:flex; align-items:center; gap:6px; flex-wrap:wrap; max-width:100%; min-width:0;
+  }
+  .tier-lane.casual .option-chip{ border-color:var(--tier-casual-border); }
+  .tier-lane.advanced .option-chip{ border-color:var(--tier-advanced-border); }
+  .tier-lane.expert .option-chip{ border-color:var(--tier-expert-border); }
+  .tier-lane.glitched .option-chip{ border-color:var(--tier-glitched-border); }
+  .tier-lane .or-sep.casual{ color:var(--tier-casual); }
+  .tier-lane .or-sep.advanced{ color:var(--tier-advanced); }
+  .tier-lane .or-sep.expert{ color:var(--tier-expert); }
+  .tier-lane .or-sep.glitched{ color:var(--tier-glitched); }
   .option-chip{
     display:flex; align-items:center; gap:3px;
     flex-wrap:wrap;
@@ -893,10 +952,37 @@ function buildCheckpointLookup(nodes, edges){
    MOON PARSER — turns one moonAccess row into the render
    shape: { name, orGroups, subarea, badges, checkpoint }
    ========================================================= */
+/* Known difficulty tiers, in the fixed display order every moon card uses.
+   "unrated" is a catch-all for rows whose difficulty column doesn't line
+   up 1:1 with its OR-branches (a handful of edge cases in raw exports) —
+   those routes still render, just without a tier label attached. */
+const TIER_ORDER = ["casual", "advanced", "expert", "glitched", "unrated"];
+const TIER_LABEL = { casual:"Casual", advanced:"Advanced", expert:"Expert", glitched:"Glitched", unrated:"Unrated" };
+
+/* Splits row.difficulty ("casual;advanced;expert") and pairs each entry,
+   in order, with the matching OR-branch in `dnf` (both are built by
+   walking the requirement_expr left-to-right, so branch i <-> tier i).
+   If the counts don't match — a rare data-entry gap — every branch is
+   dropped into "unrated" instead of guessing which tier it belongs to. */
+function tiersForGroups(dnf, difficultyField){
+  const raw = (difficultyField || "").split(";").map(s => s.trim().toLowerCase()).filter(Boolean);
+  if(raw.length !== dnf.length){
+    return dnf.map(() => "unrated");
+  }
+  return raw.map(t => TIER_ORDER.includes(t) ? t : "unrated");
+}
+
 function parseMoon(row, nodeMap, checkpointLookup){
   let dnf = exprToDNF(row.requirement_expr);
+  let tiers = tiersForGroups(dnf, row.difficulty);
   if(row.state_requirement_expr && row.state_requirement_expr.trim()){
-    dnf = crossProduct(dnf, exprToDNF(row.state_requirement_expr));
+    const stateDnf = exprToDNF(row.state_requirement_expr);
+    // Every original branch gets crossed with every state-requirement
+    // branch; its tier label rides along unchanged to each of those copies.
+    const expandedTiers = [];
+    dnf.forEach((_, i) => stateDnf.forEach(() => expandedTiers.push(tiers[i])));
+    dnf = crossProduct(dnf, stateDnf);
+    tiers = expandedTiers;
   }
 
   const badges = [];
@@ -936,13 +1022,26 @@ function parseMoon(row, nodeMap, checkpointLookup){
 
   if(/^Secret Path/i.test(row.moon_name)){
     dnf = [["PaintingAccess"]];
+    tiers = ["casual"];
   }
 
   const isFree = dnf.every(g => g.length === 0);
   const hintIdx = parseInt(row.shine_info_hint_idx, 10);
+
+  // Bucket every OR-branch into its tier lane, preserving left-to-right
+  // order within a lane. A "Free" moon has no branches/tiers at all.
+  const tierLanes = [];
+  if(!isFree){
+    TIER_ORDER.forEach(tierKey => {
+      const groups = dnf.filter((_, i) => tiers[i] === tierKey);
+      if(groups.length) tierLanes.push({ tier: tierKey, label: TIER_LABEL[tierKey], groups });
+    });
+  }
+
   return {
     name: row.moon_name,
     orGroups: isFree ? [] : dnf,
+    tierLanes,
     subarea,
     checkpoint,
     badges,
@@ -1804,6 +1903,15 @@ async function tryAutoload(){
       loaded++;
     }catch(err){ /* not reachable yet (file:// or missing file) — skip */ }
   }
+  // Optional embedded-data fallback, only used when `logic/*.json` isn't
+  // reachable (e.g. this preview build, opened without a server). Harmless
+  // no-op in the real deployment, where window.__EMBEDDED_KINGDOMS is never set.
+  if(loaded === 0 && window.__EMBEDDED_KINGDOMS){
+    window.__EMBEDDED_KINGDOMS.forEach(({data, file, name}) => {
+      loadKingdomFile(data, file, name);
+      loaded++;
+    });
+  }
   if(loaded > 0){
     setStatus(`Auto-loaded ${loaded} kingdom file${loaded===1?"":"s"} from /logic/`);
     rebuildKingdomTabs();
@@ -1932,21 +2040,43 @@ function buildMoonCard(moon){
     card.appendChild(info);
   }
 
-  const row = document.createElement("div");
-  row.className = "options-row";
-
-  if(!moon.orGroups || moon.orGroups.length === 0){
+  if(!moon.tierLanes || moon.tierLanes.length === 0){
+    const row = document.createElement("div");
+    row.className = "options-row";
     const free = document.createElement("span");
     free.className = "free-tag";
     free.textContent = "Free";
     row.appendChild(free);
-  } else {
-    moon.orGroups.forEach((andGroup, i)=>{
+    card.appendChild(row);
+    return card;
+  }
+
+  // One labeled lane per tier that actually has a route (Casual / Advanced /
+  // Expert / the rare Glitched trick). Multiple routes *within* the same
+  // tier still chain together with "or"; different tiers never mix in the
+  // same lane, so it's always clear which routes are casual vs. which
+  // require advanced or expert tech.
+  const stack = document.createElement("div");
+  stack.className = "tier-stack";
+
+  moon.tierLanes.forEach(lane => {
+    const laneEl = document.createElement("div");
+    laneEl.className = "tier-lane " + lane.tier;
+
+    const pill = document.createElement("span");
+    pill.className = "tier-pill";
+    pill.textContent = lane.label;
+    laneEl.appendChild(pill);
+
+    const optsEl = document.createElement("div");
+    optsEl.className = "tier-options";
+
+    lane.groups.forEach((andGroup, i)=>{
       if(i > 0){
         const sep = document.createElement("span");
-        sep.className = "or-sep";
+        sep.className = "or-sep " + lane.tier;
         sep.textContent = "or";
-        row.appendChild(sep);
+        optsEl.appendChild(sep);
       }
       const chip = document.createElement("div");
       chip.className = "option-chip";
@@ -1959,11 +2089,14 @@ function buildMoonCard(moon){
         }
         chip.appendChild(makeIcon(token));
       });
-      row.appendChild(chip);
+      optsEl.appendChild(chip);
     });
-  }
 
-  card.appendChild(row);
+    laneEl.appendChild(optsEl);
+    stack.appendChild(laneEl);
+  });
+
+  card.appendChild(stack);
   return card;
 }
 
