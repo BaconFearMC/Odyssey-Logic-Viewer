@@ -105,6 +105,12 @@
     border-color:var(--red);
     color:#fff;
   }
+  #glitchToggle{ right:24px; top:66px; }
+  #glitchToggle.active{
+    background:var(--tier-glitched);
+    border-color:var(--tier-glitched);
+    color:#fff;
+  }
 
   h1{
     font-family: "FontDB", 'Segoe UI', system-ui, sans-serif;
@@ -521,6 +527,13 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0Z"/></svg>
   </span>
   <span>UNMARKED (Bug Fixing)</span>
+</button>
+
+<button class="corner-btn" id="glitchToggle" type="button" aria-label="Cycle Glitched logic filter">
+  <span class="icon-svg" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v4M15 3v4M4 11h16M6 11v6a2 2 0 0 0 2 2h1M18 11v6a2 2 0 0 1-2 2h-1M10 19h4"/></svg>
+  </span>
+  <span id="glitchToggleLabel">Glitched: All</span>
 </button>
 
 <h1><img class="icon-svg" src="icon/ui-star.png" alt="" onerror="this.style.display='none'">Power Moon Requirement Charts</h1>
@@ -2020,6 +2033,10 @@ function isMoonUnmarked(moon){
   return (moon.tierLanes || []).some(lane => lane.tier === "unrated");
 }
 
+function hasGlitchedLane(moon){
+  return (moon.tierLanes || []).some(lane => lane.tier === "glitched");
+}
+
 function buildMoonCard(moon){
   const card = document.createElement("div");
   card.className = "moon-card";
@@ -2170,6 +2187,14 @@ let currentKingdomIndex = 0;
 // clicking the button itself toggles it — both handled below.
 let unmarkedMode = false;
 
+// Glitched-logic filter cycles through three states on the current kingdom:
+// "all" (default) -> "hide" (no Glitched-lane moons) -> "only" (only
+// Glitched-lane moons) -> back to "all". Same reset-on-navigate rule as
+// unmarkedMode.
+const GLITCH_MODES = ["all", "hide", "only"];
+const GLITCH_LABELS = { all: "Glitched: All", hide: "Glitched: Hidden", only: "Glitched: Only" };
+let glitchMode = "all";
+
 // Renders the grid for whatever kingdom/unmarkedMode is currently active,
 // without touching the pager name/icon/dots. Used by both kingdom
 // navigation and the UNMARKED toggle.
@@ -2181,11 +2206,21 @@ function renderGrid(){
 
   let moons = KINGDOMS[name] || [];
   if(unmarkedMode) moons = moons.filter(isMoonUnmarked);
+  if(glitchMode === "hide") moons = moons.filter(m => !hasGlitchedLane(m));
+  else if(glitchMode === "only") moons = moons.filter(hasGlitchedLane);
 
-  if(unmarkedMode && moons.length === 0){
+  const filtering = unmarkedMode || glitchMode !== "all";
+
+  if(filtering && moons.length === 0){
     grid.style.display = "none";
     emptyState.style.display = "block";
-    emptyState.textContent = "No Marked Moons! This kingdom has fully completed levels of Logic for All Moons!";
+    if(unmarkedMode){
+      emptyState.textContent = "No Marked Moons! This kingdom has fully completed levels of Logic for All Moons!";
+    } else if(glitchMode === "only"){
+      emptyState.textContent = "No Glitched-logic moons in this kingdom!";
+    } else {
+      emptyState.textContent = "No moons left to show with this filter.";
+    }
   } else {
     grid.style.display = "";
     emptyState.style.display = "none";
@@ -2197,6 +2232,13 @@ function renderKingdom(name){
   unmarkedMode = false;
   const unmarkedBtn = document.getElementById("unmarkedToggle");
   if(unmarkedBtn) unmarkedBtn.classList.remove("active");
+
+  glitchMode = "all";
+  const glitchBtn = document.getElementById("glitchToggle");
+  if(glitchBtn){
+    glitchBtn.classList.remove("active");
+    document.getElementById("glitchToggleLabel").textContent = GLITCH_LABELS.all;
+  }
 
   currentKingdomIndex = KINGDOM_ORDER.indexOf(name);
   renderGrid();
@@ -2242,6 +2284,15 @@ document.getElementById("pagerNext").onclick = () => goToRelativeKingdom(1);
 document.getElementById("unmarkedToggle").addEventListener("click", () => {
   unmarkedMode = !unmarkedMode;
   document.getElementById("unmarkedToggle").classList.toggle("active", unmarkedMode);
+  renderGrid();
+});
+
+document.getElementById("glitchToggle").addEventListener("click", () => {
+  const idx = GLITCH_MODES.indexOf(glitchMode);
+  glitchMode = GLITCH_MODES[(idx + 1) % GLITCH_MODES.length];
+  const btn = document.getElementById("glitchToggle");
+  btn.classList.toggle("active", glitchMode !== "all");
+  document.getElementById("glitchToggleLabel").textContent = GLITCH_LABELS[glitchMode];
   renderGrid();
 });
 
