@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Sand Kingdom",
-  "savedAt": "2026-08-24T19:27:51.378Z",
+  "savedAt": "2026-08-28T00:41:19.712Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T19:24:13.810Z",
+    "loadedAt": "2026-08-24T01:43:27.351Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2118,6 +2118,24 @@
         "notes": "Raw UnitConfigName=DokanStageChange2D."
       },
       {
+        "node_id": "SandWorldPyramid000Stage::entrance::pyramid02::sub_far",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldPyramid000Stage",
+        "stage_display_name": "Inverted Pyramid: Lower Interior",
+        "area_scope": "subarea",
+        "node_type": "substage_entrance",
+        "source": "StageData",
+        "entrance_id": "pyramid02",
+        "side": "sub_far",
+        "obj_id": "obj76",
+        "display_name": "Substage far side: pyramid02",
+        "x": "7000.000",
+        "y": "2900.000",
+        "z": "-4600.000",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "notes": "One-way transition from the lower interior to the Sand Kingdom overworld 2D section. StageData anchor UnitConfigName=DokanStageChange2D."
+      },
+      {
         "node_id": "SandWorldPyramid000Stage::start",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldPyramid000Stage",
@@ -2152,6 +2170,24 @@
         "z": "-19850.000",
         "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
         "notes": "Raw UnitConfigName=DokanStageChange2D."
+      },
+      {
+        "node_id": "SandWorldPyramid001Stage::entrance::pyramid03::sub_near",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldPyramid001Stage",
+        "stage_display_name": "Inverted Pyramid: Upper Interior",
+        "area_scope": "subarea",
+        "node_type": "substage_entrance",
+        "source": "StageData",
+        "entrance_id": "pyramid03",
+        "side": "sub_near",
+        "obj_id": "obj112",
+        "display_name": "Substage near side: pyramid03",
+        "x": "-850.000",
+        "y": "1350.000",
+        "z": "-19850.000",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "notes": "One-way transition from the Sand Kingdom overworld 2D section into the upper interior. StageData anchor UnitConfigName=DokanStageChange2D."
       },
       {
         "node_id": "SandWorldPyramid001Stage::stage_change::pyramid04::raw",
@@ -3731,6 +3767,474 @@
         "side": "",
         "obj_id": "",
         "display_name": "Bullet Bill Side Path Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_7",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 1,2,3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_8",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 4,5,6",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_9",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 10,11,12",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_10",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 13,14,15",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_11",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 16,17,18,19",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_12",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 20,21,22",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_13",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 23,24,25",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_14",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 26,27,28",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_15",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 29,30,31",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_16",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 32,33,34",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_17",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 35,36,37",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_18",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 38,39,40",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_19",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 41,42",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_20",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 43,44,45,46,47,48",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_21",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 49,50,51",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_22",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 60,61,62,63",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldHomeStage::place::new_place_23",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sand Kingdom Purples 7,8,9",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldKillerExStage::place::new_place_3",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldKillerExStage",
+        "stage_display_name": "Bullet Bill Maze",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Bullet Bill Maze Purples 1-6",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "MeganeLiftExStage::place::new_place",
+        "kingdom": "Sand Kingdom",
+        "stage": "MeganeLiftExStage",
+        "stage_display_name": "The Invisible Maze",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Invisible Maze Purples 1-4",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldSphinxExStage::place::new_place",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldSphinxExStage",
+        "stage_display_name": "Jaxi Driving",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Jaxi Drivingi Purples 1-8",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldPressExStage::place::new_place",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldPressExStage",
+        "stage_display_name": "Ice Cave",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Icy Cave Purples 1-4",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldRotateExStage::place::new_place_2",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldRotateExStage",
+        "stage_display_name": "Strange Neighborhood",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Strange Neighborhood Purples 1-4",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldUnderground000Stage::place::new_place_3",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldUnderground000Stage",
+        "stage_display_name": "Underground Ruins",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Underground Purples 1-3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldUnderground000Stage::place::new_place_4",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldUnderground000Stage",
+        "stage_display_name": "Underground Ruins",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Underground Purples 4-7",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldPyramid001Stage::place::new_place_2",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldPyramid001Stage",
+        "stage_display_name": "Inverted Pyramid: Upper Interior",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Inverted Pyramid 2D Purples 1-3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SandWorldUnderground000Stage::place::new_place_5",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldUnderground000Stage",
+        "stage_display_name": "Underground Ruins",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Underground Treasure Chest Free",
         "x": "",
         "y": "",
         "z": "",
@@ -5373,6 +5877,471 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0379.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0748",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj1511",
+        "to_node_id": "SandWorldHomeStage::place::new_place_7",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0749",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj99",
+        "to_node_id": "SandWorldHomeStage::place::new_place_8",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0750",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj98",
+        "to_node_id": "SandWorldHomeStage::place::new_place_9",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0751",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj98",
+        "to_node_id": "SandWorldHomeStage::place::new_place_10",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0752",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj98",
+        "to_node_id": "SandWorldHomeStage::place::new_place_11",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0753",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj1595",
+        "to_node_id": "SandWorldHomeStage::place::new_place_12",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0754",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj98",
+        "to_node_id": "SandWorldHomeStage::place::new_place_13",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0755",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::place::new_place_2",
+        "to_node_id": "SandWorldHomeStage::place::new_place_14",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0756",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj525",
+        "to_node_id": "SandWorldHomeStage::place::new_place_15",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0757",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
+        "to_node_id": "SandWorldHomeStage::place::new_place_16",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0758",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
+        "to_node_id": "SandWorldHomeStage::place::new_place_17",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0759",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
+        "to_node_id": "SandWorldHomeStage::place::new_place_18",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0760",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
+        "to_node_id": "SandWorldHomeStage::place::new_place_19",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0761",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
+        "to_node_id": "SandWorldHomeStage::place::new_place_20",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0765",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
+        "to_node_id": "SandWorldHomeStage::place::new_place_21",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0766",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj98",
+        "to_node_id": "SandWorldHomeStage::place::new_place_22",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0767",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
+        "to_node_id": "SandWorldHomeStage::place::new_place_23",
+        "requirement_expr": "",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0768",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldKillerExStage::place::new_place",
+        "to_node_id": "SandWorldKillerExStage::place::new_place_3",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0769",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldKillerExStage::entrance::doukutu1::sub_near",
+        "to_node_id": "SandWorldKillerExStage::place::new_place_3",
+        "requirement_expr": "Killer",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0770",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "MeganeLiftExStage::entrance::meganelift01::sub_near",
+        "to_node_id": "MeganeLiftExStage::place::new_place",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0771",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldSphinxExStage::entrance::aaa::sub_near",
+        "to_node_id": "SandWorldSphinxExStage::place::new_place",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0772",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldPressExStage::entrance::arijigoku::sub_near",
+        "to_node_id": "SandWorldPressExStage::place::new_place",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0773",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldRotateExStage::place::new_place",
+        "to_node_id": "SandWorldRotateExStage::place::new_place_2",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0774",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldUnderground000Stage::place::new_place",
+        "to_node_id": "SandWorldUnderground000Stage::place::new_place_3",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0775",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldUnderground000Stage::place::new_place",
+        "to_node_id": "SandWorldUnderground000Stage::place::new_place_4",
+        "requirement_expr": "NeutralThrow | SpinThrow | UpThrow | Kuribo | Killer",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;advanced;casual;casual;casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0776",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldPyramid000Stage::entrance::pyramid01::sub_near",
+        "to_node_id": "SandWorldPyramid000Stage::entrance::pyramid01::sub_far",
+        "requirement_expr": "Killer | (Vault & Dive & NeutralThrow) | NeutralThrow | Dive | (DownThrow & TripleJump) | (UpThrow & TripleJump) | LongJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;expert;expert;expert;expert;expert",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0777",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldPyramid001Stage::entrance::pyramid04::sub_near",
+        "to_node_id": "SandWorldPyramid001Stage::place::new_place",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0778",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldPyramid001Stage::place::new_place",
+        "to_node_id": "SandWorldPyramid001Stage::entrance::pyramid04::sub_far",
+        "requirement_expr": "Killer | (Vault & Dive & NeutralThrow) | (Dive & WallJump & NeutralThrow) | (DownThrow & Dive & Vault & WallJump) | (UpThrow & Dive & Vault & WallJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0779",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldPyramid001Stage::place::new_place",
+        "to_node_id": "SandWorldPyramid001Stage::place::new_place_2",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0763",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldUnderground000Stage::place::new_place",
+        "to_node_id": "SandWorldUnderground000Stage::place::new_place_5",
+        "requirement_expr": "(Killer & Dive) | (Killer & LedgeGrab) | (Killer & Backflip) | (Killer & GroundPoundJump) | (Killer & SideFlip) | (Killer & Spin) | (Killer & TripleJump) | (Killer & WallJump) | (Killer & Vault) | (GroundPound & RollBoost & Vault & Dive & NeutralThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;casual;expert",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0764",
+        "kingdom": "Sand Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SandWorldUnderground000Stage::place::new_place_2",
+        "to_node_id": "SandWorldUnderground000Stage::place::new_place_5",
+        "requirement_expr": "(Vault & WallJump & NeutralThrow) | (Vault & WallJump & Dive & NeutralThrow) | (Vault & Dive & NeutralThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert;advanced;expert",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -6493,7 +7462,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SandWorldHomeStage::checkpoint::obj98",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Killer | KingdomAccess_Sand",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -6524,7 +7493,7 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "キラーで 体あたり！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": "2,3,4,5",
         "__editor_id": "SandWorldHomeStage:878:519"
       },
@@ -7117,7 +8086,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Metro & KingdomAccess_Cascade & KingdomAccess_Luncheon & KingdomAccess_Moon & KingdomAccess_Mushroom)",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -7933,7 +8902,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SandWorldUnderground000Stage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "Kuribo",
+        "requirement_expr": "Kuribo | Killer | (Dive & Vault & NeutralThrow) | (GroundPound & RollBoost & Vault & Dive & NeutralThrow)",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -7964,7 +8933,7 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "参上！ タワークリボー",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;expert;advanced",
         "option_scenarios": "",
         "__editor_id": "SandWorldUnderground000Stage:352:558"
       },
@@ -8125,7 +9094,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SandWorldPyramid001Stage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "Killer | (Vault & Dive & NeutralThrow) | (TripleJump & WallJump & Dive & NeutralThrow) | (LongJump & WallJump & Dive & NeutralThrow)",
+        "requirement_expr": "Killer | (Vault & Dive & NeutralThrow) | (WallJump & Dive & NeutralThrow) | (NeutralThrow & Vault) | (DownThrow & WallJump & Dive & Vault) | (DownThrow & LongJump & Vault & WallJump) | (DownThrow & TripleJump & Vault & WallJump) | (UpThrow & Vault & Dive & WallJump)",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -8156,7 +9125,7 @@
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "さかさピラミッドの かくし部屋",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced;casual;casual",
+        "difficulty": "casual;advanced;advanced;expert;advanced;expert;expert;advanced",
         "option_scenarios": "1,2,3,4,5",
         "__editor_id": "SandWorldPyramid001Stage:265:563"
       },
@@ -9083,9 +10052,9 @@
         "obj_id": "463",
         "uid": "953",
         "flags": "ShineFlag_None",
-        "from_node_id": "SandWorldUnderground000Stage::place::new_place",
+        "from_node_id": "SandWorldUnderground000Stage::place::new_place_5",
         "state_requirement_expr": "",
-        "requirement_expr": "(Killer & Dive) | (Killer & LedgeGrab) | (Killer & Backflip) | (Killer & GroundPoundJump) | (Killer & SideFlip) | (Killer & Spin) | (Killer & TripleJump) | (Killer & WallJump) | (Killer & Vault)",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -11850,6 +12819,22 @@
     "captureGates": [],
     "captureGateObjects": [],
     "nodePositions": {
+      "MeganeLiftExStage::stage_change::meganelift01::raw": {
+        "x": 120,
+        "y": 1100
+      },
+      "MeganeLiftExStage::stage_change::meganelift02::raw": {
+        "x": 243.0769230769231,
+        "y": 120
+      },
+      "MeganeLiftExStage::entrance::meganelift01::sub_near": {
+        "x": 350,
+        "y": 1100
+      },
+      "MeganeLiftExStage::entrance::meganelift02::sub_far": {
+        "x": 473.0769230769231,
+        "y": 120
+      },
       "SandWorldHomeStage::checkpoint::obj1511": {
         "x": 743.9495798319329,
         "y": 910.6239168110918
@@ -12079,8 +13064,8 @@
         "y": 1098.8214904679376
       },
       "SandWorldHomeStage::start": {
-        "x": 110,
-        "y": 960
+        "x": 153.80955287388394,
+        "y": 426.6666521344865
       },
       "SandWorldHomeStage::event::MoonRockActive_Sand": {
         "x": 1912.9411764705883,
@@ -12106,6 +13091,118 @@
         "x": 1948.5714285714284,
         "y": 40
       },
+      "SandWorldPressExStage::stage_change::arijigoku1::raw": {
+        "x": 270.0537349523473,
+        "y": 1100
+      },
+      "SandWorldPressExStage::stage_change::arijigoku2::raw": {
+        "x": 120,
+        "y": 120
+      },
+      "SandWorldPressExStage::stage_change::arijigoku::raw": {
+        "x": 40,
+        "y": 1032.6960872833984
+      },
+      "SandWorldPressExStage::entrance::arijigoku2::sub_far": {
+        "x": 350,
+        "y": 120
+      },
+      "SandWorldPressExStage::entrance::arijigoku::sub_near": {
+        "x": 214.07982625698713,
+        "y": 912.6960872833984
+      },
+      "SandWorldPyramid000Stage::stage_change::pyramid01::raw": {
+        "x": 120,
+        "y": 1100
+      },
+      "SandWorldPyramid000Stage::stage_change::pyramid02::raw": {
+        "x": 1620,
+        "y": 120
+      },
+      "SandWorldPyramid001Stage::stage_change::pyramid03::raw": {
+        "x": 120,
+        "y": 120
+      },
+      "SandWorldPyramid001Stage::stage_change::pyramid04::raw": {
+        "x": 1620,
+        "y": 1100
+      },
+      "SandWorldRotateExStage::stage_change::aa::raw": {
+        "x": 1620,
+        "y": 1041.317365269461
+      },
+      "SandWorldRotateExStage::stage_change::biru::raw": {
+        "x": 1850,
+        "y": 1094.131736526946
+      },
+      "SandWorldRotateExStage::stage_change::birureturn::raw": {
+        "x": 592.4409448818898,
+        "y": 1100
+      },
+      "SandWorldRotateExStage::entrance::biru::sub_near": {
+        "x": 1390,
+        "y": 1094.131736526946
+      },
+      "SandWorldRotateExStage::entrance::birureturn::sub_far": {
+        "x": 822.4409448818898,
+        "y": 1100
+      },
+      "SandWorldSphinxExStage::stage_change::aaa::raw": {
+        "x": 1573.632148377125,
+        "y": 1100
+      },
+      "SandWorldSphinxExStage::stage_change::run00::raw": {
+        "x": 1850,
+        "y": 1090.9258896296296
+      },
+      "SandWorldSphinxExStage::stage_change::run00return::raw": {
+        "x": 947.6661514683152,
+        "y": 120
+      },
+      "SandWorldSphinxExStage::entrance::aaa::sub_far": {
+        "x": 1343.632148377125,
+        "y": 1100
+      },
+      "SandWorldSphinxExStage::entrance::aaa::sub_near": {
+        "x": 1573.632148377125,
+        "y": 1220
+      },
+      "SandWorldSphinxExStage::entrance::run00::sub_near": {
+        "x": 1620,
+        "y": 970.9258896296296
+      },
+      "SandWorldSphinxExStage::entrance::run00return::sub_far": {
+        "x": 1177.666151468315,
+        "y": 120
+      },
+      "SandWorldUnderground000Stage::stage_change::Under01::raw": {
+        "x": 136.7548435171386,
+        "y": 1100
+      },
+      "SandWorldUnderground000Stage::stage_change::Yadokari00::raw": {
+        "x": 1620,
+        "y": 267.43362831858406
+      },
+      "SandWorldUnderground000Stage::stage_change::icestart::raw": {
+        "x": 350,
+        "y": 1069.646017699115
+      },
+      "SandWorldUnderground001Stage::stage_change::Out::raw": {
+        "x": 1620,
+        "y": 541.1324570273002
+      },
+      "SandWorldUnderground001Stage::stage_change::Yadokari00::raw": {
+        "x": 1620,
+        "y": 1100
+      },
+      "SandWorldUnderground001Stage::stage_change::start::raw": {
+        "x": 1850,
+        "y": 605.540950455005
+      },
+      "SandWorldRotateExStage::place::new_place": {
+        "x": 700,
+        "y": 360
+      },
       "SandWorldHomeStage::place::new_place_2": {
         "x": 2310,
         "y": 360
@@ -12130,6 +13227,14 @@
         "x": 2161.8487394957983,
         "y": 40
       },
+      "SandWorldSphinxExStage::entrance::run00::sub_far": {
+        "x": 1850,
+        "y": 1210.9258896296296
+      },
+      "SandWorldSphinxExStage::entrance::run00return::sub_near": {
+        "x": 717.6661514683152,
+        "y": 120
+      },
       "SandWorldHomeStage::entrance::arijigoku::home_in": {
         "x": 2122.8991596638657,
         "y": 493.65684575389946
@@ -12138,25 +13243,89 @@
         "x": 2415.924369747899,
         "y": 525.9272097053727
       },
+      "SandWorldPressExStage::entrance::arijigoku1::sub_far": {
+        "x": 500.0537349523473,
+        "y": 1100
+      },
+      "SandWorldUnderground001Stage::place::new_place": {
+        "x": 700,
+        "y": 360
+      },
       "SandWorldHomeTownZone::start": {
         "x": 2516.8487394957983,
         "y": 1242.2703639514732
+      },
+      "SandWorldUnderground000Stage::place::new_place": {
+        "x": 700,
+        "y": 360
+      },
+      "SandWorldUnderground000Stage::place::new_place_2": {
+        "x": 700,
+        "y": 487.7328772020965
       },
       "SandWorldHomeStage::entrance::pyramid01::home_in": {
         "x": 2045.1260504201682,
         "y": 1249.5840554592721
       },
+      "SandWorldPyramid000Stage::entrance::pyramid01::sub_near": {
+        "x": 313.84038387947953,
+        "y": 954.114698390482
+      },
+      "SandWorldPyramid000Stage::entrance::pyramid01::sub_far": {
+        "x": 1031.4712583495195,
+        "y": 939.4514332122164
+      },
       "SandWorldHomeStage::entrance::pyramid04::home_in": {
         "x": 436.1764705882353,
         "y": 1300.5372616984403
+      },
+      "SandWorldPyramid001Stage::entrance::pyramid04::sub_near": {
+        "x": 744.0151177898624,
+        "y": 590.0249466444595
+      },
+      "SandWorldPyramid001Stage::entrance::pyramid04::sub_far": {
+        "x": 1293.9900251971271,
+        "y": 205.98508928999524
       },
       "SandWorldHomeStage::entrance::Under01::home_in": {
         "x": 543.3193277310925,
         "y": 457.14038128249564
       },
+      "SandWorldUnderground000Stage::entrance::Under01::sub_near": {
+        "x": 136.7548435171386,
+        "y": 1220
+      },
+      "SandWorldUnderground000Stage::entrance::Under01::sub_far": {
+        "x": 136.7548435171386,
+        "y": 980
+      },
       "SandWorldHomeStage::entrance::Out::home_in": {
         "x": 1758.4033613445379,
         "y": 1373.310225303293
+      },
+      "SandWorldUnderground001Stage::entrance::Out::sub_near": {
+        "x": 1390,
+        "y": 541.1324570273002
+      },
+      "SandWorldUnderground001Stage::entrance::Out::sub_far": {
+        "x": 1620,
+        "y": 661.1324570273002
+      },
+      "SandWorldUnderground000Stage::entrance::Yadokari00::home_in": {
+        "x": 1850,
+        "y": 267.43362831858406
+      },
+      "SandWorldUnderground001Stage::entrance::Yadokari00::sub_near": {
+        "x": 1850,
+        "y": 1100
+      },
+      "SandWorldUnderground001Stage::entrance::Yadokari00::sub_far": {
+        "x": 1390,
+        "y": 1100
+      },
+      "SandWorldPyramid001Stage::place::new_place": {
+        "x": 880.0225319334949,
+        "y": 378.0410023847913
       },
       "SandWorldHomeStage::place::new_place_6": {
         "x": 1160,
@@ -12169,6 +13338,110 @@
       "SandWorldKillerExStage::place::new_place_2": {
         "x": 616.8514344750382,
         "y": 579.5610500428735
+      },
+      "SandWorldHomeStage::place::new_place_7": {
+        "x": 378.20719300284895,
+        "y": 1647.8247074846918
+      },
+      "SandWorldHomeStage::place::new_place_8": {
+        "x": 625.2191895616662,
+        "y": 1648.310668093005
+      },
+      "SandWorldHomeStage::place::new_place_9": {
+        "x": 1067.8736107213992,
+        "y": 1647.0032173110023
+      },
+      "SandWorldHomeStage::place::new_place_10": {
+        "x": 1295.448501036105,
+        "y": 1647.7407956345776
+      },
+      "SandWorldHomeStage::place::new_place_11": {
+        "x": 1522.1263636005388,
+        "y": 1650.697652873469
+      },
+      "SandWorldHomeStage::place::new_place_12": {
+        "x": 502.1926981350108,
+        "y": 1784.3255521205701
+      },
+      "SandWorldHomeStage::place::new_place_13": {
+        "x": 728.10629667987,
+        "y": 1781.7408257195316
+      },
+      "SandWorldHomeStage::place::new_place_14": {
+        "x": 963.9865305834916,
+        "y": 1782.4783482800908
+      },
+      "SandWorldHomeStage::place::new_place_15": {
+        "x": 1193.2224896159805,
+        "y": 1784.8770510844652
+      },
+      "SandWorldHomeStage::place::new_place_16": {
+        "x": 1427.4418778538827,
+        "y": 1783.9534491642253
+      },
+      "SandWorldHomeStage::place::new_place_17": {
+        "x": 1654.1195173662527,
+        "y": 1786.910278521609
+      },
+      "SandWorldHomeStage::place::new_place_18": {
+        "x": 368.4053773427206,
+        "y": 1903.92679355318
+      },
+      "SandWorldHomeStage::place::new_place_19": {
+        "x": 609.2690404517552,
+        "y": 1903.0031916329403
+      },
+      "SandWorldHomeStage::place::new_place_20": {
+        "x": 846.8106776512553,
+        "y": 1900.4185209949176
+      },
+      "SandWorldHomeStage::place::new_place_21": {
+        "x": 1084.3522033247236,
+        "y": 1902.8172237992917
+      },
+      "SandWorldHomeStage::place::new_place_22": {
+        "x": 755.4486639182609,
+        "y": 2061.362073902902
+      },
+      "SandWorldHomeStage::place::new_place_23": {
+        "x": 852.5583708762429,
+        "y": 1649.03652839267
+      },
+      "SandWorldKillerExStage::place::new_place_3": {
+        "x": 702.4937579689268,
+        "y": 411.9800503942543
+      },
+      "MeganeLiftExStage::place::new_place": {
+        "x": 700,
+        "y": 360
+      },
+      "SandWorldSphinxExStage::place::new_place": {
+        "x": 945.6358715087538,
+        "y": 589.4264447107296
+      },
+      "SandWorldPressExStage::place::new_place": {
+        "x": 700,
+        "y": 360
+      },
+      "SandWorldRotateExStage::place::new_place_2": {
+        "x": 1042.8928508671718,
+        "y": 354.81792501446034
+      },
+      "SandWorldUnderground000Stage::place::new_place_3": {
+        "x": 647.6309989384824,
+        "y": 132.67829980539318
+      },
+      "SandWorldUnderground000Stage::place::new_place_4": {
+        "x": 908.229418260797,
+        "y": 133.73068252771148
+      },
+      "SandWorldPyramid001Stage::place::new_place_2": {
+        "x": 600.2217362566691,
+        "y": 473.13081024914254
+      },
+      "SandWorldUnderground000Stage::place::new_place_5": {
+        "x": 1019.6091669674769,
+        "y": 648.7818447469587
       },
       "moon:SandWorldHomeStage:3456:493": {
         "x": 2491.5546218487393,
@@ -12291,8 +13564,8 @@
         "y": 316.1698440207972
       },
       "moon:SandWorldHomeStage:4632:531": {
-        "x": 211.38655462184875,
-        "y": 1534.991334488735
+        "x": 105.17970016333582,
+        "y": 1584.646506902528
       },
       "moon:SandWorldHomeStage:1841:532": {
         "x": 1923.3193277310925,
@@ -12366,6 +13639,46 @@
         "x": 577.5,
         "y": 164.54545454545456
       },
+      "moon:SandWorldSphinxExStage:880:556": {
+        "x": 120,
+        "y": 373.1666666666667
+      },
+      "moon:SandWorldSphinxExStage:334:557": {
+        "x": 972.0092735703246,
+        "y": 258.14814814814815
+      },
+      "moon:SandWorldUnderground000Stage:352:558": {
+        "x": 193.77049180327867,
+        "y": 120
+      },
+      "moon:SandWorldUnderground001Stage:9:560": {
+        "x": 274.87571701720844,
+        "y": 120
+      },
+      "moon:SandWorldPyramid001Stage:265:563": {
+        "x": 390,
+        "y": 365
+      },
+      "moon:SandWorldPressExStage:87:567": {
+        "x": 1620,
+        "y": 226.8748127024218
+      },
+      "moon:SandWorldRotateExStage:20:570": {
+        "x": 120,
+        "y": 1011.9760479041915
+      },
+      "moon:SandWorldRotateExStage:206:571": {
+        "x": 120,
+        "y": 120
+      },
+      "moon:MeganeLiftExStage:217:572": {
+        "x": 181.53846153846155,
+        "y": 289.4949494949495
+      },
+      "moon:MeganeLiftExStage:315:573": {
+        "x": 1620,
+        "y": 473.88888888888886
+      },
       "moon:SandWorldHomeStage:5320:692": {
         "x": 2759.6638655462184,
         "y": 40
@@ -12375,12 +13688,16 @@
         "y": 411.28249566724435
       },
       "moon:SandWorldKillerTowerZone:210:783": {
-        "x": 611.102268907563,
-        "y": 1685.7872187175044
+        "x": 319.67361028591125,
+        "y": 931.5015044317901
       },
       "moon:SandWorldHomeStage:5364:799": {
         "x": 797.5210084033614,
         "y": 636.3258232235702
+      },
+      "moon:SandWorldUnderground001Stage:244:887": {
+        "x": 120,
+        "y": 364.7522750252781
       },
       "moon:SandWorldHomeStage:5989:893": {
         "x": 202.98319327731093,
@@ -12394,17 +13711,25 @@
         "x": 3035.672268907563,
         "y": 1519.636048526863
       },
+      "moon:SandWorldUnderground000Stage:463:953": {
+        "x": 1315.9761549925483,
+        "y": 534.1150442477876
+      },
       "moon:SandWorldHomeStage:6126:965": {
-        "x": 120,
-        "y": 1697.9722873483533
+        "x": 264.7618756975446,
+        "y": 1383.6864858695587
+      },
+      "moon:SandWorldUnderground001Stage:321:995": {
+        "x": 350,
+        "y": 364.7522750252781
       },
       "moon:SandWorldHomeStage:6208:1045": {
-        "x": 1652.310924369748,
-        "y": 1756.3084922010398
+        "x": 1621.834850150998,
+        "y": 1493.451349343897
       },
       "moon:SandWorldHomeStage:6209:1046": {
-        "x": 272.3109243697479,
-        "y": 1876.3084922010398
+        "x": 81.83467576483719,
+        "y": 813.4512621508165
       },
       "moon:SandWorldHomeStage:6270:1059": {
         "x": 3037.7731092436975,
@@ -12423,8 +13748,8 @@
         "y": 474.9740034662045
       },
       "moon:SandWorldHomeStage:2876:1114": {
-        "x": 1124.0966386554621,
-        "y": 1700
+        "x": 1198.3823529411764,
+        "y": 1408.5713413783483
       }
     }
   }

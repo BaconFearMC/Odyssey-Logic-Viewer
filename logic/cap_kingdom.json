@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Cap Kingdom",
-  "savedAt": "2026-08-24T17:43:32.360Z",
+  "savedAt": "2026-08-28T00:46:16.191Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T17:29:03.123Z",
+    "loadedAt": "2026-08-24T01:43:27.351Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1126,6 +1126,258 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldHomeStage::place::new_place_3",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldHomeStage",
+        "stage_display_name": "Cap Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cap Kingdom Purples 1,2,3,4",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldHomeStage::place::new_place_4",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldHomeStage",
+        "stage_display_name": "Cap Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cap Kingdom Purples 5,6,7,8",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldHomeStage::place::new_place_5",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldHomeStage",
+        "stage_display_name": "Cap Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cap Kingdom Purples 9,10,11,12",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldHomeStage::place::new_place_6",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldHomeStage",
+        "stage_display_name": "Cap Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cap Kingdom Purples 13,14,15,16",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldHomeStage::place::new_place_7",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldHomeStage",
+        "stage_display_name": "Cap Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cap Kingdom Purples 17,18,19",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldHomeStage::place::new_place_8",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldHomeStage",
+        "stage_display_name": "Cap Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cap Kingdom Purples 20,21,22",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldHomeStage::place::new_place_9",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldHomeStage",
+        "stage_display_name": "Cap Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cap Kingdom Purples 23,24,25",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldHomeStage::place::new_place_10",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldHomeStage",
+        "stage_display_name": "Cap Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cap Kingdom Purples 26,27,28",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldHomeStage::place::new_place_11",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldHomeStage",
+        "stage_display_name": "Cap Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cap Kingdom Purples 29,30,31",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldTowerStage::place::new_place_3",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldTowerStage",
+        "stage_display_name": "Inside Cap Tower",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "THT Purples 1-4",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapWorldTowerStage::place::new_place_4",
+        "kingdom": "Cap Kingdom",
+        "stage": "CapWorldTowerStage",
+        "stage_display_name": "Inside Cap Tower",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "THT Purples 5-9",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "PoisonWaveExStage::place::new_place",
+        "kingdom": "Cap Kingdom",
+        "stage": "PoisonWaveExStage",
+        "stage_display_name": "Poison Tides",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Poison Tides Purples 1-3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "PushBlockExStage::place::new_place",
+        "kingdom": "Cap Kingdom",
+        "stage": "PushBlockExStage",
+        "stage_display_name": "Push Block Peril",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Push Block Peril Purples 1-3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "FrogSearchExStage::place::new_place",
+        "kingdom": "Cap Kingdom",
+        "stage": "FrogSearchExStage",
+        "stage_display_name": "Frog Pond",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Frog Pond Purples 1-4",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -1638,6 +1890,216 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0118.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0613",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
+        "to_node_id": "CapWorldHomeStage::place::new_place_3",
+        "requirement_expr": "NeutralThrow | SpinThrow | UpThrow | (Dive & DownThrow) | (Vault & DownThrow) | KuriboWing",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;advanced;advanced;advanced;advanced;casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0708",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
+        "to_node_id": "CapWorldHomeStage::place::new_place_4",
+        "requirement_expr": "KuriboWing | (Dive & Vault & NeutralThrow) | (LongJump & NeutralThrow & Dive) | (LongJump & Dive & UpThrow) | (LongJump & Vault & NeutralThrow) | (Vault & NeutralThrow) | (TripleJump & Dive) | Frog",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;expert;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0739",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
+        "to_node_id": "CapWorldHomeStage::place::new_place_5",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0740",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
+        "to_node_id": "CapWorldHomeStage::place::new_place_6",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0741",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
+        "to_node_id": "CapWorldHomeStage::place::new_place_7",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0742",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
+        "to_node_id": "CapWorldHomeStage::place::new_place_8",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0743",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
+        "to_node_id": "CapWorldHomeStage::place::new_place_9",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0744",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
+        "to_node_id": "CapWorldHomeStage::place::new_place_10",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0745",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
+        "to_node_id": "CapWorldHomeStage::place::new_place_11",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0762",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "CapWorldTowerStage::entrance::Ex::sub_near",
+        "to_node_id": "CapWorldTowerStage::place::new_place_3",
+        "requirement_expr": "Frog | (WallJump & Dive & UpThrow) | (WallJump & Dive & NeutralThrow) | (Vault & NeutralThrow & LedgeGrab) | (Vault & WallJump & NeutralThrow) | (Vault & WallJump & LedgeGrab & UpThrow) | (Vault & UpThrow & Dive) | (Vault & Dive & NeutralThrow) | (Backflip & WallJump & LedgeGrab & NeutralThrow) | (Backflip & WallJump & LedgeGrab & UpThrow) | (Backflip & Vault & NeutralThrow) | (Backflip & Vault & UpThrow) | (SideFlip & WallJump & LedgeGrab & NeutralThrow) | (SideFlip & WallJump & UpThrow & LedgeGrab) | (SideFlip & Vault & NeutralThrow) | (SideFlip & Vault & UpThrow) | (GroundPoundJump & WallJump & LedgeGrab & NeutralThrow) | (GroundPoundJump & WallJump & LedgeGrab & UpThrow) | (GroundPoundJump & Vault & NeutralThrow) | (GroundPoundJump & Vault & UpThrow) | (Spin & Vault & NeutralThrow) | (Spin & Vault & UpThrow) | (TripleJump & WallJump & LedgeGrab & NeutralThrow) | (TripleJump & WallJump & LedgeGrab & UpThrow) | (TripleJump & Vault & NeutralThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0763",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "CapWorldTowerStage::entrance::Goal::sub_far",
+        "to_node_id": "CapWorldTowerStage::place::new_place_4",
+        "requirement_expr": "Frog | (Dive & UpThrow) | (WallJump & UpThrow & Vault) | (Vault & Dive & NeutralThrow) | (TripleJump & LedgeGrab & UpThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0764",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "PoisonWaveExStage::entrance::PoisonWaveExExit::sub_far",
+        "to_node_id": "PoisonWaveExStage::place::new_place",
+        "requirement_expr": "KuriboWing | (Vault & WallJump & Dive & NeutralThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;expert",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0746",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "PushBlockExStage::entrance::PushBlockExStageEntDokan::sub_far",
+        "to_node_id": "PushBlockExStage::place::new_place",
+        "requirement_expr": "ElectricWire | (Vault & Dive & NeutralThrow) | (LongJump & WallJump & NeutralThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;expert",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0747",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "FrogSearchExStage::entrance::FrogSearchExStageEnt::sub_near",
+        "to_node_id": "FrogSearchExStage::place::new_place",
+        "requirement_expr": "Frog | (Vault & WallJump & NeutralThrow) | (Vault & WallJump & LedgeGrab & UpThrow) | (Vault & Dive & NeutralThrow) | (Backflip & Vault & LedgeGrab & NeutralThrow) | (GroundPoundJump & Vault & LedgeGrab & NeutralThrow) | (GroundPoundJump & WallJump & LedgeGrab & NeutralThrow) | (GroundPoundJump & WallJump & LedgeGrab & UpThrow) | (SideFlip & Vault & LedgeGrab & NeutralThrow) | (TripleJump & Vault & NeutralThrow & LedgeGrab)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
       }
     ],
     "moonAccess": [
@@ -1700,9 +2162,9 @@
         "obj_id": "463",
         "uid": "235",
         "flags": "ShineFlag_None",
-        "from_node_id": "PushBlockExStage::entrance::PushBlockExStageEnt::sub_near",
+        "from_node_id": "PushBlockExStage::entrance::PushBlockExStageEntDokan::sub_far",
         "state_requirement_expr": "",
-        "requirement_expr": "ElectricWire",
+        "requirement_expr": "ElectricWire | (Dive & NeutralThrow) | (WallJump & KaronWing) | (LongJump & NeutralThrow) | (Vault & NeutralThrow)",
         "world_peace_token": "WorldPeace_Cap",
         "moon_rock_token": "MoonRockActive_Cap",
         "access_type": "primary",
@@ -1733,7 +2195,7 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "でっぱり壁の かくし穴",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;advanced;advanced;advanced",
         "option_scenarios": "",
         "__editor_id": "PushBlockExStage:463:235"
       },
@@ -5260,6 +5722,236 @@
         "gate_id": "cg_moon_local_239_Frog_KillerMagnum_6",
         "placement_stage": "FrogSearchExStage",
         "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj205"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj207"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj209"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj212"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_2",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj205"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_2",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj207"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_2",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj209"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_2",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj212"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_2",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_3",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj205"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_3",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj207"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_3",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj209"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_3",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj212"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_3",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_4",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj205"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_4",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj207"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_4",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj209"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_4",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj212"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_4",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_6",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj205"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_6",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj207"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_6",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj209"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_6",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj212"
+      },
+      {
+        "gate_id": "cg_moon_local_238_Frog_KillerMagnum_6",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_2",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj205"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_2",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj212"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_2",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_3",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj205"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_3",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj207"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_3",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj209"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_3",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj212"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_3",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_4",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj205"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_4",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj207"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_4",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj209"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_4",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj212"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_4",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_5",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj205"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_5",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj212"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_5",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_6",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj205"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_6",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj207"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_6",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj209"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_6",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj212"
+      },
+      {
+        "gate_id": "cg_moon_local_239_Frog_KillerMagnum_6",
+        "placement_stage": "FrogSearchExStage",
+        "object_id": "obj218"
       }
     ],
     "nodePositions": {
@@ -5294,6 +5986,22 @@
       "FrogSearchExStage::entrance::FrogSearchExStageEnt::sub_near": {
         "x": 1064.4035923193223,
         "y": 468.60557768924303
+      },
+      "PoisonWaveExStage::stage_change::PoisonWaveExEnt::raw": {
+        "x": 120,
+        "y": 454.90663585091403
+      },
+      "PoisonWaveExStage::stage_change::PoisonWaveExExit::raw": {
+        "x": 120,
+        "y": 1079.9681255974897
+      },
+      "PoisonWaveExStage::entrance::PoisonWaveExEnt::sub_near": {
+        "x": 350,
+        "y": 454.90663585091403
+      },
+      "PoisonWaveExStage::entrance::PoisonWaveExExit::sub_far": {
+        "x": 544.1605323232133,
+        "y": 1043.4718372577797
       },
       "PushBlockExStage::stage_change::PushBlockExStageEnt::raw": {
         "x": 1620,
@@ -5411,17 +6119,81 @@
         "x": 518.4621909686643,
         "y": 373.68880613832954
       },
+      "CapWorldHomeStage::place::new_place_3": {
+        "x": 389.99401302445716,
+        "y": 2051.844943500159
+      },
+      "CapWorldHomeStage::place::new_place_4": {
+        "x": 630.2788978246639,
+        "y": 2046.7171572983139
+      },
+      "CapWorldHomeStage::place::new_place_5": {
+        "x": 865.3386060876614,
+        "y": 2043.2189995176254
+      },
+      "CapWorldHomeStage::place::new_place_6": {
+        "x": 1100.3983143506591,
+        "y": 2047.6890785149405
+      },
+      "CapWorldHomeStage::place::new_place_7": {
+        "x": 1346.3345204219227,
+        "y": 2059.2032551721713
+      },
+      "CapWorldHomeStage::place::new_place_8": {
+        "x": 493.74508824662587,
+        "y": 2183.195013446336
+      },
+      "CapWorldHomeStage::place::new_place_9": {
+        "x": 756.6932908767067,
+        "y": 2181.689215780485
+      },
+      "CapWorldHomeStage::place::new_place_10": {
+        "x": 999.7211021753361,
+        "y": 2188.151186794336
+      },
+      "CapWorldHomeStage::place::new_place_11": {
+        "x": 1240.7569545862434,
+        "y": 2188.637281145021
+      },
+      "CapWorldTowerStage::place::new_place_3": {
+        "x": 499.99996669042537,
+        "y": 612.9172131010719
+      },
+      "CapWorldTowerStage::place::new_place_4": {
+        "x": 1260.5095603305567,
+        "y": 424.08919196566967
+      },
+      "PoisonWaveExStage::place::new_place": {
+        "x": 904.3795283428899,
+        "y": 873.8685690102254
+      },
+      "PushBlockExStage::place::new_place": {
+        "x": 700,
+        "y": 360
+      },
+      "FrogSearchExStage::place::new_place": {
+        "x": 567.2654383180912,
+        "y": 279.1616551521786
+      },
       "moon:PushBlockExStage:193:234": {
         "x": 643.4782608695652,
         "y": 853.8388625592416
       },
       "moon:PushBlockExStage:463:235": {
-        "x": 152.6086956521739,
-        "y": 40
+        "x": 611.6905390638993,
+        "y": 677.7245157296777
+      },
+      "moon:PoisonWaveExStage:5:236": {
+        "x": 1620,
+        "y": 120
+      },
+      "moon:PoisonWaveExStage:381:237": {
+        "x": 236.53366722387022,
+        "y": 1220
       },
       "moon:FrogSearchExStage:106:238": {
-        "x": 120,
-        "y": 1100
+        "x": 662.3939906656433,
+        "y": 801.9950437156742
       },
       "moon:FrogSearchExStage:249:239": {
         "x": 1620,

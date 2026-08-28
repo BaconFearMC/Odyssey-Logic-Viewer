@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Metro Kingdom",
-  "savedAt": "2026-08-24T19:42:36.498Z",
+  "savedAt": "2026-08-25T03:12:55.236Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T19:24:13.810Z",
+    "loadedAt": "2026-08-25T02:40:15.203Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -7354,7 +7354,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj5012",
         "state_requirement_expr": "",
-        "requirement_expr": "ElectricWire | Guidepost | (Vault & Dive) | WallJump | TripleJump | LongJump | (LongJump & Dive)",
+        "requirement_expr": "ElectricWire | Guidepost | (Vault & Dive & NeutralThrow) | WallJump | TripleJump | LongJump | (LongJump & Dive)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -7386,7 +7386,7 @@
         "shine_info_scenario_name": "ビルで つかまえたピョン！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:13457:99",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced;casual;advanced;advanced;casual",
         "option_scenarios": ""
       },
       {
@@ -12652,8 +12652,8 @@
         "y": 846
       },
       "moon:CityWorldHomeStage:13457:99": {
-        "x": 2036,
-        "y": 1784
+        "x": 2027.6944334088596,
+        "y": 1832.1727769431507
       },
       "moon:CityWorldMainTowerStage:489:100": {
         "x": 581.323533288395,

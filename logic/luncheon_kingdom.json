@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Luncheon Kingdom",
-  "savedAt": "2026-08-14T21:49:33.888Z",
+  "savedAt": "2026-08-28T00:53:34.257Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-14T20:24:18.663Z",
+    "loadedAt": "2026-08-24T01:43:27.351Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -4052,9 +4052,9 @@
         "obj_id": "5624",
         "uid": "248",
         "flags": "ShineFlag_None",
-        "from_node_id": "LavaWorldHomeStage::place::new_place_2",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_3",
         "state_requirement_expr": "",
-        "requirement_expr": "GroundPound | (HammerBros & GroundPound) | (FireBros & GroundPound) | Bubble",
+        "requirement_expr": "GroundPound | (HammerBros & GroundPound) | (FireBros & GroundPound) | (Bubble & GroundPound)",
         "world_peace_token": "WorldPeace_Luncheon",
         "moon_rock_token": "MoonRockActive_Luncheon",
         "access_type": "primary",
@@ -4086,7 +4086,7 @@
         "shine_info_scenario_name": "高い山に囲まれて",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldHomeStage:5624:248",
-        "difficulty": "casual",
+        "difficulty": "advanced;casual;casual;casual",
         "option_scenarios": "1,2,3,4,5;1,2,3,4,5;2,3,4,5;5"
       },
       {
@@ -4196,7 +4196,7 @@
         "obj_id": "355",
         "uid": "251",
         "flags": "ShineFlag_Story",
-        "from_node_id": "LavaWorldHomeStage::place::new_place",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_2",
         "state_requirement_expr": "",
         "requirement_expr": "HammerBros",
         "world_peace_token": "WorldPeace_Luncheon",
@@ -9207,8 +9207,8 @@
         "y": 3016
       },
       "LavaWorldHomeStage::checkpoint::obj2549": {
-        "x": 428,
-        "y": 1434
+        "x": 339.72409583782326,
+        "y": 1422.965433054957
       },
       "LavaWorldHomeStage::checkpoint::obj4074": {
         "x": 543,
@@ -9511,8 +9511,8 @@
         "y": 1542
       },
       "moon:LavaWorldHomeStage:5624:248": {
-        "x": 1904,
-        "y": 4008
+        "x": 1772.965433054957,
+        "y": 4017.6552145070045
       },
       "moon:LavaWorldTimerAthletic001Zone:109:249": {
         "x": 1166,
@@ -9523,8 +9523,8 @@
         "y": 100
       },
       "moon:LavaWorldHomeStage:355:251": {
-        "x": 1166,
-        "y": 1434
+        "x": 880.8263786637333,
+        "y": 2153.526951149139
       },
       "moon:LavaWorldHomeStage:2174:253": {
         "x": 838,

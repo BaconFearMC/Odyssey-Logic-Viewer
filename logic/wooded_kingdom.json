@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Wooded Kingdom",
-  "savedAt": "2026-08-24T19:25:46.016Z",
+  "savedAt": "2026-08-27T23:05:27.604Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T19:24:13.810Z",
+    "loadedAt": "2026-08-27T20:21:27.380Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -3412,6 +3412,366 @@
         "z": "2600.000",
         "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
         "notes": "Connected from ForestWorldHomeStage."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_12",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 1,2,3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_13",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 44,45,46,47",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_14",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 4,5,6",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_15",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 10,11",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_16",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 12,13,14,15",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_17",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 16,17,18,19",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_18",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 26,27,28,29",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_19",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 30,31,32,33",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_20",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 38,39,40",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_21",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 41,42,43",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_22",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 68,69,70",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_23",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 71,72,73",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_24",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Wooded Kingdom Purples 51,52,53",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ShootingElevatorExStage::place::new_place",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ShootingElevatorExStage",
+        "stage_display_name": "Crowded Elevator",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Crowded Elevator Purples 1-3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldWoodsStage::place::new_place_2",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldWoodsStage",
+        "stage_display_name": "Deep Woods",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Deep Woods Purples 7-9",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldWoodsStage::place::new_place_3",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldWoodsStage",
+        "stage_display_name": "Deep Woods",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Deep Woods Purples 1-6",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldWaterExStage::place::new_place",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldWaterExStage",
+        "stage_display_name": "Flooding Pipeway",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Flooding Pipeway Purples 1-3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "RailCollisionExStage::place::new_place",
+        "kingdom": "Wooded Kingdom",
+        "stage": "RailCollisionExStage",
+        "stage_display_name": "Flower Road",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Flower Road Purples 1-3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldTowerStage::place::new_place",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldTowerStage",
+        "stage_display_name": "Sky Garden Tower",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sky Garden Tower Purples 1-3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldCloudBonusExStage::place::new_place",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldCloudBonusExStage",
+        "stage_display_name": "Walking on Clouds",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Walking on Clouds Purples 1-3",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -3481,7 +3841,7 @@
         "area_scope": "subarea",
         "from_node_id": "RailCollisionExStage::entrance::EX_RailCollision_Exit::sub_far",
         "to_node_id": "RailCollisionExStage::entrance::EX_RailCollision::sub_near",
-        "requirement_expr": "(GroundPound & RollBoost & Vault & NeutralThrow & Dive) | (TripleJump & Dive & Vault)",
+        "requirement_expr": "(GroundPound & RollBoost & Vault & NeutralThrow & Dive) | (TripleJump & Dive & Vault & NeutralThrow)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced",
@@ -4823,7 +5183,7 @@
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
+        "option_scenarios": "2,3,4,5"
       },
       {
         "edge_id": "edge_user_0006",
@@ -5649,6 +6009,396 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0728.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0613",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj447",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_12",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0708",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_14",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0739",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_15",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0740",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj3734",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_16",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0741",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_16",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0742",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_17",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0743",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj447",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_18",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0744",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj447",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_19",
+        "requirement_expr": "(WallJump & NeutralThrow) | (UpThrow & WallJump) | (WallJump & Dive & SpinThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0745",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_19",
+        "requirement_expr": "(NeutralThrow & WallJump) | (WallJump & UpThrow) | (WallJump & Dive & SpinThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0746",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_19",
+        "requirement_expr": "Senobi",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0747",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::start",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_20",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0748",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::start",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_21",
+        "requirement_expr": "NeutralThrow | Senobi | UpThrow | (SpinThrow & WallJump & TripleJump & Dive) | (SpinThrow & WallJump & Backflip & Dive) | (SpinThrow & WallJump & SideFlip & Dive) | (GroundPoundJump & WallJump & Dive & SpinThrow) | (WallJump & Spin & Dive & SpinThrow) | KingdomAccess_Wooded",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;casual;casual;advanced;advanced;advanced;advanced;advanced;expert",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0749",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_13",
+        "requirement_expr": "Senobi | UpThrow | (NeutralThrow & WallJump) | (Vault & NeutralThrow) | (Backflip & WallJump & Dive) | (SideFlip & WallJump & Dive) | (Spin & WallJump & Dive) | (GroundPoundJump & WallJump & Dive) | (TripleJump & Dive & WallJump) | (FireBros & NeutralThrow) | (FireBros & WallJump) | Tank",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;2"
+      },
+      {
+        "edge_id": "edge_user_0750",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::start",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_24",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0751",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_21",
+        "requirement_expr": "Tank",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0752",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::start",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_22",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0753",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_13",
+        "requirement_expr": "Tank",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0754",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::start",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_23",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0755",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "ShootingElevatorExStage::entrance::EX_Tankuro::sub_near",
+        "to_node_id": "ShootingElevatorExStage::place::new_place",
+        "requirement_expr": "SingleJump | Tank | FireBros",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;casual;casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0756",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "ForestWorldWoodsStage::place::new_place",
+        "to_node_id": "ForestWorldWoodsStage::place::new_place_2",
+        "requirement_expr": "RockForest",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0757",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "ForestWorldWoodsStage::place::new_place",
+        "to_node_id": "ForestWorldWoodsStage::place::new_place_3",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0758",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "ForestWorldWaterExStage::entrance::EX_Water::sub_near",
+        "to_node_id": "ForestWorldWaterExStage::place::new_place",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0759",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "RailCollisionExStage::entrance::EX_RailCollision::sub_near",
+        "to_node_id": "RailCollisionExStage::place::new_place",
+        "requirement_expr": "WallJump | (Kuribo & LedgeGrab) | (Kuribo & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0760",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "RailCollisionExStage::entrance::EX_RailCollision_Exit::sub_far",
+        "to_node_id": "RailCollisionExStage::place::new_place",
+        "requirement_expr": "(GroundPound & RollBoost & Vault & Dive & NeutralThrow) | (TripleJump & Vault & Dive & NeutralThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0761",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "ForestWorldTowerStage::entrance::Tower002::sub_near",
+        "to_node_id": "ForestWorldTowerStage::place::new_place",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0762",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "ForestWorldCloudBonusExStage::entrance::EXCloud::sub_near",
+        "to_node_id": "ForestWorldCloudBonusExStage::place::new_place",
+        "requirement_expr": "Senobi | NeutralThrow | UpThrow | (NeutralThrow & Vault & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;expert;expert;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4,5"
       }
     ],
     "moonAccess": [
@@ -7585,7 +8335,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldBossStage::entrance::boss001::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NeutralThrow | DownThrow | SpinThrow | UpThrow",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -7616,7 +8366,7 @@
         "shine_info_object_name": "森ボス地形お花畑コントロール",
         "shine_info_scenario_name": "咲かせて ヒミツの花バタケ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;advanced",
         "option_scenarios": "5,3,4",
         "__editor_id": "ForestWorldBossStage:488:182"
       },
@@ -7967,7 +8717,7 @@
         "obj_id": "105",
         "uid": "190",
         "flags": "ShineFlag_None",
-        "from_node_id": "ShootingElevatorExStage::entrance::EX_Tankuro_Exit::sub_far",
+        "from_node_id": "ShootingElevatorExStage::entrance::EX_Tankuro::sub_near",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Wooded",
@@ -8353,7 +9103,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldCloudBonusExStage::entrance::EXCloud::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "Senobi | (Backflip & Dive & Vault & NeutralThrow) | (GroundPoundJump & Vault & Dive & NeutralThrow) | (SideFlip & Vault & Dive & NeutralThrow) | (TripleJump & Dive & Vault & NeutralThrow)",
+        "requirement_expr": "Senobi | (Dive & Vault & NeutralThrow)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -8384,8 +9134,8 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "雲の上で 散歩",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced;advanced;advanced;advanced",
-        "option_scenarios": "",
+        "difficulty": "casual;advanced",
+        "option_scenarios": "1,2,3,4,5",
         "__editor_id": "ForestWorldCloudBonusExStage:11:198"
       },
       {
@@ -8639,9 +9389,9 @@
         "obj_id": "41",
         "uid": "676",
         "flags": "ShineFlag_None",
-        "from_node_id": "ForestWorldTimerAthletic001Zone::start",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NeutralThrow | DownThrow | SpinThrow | UpThrow",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -8657,9 +9407,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-14600.000",
-        "placement_y": "7030.000",
-        "placement_z": "-15700.000",
+        "placement_x": "-29200.000",
+        "placement_y": "14030.000",
+        "placement_z": "-31400.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_ForestWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -8672,7 +9422,7 @@
         "shine_info_object_name": "帽子掛け（タイマー）",
         "shine_info_scenario_name": "森の国で チクタク・アスレチック ２",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced;advanced",
         "option_scenarios": "",
         "__editor_id": "ForestWorldTimerAthletic001Zone:41:676"
       },
@@ -9025,7 +9775,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj2821",
         "state_requirement_expr": "",
-        "requirement_expr": "Climb | (Vault & Dive & NeutralThrow) | KingdomAccess_Wooded | Kakku",
+        "requirement_expr": "Swing | (Vault & Dive & NeutralThrow) | KingdomAccess_Wooded | Kakku",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -10901,6 +11651,45 @@
     ],
     "rooms": [
       {
+        "stage": "AnimalChaseExStage",
+        "kingdom": "Wooded Kingdom",
+        "stage_display_name": "Herding Sheep",
+        "stage_start_node_id": "AnimalChaseExStage::start",
+        "area_scope": "subarea",
+        "listed_in_stage_warp": "true",
+        "has_shine_db_moons": "true",
+        "active_entrance_link_count": "1",
+        "excluded_entrance_link_count": "0",
+        "has_raw_stage_data_points": "true",
+        "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
+      },
+      {
+        "stage": "FogMountainExStage",
+        "kingdom": "Wooded Kingdom",
+        "stage_display_name": "Shards in the Fog",
+        "stage_start_node_id": "FogMountainExStage::start",
+        "area_scope": "subarea",
+        "listed_in_stage_warp": "true",
+        "has_shine_db_moons": "true",
+        "active_entrance_link_count": "1",
+        "excluded_entrance_link_count": "0",
+        "has_raw_stage_data_points": "true",
+        "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
+      },
+      {
+        "stage": "ForestWorldBonusStage",
+        "kingdom": "Wooded Kingdom",
+        "stage_display_name": "Spinning-Platforms Treasure Vault",
+        "stage_start_node_id": "ForestWorldBonusStage::start",
+        "area_scope": "subarea",
+        "listed_in_stage_warp": "true",
+        "has_shine_db_moons": "true",
+        "active_entrance_link_count": "1",
+        "excluded_entrance_link_count": "0",
+        "has_raw_stage_data_points": "true",
+        "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
+      },
+      {
         "stage": "ForestWorldBossStage",
         "kingdom": "Wooded Kingdom",
         "stage_display_name": "Secret Flower Field",
@@ -11344,6 +12133,18 @@
         "x": 1156.120460141123,
         "y": 510.3414291704068
       },
+      "ForestWorldCloudBonusExStage::stage_change::EXCloud::raw": {
+        "x": 1620,
+        "y": 1100
+      },
+      "ForestWorldCloudBonusExStage::entrance::EXCloud::sub_far": {
+        "x": 210,
+        "y": 560
+      },
+      "ForestWorldCloudBonusExStage::entrance::EXCloud::sub_near": {
+        "x": 210,
+        "y": 160
+      },
       "ForestWorldHomeStage::checkpoint::obj1841": {
         "x": 1033.2748902970725,
         "y": 748.9681133630442
@@ -11584,6 +12385,110 @@
         "x": 40,
         "y": 40
       },
+      "ForestWorldTowerStage::stage_change::Tower001::raw": {
+        "x": 1620,
+        "y": 1100
+      },
+      "ForestWorldTowerStage::stage_change::Tower002::raw": {
+        "x": 120,
+        "y": 120
+      },
+      "ForestWorldWaterExStage::stage_change::EX_Water::raw": {
+        "x": 980,
+        "y": 120
+      },
+      "ForestWorldWaterExStage::stage_change::EX_Water_Exit::raw": {
+        "x": 980,
+        "y": 236
+      },
+      "ForestWorldWaterExStage::entrance::EX_Water::sub_near": {
+        "x": 210,
+        "y": 160
+      },
+      "ForestWorldWaterExStage::entrance::EX_Water_Exit::sub_far": {
+        "x": 210,
+        "y": 560
+      },
+      "ForestWorldWoodsStage::stage_change::Explorer_Bonus::raw": {
+        "x": 696.3757115749526,
+        "y": 120
+      },
+      "ForestWorldWoodsStage::stage_change::Jyukai001::raw": {
+        "x": 1480.5313092979127,
+        "y": 231.8906508023762
+      },
+      "ForestWorldWoodsStage::stage_change::Jyukai001v::raw": {
+        "x": 1713.3776091081595,
+        "y": 318.3337427775633
+      },
+      "ForestWorldWoodsStage::stage_change::Jyukai002::raw": {
+        "x": 643.7191650853889,
+        "y": 305.45923971742906
+      },
+      "ForestWorldWoodsStage::stage_change::Jyukai003::raw": {
+        "x": 1620,
+        "y": 833.3138651829333
+      },
+      "ForestWorldWoodsStage::stage_change::Jyukai003v::raw": {
+        "x": 1273.301707779886,
+        "y": 846.1883682430675
+      },
+      "ForestWorldWoodsStage::stage_change::Jyukai004::raw": {
+        "x": 507.09677419354836,
+        "y": 827.7962210143044
+      },
+      "ForestWorldWoodsStage::stage_change::TreasureTree::raw": {
+        "x": 1087.6832447817837,
+        "y": 704.5688345815907
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai001::sub_far": {
+        "x": 1250.5313092979127,
+        "y": 231.8906508023762
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai001::sub_near": {
+        "x": 1480.5313092979127,
+        "y": 351.8906508023762
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai001v::sub_far": {
+        "x": 1713.3776091081595,
+        "y": 438.3337427775633
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai001v::sub_near": {
+        "x": 1253.3776091081595,
+        "y": 438.3337427775633
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai002::sub_far": {
+        "x": 873.7191650853889,
+        "y": 305.45923971742906
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai002::sub_near": {
+        "x": 413.7191650853889,
+        "y": 305.45923971742906
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai003::sub_far": {
+        "x": 1850,
+        "y": 833.3138651829333
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai003::sub_near": {
+        "x": 1620,
+        "y": 953.3138651829333
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai003v::sub_far": {
+        "x": 1503.301707779886,
+        "y": 726.1883682430675
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai003v::sub_near": {
+        "x": 1273.301707779886,
+        "y": 966.1883682430675
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai004::sub_far": {
+        "x": 737.0967741935483,
+        "y": 827.7962210143044
+      },
+      "ForestWorldWoodsStage::entrance::Jyukai004::sub_near": {
+        "x": 277.09677419354836,
+        "y": 827.7962210143044
+      },
       "RailCollisionExStage::stage_change::EX_RailCollision::raw": {
         "x": 120,
         "y": 1100
@@ -11593,12 +12498,32 @@
         "y": 120
       },
       "RailCollisionExStage::entrance::EX_RailCollision::sub_near": {
-        "x": 350,
-        "y": 1100
+        "x": 1057.2164162061829,
+        "y": 605.1546243792493
       },
       "RailCollisionExStage::entrance::EX_RailCollision_Exit::sub_far": {
         "x": 1850,
         "y": 120
+      },
+      "ShootingElevatorExStage::stage_change::EX_Tankuro::raw": {
+        "x": 120,
+        "y": 1100
+      },
+      "ShootingElevatorExStage::stage_change::EX_Tankuro_Exit::raw": {
+        "x": 377.8528470637928,
+        "y": 120
+      },
+      "ShootingElevatorExStage::entrance::EX_Tankuro::sub_near": {
+        "x": 350,
+        "y": 1100
+      },
+      "ShootingElevatorExStage::entrance::EX_Tankuro_Exit::sub_far": {
+        "x": 607.8528470637928,
+        "y": 120
+      },
+      "ForestWorldWoodsStage::place::new_place": {
+        "x": 700,
+        "y": 480
       },
       "ForestWorldHomeStage::place::new_place": {
         "x": 1390,
@@ -11644,21 +12569,125 @@
         "x": 1620,
         "y": 1208
       },
+      "ForestWorldWoodsStage::entrance::TreasureTree::home_in": {
+        "x": 857.6832447817837,
+        "y": 704.5688345815907
+      },
+      "ForestWorldWoodsStage::entrance::Explorer_Bonus::home_in": {
+        "x": 926.3757115749526,
+        "y": 120
+      },
       "ForestWorldAthleticZone::start": {
-        "x": 2083.45452401241,
-        "y": 204.66466407353175
+        "x": 2072.2546216686596,
+        "y": 119.86463965946926
       },
       "ForestWorldHomeStage::entrance::boss001::home_in": {
-        "x": 323.1062146510343,
-        "y": 40
+        "x": 391.9062634791593,
+        "y": 24.0000244140625
       },
       "ForestWorldHomeStage::entrance::Tower001::home_in": {
         "x": 2077.0097486332725,
         "y": 308.56476095520804
       },
+      "ForestWorldTowerStage::entrance::Tower002::sub_near": {
+        "x": 350,
+        "y": 120
+      },
+      "ForestWorldTowerStage::entrance::Tower002::sub_far": {
+        "x": 120,
+        "y": 240
+      },
       "ForestWorldHomeStage::entrance::Tower002::home_in": {
         "x": 2305.907952217889,
         "y": 334.00991716665885
+      },
+      "ForestWorldTowerStage::entrance::Tower001::sub_far": {
+        "x": 1850,
+        "y": 1100
+      },
+      "ForestWorldTowerStage::entrance::Tower001::sub_near": {
+        "x": 1390,
+        "y": 1100
+      },
+      "ForestWorldHomeStage::place::new_place_12": {
+        "x": 282.2930494074668,
+        "y": 2052.672329496251
+      },
+      "ForestWorldHomeStage::place::new_place_13": {
+        "x": 728.9798797891701,
+        "y": 2266.3426806025927
+      },
+      "ForestWorldHomeStage::place::new_place_14": {
+        "x": 509.2100037394779,
+        "y": 2054.567804296076
+      },
+      "ForestWorldHomeStage::place::new_place_15": {
+        "x": 940.4614661751668,
+        "y": 2056.9384910443264
+      },
+      "ForestWorldHomeStage::place::new_place_16": {
+        "x": 1165.318819564566,
+        "y": 2057.0896442423814
+      },
+      "ForestWorldHomeStage::place::new_place_17": {
+        "x": 1381.4109716318978,
+        "y": 2056.8242313063097
+      },
+      "ForestWorldHomeStage::place::new_place_18": {
+        "x": 844.6151782887027,
+        "y": 2168.1283608945614
+      },
+      "ForestWorldHomeStage::place::new_place_19": {
+        "x": 1063.8756399993285,
+        "y": 2167.976375697855
+      },
+      "ForestWorldHomeStage::place::new_place_20": {
+        "x": 286.6840042067706,
+        "y": 2264.494820229651
+      },
+      "ForestWorldHomeStage::place::new_place_21": {
+        "x": 504.63385537123713,
+        "y": 2263.8599762462504
+      },
+      "ForestWorldHomeStage::place::new_place_22": {
+        "x": 1054.7424517789766,
+        "y": 2375.700222390129
+      },
+      "ForestWorldHomeStage::place::new_place_23": {
+        "x": 1269.995903187668,
+        "y": 2375.274987598969
+      },
+      "ForestWorldHomeStage::place::new_place_24": {
+        "x": 1165.3058122565037,
+        "y": 2273.385318097416
+      },
+      "ShootingElevatorExStage::place::new_place": {
+        "x": 813.8686587707871,
+        "y": 549.7809836032077
+      },
+      "ForestWorldWoodsStage::place::new_place_2": {
+        "x": 937.9562155485901,
+        "y": 940.394089198167
+      },
+      "ForestWorldWoodsStage::place::new_place_3": {
+        "x": 678.1021093809812,
+        "y": 941.2262805733646
+      },
+      "ForestWorldWaterExStage::place::new_place": {
+        "x": 700,
+        "y": 360
+      },
+      "RailCollisionExStage::place::new_place": {
+        "x": 984.5360459920998,
+        "y": 122.88662833991685
+      },
+      "ForestWorldTowerStage::place::new_place": {
+        "x": 700,
+        "y": 360
+      },
+      "ForestWorldCloudBonusExStage::place::new_place": {
+        "x": 700,
+        "y": 360
       },
       "moon:ForestWorldHomeStage:1064:129": {
         "x": 2111.767767552028,
@@ -11808,6 +12837,38 @@
         "x": 2557.099639809455,
         "y": 498.7875059710346
       },
+      "moon:ForestWorldTowerStage:220:179": {
+        "x": 1620,
+        "y": 530.466000854301
+      },
+      "moon:ForestWorldTowerStage:161:180": {
+        "x": 1620,
+        "y": 639.9917699207816
+      },
+      "moon:ForestWorldWoodsStage:220:183": {
+        "x": 1005.7495256166983,
+        "y": 884.8118774234704
+      },
+      "moon:ForestWorldWoodsStage:222:184": {
+        "x": 120,
+        "y": 1100
+      },
+      "moon:ForestWorldWoodsStage:186:185": {
+        "x": 350,
+        "y": 1100
+      },
+      "moon:ForestWorldWoodsStage:206:186": {
+        "x": 120,
+        "y": 1220
+      },
+      "moon:ShootingElevatorExStage:160:189": {
+        "x": 1620,
+        "y": 615.625880126183
+      },
+      "moon:ShootingElevatorExStage:105:190": {
+        "x": 147.8528470637928,
+        "y": 175.64668769716087
+      },
       "moon:RailCollisionExStage:171:191": {
         "x": 1390,
         "y": 162.71186440677965
@@ -11816,9 +12877,25 @@
         "x": 171.28205128205127,
         "y": 717.9661016949153
       },
+      "moon:ForestWorldWaterExStage:52:196": {
+        "x": 1320,
+        "y": 120
+      },
+      "moon:ForestWorldWaterExStage:138:197": {
+        "x": 1320,
+        "y": 224
+      },
+      "moon:ForestWorldCloudBonusExStage:11:198": {
+        "x": 529.090909090909,
+        "y": 120
+      },
+      "moon:ForestWorldCloudBonusExStage:1556:199": {
+        "x": 120,
+        "y": 706.7215484036509
+      },
       "moon:ForestWorldTimerAthletic001Zone:41:676": {
-        "x": 343.8728863961329,
-        "y": 425.4413841251844
+        "x": 339.0728863961329,
+        "y": 331.0413597111219
       },
       "moon:ForestWorldHomeStage:6962:892": {
         "x": 2414.452097512931,
@@ -11851,6 +12928,50 @@
       "moon:ForestWorldHomeStage:7463:1089": {
         "x": 1367.0832604001425,
         "y": 1500.8711493388555
+      },
+      "moon:ForestWorldWoodsStage:343:1137": {
+        "x": 120,
+        "y": 980
+      },
+      "moon:ForestWorldWoodsStage:392:1153": {
+        "x": 396.6413662239089,
+        "y": 467.31013533054534
+      },
+      "moon:ForestWorldWoodsStage:415:1159": {
+        "x": 350,
+        "y": 1220
+      },
+      "ForestWorldBossStage::stage_change::Boss_Respawn::raw": {
+        "x": 120,
+        "y": 966.5531914893618
+      },
+      "ForestWorldBossStage::stage_change::boss001::raw": {
+        "x": 120,
+        "y": 1100
+      },
+      "ForestWorldBossStage::stage_change::boss002::raw": {
+        "x": 120,
+        "y": 837.6838587234042
+      },
+      "ForestWorldBossStage::place::new_place": {
+        "x": 700,
+        "y": 360
+      },
+      "ForestWorldBossStage::entrance::boss001::sub_near": {
+        "x": 210,
+        "y": 160
+      },
+      "ForestWorldBossStage::entrance::boss001::sub_far": {
+        "x": 210,
+        "y": 560
+      },
+      "moon:ForestWorldBossStage:6:181": {
+        "x": 1575.862237338362,
+        "y": 213.79309292497305
+      },
+      "moon:ForestWorldBossStage:488:182": {
+        "x": 1850,
+        "y": 120
       }
     }
   }

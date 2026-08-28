@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Ruined Kingdom",
-  "savedAt": "2026-08-01T20:11:10.147Z",
+  "savedAt": "2026-08-27T21:34:54.321Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-01T18:33:58.572Z",
+    "loadedAt": "2026-08-27T20:21:27.380Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -919,7 +919,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "BossRaidWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "(Backflip & LedgeGrab & GroundPound) | (Dive & GroundPound) | (WallJump & GroundPound) | (GroundPoundJump & GroundPound) | (SideFlip & LedgeGrab & GroundPound) | (Spin & LedgeGrab & GroundPound) | (TripleJump & GroundPound)",
+        "requirement_expr": "(Backflip & LedgeGrab & GroundPound) | (Dive & GroundPound) | (WallJump & GroundPound) | (GroundPoundJump & GroundPound) | (SideFlip & LedgeGrab & GroundPound) | (Spin & LedgeGrab & GroundPound) | (TripleJump & GroundPound) | (UpThrow & Vault) | (NeutralThrow & Vault)",
         "world_peace_token": "WorldPeace_Ruined",
         "moon_rock_token": "MoonRockActive_Ruined",
         "access_type": "primary",
@@ -3044,7 +3044,7 @@
       },
       "moon:BossRaidWorldHomeStage:353:835": {
         "x": 0,
-        "y": 276.0583370545881
+        "y": 349.2246092104723
       },
       "moon:DotTowerExStage:282:888": {
         "x": 839.2307659242985,

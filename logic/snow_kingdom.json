@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Snow Kingdom",
-  "savedAt": "2026-08-24T17:44:08.341Z",
+  "savedAt": "2026-08-28T01:01:05.954Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T17:29:03.123Z",
+    "loadedAt": "2026-08-24T01:43:27.351Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2998,10 +2998,10 @@
         "area_scope": "overworld",
         "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
         "to_node_id": "SnowWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "Byugo | (Backflip & NeutralThrow & Vault & WallJump & Dive) | (GroundPoundJump & Vault & WallJump & Dive & NeutralThrow) | (SideFlip & Vault & WallJump & Dive & NeutralThrow) | (WallJump & Vault & Dive & NeutralThrow)",
+        "requirement_expr": "Byugo | (Backflip & NeutralThrow & Vault & WallJump & Dive) | (GroundPoundJump & Vault & WallJump & Dive & NeutralThrow) | (SideFlip & Vault & WallJump & Dive & NeutralThrow) | (WallJump & Vault & Dive & NeutralThrow) | (NeutralThrow & TripleJump & Vault & Dive & WallJump) | (DownThrow & Backflip & Vault & WallJump & Dive) | (DownThrow & GroundPoundJump & Vault & WallJump & Dive) | (DownThrow & SideFlip & Vault & WallJump & Dive) | (DownThrow & TripleJump & Vault & WallJump & Dive) | (UpThrow & Backflip & Vault & WallJump & Dive) | (UpThrow & GroundPoundJump & Vault & WallJump & Dive) | (UpThrow & Vault & WallJump & Dive & SideFlip) | (UpThrow & Vault & WallJump & Dive & TripleJump)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;advanced;advanced;advanced;expert",
+        "difficulty": "casual;advanced;advanced;advanced;expert;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
         "option_scenarios": "2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5",
         "bidirectional": "true",
         "source": "editor",
@@ -3433,7 +3433,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
         "state_requirement_expr": "",
-        "requirement_expr": "(Byugo & GroundPound) | (WallJump & GroundPound) | (Vault & GroundPound & NeutralThrow) | (Dive & GroundPound) | (Backflip & LedgeGrab & GroundPound) | (GroundPound & GroundPoundJump & LedgeGrab) | (SideFlip & LedgeGrab & GroundPound) | (Spin & LedgeGrab & GroundPound) | (TripleJump & GroundPound)",
+        "requirement_expr": "(Byugo & GroundPound) | (WallJump & GroundPound) | (Vault & GroundPound & NeutralThrow) | (Dive & GroundPound) | (Backflip & LedgeGrab & GroundPound) | (GroundPound & GroundPoundJump & LedgeGrab) | (SideFlip & LedgeGrab & GroundPound) | (Spin & LedgeGrab & GroundPound) | (TripleJump & GroundPound) | (UpThrow & Vault & GroundPound) | (DownThrow & Vault & LedgeGrab & GroundPound)",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -3465,7 +3465,7 @@
         "shine_info_scenario_name": "氷の中から とび出した",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SnowWorldHomeStage:1117:10",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;casual;advanced;advanced",
         "option_scenarios": ""
       },
       {
@@ -3625,7 +3625,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "IceWaterBlockExStage::entrance::EX_IceWater_Exit::sub_far",
         "state_requirement_expr": "",
-        "requirement_expr": "Climb",
+        "requirement_expr": "Swing",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -3865,7 +3865,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
         "state_requirement_expr": "",
-        "requirement_expr": "Climb | Dive | LongJump | TripleJump",
+        "requirement_expr": "Climb | Dive | LongJump | TripleJump | KingdomAccess_Snow",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -3897,7 +3897,7 @@
         "shine_info_scenario_name": "雪の国で チクタク・アスレチック ２",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SnowWorldHomeStage:1321:686",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;advanced;advanced;expert",
         "option_scenarios": ""
       },
       {
@@ -5257,7 +5257,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SnowWorldGabuzouZone::start",
         "state_requirement_expr": "",
-        "requirement_expr": "LedgeGrab | (Vault & Dive)",
+        "requirement_expr": "LedgeGrab | (Vault & Dive & NeutralThrow)",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -5288,7 +5288,7 @@
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "氷壁の宝箱",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": "",
         "__editor_id": "SnowWorldGabuzouZone:235:24"
       },

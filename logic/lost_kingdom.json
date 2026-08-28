@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Lost Kingdom",
-  "savedAt": "2026-08-24T03:27:04.100Z",
+  "savedAt": "2026-08-27T23:17:16.054Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T01:43:27.351Z",
+    "loadedAt": "2026-08-27T20:21:27.380Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1702,7 +1702,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Imomu | KingdomAccess_Lost",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -1733,7 +1733,7 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "のぞきこんで 橋の下",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": "",
         "__editor_id": "ClashWorldHomeStage:701:382"
       },
@@ -1894,7 +1894,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NeutralThrow | SpinThrow",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2518,7 +2518,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "JangoExStage::entrance::ClashWorldMoonEX2::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "Bubble | Vault",
+        "requirement_expr": "(Bubble & GroundPound) | (Vault & NeutralThrow & GroundPound) | (Vault & UpThrow & GroundPound) | (DownThrow & Vault & Dive & WallJump & GroundPound)",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2549,7 +2549,7 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "マグマを 泳ぎ回って",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced",
+        "difficulty": "casual;advanced;advanced;advanced",
         "option_scenarios": "",
         "__editor_id": "JangoExStage:226:492"
       },
@@ -2645,7 +2645,7 @@
         "shine_info_object_name": "帽子掛け（タイマー）",
         "shine_info_scenario_name": "失われた国で チクタク・アスレチック",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;expert;advanced;advanced",
         "option_scenarios": "",
         "__editor_id": "ClashWorldHomeStage:2833:855"
       },
@@ -4630,12 +4630,12 @@
         "y": 150.87514585764293
       },
       "ClashWorldHomeStage::checkpoint::obj545": {
-        "x": 369.83133094153834,
-        "y": 502.0512355005574
+        "x": 475.40069686411147,
+        "y": 523.6639439906651
       },
       "ClashWorldHomeStage::entrance::ClashWorldMoonEX2::home_in": {
-        "x": 1134.2544576872353,
-        "y": 745.1605076847629
+        "x": 867.4216027874564,
+        "y": 455.0525087514586
       },
       "ClashWorldHomeStage::entrance::Kinopio::home_in": {
         "x": 470.1699303135888,
@@ -4682,12 +4682,12 @@
         "y": 360
       },
       "ClashWorldHomeStage::place::new_place_2": {
-        "x": 905.8937009803063,
-        "y": 455.1006179911286
+        "x": 930,
+        "y": 362
       },
       "ClashWorldHomeStage::place::new_place_3": {
-        "x": 675.893533552198,
-        "y": 743.9501473756086
+        "x": 700,
+        "y": 724
       },
       "moon:ClashWorldHomeStage:83:372": {
         "x": 710.5923344947735,
@@ -4714,8 +4714,8 @@
         "y": 477.78296382730457
       },
       "moon:ClashWorldHomeStage:142:378": {
-        "x": 566.3759588889421,
-        "y": 1033.9631402814143
+        "x": 484.91289198606273,
+        "y": 626.6483080513419
       },
       "moon:ClashWorldHomeStage:492:379": {
         "x": 297.70034843205576,
@@ -4808,6 +4808,50 @@
       "moon:ClashWorldHomeStage:3284:1077": {
         "x": 1484.1114982578397,
         "y": 822.193698949825
+      },
+      "ImomuPoisonExStage::stage_change::imomu_01::raw": {
+        "x": 1620,
+        "y": 1100
+      },
+      "ImomuPoisonExStage::stage_change::imomu_02::raw": {
+        "x": 120,
+        "y": 120
+      },
+      "ImomuPoisonExStage::entrance::imomu_01::sub_near": {
+        "x": 1850,
+        "y": 1100
+      },
+      "ImomuPoisonExStage::entrance::imomu_02::sub_far": {
+        "x": 350,
+        "y": 120
+      },
+      "moon:ImomuPoisonExStage:3970:399": {
+        "x": 120,
+        "y": 261.53846153846155
+      },
+      "moon:ImomuPoisonExStage:4857:400": {
+        "x": 1620,
+        "y": 512
+      },
+      "JangoExStage::stage_change::ClashWorldMoonEX2::raw": {
+        "x": 1620,
+        "y": 1100
+      },
+      "JangoExStage::entrance::ClashWorldMoonEX2::sub_far": {
+        "x": 1850,
+        "y": 1100
+      },
+      "JangoExStage::entrance::ClashWorldMoonEX2::sub_near": {
+        "x": 1390,
+        "y": 1100
+      },
+      "moon:JangoExStage:211:491": {
+        "x": 1464.6215139442231,
+        "y": 428
+      },
+      "moon:JangoExStage:226:492": {
+        "x": 120,
+        "y": 120
       }
     }
   }

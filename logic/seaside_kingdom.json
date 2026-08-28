@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Seaside Kingdom",
-  "savedAt": "2026-08-24T19:34:05.127Z",
+  "savedAt": "2026-08-27T23:22:59.761Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T19:24:13.810Z",
+    "loadedAt": "2026-08-27T20:21:27.380Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2335,7 +2335,7 @@
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual;advanced",
+        "difficulty": "casual;expert",
         "option_scenarios": ""
       },
       {
@@ -4147,7 +4147,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SeaWorldHomeStage::checkpoint::obj2264",
         "state_requirement_expr": "",
-        "requirement_expr": "DownThrow | GroundPound | Pukupuku | NeutralThrow",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -4180,7 +4180,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SeaWorldHomeStage:2097:450",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4"
       },
       {
         "moon_id": "SeaWorldHomeStage:2112:451",
@@ -5571,7 +5571,7 @@
         "shine_info_scenario_name": "突いて！ 転がして！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "ReflectBombExStage:2157:487",
-        "difficulty": "casual;advanced",
+        "difficulty": "casual;expert",
         "option_scenarios": "1,2,3,4,5"
       },
       {

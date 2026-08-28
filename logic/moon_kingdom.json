@@ -2,7 +2,7 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Moon Kingdom",
-  "savedAt": "2026-08-24T02:51:51.869Z",
+  "savedAt": "2026-08-27T23:44:12.691Z",
   "workspace": {
     "schemaVersion": 2,
     "loadedAt": "2026-08-24T01:43:27.351Z",
@@ -3604,7 +3604,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "MoonWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Sand & KingdomAccess_Metro & KingdomAccess_Cascade & KingdomAccess_Luncheon)",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Moon",
         "moon_rock_token": "MoonRockActive_Moon",
         "access_type": "primary",

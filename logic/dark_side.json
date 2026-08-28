@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Dark Side",
-  "savedAt": "2026-08-24T19:45:02.879Z",
+  "savedAt": "2026-08-27T23:47:16.413Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T19:24:13.810Z",
+    "loadedAt": "2026-08-24T01:43:27.351Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2260,11 +2260,11 @@
         "area_scope": "subarea",
         "from_node_id": "BikeSteelNoCapExStage::entrance::BikeSteelNoCapEx::sub_near",
         "to_node_id": "BikeSteelNoCapExStage::entrance::BikeSteelNoCapEx_Exit::sub_far",
-        "requirement_expr": "(LongJump & RollBoost) | RollBoost | LongJump",
+        "requirement_expr": "(LongJump & RollBoost) | RollBoost | LongJump | Dive",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;advanced;advanced",
-        "bidirectional": "true",
+        "difficulty": "casual;advanced;advanced;advanced",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2342,6 +2342,21 @@
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0001",
+        "kingdom": "Dark Side",
+        "area_scope": "subarea",
+        "from_node_id": "BikeSteelNoCapExStage::entrance::BikeSteelNoCapEx_Exit::sub_far",
+        "to_node_id": "BikeSteelNoCapExStage::entrance::BikeSteelNoCapEx::sub_near",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0431.",
         "option_scenarios": ""
       }
     ],
@@ -2503,7 +2518,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "BikeSteelNoCapExStage::entrance::BikeSteelNoCapEx::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "LongJump | RollBoost | (RollBoost & LongJump)",
+        "requirement_expr": "LongJump | RollBoost | (RollBoost & LongJump) | Dive",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -2535,7 +2550,7 @@
         "shine_info_scenario_name": "チャレンジ！ 消える道路",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "BikeSteelNoCapExStage:5:1064",
-        "difficulty": "advanced;advanced;casual",
+        "difficulty": "advanced;advanced;casual;advanced",
         "option_scenarios": "1,2,3,4,5"
       },
       {
