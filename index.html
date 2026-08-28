@@ -346,6 +346,10 @@
     font-size:12px; font-style:italic; color:var(--text-dim);
     padding:8px 10px;
   }
+  .kingdom-complete-note{
+    font-size:11.5px; color:var(--worldpeace); margin:2px 0 6px;
+    font-style:italic;
+  }
   .impossible-chip{
     font-size:12px; font-style:italic; color:var(--danger);
     padding:8px 10px; border-color:var(--danger) !important;
@@ -1030,10 +1034,17 @@ function buildCheckpointLookup(nodes, edges){
 // Turns the raw routeEdges + node list into a flat, fully-expanded directed
 // edge list carrying a DNF per edge: { from, to, dnf }. "impossible" edges
 // are dropped entirely (that direction genuinely cannot be walked); bidirectional
-// edges are expanded into both directions. Also bridges every home_entrance
-// <-> substage_entrance pair that shares an entrance_id, as a free (Free)
-// two-way hop — same implicit-pipe rule buildCheckpointLookup() uses, kept
-// separate here so that function's own behavior is never touched.
+// edges are expanded into both directions. Also bridges the implicit pipe
+// transition for each entrance_id: home_in->sub_near (walking IN through the
+// entry door) and sub_far->home_out (walking OUT through the exit door) are
+// each a real, free, one-way stage-change hop. These are deliberately ONE-WAY
+// only, not bidirectional bridges — entering Odyssey's warp pipe at home_in
+// sends the player to sub_near, but sub_near does not lead back to home_in;
+// the only way out of a subarea is via its own exit door (sub_far->home_out).
+// Bridging home_in<->sub_near both ways would invent a "free" return trip
+// through the entrance door that the game doesn't actually allow, which
+// silently masks genuinely one-way subareas (like Gusty Bridges, whose only
+// far-side return route is walled off) as if they had a free way back out.
 function buildLogicEdgeList(nodes, edges){
   const out = [];
   (edges || []).forEach(e => {
@@ -1050,15 +1061,16 @@ function buildLogicEdgeList(nodes, edges){
   (nodes || []).forEach(n => {
     if(!n.entrance_id) return;
     if(n.node_type !== "home_entrance" && n.node_type !== "substage_entrance") return;
-    (byEntranceId[n.entrance_id] = byEntranceId[n.entrance_id] || []).push(n.node_id);
+    (byEntranceId[n.entrance_id] = byEntranceId[n.entrance_id] || []).push(n);
   });
-  Object.values(byEntranceId).forEach(nodeIds => {
-    for(let i = 0; i < nodeIds.length; i++){
-      for(let j = 0; j < nodeIds.length; j++){
-        if(i === j) continue;
-        out.push({ from: nodeIds[i], to: nodeIds[j], dnf: [[]] }); // free — the stage-change itself isn't a "requirement"
-      }
-    }
+  const PIPE_SIDE_PAIRS = [["home_in", "sub_near"], ["sub_far", "home_out"]];
+  Object.values(byEntranceId).forEach(group => {
+    PIPE_SIDE_PAIRS.forEach(([fromSide, toSide]) => {
+      const a = group.find(n => n.side === fromSide);
+      const b = group.find(n => n.side === toSide);
+      if(!a || !b) return;
+      out.push({ from: a.node_id, to: b.node_id, dnf: [[]] });
+    });
   });
 
   return out;
@@ -1239,6 +1251,20 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
     if(truthy && !badges.includes("worldPeace")) badges.push("worldPeace");
   });
 
+  // "On Kingdom Complete" — capture this BEFORE filterRequirementTokens
+  // strips the kingdom's own KingdomAccess_<kingdom> token out of dnf below.
+  // A branch like "BreedaWanwan | KingdomAccess_Cascade" reflects a real
+  // game mechanic: once Cascade's main story is finished, simply leaving
+  // and returning (any zone transition) re-triggers a check that unlocks
+  // the Multi Moon for free, no capture or ability needed anymore. Without
+  // flagging it here, that free-after-completion route would otherwise be
+  // silently dropped since KingdomAccess_<the kingdom you're already in> is
+  // treated as "always true, not worth showing" by filterRequirementTokens.
+  const kingdomAccessToken = Object.keys(KINGDOM_ACCESS_TOKEN_TO_KINGDOM).find(
+    tok => KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] === kingdomName
+  );
+  const onKingdomComplete = !!(kingdomAccessToken && dnf.some(g => g.includes(kingdomAccessToken)));
+
   dnf = filterRequirementTokens(dnf, {
     moonRockToken: row.moon_rock_token,
     worldPeaceToken: row.world_peace_token,
@@ -1348,6 +1374,7 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
     loadingZone,
     checkpoint,
     badges,
+    onKingdomComplete,
     hintIdx: Number.isNaN(hintIdx) ? null : hintIdx,
   };
 }
@@ -2201,6 +2228,19 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
     substageEntranceCountByStage[stage] = (substageEntranceCountByStage[stage] || 0) + 1;
   });
 
+  // "Flying Far Away from Gusty Bridges" and similar far-anchored moons are
+  // reached by flying/launching directly to the level's far end, not by
+  // walking the near->far bridge crossing. Once physically at the far
+  // anchor, walking back out through the near door means re-crossing the
+  // one-way bridge backward, which the data already marks impossible
+  // (sub_far -> sub_near). But entryReach/exitReach are computed once per
+  // *node*, keyed by from_node_id, and both Gusty moons share the same
+  // from_node_id (sub_near) in this export even though one of them is only
+  // reachable by flying to the far side. Anthropic can't currently fix the
+  // moon's own from_node_id (that's a data-authoring problem outside this
+  // file), but the walkable exit for anything actually anchored past that
+  // one-way crossing must still resolve to impossible — enforced explicitly
+  // here rather than trusting a single from_node_id lookup for every moon.
   const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach, substageEntranceCountByStage)));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
@@ -2454,6 +2494,19 @@ function buildMoonCard(moon){
   name.className = "moon-name";
   name.textContent = moon.name;
   card.appendChild(name);
+
+  // A branch like "BreedaWanwan | KingdomAccess_Cascade" means: once the
+  // kingdom's main story is finished, leaving and coming back unlocks this
+  // moon for free, no capture/ability needed. That's a real, useful fact a
+  // player would otherwise never see (the KingdomAccess token for a kingdom
+  // you're already in is normally filtered out of the displayed logic
+  // entirely), so it gets called out explicitly right under the name.
+  if(moon.onKingdomComplete){
+    const note = document.createElement("p");
+    note.className = "kingdom-complete-note";
+    note.textContent = "Free after Kingdom Complete (leave & return)";
+    card.appendChild(note);
+  }
 
   if(moon.badges && moon.badges.length){
     const badgeRow = document.createElement("div");
