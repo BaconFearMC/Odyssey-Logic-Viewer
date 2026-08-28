@@ -346,6 +346,10 @@
     font-size:12px; font-style:italic; color:var(--text-dim);
     padding:8px 10px;
   }
+  .impossible-chip{
+    font-size:12px; font-style:italic; color:var(--danger);
+    padding:8px 10px; border-color:var(--danger) !important;
+  }
   .icon{ width:48.6px; height:48.6px; border-radius:8px; object-fit:cover; display:block; border:1px solid var(--border); }
   .icon-fallback{
     width:48.6px; height:48.6px; border-radius:8px;
@@ -1191,7 +1195,7 @@ function tiersForGroups(dnf, difficultyField){
   return raw.map(t => TIER_ORDER.includes(t) ? t : "unrated");
 }
 
-function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach){
+function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach, substageEntranceCountByStage){
   let dnf = exprToDNF(row.requirement_expr);
   let tiers = tiersForGroups(dnf, row.difficulty);
   if(row.state_requirement_expr && row.state_requirement_expr.trim()){
@@ -1205,26 +1209,18 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
   }
 
   // SUBAREA LOADING-ZONE LOGIC — a subarea moon's requirement_expr only ever
-  // describes the *local* ability check at its anchor point (row.from_node_id);
-  // it says nothing about what it costs to actually walk/warp into the subarea
-  // and reach that anchor in the first place. That entry-path cost is folded in
-  // here so the card's real, overall requirement is accurate (e.g. a moon
-  // anchored just past a Chain-Chomp-gated one-way stretch now correctly shows
-  // the Chain Chomp capture, instead of reading "Free"). The two are still kept
-  // as separate concepts, though — see moon.loadingZone below, built from the
-  // very same entryReach/exitReach lookup — so a card can show "what it costs
-  // to enter" and "what it costs to exit" as their own distinct paths rather
-  // than silently combining them into one number and calling it done.
+  // describes the *local* ability check at its anchor point (row.from_node_id).
+  // What it costs to actually walk/warp into the subarea and reach that anchor
+  // is a separate concept — the loading-zone Enter/Exit panel below — and is
+  // deliberately NOT folded into the tier lanes here. Folding it in used to
+  // make every subarea moon's displayed tier logic a mix of "the door's entry
+  // cost" plus "this moon's own local cost," duplicating the entry logic
+  // across every moon in the subarea and burying each moon's real local
+  // requirement behind whatever the door needed. Tier lanes now always show
+  // pure local logic; moon.loadingZone (built below from the same
+  // entryReach/exitReach lookup) is the only place entry/exit cost appears.
   const originNode = nodeMap[row.from_node_id];
   const isSubarea = !!(originNode && originNode.area_scope === "subarea");
-  if(isSubarea && entryReach){
-    const entryDNF = (entryReach[row.from_node_id] && entryReach[row.from_node_id].length)
-      ? entryReach[row.from_node_id] : [[]];
-    const expandedTiers = [];
-    dnf.forEach((_, i) => entryDNF.forEach(() => expandedTiers.push(tiers[i])));
-    dnf = crossProduct(dnf, entryDNF);
-    tiers = expandedTiers;
-  }
 
   const badges = [];
   if(String(row.shine_info_is_moon_rock).toLowerCase() === "true") badges.push("moonRock");
@@ -1307,14 +1303,40 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
   // don't have a loading zone to speak of.
   let loadingZone = null;
   if(isSubarea){
-    const rawEntry = (entryReach && entryReach[row.from_node_id]) || [[]];
-    const rawExit = (exitReach && exitReach[row.from_node_id]) || [[]];
-    const entryDnf = pruneDNF(filterRequirementTokens(rawEntry, { kingdomName }));
-    const exitDnf = pruneDNF(filterRequirementTokens(rawExit, { kingdomName }));
+    // entryReach/exitReach only have an entry for a node if the BFS actually
+    // found at least one path to it. Missing from the map means genuinely
+    // unreachable in that direction (e.g. an exit-only pipe with no return
+    // route) — that's NOT the same thing as "free," so it must not silently
+    // fall back to [[]] (which renders as a green Free chip). Only an empty
+    // *array* of groups that was actually computed represents "no cost."
+    const entryFound = entryReach && Object.prototype.hasOwnProperty.call(entryReach, row.from_node_id);
+    const exitFound = exitReach && Object.prototype.hasOwnProperty.call(exitReach, row.from_node_id);
+    const rawEntry = entryFound ? entryReach[row.from_node_id] : null;
+    const rawExit = exitFound ? exitReach[row.from_node_id] : null;
+    const entryDnf = rawEntry ? pruneDNF(filterRequirementTokens(rawEntry, { kingdomName })) : null;
+    const exitDnf = rawExit ? pruneDNF(filterRequirementTokens(rawExit, { kingdomName })) : null;
+
+    // Single-door subareas (only one substage_entrance node, e.g. Frog Pond
+    // in Cap Kingdom) don't have a distinct entry route and exit route —
+    // it's the same door both ways — so the panel collapses to one
+    // "Entrance" row instead of separate Enter/Exit rows.
+    const stageName = node.stage_display_name;
+    const doorCount = (substageEntranceCountByStage && substageEntranceCountByStage[stageName]) || 0;
+    const singleDoor = doorCount <= 1;
+
     loadingZone = {
-      stageName: node.stage_display_name,
-      entry: { orGroups: entryDnf, isFree: entryDnf.every(g => g.length === 0) },
-      exit: { orGroups: exitDnf, isFree: exitDnf.every(g => g.length === 0) },
+      stageName,
+      singleDoor,
+      entry: {
+        orGroups: entryDnf || [],
+        isFree: !!entryDnf && entryDnf.every(g => g.length === 0),
+        isUnreachable: !entryDnf,
+      },
+      exit: {
+        orGroups: exitDnf || [],
+        isFree: !!exitDnf && exitDnf.every(g => g.length === 0),
+        isUnreachable: !exitDnf,
+      },
     };
   }
 
@@ -2166,7 +2188,20 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   const entryReach = computeReachabilityDNF(logicEdgeList, checkpointIds);
   const exitReach = computeReachabilityDNF(reverseLogicEdgeList(logicEdgeList), checkpointIds);
 
-  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach)));
+  // Some subareas (e.g. Cap Kingdom's Frog Pond) only have a single door in
+  // and out — one substage_entrance node, not a separate pair for entry vs.
+  // exit. For those, "Enter" and "Exit" aren't two distinct routes, they're
+  // the same door described twice, so the panel should say just "Entrance"
+  // instead. Tally substage_entrance nodes per subarea stage name so
+  // parseMoon can tell single-door subareas apart from multi-door ones.
+  const substageEntranceCountByStage = {};
+  (ws.logicNodes || []).forEach(n => {
+    if(n.node_type !== "substage_entrance") return;
+    const stage = n.stage_display_name;
+    substageEntranceCountByStage[stage] = (substageEntranceCountByStage[stage] || 0) + 1;
+  });
+
+  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach, substageEntranceCountByStage)));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons;
@@ -2308,9 +2343,21 @@ function hasGlitchedLane(moon){
 // Renders one loading-zone side (Enter or Exit) as the same OR/AND chip
 // pattern the tier lanes use, so it reads consistently with the rest of the
 // card — just styled with the subarea gold accent instead of a tier color.
-function buildLoadingZoneChips(orGroups){
+// isUnreachable means the reachability BFS found no path at all in that
+// direction (a genuine one-way dead end) — that's distinct from an empty
+// AND-group, which means a path was found and it costs nothing. The two
+// must never render the same way, or a real dead end silently reads as Free.
+function buildLoadingZoneChips(orGroups, isUnreachable){
   const wrap = document.createElement("div");
   wrap.className = "tier-options";
+
+  if(isUnreachable){
+    const chip = document.createElement("div");
+    chip.className = "option-chip impossible-chip";
+    chip.textContent = "Impossible";
+    wrap.appendChild(chip);
+    return wrap;
+  }
 
   const groups = (orGroups && orGroups.length) ? orGroups : [[]];
   groups.forEach((andGroup, i) => {
@@ -2355,13 +2402,35 @@ function buildLoadingZonePanel(loadingZone){
   title.textContent = "Loading Zones \u2014 " + loadingZone.stageName;
   panel.appendChild(title);
 
+  // A subarea with only one door in and out (e.g. Cap Kingdom's Frog Pond)
+  // doesn't have a separate entry route and exit route to show — showing
+  // both Enter and Exit rows would just repeat the same door twice. Those
+  // subareas get one "Entrance" row instead. Everywhere else keeps the
+  // distinct Enter/Exit rows, since those genuinely can differ (different
+  // doors, one-way paths, etc).
+  if(loadingZone.singleDoor){
+    const row = document.createElement("div");
+    row.className = "loading-zone-row";
+    const pill = document.createElement("span");
+    pill.className = "loading-zone-pill";
+    pill.textContent = "Entrance";
+    row.appendChild(pill);
+    // Prefer whichever side actually resolved a path; a single door's entry
+    // and exit logic should normally agree, but fall back gracefully if only
+    // one direction's reachability was computed.
+    const side = !loadingZone.entry.isUnreachable ? loadingZone.entry : loadingZone.exit;
+    row.appendChild(buildLoadingZoneChips(side.orGroups, side.isUnreachable));
+    panel.appendChild(row);
+    return panel;
+  }
+
   const enterRow = document.createElement("div");
   enterRow.className = "loading-zone-row";
   const enterPill = document.createElement("span");
   enterPill.className = "loading-zone-pill";
   enterPill.textContent = "Enter";
   enterRow.appendChild(enterPill);
-  enterRow.appendChild(buildLoadingZoneChips(loadingZone.entry.orGroups));
+  enterRow.appendChild(buildLoadingZoneChips(loadingZone.entry.orGroups, loadingZone.entry.isUnreachable));
   panel.appendChild(enterRow);
 
   const exitRow = document.createElement("div");
@@ -2370,7 +2439,7 @@ function buildLoadingZonePanel(loadingZone){
   exitPill.className = "loading-zone-pill";
   exitPill.textContent = "Exit";
   exitRow.appendChild(exitPill);
-  exitRow.appendChild(buildLoadingZoneChips(loadingZone.exit.orGroups));
+  exitRow.appendChild(buildLoadingZoneChips(loadingZone.exit.orGroups, loadingZone.exit.isUnreachable));
   panel.appendChild(exitRow);
 
   return panel;
