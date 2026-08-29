@@ -313,35 +313,6 @@
     padding:5px 7px;
   }
   .and-plus{ font-size:11px; color:var(--text-dim); margin:0 1px; }
-  /* ---- Subarea loading-zone panel ---------------------------------------
-     A subarea moon's *overall* requirement (the tier lanes above) already
-     folds in whatever it costs to travel in and reach the moon's anchor
-     point. This panel shows that entry cost broken back out on its own,
-     plus — separately — what it costs to leave again, since the two doors
-     of a subarea loading zone (in a Odyssey substage, usually two distinct
-     entrance_id-paired nodes) aren't always the same requirement and
-     shouldn't be flattened into one combined figure. */
-  .loading-zone-panel{
-    margin-top:10px;
-    padding-top:9px;
-    border-top:1px dashed var(--subarea-border);
-    display:flex; flex-direction:column; gap:6px;
-  }
-  .loading-zone-title{
-    font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;
-    color:var(--subarea);
-  }
-  .loading-zone-row{ display:flex; align-items:flex-start; gap:8px; }
-  .loading-zone-pill{
-    flex:0 0 auto;
-    font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;
-    padding:3px 7px; border-radius:20px; border:1px solid var(--subarea-border);
-    line-height:1.4; white-space:nowrap; margin-top:2px;
-    color:var(--subarea); background:var(--subarea-bg);
-  }
-  .loading-zone-row .tier-options{ margin:0; }
-  .loading-zone-row .option-chip{ border-color:var(--subarea-border); }
-  .loading-zone-row .or-sep.loadingzone{ color:var(--subarea); }
   .free-chip{
     font-size:12px; font-style:italic; color:var(--text-dim);
     padding:8px 10px;
@@ -992,182 +963,6 @@ function buildCheckpointLookup(nodes, edges){
 }
 
 /* =========================================================
-   LOADING-ZONE / PATH REACHABILITY ENGINE
-   ---------------------------------------------------------
-   buildCheckpointLookup() above answers "which checkpoint is
-   this node closest to" with a plain unweighted BFS — it's
-   deliberately blind to *what* an edge costs, it just needs
-   the nearest label.
-
-   Subarea moons need something stronger. A subarea (a
-   Mysterious-Clouds / 8-Bit-Chasm-Lifts style substage) is
-   entered and exited through its own loading zones — a
-   "home_entrance" node in the overworld stage paired with a
-   "substage_entrance" node in the substage, bridged implicitly
-   via a shared entrance_id, exactly like buildCheckpointLookup
-   already bridges for its own purposes. Two different doors
-   (two different entrance_id groups) commonly cover entry and
-   exit separately — e.g. Cascade's "Nice Shot with the Chain
-   Chomp!" moons live behind a Chain-Chomp-gated one-way path
-   from the near-side door to the far-side door, so *reaching*
-   that far-side anchor already costs the Chain Chomp capture
-   even though the moon's own local requirement_expr says
-   "free". Previously that cost was silently dropped — the
-   card just said "Free" for the entry-anchored copy of that
-   route and never mentioned the capture at all. The functions
-   below walk the same graph (routeEdges + entrance_id bridges)
-   but carry the *logic* (an OR-of-AND token DNF) along every
-   edge, so both directions of a loading zone — what it costs
-   to get IN, and separately what it costs to get back OUT —
-   can be computed and displayed as their own distinct paths
-   instead of being invisibly combined (or silently dropped).
-   ========================================================= */
-
-// Turns the raw routeEdges + node list into a flat, fully-expanded directed
-// edge list carrying a DNF per edge: { from, to, dnf }. "impossible" edges
-// are dropped entirely (that direction genuinely cannot be walked); bidirectional
-// edges are expanded into both directions. Also bridges every home_entrance
-// <-> substage_entrance pair that shares an entrance_id, as a free (Free)
-// two-way hop — same implicit-pipe rule buildCheckpointLookup() uses, kept
-// separate here so that function's own behavior is never touched.
-function buildLogicEdgeList(nodes, edges){
-  const out = [];
-  (edges || []).forEach(e => {
-    if(!e.from_node_id || !e.to_node_id) return;
-    if((e.requirement_expr || "").trim().toLowerCase() === "impossible") return;
-    const dnf = exprToDNF(e.requirement_expr);
-    out.push({ from: e.from_node_id, to: e.to_node_id, dnf });
-    if(String(e.bidirectional).toLowerCase() === "true"){
-      out.push({ from: e.to_node_id, to: e.from_node_id, dnf });
-    }
-  });
-
-  const byEntranceId = {};
-  (nodes || []).forEach(n => {
-    if(!n.entrance_id) return;
-    if(n.node_type !== "home_entrance" && n.node_type !== "substage_entrance") return;
-    (byEntranceId[n.entrance_id] = byEntranceId[n.entrance_id] || []).push(n.node_id);
-  });
-  Object.values(byEntranceId).forEach(nodeIds => {
-    for(let i = 0; i < nodeIds.length; i++){
-      for(let j = 0; j < nodeIds.length; j++){
-        if(i === j) continue;
-        out.push({ from: nodeIds[i], to: nodeIds[j], dnf: [[]] }); // free — the stage-change itself isn't a "requirement"
-      }
-    }
-  });
-
-  return out;
-}
-
-// Flips every edge in a logic edge list (from<->to, same dnf kept). Walking
-// checkpoints forward across the reversed graph is exactly the same thing as
-// walking backward from a node to a checkpoint on the original graph, which
-// is what "what does it cost to get OUT of here" needs.
-function reverseLogicEdgeList(edgeList){
-  return edgeList.map(e => ({ from: e.to, to: e.from, dnf: e.dnf }));
-}
-
-// Sorted, de-duplicated copy of one AND-group (order shouldn't matter for
-// "what tokens does this branch need", and duplicates can appear once two
-// path segments are crossed together, e.g. a moon-local "Wanwan" branch
-// crossed with a path that also needed "Wanwan" to get there at all).
-function dedupeAndGroup(group){
-  return Array.from(new Set(group)).sort();
-}
-
-// Drops exact-duplicate AND-groups, then drops any group that's a strict
-// superset of an easier (or equally easy) group already kept — if reaching
-// a node "for free" is possible, a branch that also lists "Wanwan" among
-// its requirements for the exact same destination isn't a real second
-// route, it's just a harder way of describing the same trip.
-function pruneDNF(dnf){
-  const seen = new Set();
-  const cleaned = [];
-  (dnf || []).forEach(g => {
-    const norm = dedupeAndGroup(g);
-    const key = norm.join("\u0001");
-    if(seen.has(key)) return;
-    seen.add(key);
-    cleaned.push(norm);
-  });
-  return cleaned.filter((g, i) => {
-    const gs = new Set(g);
-    return !cleaned.some((h, j) => {
-      if(i === j || h.length >= g.length) return false;
-      return h.every(tok => gs.has(tok));
-    });
-  });
-}
-
-// Multi-source DFS over a logic edge list: for every node reachable from any
-// of sourceIds, returns the OR-of-AND-groups DNF describing every distinct
-// simple path in (no node revisited within one path, so cycles can't loop
-// forever). Small, sparse per-kingdom graphs make this cheap; the depth cap
-// and total-step budget below are just a safety net against a much larger
-// or more densely-looped kingdom file blowing up the branch count.
-function computeReachabilityDNF(edgeList, sourceIds, opts){
-  const maxDepth = (opts && opts.maxDepth) || 40;
-  const maxSteps = (opts && opts.maxSteps) || 200000;
-  const maxGroupsPerNode = (opts && opts.maxGroupsPerNode) || 60;
-
-  const adj = {};
-  edgeList.forEach(e => { (adj[e.from] = adj[e.from] || []).push(e); });
-
-  const result = {};
-  let steps = 0;
-
-  function dfs(nodeId, group, visited){
-    (result[nodeId] = result[nodeId] || []).push(group);
-    if(visited.size >= maxDepth) return;
-    if(result[nodeId].length > maxGroupsPerNode) return;
-    const outgoing = adj[nodeId];
-    if(!outgoing) return;
-    for(const edge of outgoing){
-      if(visited.has(edge.to)) continue;
-      for(const edgeGroup of edge.dnf){
-        steps++;
-        if(steps > maxSteps) return;
-        const nextVisited = new Set(visited);
-        nextVisited.add(edge.to);
-        dfs(edge.to, dedupeAndGroup(group.concat(edgeGroup)), nextVisited);
-      }
-    }
-  }
-
-  (sourceIds || []).forEach(src => {
-    if(steps > maxSteps) return;
-    dfs(src, [], new Set([src]));
-  });
-
-  const pruned = {};
-  Object.keys(result).forEach(nodeId => { pruned[nodeId] = pruneDNF(result[nodeId]); });
-  return pruned;
-}
-
-// Same token clean-up parseMoon() already applies to a moon's own local
-// requirement (strip the base moveset, strip "access to the kingdom you're
-// already in", peel Moon Rock / World Peace tokens off into badges) —
-// pulled out so it can run identically over a *path* DNF (loading-zone
-// entry/exit logic), not just a moon's own requirement_expr.
-function filterRequirementTokens(dnf, opts){
-  const { moonRockToken, worldPeaceToken, kingdomName, badgeSink } = opts || {};
-  return dnf.map(group => dedupeAndGroup(group.filter(tok => {
-    if(moonRockToken && tok === moonRockToken){
-      if(badgeSink && !badgeSink.includes("moonRock")) badgeSink.push("moonRock");
-      return false;
-    }
-    if(worldPeaceToken && tok === worldPeaceToken){
-      if(badgeSink && !badgeSink.includes("worldPeace")) badgeSink.push("worldPeace");
-      return false;
-    }
-    if(ALWAYS_UNLOCKED_TOKENS[tok]) return false;
-    if(KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] && KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] === kingdomName) return false;
-    return true;
-  })));
-}
-
-/* =========================================================
    MOON PARSER — turns one moonAccess row into the render
    shape: { name, orGroups, subarea, badges, checkpoint }
    ========================================================= */
@@ -1191,7 +986,7 @@ function tiersForGroups(dnf, difficultyField){
   return raw.map(t => TIER_ORDER.includes(t) ? t : "unrated");
 }
 
-function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach){
+function parseMoon(row, nodeMap, checkpointLookup, kingdomName){
   let dnf = exprToDNF(row.requirement_expr);
   let tiers = tiersForGroups(dnf, row.difficulty);
   if(row.state_requirement_expr && row.state_requirement_expr.trim()){
@@ -1201,28 +996,6 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
     const expandedTiers = [];
     dnf.forEach((_, i) => stateDnf.forEach(() => expandedTiers.push(tiers[i])));
     dnf = crossProduct(dnf, stateDnf);
-    tiers = expandedTiers;
-  }
-
-  // SUBAREA LOADING-ZONE LOGIC — a subarea moon's requirement_expr only ever
-  // describes the *local* ability check at its anchor point (row.from_node_id);
-  // it says nothing about what it costs to actually walk/warp into the subarea
-  // and reach that anchor in the first place. That entry-path cost is folded in
-  // here so the card's real, overall requirement is accurate (e.g. a moon
-  // anchored just past a Chain-Chomp-gated one-way stretch now correctly shows
-  // the Chain Chomp capture, instead of reading "Free"). The two are still kept
-  // as separate concepts, though — see moon.loadingZone below, built from the
-  // very same entryReach/exitReach lookup — so a card can show "what it costs
-  // to enter" and "what it costs to exit" as their own distinct paths rather
-  // than silently combining them into one number and calling it done.
-  const originNode = nodeMap[row.from_node_id];
-  const isSubarea = !!(originNode && originNode.area_scope === "subarea");
-  if(isSubarea && entryReach){
-    const entryDNF = (entryReach[row.from_node_id] && entryReach[row.from_node_id].length)
-      ? entryReach[row.from_node_id] : [[]];
-    const expandedTiers = [];
-    dnf.forEach((_, i) => entryDNF.forEach(() => expandedTiers.push(tiers[i])));
-    dnf = crossProduct(dnf, entryDNF);
     tiers = expandedTiers;
   }
 
@@ -1243,35 +1016,28 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
     if(truthy && !badges.includes("worldPeace")) badges.push("worldPeace");
   });
 
-  dnf = filterRequirementTokens(dnf, {
-    moonRockToken: row.moon_rock_token,
-    worldPeaceToken: row.world_peace_token,
-    kingdomName,
-    badgeSink: badges,
-  });
-
-  // Merging the entry-path DNF in above (crossProduct) can leave duplicate
-  // AND-groups behind — e.g. a moon whose own requirement_expr already says
-  // "Wanwan" landing on the exact same branch as the path DNF that also
-  // needed "Wanwan" to get there. Collapse those (and any group that's just
-  // a strictly-harder restatement of an easier one already present) so each
-  // tier lane shows one route per genuinely distinct option, not two chips
-  // for what's really the same requirement.
-  {
-    const seen = new Set();
-    const dedupedDnf = [];
-    const dedupedTiers = [];
-    dnf.forEach((g, i) => {
-      const norm = dedupeAndGroup(g);
-      const key = tiers[i] + "\u0001" + norm.join("\u0001");
-      if(seen.has(key)) return;
-      seen.add(key);
-      dedupedDnf.push(norm);
-      dedupedTiers.push(tiers[i]);
-    });
-    dnf = dedupedDnf;
-    tiers = dedupedTiers;
-  }
+  dnf = dnf.map(group => group.filter(tok => {
+    if(row.moon_rock_token && tok === row.moon_rock_token){
+      if(!badges.includes("moonRock")) badges.push("moonRock");
+      return false;
+    }
+    if(row.world_peace_token && tok === row.world_peace_token){
+      if(!badges.includes("worldPeace")) badges.push("worldPeace");
+      return false;
+    }
+    // Base moveset the player always has (Single Jump, etc.) — not a real
+    // requirement, so it's dropped rather than shown as a token/icon.
+    if(ALWAYS_UNLOCKED_TOKENS[tok]) return false;
+    // "Access to the kingdom you're already standing in" isn't a real
+    // requirement either — e.g. KingdomAccess_Bowsers on a Bowser's
+    // Kingdom moon. Access to a *different* kingdom (a cross-kingdom
+    // moon, like KingdomAccess_Sand showing up in Bowser's Kingdom) is
+    // still a genuine requirement and stays shown.
+    if(KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] && KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] === kingdomName){
+      return false;
+    }
+    return true;
+  }));
 
   let subarea = null;
   const node = nodeMap[row.from_node_id];
@@ -1297,33 +1063,11 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
     });
   }
 
-  // LOADING ZONE PANEL — the distinct "what does it cost to walk in" /
-  // "what does it cost to walk back out" pair the entry/exit doors of a
-  // subarea represent. Built from the exact same reachability lookup that
-  // was folded into the overall requirement above, but kept as its own
-  // separate field (never merged with `entry`/`exit` together) so a card
-  // can show both loading zones as two distinct paths rather than one
-  // combined number. Only populated for subarea moons; overworld moons
-  // don't have a loading zone to speak of.
-  let loadingZone = null;
-  if(isSubarea){
-    const rawEntry = (entryReach && entryReach[row.from_node_id]) || [[]];
-    const rawExit = (exitReach && exitReach[row.from_node_id]) || [[]];
-    const entryDnf = pruneDNF(filterRequirementTokens(rawEntry, { kingdomName }));
-    const exitDnf = pruneDNF(filterRequirementTokens(rawExit, { kingdomName }));
-    loadingZone = {
-      stageName: node.stage_display_name,
-      entry: { orGroups: entryDnf, isFree: entryDnf.every(g => g.length === 0) },
-      exit: { orGroups: exitDnf, isFree: exitDnf.every(g => g.length === 0) },
-    };
-  }
-
   return {
     name: row.moon_name,
     orGroups: isFree ? [] : dnf,
     tierLanes,
     subarea,
-    loadingZone,
     checkpoint,
     badges,
     hintIdx: Number.isNaN(hintIdx) ? null : hintIdx,
@@ -2154,19 +1898,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
 
   const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
 
-  // Entry/exit loading-zone reachability: forward from every checkpoint (what
-  // it costs to walk IN), and forward from every checkpoint across the
-  // reversed graph, which is equivalent to walking backward from a node OUT
-  // to a checkpoint (what it costs to walk back OUT). Computed once per
-  // kingdom file and handed to every moon row below.
-  const checkpointIds = (ws.logicNodes || [])
-    .filter(n => n.node_type === "checkpoint")
-    .map(n => n.node_id);
-  const logicEdgeList = buildLogicEdgeList(ws.logicNodes || [], ws.routeEdges || []);
-  const entryReach = computeReachabilityDNF(logicEdgeList, checkpointIds);
-  const exitReach = computeReachabilityDNF(reverseLogicEdgeList(logicEdgeList), checkpointIds);
-
-  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach)));
+  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName)));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons;
@@ -2305,77 +2037,6 @@ function hasGlitchedLane(moon){
   return (moon.tierLanes || []).some(lane => lane.tier === "glitched");
 }
 
-// Renders one loading-zone side (Enter or Exit) as the same OR/AND chip
-// pattern the tier lanes use, so it reads consistently with the rest of the
-// card — just styled with the subarea gold accent instead of a tier color.
-function buildLoadingZoneChips(orGroups){
-  const wrap = document.createElement("div");
-  wrap.className = "tier-options";
-
-  const groups = (orGroups && orGroups.length) ? orGroups : [[]];
-  groups.forEach((andGroup, i) => {
-    if(i > 0){
-      const sep = document.createElement("span");
-      sep.className = "or-sep loadingzone";
-      sep.textContent = "or";
-      wrap.appendChild(sep);
-    }
-    if(andGroup.length === 0){
-      const chip = document.createElement("div");
-      chip.className = "option-chip free-chip";
-      chip.textContent = "Free";
-      wrap.appendChild(chip);
-      return;
-    }
-    const chip = document.createElement("div");
-    chip.className = "option-chip";
-    andGroup.forEach((token, j) => {
-      if(j > 0){
-        const plus = document.createElement("span");
-        plus.className = "and-plus";
-        plus.textContent = "+";
-        chip.appendChild(plus);
-      }
-      chip.appendChild(makeIcon(token));
-    });
-    wrap.appendChild(chip);
-  });
-  return wrap;
-}
-
-// The panel itself: two distinct rows, Enter and Exit, each its own path —
-// never flattened together — so it's always clear what it costs to walk
-// into a subarea versus what it costs to walk (or warp) back out of it.
-function buildLoadingZonePanel(loadingZone){
-  const panel = document.createElement("div");
-  panel.className = "loading-zone-panel";
-
-  const title = document.createElement("div");
-  title.className = "loading-zone-title";
-  title.textContent = "Loading Zones \u2014 " + loadingZone.stageName;
-  panel.appendChild(title);
-
-  const enterRow = document.createElement("div");
-  enterRow.className = "loading-zone-row";
-  const enterPill = document.createElement("span");
-  enterPill.className = "loading-zone-pill";
-  enterPill.textContent = "Enter";
-  enterRow.appendChild(enterPill);
-  enterRow.appendChild(buildLoadingZoneChips(loadingZone.entry.orGroups));
-  panel.appendChild(enterRow);
-
-  const exitRow = document.createElement("div");
-  exitRow.className = "loading-zone-row";
-  const exitPill = document.createElement("span");
-  exitPill.className = "loading-zone-pill";
-  exitPill.textContent = "Exit";
-  exitRow.appendChild(exitPill);
-  exitRow.appendChild(buildLoadingZoneChips(loadingZone.exit.orGroups));
-  panel.appendChild(exitRow);
-
-  return panel;
-}
-
 function buildMoonCard(moon){
   const card = document.createElement("div");
   card.className = "moon-card";
@@ -2457,7 +2118,6 @@ function buildMoonCard(moon){
     free.textContent = "Free";
     row.appendChild(free);
     card.appendChild(row);
-    if(moon.loadingZone) card.appendChild(buildLoadingZonePanel(moon.loadingZone));
     return card;
   }
 
@@ -2517,7 +2177,6 @@ function buildMoonCard(moon){
   });
 
   card.appendChild(stack);
-  if(moon.loadingZone) card.appendChild(buildLoadingZonePanel(moon.loadingZone));
   return card;
 }
 
