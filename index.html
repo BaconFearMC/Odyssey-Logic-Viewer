@@ -346,6 +346,14 @@
     font-size:12px; font-style:italic; color:var(--text-dim);
     padding:8px 10px;
   }
+  .kingdom-complete-note{
+    font-size:11.5px; color:var(--worldpeace); margin:2px 0 6px;
+    font-style:italic;
+  }
+  .impossible-chip{
+    font-size:12px; font-style:italic; color:var(--danger);
+    padding:8px 10px; border-color:var(--danger) !important;
+  }
   .icon{ width:48.6px; height:48.6px; border-radius:8px; object-fit:cover; display:block; border:1px solid var(--border); }
   .icon-fallback{
     width:48.6px; height:48.6px; border-radius:8px;
@@ -1026,10 +1034,17 @@ function buildCheckpointLookup(nodes, edges){
 // Turns the raw routeEdges + node list into a flat, fully-expanded directed
 // edge list carrying a DNF per edge: { from, to, dnf }. "impossible" edges
 // are dropped entirely (that direction genuinely cannot be walked); bidirectional
-// edges are expanded into both directions. Also bridges every home_entrance
-// <-> substage_entrance pair that shares an entrance_id, as a free (Free)
-// two-way hop — same implicit-pipe rule buildCheckpointLookup() uses, kept
-// separate here so that function's own behavior is never touched.
+// edges are expanded into both directions. Also bridges the implicit pipe
+// transition for each entrance_id: home_in->sub_near (walking IN through the
+// entry door) and sub_far->home_out (walking OUT through the exit door) are
+// each a real, free, one-way stage-change hop. These are deliberately ONE-WAY
+// only, not bidirectional bridges — entering Odyssey's warp pipe at home_in
+// sends the player to sub_near, but sub_near does not lead back to home_in;
+// the only way out of a subarea is via its own exit door (sub_far->home_out).
+// Bridging home_in<->sub_near both ways would invent a "free" return trip
+// through the entrance door that the game doesn't actually allow, which
+// silently masks genuinely one-way subareas (like Gusty Bridges, whose only
+// far-side return route is walled off) as if they had a free way back out.
 function buildLogicEdgeList(nodes, edges){
   const out = [];
   (edges || []).forEach(e => {
@@ -1046,15 +1061,16 @@ function buildLogicEdgeList(nodes, edges){
   (nodes || []).forEach(n => {
     if(!n.entrance_id) return;
     if(n.node_type !== "home_entrance" && n.node_type !== "substage_entrance") return;
-    (byEntranceId[n.entrance_id] = byEntranceId[n.entrance_id] || []).push(n.node_id);
+    (byEntranceId[n.entrance_id] = byEntranceId[n.entrance_id] || []).push(n);
   });
-  Object.values(byEntranceId).forEach(nodeIds => {
-    for(let i = 0; i < nodeIds.length; i++){
-      for(let j = 0; j < nodeIds.length; j++){
-        if(i === j) continue;
-        out.push({ from: nodeIds[i], to: nodeIds[j], dnf: [[]] }); // free — the stage-change itself isn't a "requirement"
-      }
-    }
+  const PIPE_SIDE_PAIRS = [["home_in", "sub_near"], ["sub_far", "home_out"]];
+  Object.values(byEntranceId).forEach(group => {
+    PIPE_SIDE_PAIRS.forEach(([fromSide, toSide]) => {
+      const a = group.find(n => n.side === fromSide);
+      const b = group.find(n => n.side === toSide);
+      if(!a || !b) return;
+      out.push({ from: a.node_id, to: b.node_id, dnf: [[]] });
+    });
   });
 
   return out;
@@ -1191,7 +1207,7 @@ function tiersForGroups(dnf, difficultyField){
   return raw.map(t => TIER_ORDER.includes(t) ? t : "unrated");
 }
 
-function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach){
+function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach, substageEntranceCountByStage){
   let dnf = exprToDNF(row.requirement_expr);
   let tiers = tiersForGroups(dnf, row.difficulty);
   if(row.state_requirement_expr && row.state_requirement_expr.trim()){
@@ -1205,26 +1221,18 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
   }
 
   // SUBAREA LOADING-ZONE LOGIC — a subarea moon's requirement_expr only ever
-  // describes the *local* ability check at its anchor point (row.from_node_id);
-  // it says nothing about what it costs to actually walk/warp into the subarea
-  // and reach that anchor in the first place. That entry-path cost is folded in
-  // here so the card's real, overall requirement is accurate (e.g. a moon
-  // anchored just past a Chain-Chomp-gated one-way stretch now correctly shows
-  // the Chain Chomp capture, instead of reading "Free"). The two are still kept
-  // as separate concepts, though — see moon.loadingZone below, built from the
-  // very same entryReach/exitReach lookup — so a card can show "what it costs
-  // to enter" and "what it costs to exit" as their own distinct paths rather
-  // than silently combining them into one number and calling it done.
+  // describes the *local* ability check at its anchor point (row.from_node_id).
+  // What it costs to actually walk/warp into the subarea and reach that anchor
+  // is a separate concept — the loading-zone Enter/Exit panel below — and is
+  // deliberately NOT folded into the tier lanes here. Folding it in used to
+  // make every subarea moon's displayed tier logic a mix of "the door's entry
+  // cost" plus "this moon's own local cost," duplicating the entry logic
+  // across every moon in the subarea and burying each moon's real local
+  // requirement behind whatever the door needed. Tier lanes now always show
+  // pure local logic; moon.loadingZone (built below from the same
+  // entryReach/exitReach lookup) is the only place entry/exit cost appears.
   const originNode = nodeMap[row.from_node_id];
   const isSubarea = !!(originNode && originNode.area_scope === "subarea");
-  if(isSubarea && entryReach){
-    const entryDNF = (entryReach[row.from_node_id] && entryReach[row.from_node_id].length)
-      ? entryReach[row.from_node_id] : [[]];
-    const expandedTiers = [];
-    dnf.forEach((_, i) => entryDNF.forEach(() => expandedTiers.push(tiers[i])));
-    dnf = crossProduct(dnf, entryDNF);
-    tiers = expandedTiers;
-  }
 
   const badges = [];
   if(String(row.shine_info_is_moon_rock).toLowerCase() === "true") badges.push("moonRock");
@@ -1242,6 +1250,24 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
     const truthy = v === true || v === 1 || /^(true|1|yes)$/i.test(String(v).trim());
     if(truthy && !badges.includes("worldPeace")) badges.push("worldPeace");
   });
+
+  // "On Kingdom Complete" — capture this BEFORE filterRequirementTokens
+  // strips the kingdom's own KingdomAccess_<kingdom> token out of dnf below.
+  // A branch like "BreedaWanwan | KingdomAccess_Cascade" reflects a real
+  // game mechanic: once Cascade's main story is finished, simply leaving
+  // and returning (any zone transition) re-triggers a check that unlocks
+  // the Multi Moon for free, no capture or ability needed anymore. Without
+  // flagging it here, that free-after-completion route would otherwise be
+  // silently dropped since KingdomAccess_<the kingdom you're already in> is
+  // treated as "always true, not worth showing" by filterRequirementTokens.
+  const kingdomAccessToken = Object.keys(KINGDOM_ACCESS_TOKEN_TO_KINGDOM).find(
+    tok => KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] === kingdomName
+  );
+  // Only the kingdom's Multi Moon actually re-checks on zone transition after
+  // the main story is done; other moons that happen to share a branch with
+  // KingdomAccess_<kingdom> (rare data quirk) shouldn't get this note.
+  const isMultiMoon = /(^|[\s|])ShineFlag_Multi([\s|]|$)/.test(row.flags || "");
+  const onKingdomComplete = !!(isMultiMoon && kingdomAccessToken && dnf.some(g => g.includes(kingdomAccessToken)));
 
   dnf = filterRequirementTokens(dnf, {
     moonRockToken: row.moon_rock_token,
@@ -1307,14 +1333,40 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
   // don't have a loading zone to speak of.
   let loadingZone = null;
   if(isSubarea){
-    const rawEntry = (entryReach && entryReach[row.from_node_id]) || [[]];
-    const rawExit = (exitReach && exitReach[row.from_node_id]) || [[]];
-    const entryDnf = pruneDNF(filterRequirementTokens(rawEntry, { kingdomName }));
-    const exitDnf = pruneDNF(filterRequirementTokens(rawExit, { kingdomName }));
+    // entryReach/exitReach only have an entry for a node if the BFS actually
+    // found at least one path to it. Missing from the map means genuinely
+    // unreachable in that direction (e.g. an exit-only pipe with no return
+    // route) — that's NOT the same thing as "free," so it must not silently
+    // fall back to [[]] (which renders as a green Free chip). Only an empty
+    // *array* of groups that was actually computed represents "no cost."
+    const entryFound = entryReach && Object.prototype.hasOwnProperty.call(entryReach, row.from_node_id);
+    const exitFound = exitReach && Object.prototype.hasOwnProperty.call(exitReach, row.from_node_id);
+    const rawEntry = entryFound ? entryReach[row.from_node_id] : null;
+    const rawExit = exitFound ? exitReach[row.from_node_id] : null;
+    const entryDnf = rawEntry ? pruneDNF(filterRequirementTokens(rawEntry, { kingdomName })) : null;
+    const exitDnf = rawExit ? pruneDNF(filterRequirementTokens(rawExit, { kingdomName })) : null;
+
+    // Single-door subareas (only one substage_entrance node, e.g. Frog Pond
+    // in Cap Kingdom) don't have a distinct entry route and exit route —
+    // it's the same door both ways — so the panel collapses to one
+    // "Entrance" row instead of separate Enter/Exit rows.
+    const stageName = node.stage_display_name;
+    const doorCount = (substageEntranceCountByStage && substageEntranceCountByStage[stageName]) || 0;
+    const singleDoor = doorCount <= 1;
+
     loadingZone = {
-      stageName: node.stage_display_name,
-      entry: { orGroups: entryDnf, isFree: entryDnf.every(g => g.length === 0) },
-      exit: { orGroups: exitDnf, isFree: exitDnf.every(g => g.length === 0) },
+      stageName,
+      singleDoor,
+      entry: {
+        orGroups: entryDnf || [],
+        isFree: !!entryDnf && entryDnf.every(g => g.length === 0),
+        isUnreachable: !entryDnf,
+      },
+      exit: {
+        orGroups: exitDnf || [],
+        isFree: !!exitDnf && exitDnf.every(g => g.length === 0),
+        isUnreachable: !exitDnf,
+      },
     };
   }
 
@@ -1326,6 +1378,7 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exit
     loadingZone,
     checkpoint,
     badges,
+    onKingdomComplete,
     hintIdx: Number.isNaN(hintIdx) ? null : hintIdx,
   };
 }
@@ -2166,7 +2219,33 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   const entryReach = computeReachabilityDNF(logicEdgeList, checkpointIds);
   const exitReach = computeReachabilityDNF(reverseLogicEdgeList(logicEdgeList), checkpointIds);
 
-  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach)));
+  // Some subareas (e.g. Cap Kingdom's Frog Pond) only have a single door in
+  // and out — one substage_entrance node, not a separate pair for entry vs.
+  // exit. For those, "Enter" and "Exit" aren't two distinct routes, they're
+  // the same door described twice, so the panel should say just "Entrance"
+  // instead. Tally substage_entrance nodes per subarea stage name so
+  // parseMoon can tell single-door subareas apart from multi-door ones.
+  const substageEntranceCountByStage = {};
+  (ws.logicNodes || []).forEach(n => {
+    if(n.node_type !== "substage_entrance") return;
+    const stage = n.stage_display_name;
+    substageEntranceCountByStage[stage] = (substageEntranceCountByStage[stage] || 0) + 1;
+  });
+
+  // "Flying Far Away from Gusty Bridges" and similar far-anchored moons are
+  // reached by flying/launching directly to the level's far end, not by
+  // walking the near->far bridge crossing. Once physically at the far
+  // anchor, walking back out through the near door means re-crossing the
+  // one-way bridge backward, which the data already marks impossible
+  // (sub_far -> sub_near). But entryReach/exitReach are computed once per
+  // *node*, keyed by from_node_id, and both Gusty moons share the same
+  // from_node_id (sub_near) in this export even though one of them is only
+  // reachable by flying to the far side. Anthropic can't currently fix the
+  // moon's own from_node_id (that's a data-authoring problem outside this
+  // file), but the walkable exit for anything actually anchored past that
+  // one-way crossing must still resolve to impossible — enforced explicitly
+  // here rather than trusting a single from_node_id lookup for every moon.
+  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, entryReach, exitReach, substageEntranceCountByStage)));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons;
@@ -2308,9 +2387,21 @@ function hasGlitchedLane(moon){
 // Renders one loading-zone side (Enter or Exit) as the same OR/AND chip
 // pattern the tier lanes use, so it reads consistently with the rest of the
 // card — just styled with the subarea gold accent instead of a tier color.
-function buildLoadingZoneChips(orGroups){
+// isUnreachable means the reachability BFS found no path at all in that
+// direction (a genuine one-way dead end) — that's distinct from an empty
+// AND-group, which means a path was found and it costs nothing. The two
+// must never render the same way, or a real dead end silently reads as Free.
+function buildLoadingZoneChips(orGroups, isUnreachable){
   const wrap = document.createElement("div");
   wrap.className = "tier-options";
+
+  if(isUnreachable){
+    const chip = document.createElement("div");
+    chip.className = "option-chip impossible-chip";
+    chip.textContent = "Impossible";
+    wrap.appendChild(chip);
+    return wrap;
+  }
 
   const groups = (orGroups && orGroups.length) ? orGroups : [[]];
   groups.forEach((andGroup, i) => {
@@ -2355,13 +2446,35 @@ function buildLoadingZonePanel(loadingZone){
   title.textContent = "Loading Zones \u2014 " + loadingZone.stageName;
   panel.appendChild(title);
 
+  // A subarea with only one door in and out (e.g. Cap Kingdom's Frog Pond)
+  // doesn't have a separate entry route and exit route to show — showing
+  // both Enter and Exit rows would just repeat the same door twice. Those
+  // subareas get one "Entrance" row instead. Everywhere else keeps the
+  // distinct Enter/Exit rows, since those genuinely can differ (different
+  // doors, one-way paths, etc).
+  if(loadingZone.singleDoor){
+    const row = document.createElement("div");
+    row.className = "loading-zone-row";
+    const pill = document.createElement("span");
+    pill.className = "loading-zone-pill";
+    pill.textContent = "Entrance";
+    row.appendChild(pill);
+    // Prefer whichever side actually resolved a path; a single door's entry
+    // and exit logic should normally agree, but fall back gracefully if only
+    // one direction's reachability was computed.
+    const side = !loadingZone.entry.isUnreachable ? loadingZone.entry : loadingZone.exit;
+    row.appendChild(buildLoadingZoneChips(side.orGroups, side.isUnreachable));
+    panel.appendChild(row);
+    return panel;
+  }
+
   const enterRow = document.createElement("div");
   enterRow.className = "loading-zone-row";
   const enterPill = document.createElement("span");
   enterPill.className = "loading-zone-pill";
   enterPill.textContent = "Enter";
   enterRow.appendChild(enterPill);
-  enterRow.appendChild(buildLoadingZoneChips(loadingZone.entry.orGroups));
+  enterRow.appendChild(buildLoadingZoneChips(loadingZone.entry.orGroups, loadingZone.entry.isUnreachable));
   panel.appendChild(enterRow);
 
   const exitRow = document.createElement("div");
@@ -2370,7 +2483,7 @@ function buildLoadingZonePanel(loadingZone){
   exitPill.className = "loading-zone-pill";
   exitPill.textContent = "Exit";
   exitRow.appendChild(exitPill);
-  exitRow.appendChild(buildLoadingZoneChips(loadingZone.exit.orGroups));
+  exitRow.appendChild(buildLoadingZoneChips(loadingZone.exit.orGroups, loadingZone.exit.isUnreachable));
   panel.appendChild(exitRow);
 
   return panel;
@@ -2385,6 +2498,19 @@ function buildMoonCard(moon){
   name.className = "moon-name";
   name.textContent = moon.name;
   card.appendChild(name);
+
+  // A branch like "BreedaWanwan | KingdomAccess_Cascade" means: once the
+  // kingdom's main story is finished, leaving and coming back unlocks this
+  // moon for free, no capture/ability needed. That's a real, useful fact a
+  // player would otherwise never see (the KingdomAccess token for a kingdom
+  // you're already in is normally filtered out of the displayed logic
+  // entirely), so it gets called out explicitly right under the name.
+  if(moon.onKingdomComplete){
+    const note = document.createElement("p");
+    note.className = "kingdom-complete-note";
+    note.textContent = "Free after Kingdom Complete (leave & return)";
+    card.appendChild(note);
+  }
 
   if(moon.badges && moon.badges.length){
     const badgeRow = document.createElement("div");
