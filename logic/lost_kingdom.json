@@ -2,7 +2,7 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Lost Kingdom",
-  "savedAt": "2026-08-27T23:17:16.054Z",
+  "savedAt": "2026-08-30T21:46:52.623Z",
   "workspace": {
     "schemaVersion": 2,
     "loadedAt": "2026-08-27T20:21:27.380Z",
@@ -1654,7 +1654,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ClashWorldHomeStage::checkpoint::obj545",
         "state_requirement_expr": "",
-        "requirement_expr": "Kakku | (GroundPound & RollBoost & Vault & Dive) | (TripleJump & Vault & Dive)",
+        "requirement_expr": "Kakku | (GroundPound & RollBoost & Vault & Dive & NeutralThrow) | (TripleJump & Vault & Dive & NeutralThrow)",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2806,7 +2806,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
         "state_requirement_expr": "",
-        "requirement_expr": "Imomu | (Kakku & Dive) | (Vault & Dive) | (Fukankun & Dive)",
+        "requirement_expr": "Imomu | (Kakku & Dive) | (Vault & Dive & NeutralThrow) | (Fukankun & Dive)",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -4456,7 +4456,7 @@
         "token_type": "capture",
         "display_name": "Jaxi",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
@@ -4468,7 +4468,7 @@
         "token_type": "capture",
         "display_name": "Bike",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
@@ -4480,12 +4480,60 @@
         "token_type": "capture",
         "display_name": "Rocket Flower",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Rocket Flower",
         "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "MoonLowGravity",
+        "token_type": "ability",
+        "display_name": "Moon Kingdom Low Gravity",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Moon Low Gravity; Low Gravity",
+        "notes": "Moon Kingdom's reduced gravity. Only meaningful inside Moon Kingdom, so only that kingdom's routes should ever require it."
+      },
+      {
+        "token": "Swim",
+        "token_type": "ability",
+        "display_name": "Swim",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swim",
+        "notes": "Swimming as Mario, on the surface as well as underwater. Without it, entering water bubbles him back to safe ground. Water captures (Cheep Cheep, Gushen, Lakitu, Yoshi) are unaffected and do not need it."
+      },
+      {
+        "token": "Grab",
+        "token_type": "ability",
+        "display_name": "Grab",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Grab; Carry",
+        "notes": "Picking up and carrying objects - seeds, nuts, bags and the like."
+      },
+      {
+        "token": "NpcTalk",
+        "token_type": "ability",
+        "display_name": "Talk to NPCs",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Talk to NPCs; NpcTalk; Talk",
+        "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
       }
     ],
     "rooms": [
@@ -4673,6 +4721,34 @@
         "x": 1620,
         "y": 262.9404900816803
       },
+      "ImomuPoisonExStage::stage_change::imomu_01::raw": {
+        "x": 1620,
+        "y": 1100
+      },
+      "ImomuPoisonExStage::stage_change::imomu_02::raw": {
+        "x": 120,
+        "y": 120
+      },
+      "ImomuPoisonExStage::entrance::imomu_01::sub_near": {
+        "x": 1850,
+        "y": 1100
+      },
+      "ImomuPoisonExStage::entrance::imomu_02::sub_far": {
+        "x": 350,
+        "y": 120
+      },
+      "JangoExStage::stage_change::ClashWorldMoonEX2::raw": {
+        "x": 1620,
+        "y": 1100
+      },
+      "JangoExStage::entrance::ClashWorldMoonEX2::sub_far": {
+        "x": 1850,
+        "y": 1100
+      },
+      "JangoExStage::entrance::ClashWorldMoonEX2::sub_near": {
+        "x": 1390,
+        "y": 1100
+      },
       "ClashWorldHomeStage::stage_change::Start::raw": {
         "x": 1114.45606271777,
         "y": 879.5035220536755
@@ -4781,6 +4857,22 @@
         "x": 726.3066202090592,
         "y": 250.29171528588097
       },
+      "moon:ImomuPoisonExStage:3970:399": {
+        "x": 120,
+        "y": 261.53846153846155
+      },
+      "moon:ImomuPoisonExStage:4857:400": {
+        "x": 1620,
+        "y": 512
+      },
+      "moon:JangoExStage:211:491": {
+        "x": 1464.6215139442231,
+        "y": 428
+      },
+      "moon:JangoExStage:226:492": {
+        "x": 120,
+        "y": 120
+      },
       "moon:ClashWorldHomeStage:2774:832": {
         "x": 1724.5644599303137,
         "y": 923.8973162193699
@@ -4808,50 +4900,6 @@
       "moon:ClashWorldHomeStage:3284:1077": {
         "x": 1484.1114982578397,
         "y": 822.193698949825
-      },
-      "ImomuPoisonExStage::stage_change::imomu_01::raw": {
-        "x": 1620,
-        "y": 1100
-      },
-      "ImomuPoisonExStage::stage_change::imomu_02::raw": {
-        "x": 120,
-        "y": 120
-      },
-      "ImomuPoisonExStage::entrance::imomu_01::sub_near": {
-        "x": 1850,
-        "y": 1100
-      },
-      "ImomuPoisonExStage::entrance::imomu_02::sub_far": {
-        "x": 350,
-        "y": 120
-      },
-      "moon:ImomuPoisonExStage:3970:399": {
-        "x": 120,
-        "y": 261.53846153846155
-      },
-      "moon:ImomuPoisonExStage:4857:400": {
-        "x": 1620,
-        "y": 512
-      },
-      "JangoExStage::stage_change::ClashWorldMoonEX2::raw": {
-        "x": 1620,
-        "y": 1100
-      },
-      "JangoExStage::entrance::ClashWorldMoonEX2::sub_far": {
-        "x": 1850,
-        "y": 1100
-      },
-      "JangoExStage::entrance::ClashWorldMoonEX2::sub_near": {
-        "x": 1390,
-        "y": 1100
-      },
-      "moon:JangoExStage:211:491": {
-        "x": 1464.6215139442231,
-        "y": 428
-      },
-      "moon:JangoExStage:226:492": {
-        "x": 120,
-        "y": 120
       }
     }
   }

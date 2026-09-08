@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Cap Kingdom",
-  "savedAt": "2026-08-28T00:46:16.191Z",
+  "savedAt": "2026-08-30T21:38:11.334Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T01:43:27.351Z",
+    "loadedAt": "2026-08-30T16:44:35.427Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2092,10 +2092,10 @@
         "area_scope": "subarea",
         "from_node_id": "FrogSearchExStage::entrance::FrogSearchExStageEnt::sub_near",
         "to_node_id": "FrogSearchExStage::place::new_place",
-        "requirement_expr": "Frog | (Vault & WallJump & NeutralThrow) | (Vault & WallJump & LedgeGrab & UpThrow) | (Vault & Dive & NeutralThrow) | (Backflip & Vault & LedgeGrab & NeutralThrow) | (GroundPoundJump & Vault & LedgeGrab & NeutralThrow) | (GroundPoundJump & WallJump & LedgeGrab & NeutralThrow) | (GroundPoundJump & WallJump & LedgeGrab & UpThrow) | (SideFlip & Vault & LedgeGrab & NeutralThrow) | (TripleJump & Vault & NeutralThrow & LedgeGrab)",
+        "requirement_expr": "Frog | (Vault & WallJump & NeutralThrow) | (Vault & WallJump & LedgeGrab & UpThrow) | (Vault & Dive & NeutralThrow) | (Backflip & Vault & LedgeGrab & NeutralThrow) | (GroundPoundJump & Vault & LedgeGrab & NeutralThrow) | (GroundPoundJump & WallJump & LedgeGrab & NeutralThrow) | (GroundPoundJump & WallJump & LedgeGrab & UpThrow) | (SideFlip & Vault & LedgeGrab & NeutralThrow) | (TripleJump & Vault & NeutralThrow & LedgeGrab) | (TripleJump & Dive & NeutralThrow) | (TripleJump & Dive & UpThrow) | (TripleJump & Dive & WallJump) | (NeutralThrow & Vault) | (NeutralThrow & Backflip & Dive) | (NeutralThrow & SideFlip & Dive) | (NeutralThrow & GroundPoundJump & Dive) | (Spin & WallJump & Dive & NeutralThrow) | (UpThrow & Spin & WallJump & Dive) | (UpThrow & Vault & WallJump & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert;expert;expert;expert;expert;expert;expert;advanced;advanced;advanced",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -2164,7 +2164,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PushBlockExStage::entrance::PushBlockExStageEntDokan::sub_far",
         "state_requirement_expr": "",
-        "requirement_expr": "ElectricWire | (Dive & NeutralThrow) | (WallJump & KaronWing) | (LongJump & NeutralThrow) | (Vault & NeutralThrow)",
+        "requirement_expr": "ElectricWire | (Dive & NeutralThrow) | (WallJump & NeutralThrow) | (LongJump & NeutralThrow) | (Vault & NeutralThrow) | (WallJump & UpThrow) | (DownThrow & WallJump)",
         "world_peace_token": "WorldPeace_Cap",
         "moon_rock_token": "MoonRockActive_Cap",
         "access_type": "primary",
@@ -2195,7 +2195,7 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "でっぱり壁の かくし穴",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced;advanced;advanced;advanced",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced",
         "option_scenarios": "",
         "__editor_id": "PushBlockExStage:463:235"
       },
@@ -2356,7 +2356,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "FrogSearchExStage::entrance::FrogSearchExStageEnt::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "Frog | (Vault & Dive & WallJump & NeutralThrow)",
+        "requirement_expr": "Frog | (Vault & Dive & WallJump & NeutralThrow) | (UpThrow & Vault & WallJump & Dive & Backflip) | (UpThrow & Vault & WallJump & Dive & GroundPoundJump) | (UpThrow & Vault & WallJump & Dive & SideFlip) | (UpThrow & Vault & WallJump & Dive & Spin) | (UpThrow & Vault & Dive & WallJump & DoubleJump)",
         "world_peace_token": "WorldPeace_Cap",
         "moon_rock_token": "MoonRockActive_Cap",
         "access_type": "primary",
@@ -2387,7 +2387,7 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "カエル池の かくれ家",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced",
         "option_scenarios": "",
         "__editor_id": "FrogSearchExStage:249:239"
       },
@@ -2932,7 +2932,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
         "state_requirement_expr": "",
-        "requirement_expr": "KuriboWing | (GroundPound & RollBoost & Roll & NeutralThrow & TripleJump & Vault & Dive) | Frog",
+        "requirement_expr": "KuriboWing | (Roll & NeutralThrow & TripleJump & Vault & Dive) | Frog",
         "world_peace_token": "WorldPeace_Cap",
         "moon_rock_token": "MoonRockActive_Cap",
         "access_type": "primary",
@@ -3124,7 +3124,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
         "state_requirement_expr": "",
-        "requirement_expr": "KuriboWing | Frog",
+        "requirement_expr": "KuriboWing | Frog | (Roll & TripleJump & Vault & Dive & NeutralThrow) | (GroundPound & RollBoost & Vault & Dive & NeutralThrow)",
         "world_peace_token": "WorldPeace_Cap",
         "moon_rock_token": "MoonRockActive_Cap",
         "access_type": "primary",
@@ -3155,7 +3155,7 @@
         "shine_info_object_name": "ステージスイッチ_音符オブジェディレクタ",
         "shine_info_scenario_name": "雲の上で 音符集め",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;glitched",
+        "difficulty": "casual;glitched;expert;expert",
         "option_scenarios": "4",
         "__editor_id": "CapWorldHomeStage:2681:1018"
       },
@@ -3316,7 +3316,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "CapWorldHomeStage::checkpoint::obj381",
         "state_requirement_expr": "",
-        "requirement_expr": "KuriboWing | LongJump | Roll | Dive | TripleJump",
+        "requirement_expr": "KuriboWing | LongJump | Roll | Dive | TripleJump | SingleJump",
         "world_peace_token": "WorldPeace_Cap",
         "moon_rock_token": "MoonRockActive_Cap",
         "access_type": "primary",
@@ -3347,7 +3347,7 @@
         "shine_info_object_name": "駆けっこ開始Npc",
         "shine_info_scenario_name": "帽子の国 マスターカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;casual;casual;casual;advanced",
+        "difficulty": "casual;casual;casual;casual;advanced;expert",
         "option_scenarios": "4",
         "__editor_id": "CapWorldHomeStage:2729:1034"
       },
@@ -5158,7 +5158,7 @@
         "token_type": "capture",
         "display_name": "Jaxi",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
@@ -5170,7 +5170,7 @@
         "token_type": "capture",
         "display_name": "Bike",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
@@ -5182,12 +5182,60 @@
         "token_type": "capture",
         "display_name": "Rocket Flower",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Rocket Flower",
         "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "MoonLowGravity",
+        "token_type": "ability",
+        "display_name": "Moon Kingdom Low Gravity",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Moon Low Gravity; Low Gravity",
+        "notes": "Moon Kingdom's reduced gravity. Only meaningful inside Moon Kingdom, so only that kingdom's routes should ever require it."
+      },
+      {
+        "token": "Swim",
+        "token_type": "ability",
+        "display_name": "Swim",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swim",
+        "notes": "Swimming as Mario, on the surface as well as underwater. Without it, entering water bubbles him back to safe ground. Water captures (Cheep Cheep, Gushen, Lakitu, Yoshi) are unaffected and do not need it."
+      },
+      {
+        "token": "Grab",
+        "token_type": "ability",
+        "display_name": "Grab",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Grab; Carry",
+        "notes": "Picking up and carrying objects - seeds, nuts, bags and the like."
+      },
+      {
+        "token": "NpcTalk",
+        "token_type": "ability",
+        "display_name": "Talk to NPCs",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Talk to NPCs; NpcTalk; Talk",
+        "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
       }
     ],
     "rooms": [
@@ -5486,6 +5534,30 @@
         "edge_id": "moon_local_239",
         "source_capture_token": "Frog",
         "replacement_capture_token": "Senobi",
+        "difficulty": "casual",
+        "match_mode": "any",
+        "minimum_count": "",
+        "notes": ""
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig",
+        "kingdom": "Cap Kingdom",
+        "logic_stage": "CapWorldHomeStage",
+        "edge_id": "moon_local_1019",
+        "source_capture_token": "Frog",
+        "replacement_capture_token": "Kakku",
+        "difficulty": "advanced",
+        "match_mode": "any",
+        "minimum_count": "",
+        "notes": "requires Top Hat Tower checkpoint"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "kingdom": "Cap Kingdom",
+        "logic_stage": "CapWorldHomeStage",
+        "edge_id": "moon_local_1019",
+        "source_capture_token": "Frog",
+        "replacement_capture_token": "Hosui",
         "difficulty": "casual",
         "match_mode": "any",
         "minimum_count": "",
@@ -5952,6 +6024,161 @@
         "gate_id": "cg_moon_local_239_Frog_KillerMagnum_6",
         "placement_stage": "FrogSearchExStage",
         "object_id": "obj218"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2246"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2247"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2248"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2496"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj883"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2205"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2236"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2237"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2238"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2700"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2701"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2425"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2239"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2240"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2241"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2244"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2242"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2243"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2245"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2914"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2313"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2381"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2315"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2314"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj1791"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2246"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2247"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2248"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2496"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2316"
+      },
+      {
+        "gate_id": "cg_moon_local_1019_Frog_WanwanBig_2",
+        "placement_stage": "CapWorldHomeStage",
+        "object_id": "obj2312"
       }
     ],
     "nodePositions": {

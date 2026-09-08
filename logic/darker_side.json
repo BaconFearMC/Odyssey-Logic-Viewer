@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "kingdom": "Darker Side",
-  "savedAt": "2026-07-02T07:00:16.559Z",
+  "savedAt": "2026-09-03T19:48:34.640Z",
   "workspace": {
-    "schemaVersion": 1,
-    "loadedAt": "2026-06-07T15:14:44.531Z",
+    "schemaVersion": 2,
+    "loadedAt": "2026-09-03T19:31:37.440Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -135,6 +135,23 @@
         "source_archive",
         "source_file",
         "notes"
+      ],
+      "captureGates": [
+        "gate_id",
+        "kingdom",
+        "logic_stage",
+        "edge_id",
+        "source_capture_token",
+        "replacement_capture_token",
+        "difficulty",
+        "match_mode",
+        "minimum_count",
+        "notes"
+      ],
+      "captureGateObjects": [
+        "gate_id",
+        "placement_stage",
+        "object_id"
       ]
     },
     "logicNodes": [
@@ -1121,7 +1138,7 @@
         "flags": "ShineFlag_Story | ShineFlag_Multi",
         "from_node_id": "Special2WorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "(Frog & Climb & Bubble & Senobi & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & WallJump & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & Vault & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & Dive & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & Senobi & Yoshi & WallJump & Kakku & HackFork & Tsukkun & Koopa & ElectricWire & Swing)",
+        "requirement_expr": "(Frog & Climb & Bubble & Senobi & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & WallJump & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & Vault & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & Dive & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & Senobi & Yoshi & WallJump & Kakku & HackFork & Tsukkun & Koopa & ElectricWire & Swing & Swim)",
         "world_peace_token": "WorldPeace_Darker",
         "moon_rock_token": "MoonRockActive_Darker",
         "access_type": "primary",
@@ -1153,7 +1170,7 @@
         "shine_info_scenario_name": "長い旅の終着点",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "Special2WorldHomeStage:55:1061",
-        "difficulty": "casual",
+        "difficulty": "advanced;advanced;advanced;advanced;casual",
         "option_scenarios": "1,2,3,4,5"
       }
     ],
@@ -2693,6 +2710,114 @@
         "can_start_with_seed": "false",
         "aliases": "Swing",
         "notes": ""
+      },
+      {
+        "token": "MoonLowGravity",
+        "token_type": "ability",
+        "display_name": "Moon Kingdom Low Gravity",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Moon Low Gravity; Low Gravity",
+        "notes": "Moon Kingdom's reduced gravity. Only meaningful inside Moon Kingdom, so only that kingdom's routes should ever require it."
+      },
+      {
+        "token": "Swim",
+        "token_type": "ability",
+        "display_name": "Swim",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swim",
+        "notes": "Swimming as Mario, on the surface as well as underwater. Without it, entering water bubbles him back to safe ground. Water captures (Cheep Cheep, Gushen, Lakitu, Yoshi) are unaffected and do not need it."
+      },
+      {
+        "token": "Grab",
+        "token_type": "ability",
+        "display_name": "Grab",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Grab; Carry",
+        "notes": "Picking up and carrying objects - seeds, nuts, bags and the like."
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "ability",
+        "display_name": "Jaxi Riding",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; Jaxi Riding; SphinxRide",
+        "notes": "Was an always-unlocked capture-token placeholder for the enemy-swap override props; it is a real ability now so the Movement Abilities page can lock it."
+      },
+      {
+        "token": "Bike",
+        "token_type": "ability",
+        "display_name": "Scooter Riding",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Scooter; Scooter Riding; Motorcycle",
+        "notes": "Was an always-unlocked capture-token placeholder for the enemy-swap override props; it is a real ability now so the Movement Abilities page can lock it."
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "ability",
+        "display_name": "Rocket Flower",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower; RocketFlower",
+        "notes": "Was an always-unlocked capture-token placeholder for the enemy-swap override props; it is a real ability now so the Movement Abilities page can lock it."
+      },
+      {
+        "token": "NpcTalk",
+        "token_type": "ability",
+        "display_name": "Talk to NPCs",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Talk to NPCs; NpcTalk; Talk",
+        "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
       }
     ],
     "rooms": [
@@ -2825,6 +2950,8 @@
         "notes": "No ScenarioInfo.byml in archive."
       }
     ],
+    "captureGates": [],
+    "captureGateObjects": [],
     "nodePositions": {
       "Special2WorldCloudStage::stage_change::restart::raw": {
         "x": 1620,

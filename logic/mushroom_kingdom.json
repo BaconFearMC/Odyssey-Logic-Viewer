@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Mushroom Kingdom",
-  "savedAt": "2026-08-24T01:56:21.334Z",
+  "savedAt": "2026-09-03T19:45:00.228Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T01:43:27.351Z",
+    "loadedAt": "2026-09-03T19:31:37.440Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2860,7 +2860,7 @@
         "area_scope": "overworld",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj1145",
         "to_node_id": "PeachWorldHomeStage::entrance::GiantWanderBossA::home_in",
-        "requirement_expr": "free",
+        "requirement_expr": "Swim",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -3025,10 +3025,10 @@
         "area_scope": "overworld",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj162",
         "to_node_id": "PeachWorldHomeStage::entrance::BossRaidA::home_in",
-        "requirement_expr": "Yoshi",
+        "requirement_expr": "(Yoshi & Swim) | (DownThrow & Yoshi) | (NeutralThrow & Swim)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;expert",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -4396,7 +4396,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj162",
         "state_requirement_expr": "",
-        "requirement_expr": "Yoshi",
+        "requirement_expr": "(Yoshi & Swim) | (Yoshi & DownThrow) | (Yoshi & NeutralThrow)",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -4428,7 +4428,7 @@
         "shine_info_scenario_name": "まんぷく！ ヨッシーフルーツ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:1497:858",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;expert",
         "option_scenarios": ""
       },
       {
@@ -5404,7 +5404,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj1145",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Swim",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -7582,7 +7582,7 @@
         "token_type": "capture",
         "display_name": "Jaxi",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
@@ -7594,7 +7594,7 @@
         "token_type": "capture",
         "display_name": "Bike",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
@@ -7606,12 +7606,60 @@
         "token_type": "capture",
         "display_name": "Rocket Flower",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Rocket Flower",
         "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "MoonLowGravity",
+        "token_type": "ability",
+        "display_name": "Moon Kingdom Low Gravity",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Moon Low Gravity; Low Gravity",
+        "notes": "Moon Kingdom's reduced gravity. Only meaningful inside Moon Kingdom, so only that kingdom's routes should ever require it."
+      },
+      {
+        "token": "Swim",
+        "token_type": "ability",
+        "display_name": "Swim",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swim",
+        "notes": "Swimming as Mario, on the surface as well as underwater. Without it, entering water bubbles him back to safe ground. Water captures (Cheep Cheep, Gushen, Lakitu, Yoshi) are unaffected and do not need it."
+      },
+      {
+        "token": "Grab",
+        "token_type": "ability",
+        "display_name": "Grab",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Grab; Carry",
+        "notes": "Picking up and carrying objects - seeds, nuts, bags and the like."
+      },
+      {
+        "token": "NpcTalk",
+        "token_type": "ability",
+        "display_name": "Talk to NPCs",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Talk to NPCs; NpcTalk; Talk",
+        "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
       }
     ],
     "rooms": [
@@ -8599,8 +8647,8 @@
         "y": 524.2197802197802
       },
       "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_in": {
-        "x": 488.92296424278845,
-        "y": 520.9230722280649
+        "x": 446.16436459973886,
+        "y": 581.6126958305704
       },
       "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_out": {
         "x": 1926.3296364518417,
@@ -8851,8 +8899,8 @@
         "y": 1486.8405974014945
       },
       "PeachWorldHomeStage::entrance::BossRaidA::home_in": {
-        "x": 376.0412371134021,
-        "y": 1836.989715890786
+        "x": 342.9378730239624,
+        "y": 1881.1276048320576
       },
       "PeachWorldHomeStage::entrance::GiantWanderBossA::home_in": {
         "x": 1086.0000751201924,
@@ -9039,8 +9087,8 @@
         "y": 1678
       },
       "moon:PeachWorldHomeStage:1495:857": {
-        "x": 1526,
-        "y": 316
+        "x": 1531.9701492537313,
+        "y": 292.1194029850746
       },
       "moon:PeachWorldHomeStage:1497:858": {
         "x": 100,

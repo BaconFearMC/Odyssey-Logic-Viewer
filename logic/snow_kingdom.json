@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Snow Kingdom",
-  "savedAt": "2026-08-28T01:01:05.954Z",
+  "savedAt": "2026-09-04T00:34:58.071Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T01:43:27.351Z",
+    "loadedAt": "2026-09-03T19:31:37.440Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2134,6 +2134,42 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SnowWorldTownStage::place::new_place",
+        "kingdom": "Snow Kingdom",
+        "stage": "SnowWorldTownStage",
+        "stage_display_name": "Shiveria Town",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Race Room Access",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "More or less the ability to complete The Gusty Barrier moon"
+      },
+      {
+        "node_id": "SnowWorldHomeStage::place::new_place",
+        "kingdom": "Snow Kingdom",
+        "stage": "SnowWorldHomeStage",
+        "stage_display_name": "Snow Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Swim Moons Snow Kingdom",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2378,21 +2414,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0025",
-        "kingdom": "Snow Kingdom",
-        "area_scope": "subarea",
-        "from_node_id": "SnowWorldTownZone::start",
-        "to_node_id": "SnowWorldTownStage::entrance::RaceEntrance::home_in",
-        "requirement_expr": "Byugo | Vault | Dive | TripleJump",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual;advanced;advanced;advanced",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0026",
         "kingdom": "Snow Kingdom",
         "area_scope": "subarea",
@@ -2492,7 +2513,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2683,14 +2704,14 @@
         "area_scope": "subarea",
         "from_node_id": "IceWaterDashExStage::entrance::EX_IceWaterDash::sub_near",
         "to_node_id": "IceWaterDashExStage::entrance::EX_IceWaterDash_Exit::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "Swim | NeutralThrow | (UpThrow & Vault) | (Vault & DownThrow) | Dive | LongJump | (UpThrow & Backflip) | LedgeGrab | Spin | TripleJump",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "option_scenarios": "1,2,3,4"
       },
       {
         "edge_id": "edge_user_0050",
@@ -2698,13 +2719,13 @@
         "area_scope": "subarea",
         "from_node_id": "IceWaterBlockExStage::entrance::EX_IceWater::sub_near",
         "to_node_id": "IceWaterBlockExStage::entrance::EX_IceWater_Exit::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "Swim | (GroundPound & RollBoost & TripleJump & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
+        "difficulty": "casual;expert",
         "option_scenarios": ""
       },
       {
@@ -3081,6 +3102,66 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0490",
+        "kingdom": "Snow Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SnowWorldTownZone::start",
+        "to_node_id": "SnowWorldTownStage::place::new_place",
+        "requirement_expr": "Byugo | (NeutralThrow & Vault) | Dive | TripleJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;expert",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0766",
+        "kingdom": "Snow Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SnowWorldTownStage::place::new_place",
+        "to_node_id": "SnowWorldTownStage::entrance::RaceEntrance::home_in",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0774",
+        "kingdom": "Snow Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
+        "to_node_id": "SnowWorldHomeStage::place::new_place",
+        "requirement_expr": "Swim | PukupukuSnow",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0775",
+        "kingdom": "Snow Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "IceWaterDashExStage::entrance::EX_IceWaterDash_Exit::sub_far",
+        "to_node_id": "IceWaterDashExStage::entrance::EX_IceWaterDash::sub_near",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0049.",
+        "option_scenarios": "1,2,3,4"
       }
     ],
     "moonAccess": [
@@ -3097,7 +3178,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Swim | (NeutralThrow & DownThrow) | PukupukuSnow",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -3129,7 +3210,7 @@
         "shine_info_scenario_name": "集めて！ 雪のムーンチップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SnowWorldHomeStage:769:2",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;advanced",
         "option_scenarios": ""
       },
       {
@@ -3287,7 +3368,7 @@
         "obj_id": "581",
         "uid": "7",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
+        "from_node_id": "SnowWorldHomeStage::place::new_place",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Snow",
@@ -3385,7 +3466,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
         "state_requirement_expr": "",
-        "requirement_expr": "GroundPound | PukupukuSnow",
+        "requirement_expr": "(GroundPound & Swim) | PukupukuSnow",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -3625,7 +3706,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "IceWaterBlockExStage::entrance::EX_IceWater_Exit::sub_far",
         "state_requirement_expr": "",
-        "requirement_expr": "Swing",
+        "requirement_expr": "(Swing & Swim) | (TripleJump & Dive & Swim) | (LedgeGrab & Dive & Swim) | (GroundPound & RollBoost & Dive) | (DoubleJump & Dive)",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -3657,7 +3738,7 @@
         "shine_info_scenario_name": "天井裏の 凍える水",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "IceWaterBlockExStage:363:15",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;advanced;advanced;expert",
         "option_scenarios": ""
       },
       {
@@ -3865,7 +3946,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
         "state_requirement_expr": "",
-        "requirement_expr": "Climb | Dive | LongJump | TripleJump | KingdomAccess_Snow",
+        "requirement_expr": "(Climb & Swim) | Dive | LongJump | TripleJump | KingdomAccess_Snow",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -4345,7 +4426,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Swim | Dive | RollBoost | LongJump | (NeutralThrow & PukupukuSnow) | (SpinThrow & PukupukuSnow)",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -4377,7 +4458,7 @@
         "shine_info_scenario_name": "雪の国 マスターカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SnowWorldHomeStage:1423:900",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced",
         "option_scenarios": ""
       },
       {
@@ -4679,7 +4760,7 @@
         "obj_id": "1507",
         "uid": "1003",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
+        "from_node_id": "SnowWorldHomeStage::place::new_place",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Snow",
@@ -4967,9 +5048,9 @@
         "obj_id": "532",
         "uid": "18",
         "flags": "ShineFlag_Story",
-        "from_node_id": "SnowWorldByugoZone::start",
+        "from_node_id": "SnowWorldTownStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "Byugo | (Vault & NeutralThrow) | Dive | TripleJump",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -5000,7 +5081,7 @@
         "shine_info_object_name": "ステージスイッチ_全滅監視_全滅監視_全滅監視_全滅監視_全滅監視_全滅監視",
         "shine_info_scenario_name": "突風の関門",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced;advanced;expert",
+        "difficulty": "casual",
         "option_scenarios": "",
         "__editor_id": "SnowWorldTownStage:532:18"
       },
@@ -5401,7 +5482,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SnowWorldGabuzouZone::start",
         "state_requirement_expr": "",
-        "requirement_expr": "GroundPound",
+        "requirement_expr": "(GroundPound & Swim)",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -7291,7 +7372,7 @@
         "token_type": "capture",
         "display_name": "Jaxi",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
@@ -7303,7 +7384,7 @@
         "token_type": "capture",
         "display_name": "Bike",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
@@ -7315,12 +7396,60 @@
         "token_type": "capture",
         "display_name": "Rocket Flower",
         "category": "Capture",
-        "prerequisite": "",
+        "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Rocket Flower",
         "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "MoonLowGravity",
+        "token_type": "ability",
+        "display_name": "Moon Kingdom Low Gravity",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Moon Low Gravity; Low Gravity",
+        "notes": "Moon Kingdom's reduced gravity. Only meaningful inside Moon Kingdom, so only that kingdom's routes should ever require it."
+      },
+      {
+        "token": "Swim",
+        "token_type": "ability",
+        "display_name": "Swim",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swim",
+        "notes": "Swimming as Mario, on the surface as well as underwater. Without it, entering water bubbles him back to safe ground. Water captures (Cheep Cheep, Gushen, Lakitu, Yoshi) are unaffected and do not need it."
+      },
+      {
+        "token": "Grab",
+        "token_type": "ability",
+        "display_name": "Grab",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Grab; Carry",
+        "notes": "Picking up and carrying objects - seeds, nuts, bags and the like."
+      },
+      {
+        "token": "NpcTalk",
+        "token_type": "ability",
+        "display_name": "Talk to NPCs",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Talk to NPCs; NpcTalk; Talk",
+        "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
       }
     ],
     "rooms": [
@@ -8134,8 +8263,8 @@
         "y": 1516.7177922175483
       },
       "SnowWorldTownStage::entrance::RaceEntrance::home_in": {
-        "x": 464.8276283001078,
-        "y": 597.117423564204
+        "x": 120.20890733166806,
+        "y": 528.987813719801
       },
       "SnowWorldTownStage::entrance::ShopDoor::home_in": {
         "x": 1131.212158203125,
@@ -8149,9 +8278,13 @@
         "x": 263.85534815041416,
         "y": 226.26506024096386
       },
+      "SnowWorldTownStage::place::new_place": {
+        "x": 465.3082103191125,
+        "y": 629.6865519460839
+      },
       "moon:SnowWorldHomeStage:769:2": {
-        "x": 1032,
-        "y": 1286
+        "x": 1280.1356346001057,
+        "y": 845.321930448888
       },
       "moon:SnowWorldHomeStage:1049:3": {
         "x": 1296,
@@ -8166,16 +8299,16 @@
         "y": 854
       },
       "moon:SnowWorldHomeStage:581:7": {
-        "x": 364,
-        "y": 962
+        "x": 1811.5739936064501,
+        "y": 1751.7551727425541
       },
       "moon:SnowWorldHomeStage:1113:8": {
         "x": 1032,
         "y": 962
       },
       "moon:SnowWorldHomeStage:1115:9": {
-        "x": 364,
-        "y": 1178
+        "x": 361.2881252482786,
+        "y": 1175.2881769729872
       },
       "moon:SnowWorldHomeStage:1117:10": {
         "x": 364,
@@ -8282,8 +8415,8 @@
         "y": 1070
       },
       "moon:SnowWorldHomeStage:1507:1003": {
-        "x": 100,
-        "y": 1178
+        "x": 1869.4916288731465,
+        "y": 1594.271145060911
       },
       "moon:SnowWorldLobby001Stage:331:1020": {
         "x": 17.22095768626143,
@@ -8306,8 +8439,8 @@
         "y": 743.5999755859374
       },
       "moon:SnowWorldTownStage:532:18": {
-        "x": 0,
-        "y": 950.5516609981141
+        "x": 124.13793103448275,
+        "y": 754.6896341258081
       },
       "moon:SnowWorldTownStage:1101:19": {
         "x": 100,
@@ -8322,8 +8455,8 @@
         "y": 102
       },
       "moon:SnowWorldTownStage:918:22": {
-        "x": 1910.400146484375,
-        "y": 89.1999633789062
+        "x": 2057.85103113511,
+        "y": 115.86664201325057
       },
       "moon:SnowWorldTownStage:987:23": {
         "x": 436.00000000000006,
@@ -8368,6 +8501,10 @@
       "moon:SnowWorldTownStage:1187:1087": {
         "x": 768,
         "y": 1522
+      },
+      "SnowWorldHomeStage::place::new_place": {
+        "x": 1561.0170526019597,
+        "y": 1629.152599270061
       }
     }
   }
