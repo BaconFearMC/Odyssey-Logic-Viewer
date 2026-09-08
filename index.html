@@ -874,17 +874,37 @@ function crossProduct(a, b){
 
 /* =========================================================
    CHECKPOINT LOOKUP — for every node in a kingdom, work out
-   which Checkpoint node (node_type === "checkpoint") a player
-   would realistically be closest to / arrive from, so each
-   moon card can say "tracked from <Checkpoint Name>".
+   which Checkpoint (node_type === "checkpoint") OR Custom Node
+   (node_type === "custom_place", e.g. "Outer Wall Area") a
+   player would realistically be closest to / arrive from, so
+   each moon card can say "tracked from <Name>".
+
+   Custom Nodes are human-authored logic places — when one has
+   been placed directly on a moon (or on a node the moon's BFS
+   would otherwise walk through), that's a deliberate, more
+   specific tag than "nearest Checkpoint" and should win over
+   an inherited/propagated checkpoint. So both node_type ===
+   "checkpoint" and node_type === "custom_place" are treated as
+   *sources* the BFS can trace back to — but a node that IS a
+   custom_place always reports its own name first (its own tag
+   is authoritative, never overwritten by something that merely
+   routes through it), and any node whose *nearest* source turns
+   out to be a custom_place is labeled with that Custom Node
+   instead of continuing to fall through to a checkpoint further
+   away. If a node already carries a checkpoint of its own
+   (node_type === "checkpoint"), that checkpoint is likewise
+   never replaced by a neighboring custom_place.
 
    This does a multi-source breadth-first search that starts
-   at every checkpoint node simultaneously and walks forward
-   along routeEdges (skipping edges whose requirement_expr is
-   the literal "impossible" — those are one-way-blocked
-   directions, e.g. the reverse of an exit-only pipe). The
-   first checkpoint to reach a given node (fewest hops) is
-   recorded as that node's checkpoint.
+   at every checkpoint node AND every custom_place node
+   simultaneously and walks forward along routeEdges (skipping
+   edges whose requirement_expr is the literal "impossible" —
+   those are one-way-blocked directions, e.g. the reverse of an
+   exit-only pipe). The first source (checkpoint or custom
+   node) to reach a given node (fewest hops) is recorded as
+   that node's tracked-from location — ties, i.e. a checkpoint
+   and a custom_place at equal distance, favor the custom_place
+   since it's the more specific, hand-placed tag.
 
    Subarea stages (Mysterious Clouds, 8-Bit Chasm Lifts, etc.)
    are only connected to the overworld via matching entrance_id
@@ -892,8 +912,13 @@ function crossProduct(a, b){
    "substage_entrance" node in the subarea stage share the same
    entrance_id) — there usually isn't an explicit routeEdge
    between them, since that link is implicit in the game itself.
-   Those pairs are bridged here so checkpoints can "reach" into
-   subareas too.
+   Those pairs are bridged here so checkpoints/custom nodes can
+   "reach" into subareas too.
+
+   This all runs automatically for every kingdom's workspace —
+   there's no per-kingdom or per-node-name special-casing, so any
+   Custom Node in any of the 17 kingdoms (Outer Wall Area, etc.)
+   is picked up the moment it's tagged node_type "custom_place".
    ========================================================= */
 function buildCheckpointLookup(nodes, edges){
   const displayNameOf = {};
@@ -930,11 +955,29 @@ function buildCheckpointLookup(nodes, edges){
     }
   });
 
+  // Seed the BFS from every checkpoint AND every custom_place node.
+  // Custom Nodes are queued *first* so that if a checkpoint and a
+  // custom_place are equidistant from some node (both would reach it on
+  // the same BFS pass), the custom_place claims it first — its explicit,
+  // hand-placed tag beats an inherited checkpoint at the same distance.
+  // A node that IS a source (checkpoint or custom_place) always maps to
+  // itself and is never later relabeled by a neighboring source — see
+  // the `sourceType[next]` guard in the BFS loop below.
   const checkpointOf = {};
+  const sourceType = {}; // node_id -> "checkpoint" | "custom_place", for source nodes only
   const queue = [];
+
   (nodes || []).forEach(n => {
-    if(n.node_type === "checkpoint"){
+    if(n.node_type === "custom_place"){
       checkpointOf[n.node_id] = n.node_id;
+      sourceType[n.node_id] = "custom_place";
+      queue.push(n.node_id);
+    }
+  });
+  (nodes || []).forEach(n => {
+    if(n.node_type === "checkpoint" && !(n.node_id in checkpointOf)){
+      checkpointOf[n.node_id] = n.node_id;
+      sourceType[n.node_id] = "checkpoint";
       queue.push(n.node_id);
     }
   });
@@ -944,6 +987,10 @@ function buildCheckpointLookup(nodes, edges){
     const cur = queue[qi++];
     const origin = checkpointOf[cur];
     (adj[cur] || []).forEach(next => {
+      // Never overwrite a node that is itself a checkpoint/custom_place
+      // source — its own tag always wins over anything propagating
+      // through it, automatically, with no per-kingdom special-casing.
+      if(sourceType[next]) return;
       if(!(next in checkpointOf)){
         checkpointOf[next] = origin;
         queue.push(next);
