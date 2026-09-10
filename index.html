@@ -1041,7 +1041,53 @@ let ICON_MANIFEST = {
 const ABILITY_FILENAME_OVERRIDES = {
   GroundPound: "AbilityGP",
   GroundPoundJump: "AbilityGPJump",
+  // Sphinx is the internal logicToken for the Jaxi capture-turned-ability
+  // (ride icon); Bike is the internal logicToken for what's displayed as
+  // "Scooter". Both get an explicit icon filename since their tokens don't
+  // match their display names, so squash(display_name) alone won't find
+  // the right file in /icon/.
+  Sphinx: "AbilityJaxi",
+  Bike: "AbilityScooter",
 };
+
+// Filter-panel DISPLAY LABEL overrides — renames how a token reads in the
+// Ability/Capture filter picker (and its chips/tooltips) without touching
+// the underlying token string or the moon-card requirement chips elsewhere,
+// which still use each token's own logicTokens display_name.
+const FILTER_LABEL_OVERRIDES = {
+  Bike: "Scooter",
+};
+
+// Tokens that are real entries in logicTokens but should never appear as a
+// selectable option in the Ability filter panel — either because they're
+// base moveset everyone always has (handled generically below via
+// ALWAYS_UNLOCKED_TOKENS), or because they've been folded into a different,
+// more general option per request (Turnip/Nut/Seed all fold into "Grab").
+const ABILITY_FILTER_EXCLUDE_TOKENS = {
+  Turnip: true,
+  Nut: true,
+  Seed: true,
+};
+
+// Tokens whose category in the raw data doesn't match where they should
+// show up in the filter UI. Currently: Sphinx (Jaxi) and Bike (Scooter)
+// are tagged as "ability" filter entries regardless of the category their
+// logicTokens row carries them under.
+const FORCE_ABILITY_FILTER_TOKENS = {
+  Sphinx: true,
+  Bike: true,
+};
+
+/* =========================================================
+   EXTRAABILITYFILLIN
+   Space reserved for ability tokens whose real logicToken name isn't
+   confirmed yet (e.g. Moon Kingdom Low Gravity, Talk to NPCs). Once the
+   real token string is known, add it to FORCE_ABILITY_FILTER_TOKENS above
+   (if its data category needs overriding to show as an Ability) and/or
+   ABILITY_FILENAME_OVERRIDES / FILTER_LABEL_OVERRIDES as needed. Example:
+     FORCE_ABILITY_FILTER_TOKENS.MoonGravity = true;
+     ABILITY_FILENAME_OVERRIDES.MoonGravity = "AbilityMoonGravity";
+   ========================================================= */
 
 // A handful of Captures use a real /icon/ filename that doesn't follow the
 // mechanical "capture" + squash(display_name) pattern (fan nicknames, a
@@ -1056,7 +1102,12 @@ const CAPTURE_FILENAME_OVERRIDES = {
   PukupukuSnow: "capturesnowcheepcheep",
   Hosui: "gushen",
   GotogotonCity: "capturepuzzlepartmetro",
+  // Not confirmed yet — filenames to add once the token names are known
+  // (see EXTRAABILITYFILLIN above for the Ability-side equivalent):
+  //   Megane: "capturemoeeye",          // Moe-Eye — currently missing art
+  //   AnagramAlphabet: "captureletter", // Letter — currently missing art
 };
+
 
 // "Kingdom Access" tokens (unlocking a kingdom from the Odyssey), keyed by the
 // token's display_name exactly as it appears in the logicTokens table. These
@@ -1149,6 +1200,12 @@ function mergeTokensIntoManifest(logicTokens){
     // are named inconsistently (some prefixed + no separators, some plain
     // kebab-case). First match found in /icon/ wins; see makeIcon().
     const candidates = [];
+    // Sphinx (Jaxi) / Bike (Scooter) get their explicit Ability-style
+    // filename tried first, regardless of what category/token_type their
+    // logicTokens row carries them under (see FORCE_ABILITY_FILTER_TOKENS).
+    if(ABILITY_FILENAME_OVERRIDES[t.token]){
+      candidates.push(ABILITY_FILENAME_OVERRIDES[t.token] + ".png");
+    }
     if(t.category === "Capture"){
       if(CAPTURE_FILENAME_OVERRIDES[t.token]) candidates.push(CAPTURE_FILENAME_OVERRIDES[t.token] + ".png");
       candidates.push("capture" + squashed + ".png");
@@ -1156,7 +1213,7 @@ function mergeTokensIntoManifest(logicTokens){
     if(t.category === "Kingdom Access" && KINGDOM_ACCESS_FILENAME_OVERRIDES[t.display_name]){
       candidates.push(KINGDOM_ACCESS_FILENAME_OVERRIDES[t.display_name] + ".png");
     }
-    if(t.token_type === "ability"){
+    if(t.token_type === "ability" && !ABILITY_FILENAME_OVERRIDES[t.token]){
       const abilityFile = ABILITY_FILENAME_OVERRIDES[t.token] || ("Ability" + t.token);
       candidates.push(abilityFile + ".png");
     }
@@ -1191,6 +1248,16 @@ function buildFilterLists(){
   Object.keys(ICON_MANIFEST).forEach(token => {
     const info = ICON_MANIFEST[token];
     if(!info || !info.category) return; // synthetic tokens (e.g. PaintingAccess) skip filters
+    // Base moveset everyone always has (Single Jump, Cap Return Jump, ...)
+    // isn't a real filterable requirement — never show it as an option.
+    if(ALWAYS_UNLOCKED_TOKENS[token]) return;
+    // Explicitly folded into a different, more general option (Turnip/Nut/
+    // Seed -> Grab) — hidden as their own entries.
+    if(ABILITY_FILTER_EXCLUDE_TOKENS[token]) return;
+    if(FORCE_ABILITY_FILTER_TOKENS[token]){
+      abilities.push(token);
+      return;
+    }
     if(info.tokenType === "ability"){
       abilities.push(token);
     } else if(info.category === "Capture"){
@@ -1198,6 +1265,16 @@ function buildFilterLists(){
     }
   });
   return { abilities, captures };
+}
+
+// Display label for a token inside the filter UI only (picker grid, chips,
+// tooltips) — falls back to the token's real display_name from logicTokens.
+// Moon-card requirement chips elsewhere are untouched by this and keep
+// showing each token's real display_name.
+function filterLabelFor(token){
+  if(FILTER_LABEL_OVERRIDES[token]) return FILTER_LABEL_OVERRIDES[token];
+  const info = ICON_MANIFEST[token];
+  return info ? info.label : token;
 }
 
 /* =========================================================
@@ -2973,7 +3050,7 @@ document.getElementById("viewModeToggle").addEventListener("click", () => {
    ========================================================= */
 function makeFilterIconEl(token, sizeClass){
   const info = ICON_MANIFEST[token];
-  const label = info ? info.label : token;
+  const label = filterLabelFor(token);
   const wrap = document.createElement("div");
   wrap.className = sizeClass;
   if(!info){
@@ -3030,8 +3107,7 @@ function setupFilterBar(kind, tokens, selectedSet){
     const q = (query || "").trim().toLowerCase();
     gridEl.innerHTML = "";
     const matches = tokens.filter(token => {
-      const info = ICON_MANIFEST[token];
-      const label = info ? info.label : token;
+      const label = filterLabelFor(token);
       return !q || label.toLowerCase().includes(q);
     });
     if(matches.length === 0){
@@ -3042,8 +3118,7 @@ function setupFilterBar(kind, tokens, selectedSet){
       return;
     }
     matches.forEach(token => {
-      const info = ICON_MANIFEST[token];
-      const label = info ? info.label : token;
+      const label = filterLabelFor(token);
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "filter-option" + (selectedSet.has(token) ? " selected" : "");
