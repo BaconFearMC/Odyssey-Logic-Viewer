@@ -211,64 +211,32 @@
     max-width:900px;
   }
   .checkpoint-group{
-    background:var(--bg-panel);
-    border:1px solid var(--border);
+    background:var(--bg-chip);
+    border:2px solid var(--gold);
     border-radius:10px;
     overflow:hidden;
-    box-shadow:var(--shadow);
     text-align:left;
   }
+  .checkpoint-group.loading-zone{ border-color:#3fae6a; }
   .checkpoint-group-header{
     display:flex;
     align-items:center;
-    gap:12px;
+    justify-content:space-between;
     width:100%;
-    padding:14px 16px;
+    padding:14px 18px;
     background:none;
     border:none;
     cursor:pointer;
     color:var(--text);
-    font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
+    font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
+    font-size:17px;
+    font-weight:700;
     text-align:left;
   }
-  .checkpoint-group-header:hover{ background:var(--bg-chip); }
-  .checkpoint-group-icon{
-    width:36px; height:36px; border-radius:8px;
-    object-fit:cover;
-    border:1px solid var(--border);
-    flex-shrink:0;
-  }
-  .checkpoint-group-icon-fallback{
-    width:36px; height:36px; border-radius:8px;
-    border:1px solid var(--border);
-    flex-shrink:0;
-    display:flex; align-items:center; justify-content:center;
-    font-size:12px; font-weight:700;
-    background:#2f2740; color:var(--moonrock);
-  }
-  .checkpoint-group-title{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-    min-width:0;
-  }
-  .checkpoint-group-name{
-    font-size:16px;
-    font-weight:700;
-    color:var(--gold);
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .checkpoint-group-count{
-    font-size:12px;
-    color:var(--text-dim);
-    font-family:'Segoe UI', system-ui, sans-serif;
-  }
+  .checkpoint-group-header:hover{ background:rgba(255,255,255,0.03); }
   .checkpoint-group-chevron{
     width:18px; height:18px;
-    color:var(--text-dim);
+    color:var(--text);
     flex-shrink:0;
     transition:transform 0.15s ease;
   }
@@ -277,49 +245,39 @@
     display:none;
     flex-direction:column;
     gap:10px;
-    padding:0 16px 16px;
+    padding:0 12px 12px;
   }
   .checkpoint-group.open .checkpoint-group-body{ display:flex; }
-  .moon-panel{
-    border:1px solid var(--border);
-    border-radius:8px;
-    background:var(--bg-chip);
-    overflow:hidden;
-  }
   .moon-panel-header{
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:10px;
     width:100%;
-    padding:10px 12px;
+    padding:10px 14px;
     background:none;
-    border:none;
+    border:1px solid var(--gold);
+    border-radius:6px;
     cursor:pointer;
     text-align:left;
     color:var(--text);
     font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
-    font-size:13px;
+    font-size:15px;
     font-weight:700;
   }
+  .checkpoint-group.loading-zone .moon-panel-header{ border-color:#3fae6a; }
   .moon-panel-header:hover{ background:rgba(255,255,255,0.03); }
-  .moon-panel-badges{ display:flex; gap:4px; flex-shrink:0; }
-  .moon-panel-badges .badge{
-    width:20px; height:20px; border-radius:5px;
-    display:flex; align-items:center; justify-content:center;
-    border:1px solid var(--border);
-  }
-  .moon-panel-badges .icon-svg{ width:12px; height:12px; }
+  .moon-panel{ display:flex; flex-direction:column; }
   .moon-panel-chevron{
     width:14px; height:14px;
-    color:var(--text-dim);
+    color:var(--text);
     flex-shrink:0;
     transition:transform 0.15s ease;
   }
   .moon-panel.open .moon-panel-chevron{ transform:rotate(180deg); }
   .moon-panel-body{
     display:none;
-    padding:0 12px 12px;
+    padding:12px 4px 4px;
   }
   .moon-panel.open .moon-panel-body{ display:block; }
   .checkpoint-empty{
@@ -440,6 +398,45 @@
     border-radius:8px;
     padding:5px 7px;
   }
+  /* Boxed tier variant used inside checkpoint-view moon panels: each tier
+     gets its own outlined section (label + chips inside one bordered box),
+     matching the reference layout, rather than the pill-label inline lane
+     used in the by-moon grid view. */
+  .tier-stack.boxed{ gap:10px; }
+  .tier-stack.boxed .tier-lane{
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px 12px;
+  }
+  .tier-stack.boxed .tier-lane.casual{ border-color:var(--tier-casual-border); }
+  .tier-stack.boxed .tier-lane.advanced{ border-color:var(--tier-advanced-border); }
+  .tier-stack.boxed .tier-lane.expert{ border-color:var(--tier-expert-border); }
+  .tier-stack.boxed .tier-lane.glitched{ border-color:var(--tier-glitched-border); }
+  .tier-stack.boxed .tier-lane.unrated{ border-color:var(--border); }
+  .tier-stack.boxed .tier-pill{
+    flex:none;
+    background:none;
+    border:none;
+    padding:0;
+    font-size:13px;
+    text-transform:none;
+    letter-spacing:normal;
+    margin-top:0;
+  }
+  .tier-stack.boxed .tier-lane.casual .tier-pill{ color:var(--tier-casual); }
+  .tier-stack.boxed .tier-lane.advanced .tier-pill{ color:var(--tier-advanced); }
+  .tier-stack.boxed .tier-lane.expert .tier-pill{ color:var(--tier-expert); }
+  .tier-stack.boxed .tier-lane.glitched .tier-pill{ color:var(--tier-glitched); }
+  .tier-stack.boxed .option-chip{
+    border-color:var(--gold);
+    border-radius:4px;
+    padding:8px 14px;
+    background:none;
+  }
+  .tier-stack.boxed .free-chip{ border-color:var(--gold); }
   .and-plus{ font-size:11px; color:var(--text-dim); margin:0 1px; }
   .free-chip{
     font-size:12px; font-style:italic; color:var(--text-dim);
@@ -2317,7 +2314,7 @@ function buildMoonCard(moon){
 // and the moon-panel body in the checkpoint-grouped view, since a moon's set
 // of movement options doesn't change based on which view is showing it —
 // checkpoint is one field per moon (its from_node_id), not per-branch.
-function buildMovementOptions(moon){
+function buildMovementOptions(moon, boxed){
   if(!moon.tierLanes || moon.tierLanes.length === 0){
     const row = document.createElement("div");
     row.className = "options-row";
@@ -2334,7 +2331,7 @@ function buildMovementOptions(moon){
   // same lane, so it's always clear which routes are casual vs. which
   // require advanced or expert tech.
   const stack = document.createElement("div");
-  stack.className = "tier-stack";
+  stack.className = "tier-stack" + (boxed ? " boxed" : "");
 
   moon.tierLanes.forEach(lane => {
     const laneEl = document.createElement("div");
@@ -2423,36 +2420,16 @@ function buildMoonPanel(moon){
   nameEl.textContent = moon.name;
   header.appendChild(nameEl);
 
-  const right = document.createElement("span");
-  right.style.display = "flex";
-  right.style.alignItems = "center";
-  right.style.gap = "8px";
-
-  if(moon.badges && moon.badges.length){
-    const badgeRow = document.createElement("span");
-    badgeRow.className = "moon-panel-badges";
-    moon.badges.forEach(b=>{
-      const info = b === "moonRock" ? {label:"Moon Rock", file:"badge-moon-rock.png"} : {label:"World Peace", file:"badge-world-peace.png"};
-      const el = document.createElement("span");
-      el.className = "badge " + b.toLowerCase();
-      el.title = info.label;
-      el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '" onerror="this.style.display=\'none\'">';
-      badgeRow.appendChild(el);
-    });
-    right.appendChild(badgeRow);
-  }
-
   const chevron = document.createElement("span");
   chevron.className = "moon-panel-chevron";
   chevron.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
-  right.appendChild(chevron);
+  header.appendChild(chevron);
 
-  header.appendChild(right);
   panel.appendChild(header);
 
   const body = document.createElement("div");
   body.className = "moon-panel-body";
-  body.appendChild(buildMovementOptions(moon));
+  body.appendChild(buildMovementOptions(moon, true));
   panel.appendChild(body);
 
   header.addEventListener("click", () => panel.classList.toggle("open"));
@@ -2460,47 +2437,24 @@ function buildMoonPanel(moon){
   return panel;
 }
 
+// A checkpoint entry is a "Loading Zone" (kingdom-transition point, styled
+// green per the reference) when its underlying node is a custom_place, i.e.
+// a hand-tagged transition/enter-exit point rather than an in-kingdom
+// checkpoint marker. Everything else renders as a regular gold checkpoint.
 function buildCheckpointGroup(checkpointName, entry){
+  const isLoadingZone = entry.type === "custom_place";
+
   const group = document.createElement("div");
-  group.className = "checkpoint-group";
+  group.className = "checkpoint-group" + (isLoadingZone ? " loading-zone" : "");
   group.dataset.checkpointName = checkpointName;
 
   const header = document.createElement("button");
   header.type = "button";
   header.className = "checkpoint-group-header";
 
-  const iconWrap = document.createElement("span");
-  if(checkpointName === "Other / No Checkpoint"){
-    const fb = document.createElement("span");
-    fb.className = "checkpoint-group-icon-fallback";
-    fb.textContent = "?";
-    iconWrap.appendChild(fb);
-  } else {
-    const img = document.createElement("img");
-    img.className = "checkpoint-group-icon";
-    img.src = entry.type === "custom_place" ? "icon/customnode.png" : "icon/infocheckpoint.png";
-    img.alt = "";
-    img.onerror = function(){
-      const fb = document.createElement("span");
-      fb.className = "checkpoint-group-icon-fallback";
-      fb.textContent = initialsFor(checkpointName);
-      img.replaceWith(fb);
-    };
-    iconWrap.appendChild(img);
-  }
-  header.appendChild(iconWrap);
-
-  const titleWrap = document.createElement("span");
-  titleWrap.className = "checkpoint-group-title";
   const nameEl = document.createElement("span");
-  nameEl.className = "checkpoint-group-name";
   nameEl.textContent = checkpointName.replace(/\s*Checkpoint\s*$/i, "");
-  const countEl = document.createElement("span");
-  countEl.className = "checkpoint-group-count";
-  countEl.textContent = entry.moons.length + (entry.moons.length === 1 ? " moon" : " moons");
-  titleWrap.appendChild(nameEl);
-  titleWrap.appendChild(countEl);
-  header.appendChild(titleWrap);
+  header.appendChild(nameEl);
 
   const chevron = document.createElement("span");
   chevron.className = "checkpoint-group-chevron";
