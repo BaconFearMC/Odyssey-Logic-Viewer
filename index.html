@@ -782,11 +782,24 @@
   .filter-bar-search:focus{ border-color:var(--gold); }
   .filter-bar-grid{
     display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
     gap:12px;
-    max-height:380px;
-    overflow-y:auto;
     padding-right:4px;
+    justify-content:center;
+  }
+  /* Ability panel: 30 filterable abilities (Single Jump is excluded as
+     always-unlocked base moveset, per ALWAYS_UNLOCKED_TOKENS), laid out
+     as an exact 6 x 5 grid so every row is full with no scrolling. */
+  #abilityFilterGrid{
+    grid-template-columns: repeat(6, 84px);
+    max-height:none;
+    overflow-y:visible;
+  }
+  /* Capture panel: 52 captures laid out as an exact 4 x 13 grid (4 x 13 = 52)
+     so every row is full, and no scrollbar is needed to see them all. */
+  #captureFilterGrid{
+    grid-template-columns: repeat(4, 84px);
+    max-height:none;
+    overflow-y:visible;
   }
   .filter-option{
     display:flex;
@@ -3088,6 +3101,22 @@ function makeFilterIconEl(token, sizeClass){
   wrap.appendChild(img);
   return wrap;
 }
+
+// Movement Ability dial tokens confirmed against sAbilities[] but not
+// yet wired into the randomizer/UI logic elsewhere in this project.
+// Rendered greyed-out and non-selectable in the Ability filter panel;
+// clicking one shows a "Not Implemented Yet" message instead of
+// toggling a filter that wouldn't actually do anything yet.
+const NOT_IMPLEMENTED_ABILITY_TOKENS = {
+  MoonLowGravity: true,
+  Grab: true,
+  Bike: true,
+  Jaxi: true,
+  RocketFlower: true,
+  NpcTalk: true,
+  TimerChallenge: true,
+  Pipe2D: true,
+};
 
 function setupFilterBar(kind, tokens, selectedSet){
   const barEl = document.getElementById(kind + "FilterBar");
