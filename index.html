@@ -211,7 +211,7 @@
      grouping, with each moon reachable from it as a collapsible panel. */
   .checkpoint-groups{
     display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
     gap:10px;
     width:100%;
     max-width:1400px;
@@ -224,22 +224,39 @@
     border-radius:8px;
     overflow:hidden;
     text-align:left;
+    min-width:0;
   }
   .checkpoint-group.loading-zone{ border-left-color:#3fae6a; }
   .checkpoint-group-header{
     display:flex;
-    align-items:center;
+    align-items:flex-start;
     justify-content:space-between;
+    gap:8px;
     width:100%;
-    padding:10px 14px;
+    padding:10px 12px;
     background:none;
     border:none;
     cursor:pointer;
     color:var(--text);
     font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
-    font-size:14px;
+    font-size:13px;
     font-weight:700;
     text-align:left;
+    line-height:1.35;
+  }
+  .checkpoint-group-icon{
+    width:20px; height:20px;
+    border-radius:5px;
+    object-fit:cover;
+    border:1px solid var(--border);
+    flex-shrink:0;
+    margin-top:1px;
+  }
+  .checkpoint-group-name{
+    flex:1;
+    min-width:0;
+    white-space:normal;
+    overflow-wrap:break-word;
   }
   .checkpoint-group-header:hover{ background:rgba(255,255,255,0.03); }
   .checkpoint-group-chevron{
@@ -2459,7 +2476,17 @@ function buildCheckpointGroup(checkpointName, entry){
   header.type = "button";
   header.className = "checkpoint-group-header";
 
+  if(checkpointName !== "Other / No Checkpoint"){
+    const icon = document.createElement("img");
+    icon.className = "checkpoint-group-icon";
+    icon.src = isLoadingZone ? "icon/customnode.png" : "icon/infocheckpoint.png";
+    icon.alt = "";
+    icon.onerror = function(){ this.style.display = "none"; };
+    header.appendChild(icon);
+  }
+
   const nameEl = document.createElement("span");
+  nameEl.className = "checkpoint-group-name";
   nameEl.textContent = checkpointName.replace(/\s*Checkpoint\s*$/i, "");
   header.appendChild(nameEl);
 
