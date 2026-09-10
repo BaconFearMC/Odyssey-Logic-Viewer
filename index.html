@@ -111,6 +111,12 @@
     border-color:var(--tier-glitched);
     color:#fff;
   }
+  #viewModeToggle{ right:24px; top:108px; }
+  #viewModeToggle.active{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:#1b1c1f;
+  }
 
   h1{
     font-family: "FontDB", 'Segoe UI', system-ui, sans-serif;
@@ -204,39 +210,41 @@
      CHECKPOINT-FIRST VIEW — access point/checkpoint as the top-level
      grouping, with each moon reachable from it as a collapsible panel. */
   .checkpoint-groups{
-    display:flex;
-    flex-direction:column;
-    gap:14px;
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap:10px;
     width:100%;
-    max-width:900px;
+    max-width:1400px;
+    align-items:start;
   }
   .checkpoint-group{
-    background:var(--bg-chip);
-    border:2px solid var(--gold);
-    border-radius:10px;
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-left:3px solid var(--gold);
+    border-radius:8px;
     overflow:hidden;
     text-align:left;
   }
-  .checkpoint-group.loading-zone{ border-color:#3fae6a; }
+  .checkpoint-group.loading-zone{ border-left-color:#3fae6a; }
   .checkpoint-group-header{
     display:flex;
     align-items:center;
     justify-content:space-between;
     width:100%;
-    padding:14px 18px;
+    padding:10px 14px;
     background:none;
     border:none;
     cursor:pointer;
     color:var(--text);
     font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
-    font-size:17px;
+    font-size:14px;
     font-weight:700;
     text-align:left;
   }
   .checkpoint-group-header:hover{ background:rgba(255,255,255,0.03); }
   .checkpoint-group-chevron{
-    width:18px; height:18px;
-    color:var(--text);
+    width:14px; height:14px;
+    color:var(--text-dim);
     flex-shrink:0;
     transition:transform 0.15s ease;
   }
@@ -244,8 +252,8 @@
   .checkpoint-group-body{
     display:none;
     flex-direction:column;
-    gap:10px;
-    padding:0 12px 12px;
+    gap:6px;
+    padding:0 10px 10px;
   }
   .checkpoint-group.open .checkpoint-group-body{ display:flex; }
   .moon-panel-header{
@@ -254,19 +262,18 @@
     justify-content:space-between;
     gap:10px;
     width:100%;
-    padding:10px 14px;
-    background:none;
-    border:1px solid var(--gold);
+    padding:8px 10px;
+    background:var(--bg-chip);
+    border:1px solid var(--border);
     border-radius:6px;
     cursor:pointer;
     text-align:left;
     color:var(--text);
     font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
-    font-size:15px;
+    font-size:12.5px;
     font-weight:700;
   }
-  .checkpoint-group.loading-zone .moon-panel-header{ border-color:#3fae6a; }
-  .moon-panel-header:hover{ background:rgba(255,255,255,0.03); }
+  .moon-panel-header:hover{ background:rgba(255,255,255,0.05); }
   .moon-panel{ display:flex; flex-direction:column; }
   .moon-panel-chevron{
     width:14px; height:14px;
@@ -402,14 +409,14 @@
      gets its own outlined section (label + chips inside one bordered box),
      matching the reference layout, rather than the pill-label inline lane
      used in the by-moon grid view. */
-  .tier-stack.boxed{ gap:10px; }
+  .tier-stack.boxed{ gap:6px; }
   .tier-stack.boxed .tier-lane{
     flex-direction:column;
     align-items:stretch;
-    gap:8px;
+    gap:6px;
     border:1px solid var(--border);
-    border-radius:8px;
-    padding:10px 12px;
+    border-radius:6px;
+    padding:7px 9px;
   }
   .tier-stack.boxed .tier-lane.casual{ border-color:var(--tier-casual-border); }
   .tier-stack.boxed .tier-lane.advanced{ border-color:var(--tier-advanced-border); }
@@ -421,9 +428,9 @@
     background:none;
     border:none;
     padding:0;
-    font-size:13px;
-    text-transform:none;
-    letter-spacing:normal;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
     margin-top:0;
   }
   .tier-stack.boxed .tier-lane.casual .tier-pill{ color:var(--tier-casual); }
@@ -431,10 +438,10 @@
   .tier-stack.boxed .tier-lane.expert .tier-pill{ color:var(--tier-expert); }
   .tier-stack.boxed .tier-lane.glitched .tier-pill{ color:var(--tier-glitched); }
   .tier-stack.boxed .option-chip{
-    border-color:var(--gold);
+    border-color:var(--border);
     border-radius:4px;
-    padding:8px 14px;
-    background:none;
+    padding:5px 8px;
+    background:var(--bg-chip);
   }
   .tier-stack.boxed .free-chip{ border-color:var(--gold); }
   .and-plus{ font-size:11px; color:var(--text-dim); margin:0 1px; }
@@ -2626,7 +2633,7 @@ document.getElementById("viewModeToggle").addEventListener("click", () => {
   viewMode = viewMode === "moon" ? "checkpoint" : "moon";
   const btn = document.getElementById("viewModeToggle");
   btn.classList.toggle("active", viewMode === "checkpoint");
-  document.getElementById("viewModeToggleLabel").textContent = viewMode === "checkpoint" ? "By Checkpoint" : "By Moon";
+  document.getElementById("viewModeToggleLabel").textContent = viewMode === "checkpoint" ? "By Node" : "By Moon";
   renderGrid();
 });
 
