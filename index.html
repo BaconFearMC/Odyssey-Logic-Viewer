@@ -1041,13 +1041,21 @@ let ICON_MANIFEST = {
 const ABILITY_FILENAME_OVERRIDES = {
   GroundPound: "AbilityGP",
   GroundPoundJump: "AbilityGPJump",
-  // Sphinx is the internal logicToken for the Jaxi capture-turned-ability
-  // (ride icon); Bike is the internal logicToken for what's displayed as
-  // "Scooter". Both get an explicit icon filename since their tokens don't
-  // match their display names, so squash(display_name) alone won't find
-  // the right file in /icon/.
-  Sphinx: "AbilityJaxi",
+  // Jaxi is the internal logicToken for Jaxi Riding (confirmed against
+  // AbilityRando.cpp's sAbilities[] table: AbilityId_JaxiRide, "Jaxi",
+  // "Jaxi Riding"); Bike is the internal logicToken for what's displayed
+  // as "Scooter". Both get an explicit icon filename since their tokens
+  // don't match their display names, so squash(display_name) alone won't
+  // find the right file in /icon/.
+  Jaxi: "AbilityJaxi",
   Bike: "AbilityScooter",
+  // Movement Abilities confirmed against sAbilities[] in AbilityRando.cpp.
+  MoonLowGravity: "AbilityMoonGravity",
+  NpcTalk: "AbilityNPCTalking",
+  Swim: "AbilitySwim",
+  TimerChallenge: "AbilityTimerChallenges",
+  RocketFlower: "AbilityRocketFlower",
+  Pipe2D: "Ability2DPipes",
 };
 
 // Filter-panel DISPLAY LABEL overrides — renames how a token reads in the
@@ -1070,23 +1078,27 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
 };
 
 // Tokens whose category in the raw data doesn't match where they should
-// show up in the filter UI. Currently: Sphinx (Jaxi) and Bike (Scooter)
-// are tagged as "ability" filter entries regardless of the category their
-// logicTokens row carries them under.
+// show up in the filter UI. Currently: Jaxi (Jaxi Riding) and Bike
+// (Scooter) are tagged as "ability" filter entries regardless of the
+// category their logicTokens row carries them under, plus the remaining
+// Movement Ability dial tokens confirmed against sAbilities[].
 const FORCE_ABILITY_FILTER_TOKENS = {
-  Sphinx: true,
+  Jaxi: true,
   Bike: true,
+  MoonLowGravity: true,
+  NpcTalk: true,
+  Swim: true,
+  TimerChallenge: true,
+  RocketFlower: true,
+  Pipe2D: true,
 };
 
 /* =========================================================
    EXTRAABILITYFILLIN
-   Space reserved for ability tokens whose real logicToken name isn't
-   confirmed yet (e.g. Moon Kingdom Low Gravity, Talk to NPCs). Once the
-   real token string is known, add it to FORCE_ABILITY_FILTER_TOKENS above
-   (if its data category needs overriding to show as an Ability) and/or
-   ABILITY_FILENAME_OVERRIDES / FILTER_LABEL_OVERRIDES as needed. Example:
-     FORCE_ABILITY_FILTER_TOKENS.MoonGravity = true;
-     ABILITY_FILENAME_OVERRIDES.MoonGravity = "AbilityMoonGravity";
+   All Movement Ability tokens have now been confirmed against
+   AbilityRando.cpp's sAbilities[] table and are populated above in
+   FORCE_ABILITY_FILTER_TOKENS / ABILITY_FILENAME_OVERRIDES. Nothing
+   currently pending here.
    ========================================================= */
 
 // A handful of Captures use a real /icon/ filename that doesn't follow the
@@ -1102,10 +1114,9 @@ const CAPTURE_FILENAME_OVERRIDES = {
   PukupukuSnow: "capturesnowcheepcheep",
   Hosui: "gushen",
   GotogotonCity: "capturepuzzlepartmetro",
-  // Not confirmed yet — filenames to add once the token names are known
-  // (see EXTRAABILITYFILLIN above for the Ability-side equivalent):
-  //   Megane: "capturemoeeye",          // Moe-Eye — currently missing art
-  //   AnagramAlphabet: "captureletter", // Letter — currently missing art
+  // Confirmed against CaptureRando.cpp's sCaptures[] table.
+  Megane: "capturemoe-eye", // Moe-Eye
+  AnagramAlphabetCharacter: "captureletters", // Letter (not "AnagramAlphabet")
 };
 
 
@@ -1200,9 +1211,10 @@ function mergeTokensIntoManifest(logicTokens){
     // are named inconsistently (some prefixed + no separators, some plain
     // kebab-case). First match found in /icon/ wins; see makeIcon().
     const candidates = [];
-    // Sphinx (Jaxi) / Bike (Scooter) get their explicit Ability-style
-    // filename tried first, regardless of what category/token_type their
-    // logicTokens row carries them under (see FORCE_ABILITY_FILTER_TOKENS).
+    // Jaxi (Jaxi Riding) / Bike (Scooter), plus the other Movement Ability
+    // dial tokens, get their explicit Ability-style filename tried first,
+    // regardless of what category/token_type their logicTokens row carries
+    // them under (see FORCE_ABILITY_FILTER_TOKENS).
     if(ABILITY_FILENAME_OVERRIDES[t.token]){
       candidates.push(ABILITY_FILENAME_OVERRIDES[t.token] + ".png");
     }
