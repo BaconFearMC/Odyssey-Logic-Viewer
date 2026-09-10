@@ -200,6 +200,134 @@
     max-width:1400px;
     justify-content:center;
   }
+  /* =========================================================
+     CHECKPOINT-FIRST VIEW — access point/checkpoint as the top-level
+     grouping, with each moon reachable from it as a collapsible panel. */
+  .checkpoint-groups{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    width:100%;
+    max-width:900px;
+  }
+  .checkpoint-group{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    text-align:left;
+  }
+  .checkpoint-group-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    padding:14px 16px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    color:var(--text);
+    font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
+    text-align:left;
+  }
+  .checkpoint-group-header:hover{ background:var(--bg-chip); }
+  .checkpoint-group-icon{
+    width:36px; height:36px; border-radius:8px;
+    object-fit:cover;
+    border:1px solid var(--border);
+    flex-shrink:0;
+  }
+  .checkpoint-group-icon-fallback{
+    width:36px; height:36px; border-radius:8px;
+    border:1px solid var(--border);
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700;
+    background:#2f2740; color:var(--moonrock);
+  }
+  .checkpoint-group-title{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    min-width:0;
+  }
+  .checkpoint-group-name{
+    font-size:16px;
+    font-weight:700;
+    color:var(--gold);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .checkpoint-group-count{
+    font-size:12px;
+    color:var(--text-dim);
+    font-family:'Segoe UI', system-ui, sans-serif;
+  }
+  .checkpoint-group-chevron{
+    width:18px; height:18px;
+    color:var(--text-dim);
+    flex-shrink:0;
+    transition:transform 0.15s ease;
+  }
+  .checkpoint-group.open .checkpoint-group-chevron{ transform:rotate(180deg); }
+  .checkpoint-group-body{
+    display:none;
+    flex-direction:column;
+    gap:10px;
+    padding:0 16px 16px;
+  }
+  .checkpoint-group.open .checkpoint-group-body{ display:flex; }
+  .moon-panel{
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--bg-chip);
+    overflow:hidden;
+  }
+  .moon-panel-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    width:100%;
+    padding:10px 12px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    text-align:left;
+    color:var(--text);
+    font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
+    font-size:13px;
+    font-weight:700;
+  }
+  .moon-panel-header:hover{ background:rgba(255,255,255,0.03); }
+  .moon-panel-badges{ display:flex; gap:4px; flex-shrink:0; }
+  .moon-panel-badges .badge{
+    width:20px; height:20px; border-radius:5px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--border);
+  }
+  .moon-panel-badges .icon-svg{ width:12px; height:12px; }
+  .moon-panel-chevron{
+    width:14px; height:14px;
+    color:var(--text-dim);
+    flex-shrink:0;
+    transition:transform 0.15s ease;
+  }
+  .moon-panel.open .moon-panel-chevron{ transform:rotate(180deg); }
+  .moon-panel-body{
+    display:none;
+    padding:0 12px 12px;
+  }
+  .moon-panel.open .moon-panel-body{ display:block; }
+  .checkpoint-empty{
+    padding:40px 20px;
+    text-align:center;
+    color:var(--text-dim);
+    font-size:14px;
+  }
   .moon-card{
     background:var(--bg-panel);
     border:1px solid var(--border);
@@ -405,7 +533,8 @@
     78%  { transform: scale(1.01) rotate(0.8deg); }
     100% { transform: scale(1) rotate(0deg); }
   }
-  .moon-card.pop-highlight{
+  .moon-card.pop-highlight,
+  .moon-panel.pop-highlight{
     animation: moonPopSway 0.9s cubic-bezier(.34,1.56,.64,1);
     box-shadow: 0 0 0 3px var(--gold), var(--shadow-hover);
     z-index:5;
@@ -536,6 +665,13 @@
   <span id="glitchToggleLabel">Glitched: All</span>
 </button>
 
+<button class="corner-btn" id="viewModeToggle" type="button" aria-label="Switch between moon view and checkpoint view">
+  <span class="icon-svg" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-7-11a7 7 0 0 1 14 0c0 6.65-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+  </span>
+  <span id="viewModeToggleLabel">By Moon</span>
+</button>
+
 <h1><img class="icon-svg" src="icon/ui-star.png" alt="" onerror="this.style.display='none'">Power Moon Requirement Charts</h1>
 
 <div id="loadStatus" class="load-status"></div>
@@ -552,6 +688,7 @@
   <button class="pager-arrow" id="pagerNext" aria-label="Next kingdom"><img class="icon-svg" src="icon/ui-chevron-right.png" alt="" onerror="this.outerHTML='&lt;span&gt;&amp;rarr;&lt;/span&gt;'"></button>
 </div>
 <div class="grid" id="grid"></div>
+<div class="checkpoint-groups" id="checkpointGroups" style="display:none;"></div>
 <div class="empty-state" id="emptyState" style="display:none;"></div>
 
 <div class="search-overlay" id="searchOverlay">
@@ -2171,6 +2308,16 @@ function buildMoonCard(moon){
     card.appendChild(info);
   }
 
+  card.appendChild(buildMovementOptions(moon));
+  return card;
+}
+
+// Builds just the movement-options portion of a moon (the "Free" tag or the
+// tier-stack of OR/AND requirement chips). Shared by the moon-card grid view
+// and the moon-panel body in the checkpoint-grouped view, since a moon's set
+// of movement options doesn't change based on which view is showing it —
+// checkpoint is one field per moon (its from_node_id), not per-branch.
+function buildMovementOptions(moon){
   if(!moon.tierLanes || moon.tierLanes.length === 0){
     const row = document.createElement("div");
     row.className = "options-row";
@@ -2178,8 +2325,7 @@ function buildMoonCard(moon){
     free.className = "free-tag";
     free.textContent = "Free";
     row.appendChild(free);
-    card.appendChild(row);
-    return card;
+    return row;
   }
 
   // One labeled lane per tier that actually has a route (Casual / Advanced /
@@ -2237,8 +2383,161 @@ function buildMoonCard(moon){
     stack.appendChild(laneEl);
   });
 
-  card.appendChild(stack);
-  return card;
+  return stack;
+}
+
+/* =========================================================
+   CHECKPOINT-FIRST VIEW
+   Groups the current kingdom's moons by their `checkpoint` field (the
+   access point/checkpoint they're tracked from) instead of by moon. Each
+   checkpoint becomes a collapsible group; each moon inside it becomes a
+   collapsible panel showing that moon's movement options. A moon with no
+   checkpoint (e.g. it only carries a subarea tag, or neither) falls into
+   an "Other / No Checkpoint" bucket so nothing silently disappears. */
+function groupMoonsByCheckpoint(moons){
+  const groups = new Map(); // checkpoint name -> { type, moons: [] }
+  const NO_CHECKPOINT = "Other / No Checkpoint";
+  moons.forEach(moon => {
+    const key = moon.checkpoint || NO_CHECKPOINT;
+    if(!groups.has(key)) groups.set(key, { type: moon.checkpointType || null, moons: [] });
+    groups.get(key).moons.push(moon);
+  });
+  // Alphabetical by checkpoint name, with the no-checkpoint bucket always last.
+  return Array.from(groups.entries()).sort((a, b) => {
+    if(a[0] === NO_CHECKPOINT) return 1;
+    if(b[0] === NO_CHECKPOINT) return -1;
+    return a[0].localeCompare(b[0]);
+  });
+}
+
+function buildMoonPanel(moon){
+  const panel = document.createElement("div");
+  panel.className = "moon-panel";
+  panel.dataset.moonName = moon.name;
+
+  const header = document.createElement("button");
+  header.type = "button";
+  header.className = "moon-panel-header";
+
+  const nameEl = document.createElement("span");
+  nameEl.textContent = moon.name;
+  header.appendChild(nameEl);
+
+  const right = document.createElement("span");
+  right.style.display = "flex";
+  right.style.alignItems = "center";
+  right.style.gap = "8px";
+
+  if(moon.badges && moon.badges.length){
+    const badgeRow = document.createElement("span");
+    badgeRow.className = "moon-panel-badges";
+    moon.badges.forEach(b=>{
+      const info = b === "moonRock" ? {label:"Moon Rock", file:"badge-moon-rock.png"} : {label:"World Peace", file:"badge-world-peace.png"};
+      const el = document.createElement("span");
+      el.className = "badge " + b.toLowerCase();
+      el.title = info.label;
+      el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '" onerror="this.style.display=\'none\'">';
+      badgeRow.appendChild(el);
+    });
+    right.appendChild(badgeRow);
+  }
+
+  const chevron = document.createElement("span");
+  chevron.className = "moon-panel-chevron";
+  chevron.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  right.appendChild(chevron);
+
+  header.appendChild(right);
+  panel.appendChild(header);
+
+  const body = document.createElement("div");
+  body.className = "moon-panel-body";
+  body.appendChild(buildMovementOptions(moon));
+  panel.appendChild(body);
+
+  header.addEventListener("click", () => panel.classList.toggle("open"));
+
+  return panel;
+}
+
+function buildCheckpointGroup(checkpointName, entry){
+  const group = document.createElement("div");
+  group.className = "checkpoint-group";
+  group.dataset.checkpointName = checkpointName;
+
+  const header = document.createElement("button");
+  header.type = "button";
+  header.className = "checkpoint-group-header";
+
+  const iconWrap = document.createElement("span");
+  if(checkpointName === "Other / No Checkpoint"){
+    const fb = document.createElement("span");
+    fb.className = "checkpoint-group-icon-fallback";
+    fb.textContent = "?";
+    iconWrap.appendChild(fb);
+  } else {
+    const img = document.createElement("img");
+    img.className = "checkpoint-group-icon";
+    img.src = entry.type === "custom_place" ? "icon/customnode.png" : "icon/infocheckpoint.png";
+    img.alt = "";
+    img.onerror = function(){
+      const fb = document.createElement("span");
+      fb.className = "checkpoint-group-icon-fallback";
+      fb.textContent = initialsFor(checkpointName);
+      img.replaceWith(fb);
+    };
+    iconWrap.appendChild(img);
+  }
+  header.appendChild(iconWrap);
+
+  const titleWrap = document.createElement("span");
+  titleWrap.className = "checkpoint-group-title";
+  const nameEl = document.createElement("span");
+  nameEl.className = "checkpoint-group-name";
+  nameEl.textContent = checkpointName.replace(/\s*Checkpoint\s*$/i, "");
+  const countEl = document.createElement("span");
+  countEl.className = "checkpoint-group-count";
+  countEl.textContent = entry.moons.length + (entry.moons.length === 1 ? " moon" : " moons");
+  titleWrap.appendChild(nameEl);
+  titleWrap.appendChild(countEl);
+  header.appendChild(titleWrap);
+
+  const chevron = document.createElement("span");
+  chevron.className = "checkpoint-group-chevron";
+  chevron.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  header.appendChild(chevron);
+
+  group.appendChild(header);
+
+  const body = document.createElement("div");
+  body.className = "checkpoint-group-body";
+  entry.moons.forEach(moon => body.appendChild(buildMoonPanel(moon)));
+  group.appendChild(body);
+
+  header.addEventListener("click", () => group.classList.toggle("open"));
+
+  return group;
+}
+
+function renderCheckpointGroups(moons){
+  const container = document.getElementById("checkpointGroups");
+  container.innerHTML = "";
+
+  if(moons.length === 0){
+    const empty = document.createElement("div");
+    empty.className = "checkpoint-empty";
+    empty.textContent = "No moons left to show with this filter.";
+    container.appendChild(empty);
+    return;
+  }
+
+  const groups = groupMoonsByCheckpoint(moons);
+  groups.forEach(([checkpointName, entry]) => {
+    container.appendChild(buildCheckpointGroup(checkpointName, entry));
+  });
+  // Open the first group by default so the view isn't a wall of collapsed bars.
+  const first = container.querySelector(".checkpoint-group");
+  if(first) first.classList.add("open");
 }
 
 let currentKingdomIndex = 0;
@@ -2259,9 +2558,12 @@ let glitchMode = "all";
 // Renders the grid for whatever kingdom/unmarkedMode is currently active,
 // without touching the pager name/icon/dots. Used by both kingdom
 // navigation and the UNMARKED toggle.
+let viewMode = "moon"; // "moon" | "checkpoint" — persists across kingdom navigation
+
 function renderGrid(){
   const name = KINGDOM_ORDER[currentKingdomIndex];
   const grid = document.getElementById("grid");
+  const checkpointGroups = document.getElementById("checkpointGroups");
   const emptyState = document.getElementById("emptyState");
   grid.innerHTML = "";
 
@@ -2274,6 +2576,7 @@ function renderGrid(){
 
   if(filtering && moons.length === 0){
     grid.style.display = "none";
+    checkpointGroups.style.display = "none";
     emptyState.style.display = "block";
     if(unmarkedMode){
       emptyState.textContent = "No Marked Moons! This kingdom has fully completed levels of Logic for All Moons!";
@@ -2282,9 +2585,17 @@ function renderGrid(){
     } else {
       emptyState.textContent = "No moons left to show with this filter.";
     }
+    return;
+  }
+
+  emptyState.style.display = "none";
+  if(viewMode === "checkpoint"){
+    grid.style.display = "none";
+    checkpointGroups.style.display = "flex";
+    renderCheckpointGroups(moons);
   } else {
     grid.style.display = "";
-    emptyState.style.display = "none";
+    checkpointGroups.style.display = "none";
     moons.forEach(moon => grid.appendChild(buildMoonCard(moon)));
   }
 }
@@ -2354,6 +2665,14 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   const btn = document.getElementById("glitchToggle");
   btn.classList.toggle("active", glitchMode !== "all");
   document.getElementById("glitchToggleLabel").textContent = GLITCH_LABELS[glitchMode];
+  renderGrid();
+});
+
+document.getElementById("viewModeToggle").addEventListener("click", () => {
+  viewMode = viewMode === "moon" ? "checkpoint" : "moon";
+  const btn = document.getElementById("viewModeToggle");
+  btn.classList.toggle("active", viewMode === "checkpoint");
+  document.getElementById("viewModeToggleLabel").textContent = viewMode === "checkpoint" ? "By Checkpoint" : "By Moon";
   renderGrid();
 });
 
@@ -2444,6 +2763,24 @@ function goToMoon(kingdomName, moonName){
   renderKingdom(kingdomName);
   requestAnimationFrame(() => {
     const escaped = window.CSS && CSS.escape ? CSS.escape(moonName) : moonName.replace(/["\\]/g, "\\$&");
+
+    if(viewMode === "checkpoint"){
+      // In checkpoint view the target is a collapsed moon-panel nested inside
+      // a collapsed checkpoint-group — open both ancestors before scrolling,
+      // or the highlight would pop on an invisible (display:none) element.
+      const panel = document.querySelector('.moon-panel[data-moon-name="' + escaped + '"]');
+      if(!panel) return;
+      const group = panel.closest(".checkpoint-group");
+      if(group) group.classList.add("open");
+      panel.classList.add("open");
+      panel.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => {
+        panel.classList.add("pop-highlight");
+        panel.addEventListener("animationend", () => panel.classList.remove("pop-highlight"), { once: true });
+      }, 350);
+      return;
+    }
+
     const card = document.querySelector('.moon-card[data-moon-name="' + escaped + '"]');
     if(!card) return;
     card.scrollIntoView({ behavior: "smooth", block: "center" });
