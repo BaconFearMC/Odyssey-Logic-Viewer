@@ -1072,6 +1072,18 @@ let ICON_MANIFEST = {
   // Always present: synthetic token used by the Secret Path override,
   // not part of the game's own logic-token table.
   PaintingAccess: { filenames:["painting-access.png", "paintingaccess.png"], label:"Painting Access", color:"#8a4f78" },
+  // Synthetic entries for confirmed sAbilities[] tokens that are not
+  // currently present in the loaded kingdom logicTokens data, so
+  // mergeTokensIntoManifest() never populates them on its own. Seeded here
+  // (filenames confirmed to exist in /icon/) purely so they render as
+  // greyed-out "Not Implemented Yet" tiles in the Ability filter panel via
+  // NOT_IMPLEMENTED_ABILITY_TOKENS, rather than silently vanishing from the
+  // list. Remove an entry here once its real logicTokens row shows up.
+  Bike: { filenames:["AbilityScooter.png"], label:"Scooter Riding", color:"#34406e", category:"Movement", tokenType:"ability" },
+  Jaxi: { filenames:["AbilityJaxi.png"], label:"Jaxi Riding", color:"#34406e", category:"Movement", tokenType:"ability" },
+  RocketFlower: { filenames:["AbilityRocketFlower.png"], label:"Rocket Flower", color:"#34406e", category:"Movement", tokenType:"ability" },
+  TimerChallenge: { filenames:["AbilityTimerChallenges.png"], label:"Timer Challenges", color:"#34406e", category:"Movement", tokenType:"ability" },
+  Pipe2D: { filenames:["Ability2DPipes.png"], label:"Enter 2D Pipes", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
 
 // Movement/CapThrow ("ability") icon sets found in the wild are commonly
