@@ -2962,15 +2962,12 @@ let viewMode = "moon"; // "moon" | "checkpoint" — persists across kingdom navi
 
 /* =========================================================
    ABILITY / CAPTURE FILTERS
-   Two independent multi-select sets of tokens. A moon passes the
-   Ability filter if ANY selected ability token appears anywhere in
-   its requirements (any OR-branch, any AND-slot); same for Capture.
-   An empty set for a filter means that filter is off. Both active
-   filters must pass (AND between the two filter *types*; OR within
-   each type's selections) — this matches the reference screenshot's
-   "some abilities and captures selected" example, which reads as
-   "moon uses at least one of the checked abilities AND at least one
-   of the checked captures".
+   Two independent multi-select sets of tokens, but combined as one
+   pool: a moon passes if ANY selected token — ability or capture —
+   appears anywhere in its requirements (any OR-branch, any AND-slot).
+   An empty set for a filter means that filter is off; if both are
+   empty, no filtering happens. Free moons (no requirements at all)
+   always pass, since there's nothing on them to match against.
    ========================================================= */
 let selectedAbilities = new Set();
 let selectedCaptures = new Set();
@@ -2983,18 +2980,14 @@ function moonTokens(moon){
 
 function moonMatchesFilters(moon){
   if(selectedAbilities.size === 0 && selectedCaptures.size === 0) return true;
+  // Free moons have no requirements to match against, so they always pass
+  // through an active filter rather than being excluded by it.
+  if((moon.orGroups || []).length === 0) return true;
   const toks = moonTokens(moon);
-  if(selectedAbilities.size > 0){
-    let any = false;
-    selectedAbilities.forEach(t => { if(toks.has(t)) any = true; });
-    if(!any) return false;
-  }
-  if(selectedCaptures.size > 0){
-    let any = false;
-    selectedCaptures.forEach(t => { if(toks.has(t)) any = true; });
-    if(!any) return false;
-  }
-  return true;
+  let any = false;
+  selectedAbilities.forEach(t => { if(toks.has(t)) any = true; });
+  selectedCaptures.forEach(t => { if(toks.has(t)) any = true; });
+  return any;
 }
 
 function renderGrid(){
