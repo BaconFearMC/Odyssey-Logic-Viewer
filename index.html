@@ -1082,6 +1082,7 @@ let ICON_MANIFEST = {
   Bike: { filenames:["AbilityScooter.png"], label:"Scooter Riding", color:"#34406e", category:"Movement", tokenType:"ability" },
   Jaxi: { filenames:["AbilityJaxi.png"], label:"Jaxi Riding", color:"#34406e", category:"Movement", tokenType:"ability" },
   RocketFlower: { filenames:["AbilityRocketFlower.png"], label:"Rocket Flower", color:"#34406e", category:"Movement", tokenType:"ability" },
+  NpcTalk: { filenames:["AbilityNpcTalk.png"], label:"NPC Talking", color:"#34406e", category:"Movement", tokenType:"ability" },
   TimerChallenge: { filenames:["AbilityTimerChallenges.png"], label:"Timer Challenges", color:"#34406e", category:"Movement", tokenType:"ability" },
   Pipe2D: { filenames:["Ability2DPipes.png"], label:"Enter 2D Pipes", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
@@ -1320,8 +1321,8 @@ const ABILITY_DISPLAY_ORDER = [
   "GroundPound", "GroundPoundJump", "Dive",
   "DoubleJump", "TripleJump", "SideFlip", "Spin", "WallJump",
   "LedgeGrab", "Climb", "Swing",
-  "MoonLowGravity", "Swim", "Grab", "Jaxi", "Bike",
-  "RocketFlower", "NpcTalk", "Pipe2D", "TimerChallenge",
+  "MoonLowGravity", "Grab", "Swim", "Bike", "Jaxi",
+  "RocketFlower", "NpcTalk", "TimerChallenge", "Pipe2D",
 ];
 const ABILITY_DISPLAY_ORDER_INDEX = {};
 ABILITY_DISPLAY_ORDER.forEach((token, i) => { ABILITY_DISPLAY_ORDER_INDEX[token] = i; });
