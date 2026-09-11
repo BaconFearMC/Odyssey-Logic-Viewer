@@ -788,9 +788,9 @@
   }
   /* Ability panel: 30 filterable abilities (Single Jump is excluded as
      always-unlocked base moveset, per ALWAYS_UNLOCKED_TOKENS), laid out
-     as an exact 6 x 5 grid so every row is full with no scrolling. */
+     as an exact 10 x 3 grid so every row is full with no scrolling. */
   #abilityFilterGrid{
-    grid-template-columns: repeat(6, 84px);
+    grid-template-columns: repeat(10, 84px);
     max-height:none;
     overflow-y:visible;
   }
@@ -841,6 +841,35 @@
     -webkit-box-orient:vertical;
   }
   .filter-option.selected .filter-option-name{ color:var(--text); }
+  .filter-option.not-implemented{
+    opacity:0.4;
+    cursor:not-allowed;
+  }
+  .filter-option.not-implemented:hover{ background:none; }
+  .filter-option.not-implemented .filter-option-icon{
+    filter:grayscale(1);
+  }
+  .not-implemented-toast{
+    position:fixed;
+    left:50%;
+    bottom:32px;
+    transform:translateX(-50%) translateY(12px);
+    background:rgba(20,20,26,0.95);
+    color:var(--text);
+    border:1px solid var(--border);
+    padding:10px 18px;
+    border-radius:8px;
+    font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
+    font-size:13px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.2s ease, transform 0.2s ease;
+    z-index:9999;
+  }
+  .not-implemented-toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
   .filter-bar-none{
     padding:14px 4px;
     text-align:center;
@@ -3118,6 +3147,21 @@ const NOT_IMPLEMENTED_ABILITY_TOKENS = {
   Pipe2D: true,
 };
 
+let notImplementedToastTimer = null;
+function showNotImplementedToast(){
+  let toast = document.getElementById("notImplementedToast");
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "notImplementedToast";
+    toast.className = "not-implemented-toast";
+    document.body.appendChild(toast);
+  }
+  toast.textContent = "Not Implemented Yet";
+  toast.classList.add("show");
+  clearTimeout(notImplementedToastTimer);
+  notImplementedToastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
+}
+
 function setupFilterBar(kind, tokens, selectedSet){
   const barEl = document.getElementById(kind + "FilterBar");
   const rowEl = document.getElementById(kind + "FilterRow");
@@ -3160,9 +3204,12 @@ function setupFilterBar(kind, tokens, selectedSet){
     }
     matches.forEach(token => {
       const label = filterLabelFor(token);
+      const notImplemented = kind === "ability" && NOT_IMPLEMENTED_ABILITY_TOKENS[token];
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "filter-option" + (selectedSet.has(token) ? " selected" : "");
+      btn.className = "filter-option"
+        + (selectedSet.has(token) ? " selected" : "")
+        + (notImplemented ? " not-implemented" : "");
       const iconWrap = document.createElement("div");
       iconWrap.className = "filter-option-icon";
       iconWrap.appendChild(makeFilterIconEl(token, ""));
@@ -3171,13 +3218,21 @@ function setupFilterBar(kind, tokens, selectedSet){
       nameEl.className = "filter-option-name";
       nameEl.textContent = label;
       btn.appendChild(nameEl);
-      btn.addEventListener("click", () => {
-        if(selectedSet.has(token)) selectedSet.delete(token);
-        else selectedSet.add(token);
-        btn.classList.toggle("selected", selectedSet.has(token));
-        renderChips();
-        renderGrid();
-      });
+      if(notImplemented){
+        btn.title = "Not Implemented Yet";
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          showNotImplementedToast();
+        });
+      } else {
+        btn.addEventListener("click", () => {
+          if(selectedSet.has(token)) selectedSet.delete(token);
+          else selectedSet.add(token);
+          btn.classList.toggle("selected", selectedSet.has(token));
+          renderChips();
+          renderGrid();
+        });
+      }
       gridEl.appendChild(btn);
     });
   }
