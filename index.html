@@ -1333,16 +1333,19 @@ function buildFilterLists(){
   Object.keys(ICON_MANIFEST).forEach(token => {
     const info = ICON_MANIFEST[token];
     if(!info || !info.category) return; // synthetic tokens (e.g. PaintingAccess) skip filters
+    // Explicit force-include always wins, even if the real loaded logicTokens
+    // row happens to mark this token always_unlocked or otherwise excluded —
+    // Bike/Jaxi/RocketFlower/etc. must always surface as filter options.
+    if(FORCE_ABILITY_FILTER_TOKENS[token]){
+      abilities.push(token);
+      return;
+    }
     // Base moveset everyone always has (Single Jump, Cap Return Jump, ...)
     // isn't a real filterable requirement — never show it as an option.
     if(ALWAYS_UNLOCKED_TOKENS[token]) return;
     // Explicitly folded into a different, more general option (Turnip/Nut/
     // Seed -> Grab) — hidden as their own entries.
     if(ABILITY_FILTER_EXCLUDE_TOKENS[token]) return;
-    if(FORCE_ABILITY_FILTER_TOKENS[token]){
-      abilities.push(token);
-      return;
-    }
     if(info.tokenType === "ability"){
       abilities.push(token);
     } else if(info.category === "Capture"){
