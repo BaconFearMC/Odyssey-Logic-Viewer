@@ -883,6 +883,24 @@
   .icon-wrap.filter-match .icon-fallback{
     box-shadow:0 0 0 2px var(--gold);
   }
+  /* Always-unlocked ("optional") abilities — Swim, MoonLowGravity, and
+     friends — are never actually gating a moon, so they get their own
+     dashed teal outline instead of the solid gold filter-match ring. This
+     stays visible even with no filter active, so it's always clear at a
+     glance which requirement icons on a card are "free" vs. something you
+     actually need to have unlocked. If a filter also matches this same
+     icon, the gold ring (higher specificity, applied second) wins. */
+  .icon-wrap.optional-ability .icon,
+  .icon-wrap.optional-ability .icon-fallback{
+    box-shadow:0 0 0 2px var(--worldpeace);
+    outline:1px dashed var(--worldpeace);
+    outline-offset:2px;
+  }
+  .icon-wrap.optional-ability.filter-match .icon,
+  .icon-wrap.optional-ability.filter-match .icon-fallback{
+    box-shadow:0 0 0 2px var(--gold);
+    outline-color:var(--gold);
+  }
 </style>
 </head>
 <body>
@@ -2583,6 +2601,12 @@ function makeIcon(token){
   wrap.tabIndex = 0; // keyboard-focusable, so the tooltip is reachable without a mouse
   wrap.setAttribute("aria-label", label);
   wrap.dataset.token = token;
+  // Always-unlocked ("optional") abilities — Swim, MoonLowGravity, etc. —
+  // never actually gate a moon, so mark them for a distinct outline in CSS
+  // instead of the regular filter-match highlight, letting the player see
+  // at a glance that this icon is "free" rather than something they need
+  // to have unlocked.
+  if(ALWAYS_UNLOCKED_TOKENS[token]) wrap.classList.add("optional-ability");
 
   if(!info){
     const d = document.createElement("div");
@@ -2980,9 +3004,19 @@ function moonTokens(moon){
 
 function moonMatchesFilters(moon){
   if(selectedAbilities.size === 0 && selectedCaptures.size === 0) return true;
+  const groups = moon.orGroups || [];
   // Free moons have no requirements to match against, so they always pass
   // through an active filter rather than being excluded by it.
-  if((moon.orGroups || []).length === 0) return true;
+  if(groups.length === 0) return true;
+  // A branch made up entirely of always-unlocked ("optional") tokens gets
+  // stripped down to an empty group during parsing (see the
+  // ALWAYS_UNLOCKED_TOKENS check in parseMoon) — it's a fully free route
+  // that doesn't require unlocking anything. If ANY branch is like this,
+  // the moon is gettable with nothing selected at all, so it should never
+  // be hidden by an ability/capture filter — same treatment as a moon with
+  // zero groups. This is what was hiding e.g. Swim-only moons whenever any
+  // other filter chip was active.
+  if(groups.some(group => group.length === 0)) return true;
   const toks = moonTokens(moon);
   let any = false;
   selectedAbilities.forEach(t => { if(toks.has(t)) any = true; });
