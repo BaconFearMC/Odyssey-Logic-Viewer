@@ -345,16 +345,24 @@
   .badge .icon-svg{ width:17.55px; height:17.55px; }
   .badge.moonrock{ background:var(--moonrock-bg); color:var(--moonrock); border-color:var(--moonrock-border);}
   .badge.worldpeace{ background:var(--worldpeace-bg); color:var(--worldpeace); border-color:var(--worldpeace-border);}
-  /* Checkpoint icon and Subarea icon share this exact same slot/size (bottom-right
-     of the card) — a moon shows one or the other, never both. Sized to match the
-     Captures' icon (.icon, 48.6px) per request. Hover/focus reveals the name via
-     the shared .icon-tooltip, same interaction pattern as the requirement icons. */
+  /* Checkpoint icon and Subarea icon share the same slot/size (bottom-right
+     of the card, same size as a Captures icon, 48.6px) but are NOT mutually
+     exclusive: a moon can show both a Subarea icon and a Custom-Node icon
+     at once (a plain Checkpoint is suppressed whenever Subarea is already
+     shown, in JS — see buildMoonCard). When two DO render together, they're
+     direct siblings appended in a fixed order (Subarea first, then
+     Checkpoint/Custom-Node), so the adjacent-sibling rule below shifts
+     the second one left by its own width + a gap, instead of both sitting
+     at the same bottom:10px;right:10px and rendering on top of each other. */
   .checkpoint-info{
     position:absolute;
     bottom:10px; right:10px;
     width:48.6px; height:48.6px;
     display:inline-flex; align-items:center; justify-content:center;
     cursor:help;
+  }
+  .checkpoint-info + .checkpoint-info{
+    right:calc(10px + 48.6px + 6px);
   }
   .checkpoint-info img{
     width:48.6px; height:48.6px;
@@ -2917,7 +2925,14 @@ function buildMoonCard(moon){
 
     card.appendChild(info);
   }
-  if(moon.checkpoint){
+  if(moon.checkpoint && (moon.checkpointType === "custom_place" || !moon.subarea)){
+    // A plain Checkpoint (checkpointType === "checkpoint") is redundant once
+    // a Subarea icon is already shown — the subarea already tells you where
+    // the moon is, a generic overworld checkpoint doesn't add anything for
+    // a subarea moon. So it's skipped whenever moon.subarea is set. A
+    // Custom Node (checkpointType === "custom_place") is NOT skipped even
+    // inside a subarea — that's a specific named waypoint (e.g. Rooftop),
+    // not a generic checkpoint, so it still gets shown alongside Subarea.
     // Strip a trailing "Checkpoint" word for the tooltip text per request
     // (e.g. "Stone Bridge Checkpoint" -> "Stone Bridge"), independent of
     // the "(objXXX)" suffix already stripped when the lookup was built.
