@@ -1491,13 +1491,52 @@ function astToDNF(node){
 // Moons whose scenario-tag chips should be hidden entirely (e.g. a
 // non-story moon where the scenario split in the data is misleading).
 const SCENARIO_DATA_HIDDEN_MOONS = new Set([
-  // "Some Moon Name",
+  "Found with Cap Kingdom Art",
+  "Fog-Shrouded Platform",
+  "On the Lone Pillar",
+  "The Lurker Under the Stone",
+  "Sand Kingdom Timer Challenge 1",
+  "Fishing in the Oasis",
+  "You're Quite a Catch, Captain Toad!",
+  "Welcome Back, Jaxi!",
+  "Found with Sand Kingdom Art",
+  "Binding Band Returned",
+  "'Round-the-World Tourist",
+  "Peach in the Sand Kingdom",
+  "On the North Pillar",
+  "Poster Cleanup",
+  "Inside a Rock in the Forest",
+  "Lost in the Tall Trees",
+  "Moon Shards in the Forest",
+  "Lost Kingdom Regular Cup",
+  "Peach in the Metro Kingdom",
+  "The Bound Bowl Grand Prix",
+  "Peach in the Snow Kingdom",
+  "Water Pooling in the Crevasse",
+  "Squirming Under Ice",
+  "Stacked-Up Ice Climb",
+  "Bonjour, Dorrie!",
+  "What the Waves Left Behind",
+  "Treasure Beneath the Cheese Rocks",
+  "Bowser's Kingdom Regular Cup",
+  "Fly to the Treasure Chest and Back",
+  "Found with Dark Side Art 6",
 ]);
 // Moons whose difficulty/tier should be forced to a specific value,
 // overriding whatever the CSV's difficulty column computed. Value must be
 // one of: "casual", "advanced", "expert", "glitched", "unrated".
 const LOGIC_LEVEL_OVERRIDES = {
-  // "Some Moon Name": "expert",
+  "Multi Moon Atop the Falls": "casual",
+  "Chomp Through the Rocks": "casual",
+  "Behind the Waterfall": "casual",
+  "The Hole in the Desert": "casual",
+  "Defend the Secret Flower Field!": "casual",
+  "Moon Shards in the Jungle": "casual",
+  "Remotely Captured Car": "casual",
+  "The Bound Bowl Grand Prix": "casual",
+  "The Glass Is Half Full!": "casual",
+  "Light the Lantern on the Small Island": "casual",
+  "Battle with the Lord of Lightning!": "casual",
 };
 
 function exprToDNF(expr){
