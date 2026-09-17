@@ -484,6 +484,21 @@
   .free-chip{
     font-size:12px; font-style:italic; color:var(--text-dim);
     padding:8px 10px;
+    position:relative; /* positioning context for the scenario-explainer tooltip below */
+  }
+  /* Wider variant of .icon-tooltip for the Free+Scenario explainer, which is
+     a full sentence rather than a short label — the base .icon-tooltip is
+     white-space:nowrap and would overflow badly at that length. */
+  .icon-tooltip.wide{
+    white-space:normal;
+    width:260px;
+    left:0;
+    transform:none;
+  }
+  .free-chip:hover .icon-tooltip,
+  .free-chip:focus-visible .icon-tooltip{
+    opacity:1;
+    visibility:visible;
   }
   .icon{ width:48.6px; height:48.6px; border-radius:8px; object-fit:cover; display:block; border:1px solid var(--border); }
   .icon-fallback{
@@ -1465,6 +1480,26 @@ function astToDNF(node){
   }
   return [[]];
 }
+
+/* =========================================================
+   MANUAL PER-MOON OVERRIDES — edit these two lists directly.
+   Both key on the exact moon_name string from moonAccess (case-sensitive).
+   Only moons you list here are affected; every other moon keeps its
+   normally computed scenario data / logic-level tier. See usage in
+   parseMoon() for exactly what each one does.
+   ========================================================= */
+// Moons whose scenario-tag chips should be hidden entirely (e.g. a
+// non-story moon where the scenario split in the data is misleading).
+const SCENARIO_DATA_HIDDEN_MOONS = new Set([
+  // "Some Moon Name",
+]);
+// Moons whose difficulty/tier should be forced to a specific value,
+// overriding whatever the CSV's difficulty column computed. Value must be
+// one of: "casual", "advanced", "expert", "glitched", "unrated".
+const LOGIC_LEVEL_OVERRIDES = {
+  // "Some Moon Name": "expert",
+};
+
 function exprToDNF(expr){
   const trimmed = (expr || "").trim();
   if(trimmed === "" || trimmed.toLowerCase() === "free") return [[]];
@@ -1819,6 +1854,37 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
     dnf = [["PaintingAccess"]];
     tiers = ["casual"];
     scenarios = [null];
+  }
+
+  // --- Manual per-moon overrides -----------------------------------------
+  // Both maps key on the exact moon_name string (case-sensitive, must match
+  // moonAccess exactly). Intentionally NOT a blanket toggle — only moons
+  // listed here are affected, everything else keeps its normal computed
+  // scenario data / logic-level tier. Meant for individual non-story moons
+  // where the raw data is misleading or incomplete (e.g. a moon whose
+  // scenario split doesn't reflect real in-game behavior, or whose CSV
+  // difficulty rating needs a manual correction) — NOT for hiding/
+  // reclassifying moons in bulk.
+  //
+  // SCENARIO_DATA_HIDDEN_MOONS: every branch's scenario tag is cleared
+  // (chips render with no "Scenario X" pill) for a listed moon, as if
+  // option_scenarios were empty for it. Add a moon_name string to hide it:
+  //   "Some Moon Name",
+  if(SCENARIO_DATA_HIDDEN_MOONS.has(row.moon_name)){
+    scenarios = scenarios.map(() => null);
+  }
+  // LOGIC_LEVEL_OVERRIDES: forces every branch of a listed moon to the
+  // given tier, overriding whatever tiersForGroups computed from the CSV's
+  // difficulty column. Value must be one of TIER_ORDER ("casual",
+  // "advanced", "expert", "glitched", "unrated") or it's ignored (falls
+  // back to the computed tier) rather than silently producing an empty
+  // tier-lane. Add an entry to override a moon:
+  //   "Some Moon Name": "expert",
+  if(Object.prototype.hasOwnProperty.call(LOGIC_LEVEL_OVERRIDES, row.moon_name)){
+    const overrideTier = LOGIC_LEVEL_OVERRIDES[row.moon_name];
+    if(TIER_ORDER.includes(overrideTier)){
+      tiers = tiers.map(() => overrideTier);
+    }
   }
 
   const isFree = dnf.every(g => g.length === 0);
@@ -3023,6 +3089,19 @@ function buildMovementOptions(moon, boxed){
           tag.className = "scenario-tag";
           tag.textContent = freeScenarioLabel;
           chip.appendChild(tag);
+
+          // Free + Scenario Data together needs an explainer: a branch can
+          // show as "Free" (no ability/capture needed) yet still only be
+          // valid in certain scenarios, which is easy to misread as "always
+          // free". Hovering/focusing the chip clarifies via the standard
+          // icon-tooltip pattern (wide variant, since this is a full
+          // sentence rather than a short label).
+          chip.tabIndex = 0;
+          chip.setAttribute("aria-label", "Free — " + freeScenarioLabel);
+          const explainer = document.createElement("span");
+          explainer.className = "icon-tooltip wide";
+          explainer.textContent = 'The "On Kingdom Complete" World Peace Settings forces Kingdoms to World Peace. In any case, ' + freeScenarioLabel + ".";
+          chip.appendChild(explainer);
         }
         optsEl.appendChild(chip);
         return;
