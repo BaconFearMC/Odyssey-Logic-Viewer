@@ -404,6 +404,17 @@
   .tier-options{
     display:flex; align-items:center; gap:6px; flex-wrap:wrap; max-width:100%; min-width:0;
   }
+  /* Scenario Data: small pill appended inside an option-chip when that
+     specific branch is only valid in certain in-game scenarios (e.g. only
+     post-World Peace). Deliberately muted/neutral, not tier-colored — the
+     tier color already belongs to the lane, this is an orthogonal axis. */
+  .scenario-tag{
+    flex:0 0 auto;
+    font-size:8.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;
+    padding:2px 5px; border-radius:20px;
+    line-height:1.4; white-space:nowrap;
+    color:var(--text-dim); background:var(--bg); border:1px solid var(--border);
+  }
   .tier-lane.casual .option-chip{ border-color:var(--tier-casual-border); }
   .tier-lane.advanced .option-chip{ border-color:var(--tier-advanced-border); }
   .tier-lane.expert .option-chip{ border-color:var(--tier-expert-border); }
@@ -1460,6 +1471,73 @@ function crossProduct(a, b){
 }
 
 /* =========================================================
+   SCENARIO DATA — a routeEdge's requirement_expr can differ by
+   in-game scenario (pre- vs post-"World Peace"/story-completion).
+   Rather than one flat requirement, an edge's option_scenarios
+   field is a semicolon-joined list, one entry per TOP-LEVEL "|"
+   branch of requirement_expr, in the same left-to-right order —
+   the exact same pairing convention parseMoon already uses for
+   the difficulty column against DNF branches. e.g. Sand Kingdom's
+   "On the Lone Pillar" reach edge is "Kakku | Killer" with
+   option_scenarios "3,4,5;1,2,3,4,5": Kakku (Glydon) only works
+   scenarios 3-5 (post-World Peace), Killer (Bullet Bill) works
+   1-5 (always). This is NOT read from legacy_requirement_notes —
+   that field is raw free-text kept only for human cross-reference
+   in the source export and is never parsed or trusted by any
+   logic in this file; option_scenarios is the real structured
+   field this uses.
+   Deliberately separate from exprToDNF (which many callers use
+   without ever having scenario data) so existing call sites are
+   unaffected; only call sites that actually have an edge's
+   option_scenarios opt into scenario tagging.
+   ========================================================= */
+function splitTopLevelOrBranches(expr){
+  // Re-parses just enough to recover the top-level "|" branch count/order
+  // (mirrors parseOr/astToDNF's flattening, without expanding AND/OR
+  // combinations) so branch i here lines up with option_scenarios entry i.
+  const trimmed = (expr || "").trim();
+  if(trimmed === "" || trimmed.toLowerCase() === "free") return [""];
+  const ast = parseExprToAst(trimmed);
+  return ast.type === "or" ? ast.args.length : 1;
+}
+function parseScenarioList(str){
+  // "3,4,5" -> [3,4,5]; "" / missing -> null (no scenario restriction, i.e.
+  // this branch is active in every scenario).
+  const trimmed = (str || "").trim();
+  if(!trimmed) return null;
+  return trimmed.split(",").map(s => parseInt(s.trim(), 10)).filter(n => !Number.isNaN(n));
+}
+function scenarioListLabel(list){
+  if(!list || !list.length) return null;
+  // Render a contiguous run as "N-M", otherwise comma-join. Sorted first
+  // since source data is already ascending but this stays correct either way.
+  const sorted = [...list].sort((a,b) => a-b);
+  const isRun = sorted.every((v,i) => i===0 || v === sorted[i-1]+1);
+  if(isRun && sorted.length > 1) return `Scenario ${sorted[0]}-${sorted[sorted.length-1]}`;
+  if(sorted.length === 1) return `Scenario ${sorted[0]}`;
+  return `Scenarios ${sorted.join(",")}`;
+}
+/* Same job as exprToDNF, but additionally tags every returned branch with
+   the scenario list it's restricted to (or null = unrestricted), read from
+   the edge's option_scenarios field. Returns [{group:[tok,...], scenarios:[...]|null}]
+   instead of a bare array of groups. Falls back to untagged (scenarios:null)
+   for every branch if option_scenarios is empty/missing or its branch count
+   doesn't match the expression's top-level OR count (a data gap) — same
+   fail-open pattern tiersForGroups uses for a difficulty-count mismatch. */
+function exprToScenarioDNF(expr, optionScenarios){
+  const dnf = exprToDNF(expr);
+  const topLevelCount = splitTopLevelOrBranches(expr);
+  const raw = (optionScenarios || "").split(";").map(s => s.trim());
+  // dnf.length can exceed topLevelCount when a nested AND itself contains an
+  // OR that astToDNF expanded; in that case there's no clean 1:1 branch
+  // mapping to trust, so scenario tags are skipped rather than misapplied.
+  if(!optionScenarios || raw.length !== topLevelCount || dnf.length !== topLevelCount){
+    return dnf.map(group => ({ group, scenarios: null }));
+  }
+  return dnf.map((group, i) => ({ group, scenarios: parseScenarioList(raw[i]) }));
+}
+
+/* =========================================================
    CHECKPOINT LOOKUP — for every node in a kingdom, work out
    which Checkpoint (node_type === "checkpoint") OR Custom Node
    (node_type === "custom_place", e.g. "Outer Wall Area") a
@@ -1626,8 +1704,19 @@ function tiersForGroups(dnf, difficultyField){
   return raw.map(t => TIER_ORDER.includes(t) ? t : "unrated");
 }
 
-function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachExpr){
-  let dnf = exprToDNF(row.requirement_expr);
+function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachExpr, customNodeReachBranches){
+  // scenarios[i] = scenario-number array (or null = unrestricted) for
+  // branch i, parallel to dnf/tiers. Populated from moonAccess's own
+  // option_scenarios column when it lines up 1:1 with requirement_expr's
+  // top-level OR branches (e.g. "The Hole in the Desert": "(BossKnuckleHand
+  // & Killer) | Killer" / "1,2,3,4,5;3,4,5"), and further narrowed below
+  // by any custom-node reach edge's own option_scenarios. This is read
+  // ONLY from the structured option_scenarios field — never from
+  // legacy_requirement_notes, which is raw free-text kept purely for
+  // human cross-reference and is not parsed anywhere in this file.
+  const seeded = exprToScenarioDNF(row.requirement_expr, row.option_scenarios);
+  let dnf = seeded.map(b => b.group);
+  let scenarios = seeded.map(b => b.scenarios);
   let tiers = tiersForGroups(dnf, row.difficulty);
 
   // If this moon sits on a custom_place (e.g. Rooftop), cross in whatever
@@ -1636,21 +1725,38 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
   // requirement to get up there. Skips silently if the node has no
   // costed inbound edge (i.e. it really is free to reach).
   const reachExpr = customNodeReachExpr && customNodeReachExpr[row.from_node_id];
+  const reachBranches = customNodeReachBranches && customNodeReachBranches[row.from_node_id];
   if(reachExpr){
-    const reachDnf = exprToDNF(reachExpr);
+    const reachDnf = reachBranches ? reachBranches.map(b => b.group) : exprToDNF(reachExpr);
+    const reachScenarios = reachBranches ? reachBranches.map(b => b.scenarios) : reachDnf.map(() => null);
     const expandedTiers = [];
-    dnf.forEach((_, i) => reachDnf.forEach(() => expandedTiers.push(tiers[i])));
+    const expandedScenarios = [];
+    dnf.forEach((_, i) => reachDnf.forEach((_, j) => {
+      expandedTiers.push(tiers[i]);
+      // Combine the moon's own scenario restriction (if any) with the
+      // reach-edge branch's restriction via intersection: a branch is only
+      // valid in a scenario if BOTH sides allow it. null = unrestricted on
+      // that side, so it doesn't narrow anything.
+      const a = scenarios[i], b = reachScenarios[j];
+      if(a && b) expandedScenarios.push(a.filter(n => b.includes(n)));
+      else expandedScenarios.push(a || b || null);
+    }));
     dnf = crossProduct(dnf, reachDnf);
     tiers = expandedTiers;
+    scenarios = expandedScenarios;
   }
   if(row.state_requirement_expr && row.state_requirement_expr.trim()){
     const stateDnf = exprToDNF(row.state_requirement_expr);
     // Every original branch gets crossed with every state-requirement
-    // branch; its tier label rides along unchanged to each of those copies.
+    // branch; its tier label (and scenario tag) ride along unchanged to
+    // each of those copies, since state_requirement_expr carries no
+    // scenario data of its own.
     const expandedTiers = [];
-    dnf.forEach((_, i) => stateDnf.forEach(() => expandedTiers.push(tiers[i])));
+    const expandedScenarios = [];
+    dnf.forEach((_, i) => stateDnf.forEach(() => { expandedTiers.push(tiers[i]); expandedScenarios.push(scenarios[i]); }));
     dnf = crossProduct(dnf, stateDnf);
     tiers = expandedTiers;
+    scenarios = expandedScenarios;
   }
 
   const badges = [];
@@ -1704,17 +1810,24 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
   if(/^Secret Path/i.test(row.moon_name)){
     dnf = [["PaintingAccess"]];
     tiers = ["casual"];
+    scenarios = [null];
   }
 
   const isFree = dnf.every(g => g.length === 0);
   const hintIdx = parseInt(row.shine_info_hint_idx, 10);
 
   // Bucket every OR-branch into its tier lane, preserving left-to-right
-  // order within a lane. A "Free" moon has no branches/tiers at all.
+  // order within a lane. Each group in a lane carries its own scenario tag
+  // along with it (groups[i].scenarios), read by the renderer to show a
+  // per-branch "Scenario X-Y" chip when that branch is scenario-restricted.
+  // A "Free" moon has no branches/tiers/scenarios at all.
   const tierLanes = [];
   if(!isFree){
     TIER_ORDER.forEach(tierKey => {
-      const groups = dnf.filter((_, i) => tiers[i] === tierKey);
+      const groups = dnf
+        .map((group, i) => ({ group, scenarios: scenarios[i] }))
+        .filter((_, i) => tiers[i] === tierKey)
+        .map(g => Object.assign(g.group, { scenarios: g.scenarios })); // group stays an array (existing renderers iterate it as tokens); scenarios tags along as a non-enumerable-safe extra property
       if(groups.length) tierLanes.push({ tier: tierKey, label: TIER_LABEL[tierKey], groups });
     });
   }
@@ -2559,7 +2672,8 @@ function buildCustomNodeReachExpr(nodes, edges){
   const isCustom = {};
   (nodes || []).forEach(n => { if(n.node_type === "custom_place") isCustom[n.node_id] = true; });
 
-  const reachExprs = {}; // custom node_id -> OR-joined string of all viable inbound edge exprs
+  const reachExprs = {}; // custom node_id -> OR-joined string of all viable inbound edge exprs (legacy shape, kept for any other caller)
+  const reachBranches = {}; // custom node_id -> [{group:[tok,...], scenarios:[...]|null}, ...] (scenario-tagged, one entry per edge's own top-level OR branch)
   (edges || []).forEach(e => {
     if(!isCustom[e.to_node_id]) return;
     if(!e.from_node_id) return;
@@ -2568,8 +2682,15 @@ function buildCustomNodeReachExpr(nodes, edges){
     if(req.toLowerCase() === "free") return; // free-to-reach: nothing to fold in
     const wrapped = req.includes("|") || req.includes("&") ? `(${req})` : req;
     reachExprs[e.to_node_id] = reachExprs[e.to_node_id] ? `${reachExprs[e.to_node_id]} | ${wrapped}` : wrapped;
+
+    // Scenario-tagged version: each edge is resolved to its OWN branches
+    // (with its OWN option_scenarios) BEFORE being combined across edges,
+    // so two different inbound edges into the same custom node never have
+    // their scenario lists cross-mixed against each other's branch counts.
+    const taggedBranches = exprToScenarioDNF(req, e.option_scenarios);
+    reachBranches[e.to_node_id] = (reachBranches[e.to_node_id] || []).concat(taggedBranches);
   });
-  return reachExprs;
+  return { reachExprs, reachBranches };
 }
 
 function loadKingdomFile(fileData, sourceLabel, forcedName){
@@ -2596,9 +2717,9 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   console.log(`[${kingdomName}] loaded ${(ws.logicNodes||[]).length} nodes (${customPlaceCount} custom_place), ${(ws.routeEdges||[]).length} edges`);
 
   const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
-  const customNodeReachExpr = buildCustomNodeReachExpr(ws.logicNodes || [], ws.routeEdges || []);
+  const { reachExprs: customNodeReachExpr, reachBranches: customNodeReachBranches } = buildCustomNodeReachExpr(ws.logicNodes || [], ws.routeEdges || []);
 
-  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachExpr)));
+  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachExpr, customNodeReachBranches)));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons; // always overwrite; never merge with a stale prior entry
@@ -2768,11 +2889,15 @@ function buildMoonCard(moon){
     card.appendChild(badgeRow);
   }
 
-  // Subarea and Checkpoint share one slot (bottom-right of the card, same size
-  // as a Capture icon). A moon inside a subarea shows the Subarea picture there
-  // instead of the Checkpoint — the name only appears on hover/focus, it's no
-  // longer displayed persistently. A moon with no subarea falls back to the
-  // regular Checkpoint icon, same as before.
+  // Subarea and Checkpoint/Custom-Node are two DIFFERENT pieces of info and
+  // both get their own slot when applicable (bottom-right of the card, same
+  // size as a Capture icon, stacked side by side). A moon inside a subarea
+  // that ALSO has a custom_place/checkpoint tag (e.g. a moon on the Rooftop
+  // custom node, which lives inside the Bullet Bill Maze subarea) shows
+  // BOTH icons — previously this was an if/else-if that only ever showed
+  // one, silently dropping the custom node any time the moon was also in a
+  // subarea. A moon with no subarea just shows the Checkpoint/Custom-Node
+  // icon as before.
   if(moon.subarea){
     const info = document.createElement("span");
     info.className = "checkpoint-info";
@@ -2791,7 +2916,8 @@ function buildMoonCard(moon){
     info.appendChild(tip);
 
     card.appendChild(info);
-  } else if(moon.checkpoint){
+  }
+  if(moon.checkpoint){
     // Strip a trailing "Checkpoint" word for the tooltip text per request
     // (e.g. "Stone Bridge Checkpoint" -> "Stone Bridge"), independent of
     // the "(objXXX)" suffix already stripped when the lookup was built.
@@ -2876,6 +3002,13 @@ function buildMovementOptions(moon, boxed){
         const chip = document.createElement("div");
         chip.className = "option-chip free-chip";
         chip.textContent = "Free";
+        const freeScenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
+        if(freeScenarioLabel){
+          const tag = document.createElement("span");
+          tag.className = "scenario-tag";
+          tag.textContent = freeScenarioLabel;
+          chip.appendChild(tag);
+        }
         optsEl.appendChild(chip);
         return;
       }
@@ -2890,6 +3023,19 @@ function buildMovementOptions(moon, boxed){
         }
         chip.appendChild(makeIcon(token));
       });
+      // Scenario Data: this branch's own scenario restriction (option b —
+      // each branch gets its own independent tag, never merged into a
+      // combined sentence with sibling branches). andGroup.scenarios is
+      // set by parseMoon from a routeEdge's option_scenarios field (never
+      // from legacy_requirement_notes, which this file doesn't parse).
+      // null/absent = unrestricted, so no chip is added.
+      const scenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
+      if(scenarioLabel){
+        const tag = document.createElement("span");
+        tag.className = "scenario-tag";
+        tag.textContent = scenarioLabel;
+        chip.appendChild(tag);
+      }
       optsEl.appendChild(chip);
     });
 
