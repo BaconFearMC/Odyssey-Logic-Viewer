@@ -1626,9 +1626,23 @@ function tiersForGroups(dnf, difficultyField){
   return raw.map(t => TIER_ORDER.includes(t) ? t : "unrated");
 }
 
-function parseMoon(row, nodeMap, checkpointLookup, kingdomName){
+function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachExpr){
   let dnf = exprToDNF(row.requirement_expr);
   let tiers = tiersForGroups(dnf, row.difficulty);
+
+  // If this moon sits on a custom_place (e.g. Rooftop), cross in whatever
+  // it costs to reach that node in the first place, so a moon that's
+  // "free" once you're up there still shows the real ability/capture
+  // requirement to get up there. Skips silently if the node has no
+  // costed inbound edge (i.e. it really is free to reach).
+  const reachExpr = customNodeReachExpr && customNodeReachExpr[row.from_node_id];
+  if(reachExpr){
+    const reachDnf = exprToDNF(reachExpr);
+    const expandedTiers = [];
+    dnf.forEach((_, i) => reachDnf.forEach(() => expandedTiers.push(tiers[i])));
+    dnf = crossProduct(dnf, reachDnf);
+    tiers = expandedTiers;
+  }
   if(row.state_requirement_expr && row.state_requirement_expr.trim()){
     const stateDnf = exprToDNF(row.state_requirement_expr);
     // Every original branch gets crossed with every state-requirement
@@ -2528,6 +2542,36 @@ function sortMoonsByHintOrder(moons){
 let KINGDOMS = {};
 let KINGDOM_ORDER = [];
 
+/* =========================================================
+   CUSTOM-NODE REACH REQUIREMENTS — a custom_place (e.g. Bullet
+   Bill Maze's "Rooftop") is a hand-placed *destination*, not a
+   free-standing checkpoint: getting there costs whatever the
+   incoming routeEdge(s) say (Backflip & WallJump, etc). A moon
+   whose from_node_id IS a custom_place needs that reach cost
+   folded into its own requirement_expr, or the moon reads as
+   flatly "free" while actually gating on movement/captures.
+   Built once per kingdom load, generically, for every custom_place
+   node with inbound edges — no per-kingdom/per-node special-casing,
+   so this covers all 17 kingdoms automatically as new custom nodes
+   are added in logic_nodes.csv.
+   ========================================================= */
+function buildCustomNodeReachExpr(nodes, edges){
+  const isCustom = {};
+  (nodes || []).forEach(n => { if(n.node_type === "custom_place") isCustom[n.node_id] = true; });
+
+  const reachExprs = {}; // custom node_id -> OR-joined string of all viable inbound edge exprs
+  (edges || []).forEach(e => {
+    if(!isCustom[e.to_node_id]) return;
+    if(!e.from_node_id) return;
+    const req = (e.requirement_expr || "").trim();
+    if(!req || req.toLowerCase() === "impossible") return;
+    if(req.toLowerCase() === "free") return; // free-to-reach: nothing to fold in
+    const wrapped = req.includes("|") || req.includes("&") ? `(${req})` : req;
+    reachExprs[e.to_node_id] = reachExprs[e.to_node_id] ? `${reachExprs[e.to_node_id]} | ${wrapped}` : wrapped;
+  });
+  return reachExprs;
+}
+
 function loadKingdomFile(fileData, sourceLabel, forcedName){
   const ws = fileData.workspace;
   // forcedName (from KINGDOM_MANIFEST, keyed off the filename) always wins so
@@ -2536,15 +2580,28 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   const kingdomName = forcedName || fileData.kingdom || sourceLabel;
   mergeTokensIntoManifest(ws.logicTokens);
 
+  // Rebuild everything from THIS load's data every time — never reuse a
+  // nodeMap/checkpointLookup left over from a previous load of this same
+  // kingdom name. Custom nodes (node_type === "custom_place") get added and
+  // edited continually in logic_nodes.csv and then re-exported into this
+  // kingdom's JSON; without a full rebuild on every load, freshly added or
+  // re-pointed custom nodes (e.g. Bullet Bill Maze's "Rooftop") wouldn't
+  // show up even though they're present in ws.logicNodes. This is generic —
+  // no per-kingdom or per-node-name special-casing — so it picks up custom
+  // nodes automatically for all 17 kingdoms, on every load.
   const nodeMap = {};
   (ws.logicNodes || []).forEach(n => { nodeMap[n.node_id] = n; });
 
-  const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
+  const customPlaceCount = (ws.logicNodes || []).filter(n => n.node_type === "custom_place").length;
+  console.log(`[${kingdomName}] loaded ${(ws.logicNodes||[]).length} nodes (${customPlaceCount} custom_place), ${(ws.routeEdges||[]).length} edges`);
 
-  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName)));
+  const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
+  const customNodeReachExpr = buildCustomNodeReachExpr(ws.logicNodes || [], ws.routeEdges || []);
+
+  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachExpr)));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
-  KINGDOMS[kingdomName] = moons;
+  KINGDOMS[kingdomName] = moons; // always overwrite; never merge with a stale prior entry
 }
 
 function setStatus(text, isError){
