@@ -1184,6 +1184,19 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Seed: true,
 };
 
+// The other half of the Turnip/Nut/Seed -> "Grab" fold above: hiding them
+// from the picker only stops the *player* from selecting "Turnip" directly.
+// Without this map, selecting "Grab" never actually matched a moon whose
+// only requirement is Turnip/Nut/Seed, since moonMatchesFilters compares
+// tokens by exact string equality — "Grab" !== "Turnip". This is what maps
+// each folded token to the filter option it's supposed to answer for, so
+// moonTokens()/applyFilterMatchHighlight() can treat them as equivalent.
+const ABILITY_FILTER_FOLD_TOKENS = {
+  Turnip: "Grab",
+  Nut: "Grab",
+  Seed: "Grab",
+};
+
 // Tokens whose category in the raw data doesn't match where they should
 // show up in the filter UI. Currently: Jaxi (Jaxi Riding) and Bike
 // (Scooter) are tagged as "ability" filter entries regardless of the
@@ -3358,7 +3371,14 @@ let selectedCaptures = new Set();
 
 function moonTokens(moon){
   const set = new Set();
-  (moon.orGroups || []).forEach(group => group.forEach(tok => set.add(tok)));
+  (moon.orGroups || []).forEach(group => group.forEach(tok => {
+    set.add(tok);
+    // A branch requiring the raw Turnip/Nut/Seed token also counts as
+    // requiring "Grab" for filtering purposes, since that's the only
+    // option the player actually sees in the picker (see
+    // ABILITY_FILTER_FOLD_TOKENS).
+    if(ABILITY_FILTER_FOLD_TOKENS[tok]) set.add(ABILITY_FILTER_FOLD_TOKENS[tok]);
+  }));
   return set;
 }
 
@@ -3437,7 +3457,13 @@ function applyFilterMatchHighlight(){
   if(selectedAbilities.size === 0 && selectedCaptures.size === 0) return;
   document.querySelectorAll(".icon-wrap[data-token]").forEach(el => {
     const tok = el.dataset.token;
-    if(selectedAbilities.has(tok) || selectedCaptures.has(tok)){
+    // A Turnip/Nut/Seed chip still shows its own real display_name/icon
+    // (per FILTER_LABEL_OVERRIDES' comment above), but it should still
+    // ring gold when "Grab" is the active filter, since that's the
+    // option the player actually selected to reach it.
+    const foldedTok = ABILITY_FILTER_FOLD_TOKENS[tok] || tok;
+    if(selectedAbilities.has(tok) || selectedCaptures.has(tok)
+      || selectedAbilities.has(foldedTok) || selectedCaptures.has(foldedTok)){
       el.classList.add("filter-match");
     }
   });
