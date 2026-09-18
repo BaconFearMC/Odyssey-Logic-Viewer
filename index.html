@@ -696,6 +696,133 @@
     margin:0 auto 14px;
   }
 
+  /* ---- Logic Video overlay -----------------------------------------
+     Clicking any requirement branch ("node") on a moon card opens this:
+     a fancy info box on the left (moon name + logic-level + that
+     branch's requirement chips) and a video stage on the right that
+     plays assets/logicvideos/<autoname>.mp4 or .webp for that exact
+     branch, or shows a "Nothing yet…" note in its bottom-right corner
+     when neither file exists yet. */
+  .video-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(10,10,12,0.78);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index:110;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .video-overlay.open{ display:flex; }
+  .video-modal{
+    position:relative;
+    width:100%;
+    max-width:1120px;
+    max-height:86vh;
+    display:flex;
+    align-items:stretch;
+    gap:20px;
+  }
+  .video-close{
+    position:absolute;
+    top:-44px; right:0;
+    background:none; border:none; cursor:pointer;
+    color:var(--text-dim);
+    font-size:30px; line-height:1;
+    z-index:2;
+    transition:color 0.15s ease, transform 0.15s ease;
+  }
+  .video-close:hover{ color:var(--red); transform:rotate(90deg); }
+  /* Left: fancy info box. Slides + fades in from the left the moment the
+     overlay opens — the animation is re-triggered per open via a class
+     swap in JS (see openLogicVideo), since a plain @keyframes only plays
+     once per element otherwise. */
+  .video-info-box{
+    flex:0 0 300px;
+    background:linear-gradient(180deg, var(--bg-panel), var(--bg-chip));
+    border:1px solid var(--gold);
+    border-radius:16px;
+    box-shadow:0 0 0 1px rgba(230,194,0,0.15), 0 24px 70px rgba(0,0,0,0.6), 0 0 40px rgba(230,194,0,0.08);
+    padding:22px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    overflow-y:auto;
+    opacity:0;
+  }
+  .video-info-box.play-in{
+    animation: videoInfoIn 0.36s cubic-bezier(.2,.9,.3,1.1) forwards;
+  }
+  @keyframes videoInfoIn{
+    0%{ opacity:0; transform:translateX(-36px); }
+    100%{ opacity:1; transform:translateX(0); }
+  }
+  .video-info-kingdom{
+    font-size:11.5px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:0.6px;
+  }
+  .video-info-name{
+    font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
+    font-size:19px; font-weight:700; color:var(--gold);
+    line-height:1.3;
+  }
+  .video-info-box .tier-pill{ align-self:flex-start; }
+  .video-info-box .tier-options{ display:flex; flex-wrap:wrap; gap:6px; }
+  /* Right: video stage. Pops in ~180ms after the info box starts, so the
+     sequence reads left-to-right instead of both halves landing at once. */
+  .video-stage{
+    flex:1 1 auto;
+    position:relative;
+    background:#000;
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-width:0;
+    min-height:280px;
+    opacity:0;
+  }
+  .video-stage.play-in{
+    animation: videoStageIn 0.36s cubic-bezier(.34,1.4,.4,1) 0.18s forwards;
+  }
+  @keyframes videoStageIn{
+    0%{ opacity:0; transform:scale(0.9); }
+    100%{ opacity:1; transform:scale(1); }
+  }
+  .logic-video{
+    max-width:100%; max-height:100%;
+    width:100%; height:100%;
+    object-fit:contain;
+    background:#000;
+  }
+  .video-nothing-yet{
+    display:none;
+    position:absolute;
+    bottom:16px; right:20px;
+    font-size:13px;
+    font-style:italic;
+    color:var(--text-dim);
+    background:rgba(0,0,0,0.55);
+    padding:6px 12px;
+    border-radius:20px;
+    border:1px solid var(--border);
+  }
+  /* Hover affordance so it's clear a requirement branch is clickable. */
+  .option-chip, .free-chip{ cursor:pointer; transition:transform 0.12s ease, box-shadow 0.12s ease; }
+  .option-chip:hover, .free-chip:hover{
+    transform:translateY(-1px);
+    box-shadow:0 3px 10px rgba(0,0,0,0.35);
+  }
+  @media (max-width: 760px){
+    .video-modal{ flex-direction:column; overflow-y:auto; }
+    .video-info-box{ flex:0 0 auto; }
+    .video-stage{ min-height:220px; }
+  }
+
   /* =========================================================
      ABILITY / CAPTURE FILTER BARS
      Two collapsible filter bars (Ability, Capture) sit above the
@@ -1030,6 +1157,16 @@
   </div>
 </div>
 
+<div class="video-overlay" id="videoOverlay">
+  <div class="video-modal" id="videoModal">
+    <button type="button" class="video-close" id="videoClose" aria-label="Close">&times;</button>
+    <div class="video-info-box" id="videoInfoBox"></div>
+    <div class="video-stage" id="videoStage">
+      <div class="video-nothing-yet" id="videoNothingYet">Nothing yet…</div>
+    </div>
+  </div>
+</div>
+
 
 <script>
 /* =========================================================
@@ -1068,6 +1205,24 @@ function kebab(str){
 // Some icon sets (including hand-picked datamine art) use this instead of kebab-case.
 function squash(str){
   return str.toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+
+/* =========================================================
+   LOGIC VIDEO AUTO-NAMING — the filename (no extension) an
+   assets/logicvideos/ clip is expected to be saved under for one
+   specific requirement branch on a moon card, so a clip can be dropped
+   in with zero manual mapping. Built from the moon's own name with any
+   trailing per-moon counter stripped (redundant here — the tier + the
+   branch's position within that tier already disambiguate multiple
+   routes on the same moon), squashed to lowercase/no-separators, then
+   the tier key and the branch's 1-based position in that tier's lane
+   appended directly with no separator.
+   e.g. "Sand Kingdom Timer Challenge 3"'s 2nd casual branch ->
+   "sandkingdomtimerchallengecasual2"
+   ========================================================= */
+function videoAutoName(moonName, tierKey, indexInTier){
+  const stripped = (moonName || "").replace(/\s+\d+\s*$/, "");
+  return squash(stripped) + tierKey + indexInTier;
 }
 
 /* =========================================================
@@ -1984,6 +2139,7 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
 
   return {
     name: row.moon_name,
+    kingdom: kingdomName,
     orGroups: isFree ? [] : dnf,
     tierLanes,
     subarea,
@@ -3121,6 +3277,8 @@ function buildMovementOptions(moon, boxed){
     const free = document.createElement("span");
     free.className = "free-tag";
     free.textContent = "Free";
+    free.style.cursor = "pointer";
+    free.addEventListener("click", () => openLogicVideo(moon, "free", "Free", [], 1));
     row.appendChild(free);
     return row;
   }
@@ -3159,6 +3317,7 @@ function buildMovementOptions(moon, boxed){
         const chip = document.createElement("div");
         chip.className = "option-chip free-chip";
         chip.textContent = "Free";
+        chip.addEventListener("click", () => openLogicVideo(moon, lane.tier, lane.label, andGroup, i + 1));
         const freeScenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
         if(freeScenarioLabel){
           const tag = document.createElement("span");
@@ -3184,6 +3343,7 @@ function buildMovementOptions(moon, boxed){
       }
       const chip = document.createElement("div");
       chip.className = "option-chip";
+      chip.addEventListener("click", () => openLogicVideo(moon, lane.tier, lane.label, andGroup, i + 1));
       andGroup.forEach((token, j)=>{
         if(j > 0){
           const plus = document.createElement("span");
@@ -3831,6 +3991,126 @@ document.addEventListener("keydown", (e) => {
   if(e.key === "Escape" && searchOverlay.classList.contains("open")) closeSearch();
 });
 searchInput.addEventListener("input", () => renderSearchResults(searchInput.value));
+
+/* =========================================================
+   LOGIC VIDEO OVERLAY — clicking a requirement branch ("node") on a
+   moon card opens this. Left side is a fancy info box (moon name,
+   logic-level pill, that branch's own requirement chips) that slides +
+   fades in; the video stage on the right pops in shortly after, once
+   assets/logicvideos/<autoname>.mp4 or .webp has been given a chance to
+   load — falling back to a "Nothing yet…" note in its corner if
+   neither file exists.
+   ========================================================= */
+const videoOverlay = document.getElementById("videoOverlay");
+const videoInfoBox = document.getElementById("videoInfoBox");
+const videoStage = document.getElementById("videoStage");
+const videoNothingYet = document.getElementById("videoNothingYet");
+const videoClose = document.getElementById("videoClose");
+
+const TIER_PILL_LABEL = { free: "Free" };
+
+function openLogicVideo(moon, tierKey, tierLabel, andGroup, indexInTier){
+  const baseName = videoAutoName(moon.name, tierKey, indexInTier);
+
+  // --- Left info box -----------------------------------------------
+  videoInfoBox.innerHTML = "";
+  videoInfoBox.classList.remove("play-in");
+
+  if(moon.kingdom){
+    const kingdomEl = document.createElement("div");
+    kingdomEl.className = "video-info-kingdom";
+    kingdomEl.textContent = moon.kingdom;
+    videoInfoBox.appendChild(kingdomEl);
+  }
+
+  const nameEl = document.createElement("div");
+  nameEl.className = "video-info-name";
+  nameEl.textContent = moon.name;
+  videoInfoBox.appendChild(nameEl);
+
+  const pill = document.createElement("span");
+  pill.className = "tier-pill";
+  pill.textContent = tierLabel || TIER_PILL_LABEL[tierKey] || tierKey;
+  videoInfoBox.appendChild(pill);
+
+  const optsEl = document.createElement("div");
+  optsEl.className = "tier-options";
+  if(!andGroup || andGroup.length === 0){
+    const chip = document.createElement("div");
+    chip.className = "option-chip free-chip";
+    chip.textContent = "Free";
+    optsEl.appendChild(chip);
+  } else {
+    const chip = document.createElement("div");
+    chip.className = "option-chip";
+    andGroup.forEach((token, j) => {
+      if(j > 0){
+        const plus = document.createElement("span");
+        plus.className = "and-plus";
+        plus.textContent = "+";
+        chip.appendChild(plus);
+      }
+      chip.appendChild(makeIcon(token));
+    });
+    optsEl.appendChild(chip);
+  }
+  videoInfoBox.appendChild(optsEl);
+
+  // Re-trigger the slide/fade-in every time this opens, even for the same
+  // DOM elements re-used across opens — a plain class add wouldn't replay
+  // the animation on a class that's already present, so force a reflow
+  // between removing and re-adding it.
+  void videoInfoBox.offsetWidth;
+  videoInfoBox.classList.add("play-in");
+
+  // --- Right video stage ---------------------------------------------
+  videoStage.querySelectorAll(".logic-video").forEach(el => el.remove());
+  videoNothingYet.style.display = "none";
+  videoStage.classList.remove("play-in");
+  void videoStage.offsetWidth;
+  videoStage.classList.add("play-in");
+  loadLogicVideo(baseName);
+
+  videoOverlay.classList.add("open");
+}
+
+function loadLogicVideo(baseName){
+  const video = document.createElement("video");
+  video.className = "logic-video";
+  video.controls = true;
+  video.autoplay = true;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.addEventListener("error", () => {
+    video.remove();
+    const img = document.createElement("img");
+    img.className = "logic-video";
+    img.alt = "";
+    img.addEventListener("error", () => {
+      img.remove();
+      videoNothingYet.style.display = "block";
+    });
+    img.src = "assets/logicvideos/" + baseName + ".webp";
+    videoStage.appendChild(img);
+  });
+  video.src = "assets/logicvideos/" + baseName + ".mp4";
+  videoStage.appendChild(video);
+}
+
+function closeLogicVideo(){
+  videoOverlay.classList.remove("open");
+  videoStage.querySelectorAll(".logic-video").forEach(el => {
+    if(el.tagName === "VIDEO") el.pause();
+    el.remove();
+  });
+}
+
+videoClose.addEventListener("click", closeLogicVideo);
+videoOverlay.addEventListener("click", (e) => { if(e.target === videoOverlay) closeLogicVideo(); });
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Escape" && videoOverlay.classList.contains("open")) closeLogicVideo();
+});
 
 async function init(){
   const autoloaded = await tryAutoload();
