@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Bowser's Kingdom",
-  "savedAt": "2026-09-03T23:07:10.414Z",
+  "savedAt": "2026-09-17T20:52:47.653Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-09-03T19:31:37.440Z",
+    "loadedAt": "2026-09-17T16:39:38.464Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1900,6 +1900,24 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SkyWorldHomeStage::place::new_place_14",
+        "kingdom": "Bowser's Kingdom",
+        "stage": "SkyWorldHomeStage",
+        "stage_display_name": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Past the Moving Wall Area",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2141,7 +2159,7 @@
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": "5"
+        "option_scenarios": "5,4"
       },
       {
         "edge_id": "edge_user_0391",
@@ -2302,7 +2320,7 @@
         "requirement_expr": "SideFlip",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "expert",
+        "difficulty": "glitched",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -2344,7 +2362,7 @@
         "area_scope": "overworld",
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1888",
         "to_node_id": "SkyWorldCastleZone::checkpoint::obj1392",
-        "requirement_expr": "Tsukkun | GroundPound",
+        "requirement_expr": "(Tsukkun & ElectricWire) | (GroundPound & ElectricWire)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2381,7 +2399,7 @@
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": "5"
+        "option_scenarios": "5,4"
       },
       {
         "edge_id": "edge_user_0293",
@@ -2809,10 +2827,10 @@
         "area_scope": "overworld",
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1392",
         "to_node_id": "SkyWorldHomeStage::place::new_place_10",
-        "requirement_expr": "Tsukkun | (WallJump & Dive & NeutralThrow) | (Vault & NeutralThrow & Dive) | (Vault & WallJump & NeutralThrow) | (Vault & LedgeGrab & NeutralThrow) | (WallJump & LedgeGrab) | (Dive & NeutralThrow)",
+        "requirement_expr": "Tsukkun | (WallJump & Dive & NeutralThrow) | (Vault & NeutralThrow & Dive) | (Vault & WallJump & NeutralThrow) | (Vault & LedgeGrab & NeutralThrow) | (WallJump & LedgeGrab) | (Dive & NeutralThrow) | (SpinThrow & WallJump & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;advanced;advanced;advanced;advanced;expert;expert",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;expert;expert;expert",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -3109,14 +3127,14 @@
         "area_scope": "overworld",
         "from_node_id": "SkyWorldHomeStage::entrance::Patakaron02::home_in",
         "to_node_id": "SkyWorldCastleZone::checkpoint::obj1392",
-        "requirement_expr": "free",
+        "requirement_expr": "Dive | KingdomAccess_Bowsers | KingdomAccess_Bowsers",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0274.",
-        "option_scenarios": "1,2,3,4,5"
+        "option_scenarios": "1,2,3,4,5;1,2,3,5,4;4"
       },
       {
         "edge_id": "edge_user_0710",
@@ -3124,14 +3142,14 @@
         "area_scope": "overworld",
         "from_node_id": "SkyWorldHomeStage::entrance::tukkun001_enter::home_in",
         "to_node_id": "SkyWorldCastleZone::checkpoint::obj1392",
-        "requirement_expr": "free",
+        "requirement_expr": "Dive | KingdomAccess_Bowsers | KingdomAccess_Bowsers",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0388.",
-        "option_scenarios": "1,2,3,4,5"
+        "option_scenarios": "1,2,3,4,5;1,2,3,4,5;4,5"
       },
       {
         "edge_id": "edge_user_0728",
@@ -3192,6 +3210,96 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0800",
+        "kingdom": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SkyWorldCastleZone::checkpoint::obj1891",
+        "to_node_id": "SkyWorldHomeStage::place::new_place_14",
+        "requirement_expr": "Tsukkun | NeutralThrow | Dive",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0801",
+        "kingdom": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SkyWorldHomeStage::place::new_place_12",
+        "to_node_id": "SkyWorldHomeStage::place::new_place_14",
+        "requirement_expr": "NeutralThrow | Dive",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0802",
+        "kingdom": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SkyWorldHomeStage::place::new_place",
+        "to_node_id": "SkyWorldHomeStage::place::new_place_14",
+        "requirement_expr": "NeutralThrow | Dive",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0803",
+        "kingdom": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SkyWorldHomeStage::place::new_place_14",
+        "to_node_id": "SkyWorldHomeStage::place::new_place_12",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0801.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0804",
+        "kingdom": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SkyWorldHomeStage::place::new_place_14",
+        "to_node_id": "SkyWorldHomeStage::place::new_place",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0802.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0814",
+        "kingdom": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SkyWorldHomeStage::checkpoint::obj2697",
+        "to_node_id": "SkyWorldHomeStage::place::new_place_3",
+        "requirement_expr": "SideFlip",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "glitched",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -3208,7 +3316,7 @@
         "flags": "ShineFlag_Story",
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1888",
         "state_requirement_expr": "",
-        "requirement_expr": "Tsukkun",
+        "requirement_expr": "(Tsukkun & ElectricWire) | (GroundPound & ElectricWire)",
         "world_peace_token": "WorldPeace_Bowsers",
         "moon_rock_token": "MoonRockActive_Bowsers",
         "access_type": "primary",
@@ -3240,7 +3348,7 @@
         "shine_info_available_scenarios": "1;2;3;4;5;6",
         "shine_info_object_name": "GK連戦監視者_シャイン【2m置き】",
         "shine_info_scenario_name": "激闘！ ブルーダルズ",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": "1,2,3,4"
       },
       {
@@ -3800,9 +3908,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "89751.446",
-        "placement_y": "1921500.000",
-        "placement_z": "-66308.908",
+        "placement_x": "89751.738",
+        "placement_y": "3308700.000",
+        "placement_z": "-66309.912",
         "placement_source_archives": "SkyWorldCastleZoneMap.szs",
         "placement_source_files": "SkyWorldCastleZoneMap.byml",
         "placement_count": "3",
@@ -3992,9 +4100,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "115051.975",
-        "placement_y": "1932500.000",
-        "placement_z": "-71909.048",
+        "placement_x": "115052.650",
+        "placement_y": "3319700.000",
+        "placement_z": "-71910.136",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SkyWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "0",
@@ -4310,9 +4418,9 @@
         "obj_id": "3362",
         "uid": "340",
         "flags": "ShineFlag_None",
-        "from_node_id": "SkyWorldCastleZone::checkpoint::obj1891",
+        "from_node_id": "SkyWorldHomeStage::place::new_place_14",
         "state_requirement_expr": "",
-        "requirement_expr": "Tsukkun | NeutralThrow",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Bowsers",
         "moon_rock_token": "MoonRockActive_Bowsers",
         "access_type": "primary",
@@ -4328,9 +4436,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "131770.859",
-        "placement_y": "93800.000",
-        "placement_z": "-49260.685",
+        "placement_x": "120462.134",
+        "placement_y": "845200.000",
+        "placement_z": "62963.825",
         "placement_source_archives": "SkyWorldCastleZoneMap.szs",
         "placement_source_files": "SkyWorldCastleZoneMap.byml",
         "placement_count": "3",
@@ -4344,7 +4452,7 @@
         "shine_info_available_scenarios": "2;3;4",
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "流れる壁の先",
-        "difficulty": "casual;advanced",
+        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -4504,7 +4612,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1888",
         "state_requirement_expr": "",
-        "requirement_expr": "Kuribo | Vault | Dive | TripleJump | (Vault & Dive) | KingdomAccess_Bowsers",
+        "requirement_expr": "Kuribo | (Vault & Dive & NeutralThrow) | KingdomAccess_Bowsers",
         "world_peace_token": "WorldPeace_Bowsers",
         "moon_rock_token": "MoonRockActive_Bowsers",
         "access_type": "primary",
@@ -4536,8 +4644,8 @@
         "shine_info_available_scenarios": "4",
         "shine_info_object_name": "ジョークー",
         "shine_info_scenario_name": "クッパ城の やっかい者",
-        "difficulty": "casual;expert;expert;expert;advanced;expert",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced;expert",
+        "option_scenarios": "1,2,3,4"
       },
       {
         "moon_id": "SkyWorldHomeStage:1389:350",
@@ -5960,9 +6068,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "68801.015",
-        "placement_y": "1907950.000",
-        "placement_z": "-73609.059",
+        "placement_x": "68800.996",
+        "placement_y": "3295150.000",
+        "placement_z": "-73610.173",
         "placement_source_archives": "SkyWorldCastleZoneMap.szs",
         "placement_source_files": "SkyWorldCastleZoneMap.byml",
         "placement_count": "4",
@@ -5992,7 +6100,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1888",
         "state_requirement_expr": "",
-        "requirement_expr": "SpinThrow | NeutralThrow | DownThrow | Tsukkun | (Kuribo & Statue) | KingdomAccess_Bowsers",
+        "requirement_expr": "SpinThrow | NeutralThrow | DownThrow | Tsukkun | Kuribo | KingdomAccess_Bowsers",
         "world_peace_token": "WorldPeace_Bowsers",
         "moon_rock_token": "MoonRockActive_Bowsers",
         "access_type": "primary",
@@ -6056,9 +6164,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "143210.053",
-        "placement_y": "1980750.000",
-        "placement_z": "19293.876",
+        "placement_x": "143211.143",
+        "placement_y": "3367950.000",
+        "placement_z": "19294.143",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SkyWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "0",
@@ -6169,7 +6277,7 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "ブルブル！ クッパ城の ふるえる床",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "2,3,4"
       }
     ],
     "logicTokens": [
@@ -7816,6 +7924,30 @@
         "can_start_with_seed": "false",
         "aliases": "Talk to NPCs; NpcTalk; Talk",
         "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
+      },
+      {
+        "token": "Pipe2D",
+        "token_type": "ability",
+        "display_name": "Enter 2D Pipes",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Enter 2D Pipes; Pipe2D; 2D Pipe; DokanChange2D",
+        "notes": "Going flat: the pipes built from the DokanChange2D archive, which are the only way into an in-stage 2D section. Pipes back out of 2D are never withheld, so anything reached only through a 2D section needs this."
+      },
+      {
+        "token": "TimerChallenge",
+        "token_type": "ability",
+        "display_name": "Timer Challenges",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Timer Challenges; TimerChallenge; P-Switch; Scarecrow",
+        "notes": "Every timed challenge: P-Switches (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer) and scarecrows (CapRack), which all share one AppearSwitchTimer. Without it the timer expires the frame it starts, so anything that needs the timed objects to stay up needs this."
       }
     ],
     "rooms": [
@@ -8484,6 +8616,10 @@
         "x": 718.8148398382305,
         "y": 233.30112673921235
       },
+      "SkyWorldHomeStage::place::new_place_14": {
+        "x": 675.9322447695974,
+        "y": 793.728813559322
+      },
       "moon:SkyWorldCastleZone:3811:314": {
         "x": 1939.2729698763658,
         "y": 1104.0832434191673
@@ -8577,8 +8713,8 @@
         "y": 548.3037988452863
       },
       "moon:SkyWorldCastleZone:3362:340": {
-        "x": 1482.862321555528,
-        "y": 228.97757059723256
+        "x": 353.77757314737914,
+        "y": 833.7863666665554
       },
       "moon:SkyWorldCastleZone:4118:343": {
         "x": 1484.0715413536684,
@@ -8709,8 +8845,8 @@
         "y": 875.54625935147
       },
       "moon:SkyWorldCastleZone:7369:1091": {
-        "x": 863.3200844258517,
-        "y": 338.0888084396801
+        "x": 1737.7385471347907,
+        "y": 898.0888510223472
       },
       "moon:SkyWorldCastleZone:7421:1092": {
         "x": 2227.0084455798556,

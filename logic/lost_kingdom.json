@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Lost Kingdom",
-  "savedAt": "2026-08-30T21:46:52.623Z",
+  "savedAt": "2026-09-18T04:00:12.250Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-27T20:21:27.380Z",
+    "loadedAt": "2026-09-17T16:39:38.464Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -784,6 +784,78 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ClashWorldHomeStage::stage_change::Come::raw",
+        "kingdom": "Lost Kingdom",
+        "stage": "ClashWorldHomeStage",
+        "stage_display_name": "Lost Kingdom",
+        "area_scope": "overworld",
+        "node_type": "stage_change",
+        "source": "StageData",
+        "entrance_id": "Come",
+        "side": "raw",
+        "obj_id": "obj97060",
+        "display_name": "Stage Change Come",
+        "x": "0.000",
+        "y": "0.000",
+        "z": "0.000",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "notes": "Raw UnitConfigName=WorldWarpHole."
+      },
+      {
+        "node_id": "ClashWorldHomeStage::stage_change::Go::raw",
+        "kingdom": "Lost Kingdom",
+        "stage": "ClashWorldHomeStage",
+        "stage_display_name": "Lost Kingdom",
+        "area_scope": "overworld",
+        "node_type": "stage_change",
+        "source": "StageData",
+        "entrance_id": "Go",
+        "side": "raw",
+        "obj_id": "obj97061",
+        "display_name": "Stage Change Go",
+        "x": "0.000",
+        "y": "0.000",
+        "z": "0.000",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "notes": "Raw UnitConfigName=WorldWarpHole."
+      },
+      {
+        "node_id": "ClashWorldHomeStage::place::new_place_4",
+        "kingdom": "Lost Kingdom",
+        "stage": "ClashWorldHomeStage",
+        "stage_display_name": "Lost Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "TnT Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ClashWorldHomeStage::place::new_place_5",
+        "kingdom": "Lost Kingdom",
+        "stage": "ClashWorldHomeStage",
+        "stage_display_name": "Lost Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Lost KFR",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -793,14 +865,14 @@
         "area_scope": "subarea",
         "from_node_id": "ImomuPoisonExStage::entrance::imomu_01::sub_near",
         "to_node_id": "ImomuPoisonExStage::entrance::imomu_02::sub_far",
-        "requirement_expr": "NeutralThrow | Imomu",
+        "requirement_expr": "Imomu | SingleJump | LongJump | Dive",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "advanced;casual",
+        "difficulty": "casual;expert;advanced;advanced",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4"
       },
       {
         "edge_id": "edge_user_0039",
@@ -823,7 +895,7 @@
         "area_scope": "overworld",
         "from_node_id": "ClashWorldHomeStage::start",
         "to_node_id": "ClashWorldHomeStage::checkpoint::obj543",
-        "requirement_expr": "GroundPound | TripleJump | Dive",
+        "requirement_expr": "GroundPound | KingdomAccess_Lost | Dive",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced;casual",
@@ -968,21 +1040,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0453",
-        "kingdom": "Lost Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
-        "to_node_id": "ClashWorldHomeStage::place::new_place_3",
-        "requirement_expr": "(TripleJump & Dive)",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0454",
         "kingdom": "Lost Kingdom",
         "area_scope": "overworld",
@@ -1025,21 +1082,6 @@
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0455.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0457",
-        "kingdom": "Lost Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
-        "to_node_id": "ClashWorldHomeStage::place::new_place",
-        "requirement_expr": "GroundPound",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
         "option_scenarios": ""
       },
       {
@@ -1093,10 +1135,10 @@
         "area_scope": "overworld",
         "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
         "to_node_id": "ClashWorldHomeStage::place::new_place",
-        "requirement_expr": "Vault | KingdomAccess_Lost | Dive | WallJump | TripleJump | (GroundPound & Imomu) | Spin",
+        "requirement_expr": "Vault | KingdomAccess_Lost | Dive | WallJump | TripleJump | (GroundPound & Imomu) | Spin | GroundPound",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "advanced;expert;advanced;advanced;advanced;casual;advanced",
+        "difficulty": "advanced;expert;advanced;advanced;advanced;casual;advanced;advanced",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -1206,6 +1248,96 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0191.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0784",
+        "kingdom": "Lost Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "to_node_id": "ClashWorldHomeStage::stage_change::Go::raw",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0785",
+        "kingdom": "Lost Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ClashWorldHomeStage::stage_change::Come::raw",
+        "to_node_id": "ClashWorldHomeStage::checkpoint::obj545",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0005",
+        "kingdom": "Lost Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ClashWorldHomeStage::start",
+        "to_node_id": "ClashWorldHomeStage::place::new_place_4",
+        "requirement_expr": "Imomu | (NeutralThrow & Vault & Dive) | (NeutralThrow & Fukankun & Dive) | (DownThrow & Fukankun & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;expert;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0006",
+        "kingdom": "Lost Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ClashWorldHomeStage::checkpoint::obj545",
+        "to_node_id": "ClashWorldHomeStage::place::new_place_4",
+        "requirement_expr": "(NeutralThrow & Kakku & Dive) | (DownThrow & Kakku & Dive) | (UpThrow & Kakku & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;advanced;expert",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0847",
+        "kingdom": "Lost Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ClashWorldHomeStage::start",
+        "to_node_id": "ClashWorldHomeStage::checkpoint::obj2899",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0848",
+        "kingdom": "Lost Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ClashWorldHomeStage::start",
+        "to_node_id": "ClashWorldHomeStage::place::new_place_5",
+        "requirement_expr": "NpcTalk",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -1220,9 +1352,9 @@
         "obj_id": "83",
         "uid": "372",
         "flags": "ShineFlag_None",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "from_node_id": "ClashWorldHomeStage::checkpoint::obj2899",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -1316,7 +1448,7 @@
         "obj_id": "39",
         "uid": "374",
         "flags": "ShineFlag_None",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "from_node_id": "ClashWorldHomeStage::start",
         "state_requirement_expr": "",
         "requirement_expr": "GroundPound",
         "world_peace_token": "WorldPeace_Lost",
@@ -1364,7 +1496,7 @@
         "obj_id": "54",
         "uid": "375",
         "flags": "ShineFlag_None",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "from_node_id": "ClashWorldHomeStage::start",
         "state_requirement_expr": "",
         "requirement_expr": "GroundPound",
         "world_peace_token": "WorldPeace_Lost",
@@ -1510,7 +1642,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ClashWorldHomeStage::place::new_place_3",
         "state_requirement_expr": "",
-        "requirement_expr": "KingdomAccess_Lost | UpThrow",
+        "requirement_expr": "SpinThrow | UpThrow | NeutralThrow | DownThrow",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -1541,7 +1673,7 @@
         "shine_info_object_name": "帽子花グループ",
         "shine_info_scenario_name": "咲かせて 洞くつの花",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced",
+        "difficulty": "casual;advanced;casual;casual",
         "option_scenarios": "",
         "__editor_id": "ClashWorldHomeStage:142:378"
       },
@@ -1604,7 +1736,7 @@
         "obj_id": "564",
         "uid": "380",
         "flags": "ShineFlag_None",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "from_node_id": "ClashWorldHomeStage::start",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Lost",
@@ -1700,7 +1832,7 @@
         "obj_id": "701",
         "uid": "382",
         "flags": "ShineFlag_None",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "from_node_id": "ClashWorldHomeStage::start",
         "state_requirement_expr": "",
         "requirement_expr": "Imomu | KingdomAccess_Lost",
         "world_peace_token": "WorldPeace_Lost",
@@ -1892,7 +2024,7 @@
         "obj_id": "70",
         "uid": "386",
         "flags": "ShineFlag_None",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "from_node_id": "ClashWorldHomeStage::checkpoint::obj2899",
         "state_requirement_expr": "",
         "requirement_expr": "NeutralThrow | SpinThrow",
         "world_peace_token": "WorldPeace_Lost",
@@ -1942,7 +2074,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ClashWorldHomeStage::checkpoint::obj2899",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2182,7 +2314,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ClashWorldHomeStage::checkpoint::obj545",
         "state_requirement_expr": "",
-        "requirement_expr": "KingdomAccess_Mushroom",
+        "requirement_expr": "(KingdomAccess_Mushroom & NpcTalk)",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2326,7 +2458,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ClashWorldShopStage::entrance::Kinopio::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2422,7 +2554,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "ImomuPoisonExStage::entrance::imomu_01::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "Imomu | NeutralThrow",
+        "requirement_expr": "Imomu | SingleJump | LongJump | Dive",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2453,8 +2585,8 @@
         "shine_info_object_name": "ステージスイッチ_燭台監視",
         "shine_info_scenario_name": "ジャングルの灯火",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced",
-        "option_scenarios": "",
+        "difficulty": "casual;expert;advanced;advanced",
+        "option_scenarios": "1,2,3,4",
         "__editor_id": "ImomuPoisonExStage:4857:400"
       },
       {
@@ -2564,7 +2696,7 @@
         "obj_id": "2774",
         "uid": "832",
         "flags": "ShineFlag_None",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "from_node_id": "ClashWorldHomeStage::place::new_place_5",
         "state_requirement_expr": "",
         "requirement_expr": "(GroundPound & WallJump)",
         "world_peace_token": "WorldPeace_Lost",
@@ -2614,7 +2746,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
         "state_requirement_expr": "",
-        "requirement_expr": "Climb | KingdomAccess_Lost | Dive | TripleJump",
+        "requirement_expr": "(Climb & TimerChallenge) | TimerChallenge | (Dive & TimerChallenge) | (TripleJump & TimerChallenge)",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2660,7 +2792,7 @@
         "obj_id": "2862",
         "uid": "897",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "from_node_id": "ClashWorldHomeStage::place::new_place_5",
         "state_requirement_expr": "",
         "requirement_expr": "(GroundPound & WallJump)",
         "world_peace_token": "WorldPeace_Lost",
@@ -2708,7 +2840,7 @@
         "obj_id": "2981",
         "uid": "942",
         "flags": "ShineFlag_None",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "from_node_id": "ClashWorldHomeStage::start",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Lost",
@@ -2804,9 +2936,9 @@
         "obj_id": "3283",
         "uid": "1075",
         "flags": "ShineFlag_None",
-        "from_node_id": "ClashWorldHomeStage::checkpoint::obj543",
+        "from_node_id": "ClashWorldHomeStage::place::new_place_4",
         "state_requirement_expr": "",
-        "requirement_expr": "Imomu | (Kakku & Dive) | (Vault & Dive & NeutralThrow) | (Fukankun & Dive)",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2837,7 +2969,7 @@
         "shine_info_object_name": "鍵付き宝箱",
         "shine_info_scenario_name": "曲がりくねって お宝発見",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced;expert;advanced",
+        "difficulty": "casual",
         "option_scenarios": "",
         "__editor_id": "ClashWorldHomeStage:3283:1075"
       },
@@ -4534,6 +4666,30 @@
         "can_start_with_seed": "false",
         "aliases": "Talk to NPCs; NpcTalk; Talk",
         "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
+      },
+      {
+        "token": "Pipe2D",
+        "token_type": "ability",
+        "display_name": "Enter 2D Pipes",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Enter 2D Pipes; Pipe2D; 2D Pipe; DokanChange2D",
+        "notes": "Going flat: the pipes built from the DokanChange2D archive, which are the only way into an in-stage 2D section. Pipes back out of 2D are never withheld, so anything reached only through a 2D section needs this."
+      },
+      {
+        "token": "TimerChallenge",
+        "token_type": "ability",
+        "display_name": "Timer Challenges",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Timer Challenges; TimerChallenge; P-Switch; Scarecrow",
+        "notes": "Every timed challenge: P-Switches (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer) and scarecrows (CapRack), which all share one AppearSwitchTimer. Without it the timer expires the frame it starts, so anything that needs the timed objects to stay up needs this."
       }
     ],
     "rooms": [
@@ -4670,56 +4826,56 @@
     "captureGateObjects": [],
     "nodePositions": {
       "ClashWorldHomeStage::checkpoint::obj2899": {
-        "x": 179.58188153310104,
-        "y": 432.1820303383897
+        "x": 428,
+        "y": 1434
       },
       "ClashWorldHomeStage::checkpoint::obj543": {
-        "x": 930.1045296167248,
-        "y": 150.87514585764293
+        "x": 956,
+        "y": 844
       },
       "ClashWorldHomeStage::checkpoint::obj545": {
-        "x": 475.40069686411147,
-        "y": 523.6639439906651
+        "x": 1609,
+        "y": 1486
       },
       "ClashWorldHomeStage::entrance::ClashWorldMoonEX2::home_in": {
-        "x": 867.4216027874564,
-        "y": 455.0525087514586
+        "x": 2749.3849118972907,
+        "y": 1641.594664412286
       },
       "ClashWorldHomeStage::entrance::Kinopio::home_in": {
-        "x": 470.1699303135888,
-        "y": 341.91699136522755
+        "x": 1576.9237660898327,
+        "y": 1679.8672186326303
       },
       "ClashWorldHomeStage::entrance::imomu_01::home_in": {
-        "x": 1452.7526132404182,
-        "y": 727.2112018669778
+        "x": 956,
+        "y": 998
       },
       "ClashWorldHomeStage::stage_change::ClashStart1::raw": {
-        "x": 1463.205574912892,
-        "y": 923.8973162193699
+        "x": 1740,
+        "y": 2688
       },
       "ClashWorldHomeStage::stage_change::ClashWorldMoonEX2::raw": {
-        "x": 867.4216027874564,
-        "y": 575.0525087514586
+        "x": 2150,
+        "y": 2688
       },
       "ClashWorldHomeStage::stage_change::Kinopio::raw": {
-        "x": 240.1699303135888,
-        "y": 581.9169913652275
+        "x": 920,
+        "y": 2688
       },
       "ClashWorldHomeStage::stage_change::imomu_01::raw": {
-        "x": 1682.7526132404182,
-        "y": 727.2112018669778
+        "x": 2560,
+        "y": 2688
       },
       "ClashWorldHomeStage::stage_change::imomu_02::raw": {
-        "x": 1124.71031358885,
-        "y": 710.3600504084014
+        "x": 100,
+        "y": 2984
       },
       "ClashWorldHomeStage::start": {
-        "x": 110,
-        "y": 240
+        "x": 100,
+        "y": 100
       },
       "ClashWorldHomeStage::event::MoonRockActive_Lost": {
-        "x": 1620,
-        "y": 262.9404900816803
+        "x": 100,
+        "y": 254
       },
       "ImomuPoisonExStage::stage_change::imomu_01::raw": {
         "x": 1620,
@@ -4750,112 +4906,124 @@
         "y": 1100
       },
       "ClashWorldHomeStage::stage_change::Start::raw": {
-        "x": 1114.45606271777,
-        "y": 879.5035220536755
+        "x": 1330,
+        "y": 2688
       },
       "ClashWorldHomeStage::place::new_place": {
-        "x": 700,
-        "y": 360
+        "x": 428,
+        "y": 1936
       },
       "ClashWorldHomeStage::place::new_place_2": {
-        "x": 930,
-        "y": 362
+        "x": 428,
+        "y": 2312
       },
       "ClashWorldHomeStage::place::new_place_3": {
-        "x": 700,
-        "y": 724
+        "x": 2790,
+        "y": 1434
+      },
+      "ClashWorldHomeStage::stage_change::Come::raw": {
+        "x": 1701.341107633068,
+        "y": 1303.9262118215634
+      },
+      "ClashWorldHomeStage::stage_change::Go::raw": {
+        "x": 985.8027038943301,
+        "y": 645.40898440349
+      },
+      "ClashWorldHomeStage::place::new_place_4": {
+        "x": 63.137218998927665,
+        "y": 1080.5098398246018
       },
       "moon:ClashWorldHomeStage:83:372": {
-        "x": 710.5923344947735,
-        "y": 128.0046674445741
+        "x": 142.31853393550284,
+        "y": 1341.2366471505838
       },
       "moon:ClashWorldHomeStage:1144:373": {
-        "x": 511.95121951219505,
-        "y": 227.56126021003502
+        "x": 628,
+        "y": 1062
       },
       "moon:ClashWorldHomeStage:39:374": {
-        "x": 1269.8606271777003,
-        "y": 276.6627771295216
+        "x": 266.1156396217096,
+        "y": 401.81365770548615
       },
       "moon:ClashWorldHomeStage:54:375": {
-        "x": 1264.6341463414633,
-        "y": 121.14352392065344
+        "x": 448.61695837749085,
+        "y": 258.80907830967755
       },
       "moon:ClashWorldHomeStage:71:376": {
-        "x": 302.9268292682927,
-        "y": 107.56126021003502
+        "x": 628,
+        "y": 630
       },
       "moon:ClashWorldHomeStage:111:377": {
-        "x": 1113.1010452961673,
-        "y": 477.78296382730457
+        "x": 100,
+        "y": 1938
       },
       "moon:ClashWorldHomeStage:142:378": {
-        "x": 484.91289198606273,
-        "y": 626.6483080513419
+        "x": 2446.053112546948,
+        "y": 1485.4353267714425
       },
       "moon:ClashWorldHomeStage:492:379": {
-        "x": 297.70034843205576,
-        "y": 719.1365227537923
+        "x": 1560,
+        "y": 954
       },
       "moon:ClashWorldHomeStage:564:380": {
-        "x": 1651.3937282229965,
-        "y": 137.15285880980164
+        "x": 410.3748418098706,
+        "y": 44.182769730261015
       },
       "moon:ClashWorldHomeStage:575:381": {
-        "x": 255.8885017421603,
-        "y": 1100
+        "x": 1957.155781065493,
+        "y": 1564.5451084406886
       },
       "moon:ClashWorldHomeStage:701:382": {
-        "x": 1295.9930313588852,
-        "y": 613.9323220536755
+        "x": 433.56387749811637,
+        "y": 163.59191220719703
       },
       "moon:ClashWorldHomeStage:850:383": {
-        "x": 1343.0662020905925,
-        "y": 455.0525087514586
+        "x": 1294.7455925442446,
+        "y": 863.5619914960397
       },
       "moon:ClashWorldHomeStage:920:384": {
-        "x": 40,
-        "y": 700.8401400233372
+        "x": 124.47911756654287,
+        "y": 1582.7678735419408
       },
       "moon:ClashWorldHomeStage:1001:385": {
-        "x": 1003.3449477351917,
-        "y": 263.08051341890314
+        "x": 1166,
+        "y": 1434
       },
       "moon:ClashWorldHomeStage:70:386": {
-        "x": 40,
-        "y": 40
+        "x": 407.05666912229833,
+        "y": 1598.2542774363255
       },
       "moon:ClashWorldHomeStage:570:387": {
-        "x": 240.20905923344947,
-        "y": 820.8401400233372
+        "x": 100,
+        "y": 1436
       },
       "moon:ClashWorldHomeStage:595:388": {
-        "x": 120,
-        "y": 921.3302217036173
+        "x": 100,
+        "y": 2314
       },
       "moon:ClashWorldHomeStage:2599:390": {
-        "x": 1661.9512195121952,
-        "y": 40
+        "x": 1296,
+        "y": 1062
       },
       "moon:ClashWorldHomeStage:616:392": {
-        "x": 1526.02787456446,
-        "y": 627.514585764294
+        "x": 364,
+        "y": 738
       },
       "moon:ClashWorldHomeStage:2560:393": {
-        "x": 1045.226480836237,
-        "y": 40
+        "x": 364,
+        "y": 1062
       },
       "moon:ClashWorldHomeStage:2620:394": {
-        "x": 1322.2299651567944,
-        "y": 1028.821470245041
+        "x": 1166,
+        "y": 1542
       },
       "moon:ClashWorldHomeStage:609:395": {
-        "x": 1593.2654355400696,
-        "y": 424.43893768961493
+        "x": 1296,
+        "y": 954
       },
       "moon:ClashWorldHomeStage:615:396": {
-        "x": 726.3066202090592,
-        "y": 250.29171528588097
+        "x": 628,
+        "y": 954
       },
       "moon:ImomuPoisonExStage:3970:399": {
         "x": 120,
@@ -4874,32 +5042,56 @@
         "y": 120
       },
       "moon:ClashWorldHomeStage:2774:832": {
-        "x": 1724.5644599303137,
-        "y": 923.8973162193699
+        "x": 1126.2612689219304,
+        "y": 90.1175408085835
       },
       "moon:ClashWorldHomeStage:2833:855": {
-        "x": 809.8954703832752,
-        "y": 827.7012835472578
+        "x": 1560,
+        "y": 846
       },
       "moon:ClashWorldHomeStage:2862:897": {
-        "x": 1724.5644599303137,
-        "y": 1043.89731621937
+        "x": 1295.281570947258,
+        "y": 221.32079177181754
       },
       "moon:ClashWorldHomeStage:2981:942": {
-        "x": 1996.4111498257842,
-        "y": 160.02333722287048
+        "x": 228.3693593172526,
+        "y": 0
       },
       "moon:ClashWorldHomeStage:2921:943": {
-        "x": 1996.4111498257842,
-        "y": 480
+        "x": 1560,
+        "y": 630
       },
       "moon:ClashWorldHomeStage:3283:1075": {
-        "x": 882.9965156794424,
-        "y": 937.6196032672112
+        "x": 41.9607723460478,
+        "y": 1230.3137853285846
       },
       "moon:ClashWorldHomeStage:3284:1077": {
-        "x": 1484.1114982578397,
-        "y": 822.193698949825
+        "x": 1560,
+        "y": 1062
+      },
+      "ClashWorldHomeStage::place::new_place_5": {
+        "x": 953.5555348365482,
+        "y": 210.12444104536655
+      },
+      "ClashWorldShopStage::stage_change::Kinopio::raw": {
+        "x": 1620,
+        "y": 238.59939759036143
+      },
+      "ClashWorldShopStage::stage_change::kinopio::raw": {
+        "x": 1620,
+        "y": 120
+      },
+      "ClashWorldShopStage::entrance::Kinopio::sub_far": {
+        "x": 1850,
+        "y": 238.59939759036143
+      },
+      "ClashWorldShopStage::entrance::Kinopio::sub_near": {
+        "x": 1390,
+        "y": 238.59939759036143
+      },
+      "moon:ClashWorldShopStage:19:398": {
+        "x": 1210.6586385230519,
+        "y": 396.5453752970981
       }
     }
   }

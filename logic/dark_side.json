@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Dark Side",
-  "savedAt": "2026-08-30T22:10:47.862Z",
+  "savedAt": "2026-09-17T16:57:20.094Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-27T20:21:27.380Z",
+    "loadedAt": "2026-09-17T16:39:38.464Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1936,6 +1936,60 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "Special1WorldHomeStage::stage_change::Come::raw",
+        "kingdom": "Dark Side",
+        "stage": "Special1WorldHomeStage",
+        "stage_display_name": "Dark Side",
+        "area_scope": "overworld",
+        "node_type": "stage_change",
+        "source": "StageData",
+        "entrance_id": "Come",
+        "side": "raw",
+        "obj_id": "obj97150",
+        "display_name": "Stage Change Come",
+        "x": "0.000",
+        "y": "0.000",
+        "z": "0.000",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "notes": "Raw UnitConfigName=WorldWarpHole."
+      },
+      {
+        "node_id": "Special1WorldHomeStage::stage_change::Go::raw",
+        "kingdom": "Dark Side",
+        "stage": "Special1WorldHomeStage",
+        "stage_display_name": "Dark Side",
+        "area_scope": "overworld",
+        "node_type": "stage_change",
+        "source": "StageData",
+        "entrance_id": "Go",
+        "side": "raw",
+        "obj_id": "obj97151",
+        "display_name": "Stage Change Go",
+        "x": "0.000",
+        "y": "0.000",
+        "z": "0.000",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "notes": "Raw UnitConfigName=WorldWarpHole."
+      },
+      {
+        "node_id": "Special1WorldHomeStage::place::new_place_2",
+        "kingdom": "Dark Side",
+        "stage": "Special1WorldHomeStage",
+        "stage_display_name": "Dark Side",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Captain Toad",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -1975,13 +2029,13 @@
         "area_scope": "subarea",
         "from_node_id": "SenobiTowerYoshiExStage::entrance::SeaWorldEX3b::sub_far",
         "to_node_id": "SenobiTowerYoshiExStage::place::new_place",
-        "requirement_expr": "Vault",
+        "requirement_expr": "(Vault & NeutralThrow)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0104.",
-        "difficulty": "casual",
+        "difficulty": "expert",
         "option_scenarios": ""
       },
       {
@@ -2357,6 +2411,36 @@
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0431.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0002",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "to_node_id": "Special1WorldHomeStage::stage_change::Go::raw",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0003",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "to_node_id": "Special1WorldHomeStage::stage_change::Come::raw",
+        "requirement_expr": "ElectricWire",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
         "option_scenarios": ""
       }
     ],
@@ -3334,7 +3418,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(Vault & NeutralThrow & KingdomAccess_Snow & GroundPound & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & Dive & GroundPound & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & TripleJump & GroundPound & @SnowWorldTownStage::place::new_place) | (UpThrow & Vault & GroundPound & KingdomAccess_Snow & @SnowWorldTownStage::place::new_place) | (UpThrow & KingdomAccess_Snow & GroundPound & WallJump & @SnowWorldTownStage::place::new_place) | (NeutralThrow & WallJump & KingdomAccess_Snow & GroundPound & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & GroundPoundJump & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & SideFlip & Grab & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & Backflip & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & Yukimaru & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & WallJump & Dive & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & Backflip & Dive & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & GroundPoundJump & Dive & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & SideFlip & Dive & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & TripleJump & Dive & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & Backflip & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & GroundPoundJump & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & SideFlip & @SnowWorldTownStage::place::new_place) | (KingdomAccess_Snow & GroundPound & Spin & WallJump & SpinThrow & @SnowWorldTownStage::place::new_place) | (NeutralThrow & WallJump & KingdomAccess_Snow & GroundPound & @SnowWorldTownStage::place::new_place) | (DownThrow & KingdomAccess_Snow & GroundPound & WallJump & @SnowWorldTownStage::place::new_place) | (UpThrow & KingdomAccess_Snow & GroundPound & WallJump & @SnowWorldTownStage::place::new_place)",
+        "requirement_expr": "(KingdomAccess_Snow & GroundPound & Byugo) | (Vault & NeutralThrow & KingdomAccess_Snow & GroundPound) | (KingdomAccess_Snow & Dive & GroundPound) | (KingdomAccess_Snow & TripleJump & GroundPound)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3366,7 +3450,7 @@
         "shine_info_scenario_name": "月の国 裏で見つけた お宝写真 ５",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "Special1WorldHomeStage:486:1129",
-        "difficulty": "advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert;casual;casual;casual;casual;casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "difficulty": "casual;advanced;advanced;advanced",
         "option_scenarios": "1,2"
       },
       {
@@ -3382,7 +3466,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Metro & GroundPound & @CityWorldHomeStage::checkpoint::obj3996 & @CityWorldHomeStage::checkpoint::obj3994)",
+        "requirement_expr": "(KingdomAccess_Metro & GroundPound & @CityWorldHomeStage::place::new_place_10)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -5158,6 +5242,30 @@
         "can_start_with_seed": "false",
         "aliases": "Talk to NPCs; NpcTalk; Talk",
         "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
+      },
+      {
+        "token": "Pipe2D",
+        "token_type": "ability",
+        "display_name": "Enter 2D Pipes",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Enter 2D Pipes; Pipe2D; 2D Pipe; DokanChange2D",
+        "notes": "Going flat: the pipes built from the DokanChange2D archive, which are the only way into an in-stage 2D section. Pipes back out of 2D are never withheld, so anything reached only through a 2D section needs this."
+      },
+      {
+        "token": "TimerChallenge",
+        "token_type": "ability",
+        "display_name": "Timer Challenges",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Timer Challenges; TimerChallenge; P-Switch; Scarecrow",
+        "notes": "Every timed challenge: P-Switches (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer) and scarecrows (CapRack), which all share one AppearSwitchTimer. Without it the timer expires the frame it starts, so anything that needs the timed objects to stay up needs this."
       }
     ],
     "rooms": [
@@ -5629,16 +5737,16 @@
         "y": 531.1538487064415
       },
       "SenobiTowerYoshiExStage::entrance::SeaWorldEX3b::sub_far": {
-        "x": 1642.6923175455902,
-        "y": 531.1538459554579
+        "x": 1667.0825614480293,
+        "y": 537.9830844748939
       },
       "SenobiTowerYoshiExStage::entrance::SenobiTowerYoshiEx::sub_near": {
         "x": 815.7142857142858,
         "y": 666.4358305754342
       },
       "SenobiTowerYoshiExStage::entrance::SenobiTowerYoshiEx_Exit::sub_far": {
-        "x": 1566.6666666666665,
-        "y": 623.8095238095239
+        "x": 1533.4959945058433,
+        "y": 672.5900116144019
       },
       "ShootingCityYoshiExStage::stage_change::ShootingCityYoshiEx::raw": {
         "x": 120,
@@ -5919,6 +6027,18 @@
       "Special1WorldHomeStage::place::new_place": {
         "x": 922,
         "y": 844
+      },
+      "Special1WorldHomeStage::stage_change::Come::raw": {
+        "x": 1124.0434826780454,
+        "y": 344.5850843022019
+      },
+      "Special1WorldHomeStage::stage_change::Go::raw": {
+        "x": 1023.0631144565377,
+        "y": 663.0163850451553
+      },
+      "Special1WorldHomeStage::place::new_place_2": {
+        "x": 878.6047647165698,
+        "y": 339.534912109375
       },
       "moon:Special1WorldHomeStage:130:1055": {
         "x": 1276.8723098995697,

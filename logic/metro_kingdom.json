@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Metro Kingdom",
-  "savedAt": "2026-08-30T21:51:22.679Z",
+  "savedAt": "2026-09-18T05:03:55.295Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-27T20:21:27.380Z",
+    "loadedAt": "2026-09-17T16:39:38.464Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -3502,6 +3502,42 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CityWorldHomeStage::place::new_place_10",
+        "kingdom": "Metro Kingdom",
+        "stage": "CityWorldHomeStage",
+        "stage_display_name": "Metro Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Dark Side Hint Art - Metro",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CityWorldHomeStage::place::new_place_12",
+        "kingdom": "Metro Kingdom",
+        "stage": "CityWorldHomeStage",
+        "stage_display_name": "Metro Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Seaside Hint Art - Metro",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -3571,13 +3607,13 @@
         "area_scope": "subarea",
         "from_node_id": "BikeSteelExStage::entrance::bike::sub_near",
         "to_node_id": "BikeSteelExStage::entrance::bikereturn::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "Bike | (TripleJump & RollBoost)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -3601,13 +3637,13 @@
         "area_scope": "subarea",
         "from_node_id": "TrexBikeExStage::entrance::bike02::sub_near",
         "to_node_id": "TrexBikeExStage::entrance::bike02return::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "Bike | RollBoost",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -3871,10 +3907,10 @@
         "area_scope": "overworld",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
         "to_node_id": "CityWorldHomeStage::checkpoint::obj5012",
-        "requirement_expr": "(ElectricWire & Dive) | ElectricWire | Guidepost",
+        "requirement_expr": "(ElectricWire & Dive) | ElectricWire | Guidepost | (Vault & Dive & NeutralThrow) | (UpThrow & Vault & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;advanced;casual",
+        "difficulty": "casual;advanced;casual;advanced;expert",
         "option_scenarios": "2,4,5,6,7,8,9,10,11",
         "bidirectional": "false",
         "source": "editor",
@@ -3931,11 +3967,11 @@
         "area_scope": "overworld",
         "from_node_id": "CityWorldHomeStage::place::new_place_8",
         "to_node_id": "CityWorldHomeStage::checkpoint::obj3994",
-        "requirement_expr": "ElectricWire",
+        "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -4006,7 +4042,7 @@
         "area_scope": "overworld",
         "from_node_id": "CityWorldHomeStage::place::new_place_7",
         "to_node_id": "CityWorldHomeStage::checkpoint::obj4904",
-        "requirement_expr": "ElectricWire",
+        "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -4058,36 +4094,6 @@
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0514",
-        "kingdom": "Metro Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "CityWorldHomeStage::entrance::bike::home_in",
-        "to_node_id": "CityWorldHomeStage::checkpoint::obj4904",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0515",
-        "kingdom": "Metro Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
-        "to_node_id": "CityWorldHomeStage::entrance::bike::home_in",
-        "requirement_expr": "WallJump",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0514.",
         "option_scenarios": ""
       },
       {
@@ -4148,7 +4154,7 @@
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
+        "option_scenarios": "3"
       },
       {
         "edge_id": "edge_user_0520",
@@ -4221,21 +4227,6 @@
         "edge_type": "human_route",
         "difficulty": "casual",
         "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0525",
-        "kingdom": "Metro Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "CityWorldHomeStage::start",
-        "to_node_id": "CityWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -4541,36 +4532,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0546",
-        "kingdom": "Metro Kingdom",
-        "area_scope": "subarea",
-        "from_node_id": "CityWorldMainTowerStage::stage_change::main_enter::raw",
-        "to_node_id": "CityWorldMainTowerStage::start",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0547",
-        "kingdom": "Metro Kingdom",
-        "area_scope": "subarea",
-        "from_node_id": "CityWorldMainTowerStage::start",
-        "to_node_id": "CityWorldMainTowerStage::stage_change::main_exit::raw",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0548",
         "kingdom": "Metro Kingdom",
         "area_scope": "overworld",
@@ -4636,11 +4597,11 @@
         "area_scope": "subarea",
         "from_node_id": "CityWorldMainTowerStage::entrance::main_enter::sub_near",
         "to_node_id": "CityWorldMainTowerStage::entrance::main_exit::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "Climb | (Vault & WallJump & Dive & NeutralThrow)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
+        "difficulty": "casual;advanced",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -4781,21 +4742,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0569",
-        "kingdom": "Metro Kingdom",
-        "area_scope": "subarea",
-        "from_node_id": "ShootingCityExStage::place::new_place",
-        "to_node_id": "ShootingCityExStage::entrance::taxi::sub_near",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0570",
         "kingdom": "Metro Kingdom",
         "area_scope": "subarea",
@@ -4841,21 +4787,6 @@
         "notes": "Created in graph editor."
       },
       {
-        "edge_id": "edge_user_0305",
-        "kingdom": "Metro Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "CityWorldHomeStage::checkpoint::obj5016",
-        "to_node_id": "CityWorldHomeStage::entrance::bike::home_in",
-        "requirement_expr": "",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "advanced",
-        "option_scenarios": "",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor."
-      },
-      {
         "edge_id": "edge_user_0204",
         "kingdom": "Metro Kingdom",
         "area_scope": "overworld",
@@ -4892,21 +4823,6 @@
         "from_node_id": "CityWorldMainTowerStage::stage_change::main_enter::raw",
         "to_node_id": "CityWorldMainTowerStage::start",
         "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor."
-      },
-      {
-        "edge_id": "edge_user_0265",
-        "kingdom": "Metro Kingdom",
-        "area_scope": "subarea",
-        "from_node_id": "CityWorldMainTowerStage::start",
-        "to_node_id": "CityWorldMainTowerStage::stage_change::main_exit::raw",
-        "requirement_expr": "",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -5061,7 +4977,7 @@
         "edge_type": "human_route",
         "difficulty": "casual",
         "option_scenarios": "",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor."
       },
@@ -5071,11 +4987,11 @@
         "area_scope": "overworld",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "to_node_id": "CityWorldHomeStage::place::new_place_7",
-        "requirement_expr": "(Guidepost & Vault & Dive) | (Backflip & Vault & WallJump & Dive & NeutralThrow) | (GroundPoundJump & Vault & WallJump & Dive & NeutralThrow) | (SideFlip & Vault & Dive & WallJump & NeutralThrow) | (TripleJump & Vault & WallJump & Dive & NeutralThrow) | Guidepost",
+        "requirement_expr": "(Vault & Dive & NeutralThrow) | Guidepost | (TripleJump & WallJump & Dive & NeutralThrow & GroundPound) | (UpThrow & Vault & WallJump & Dive & Backflip) | (UpThrow & Vault & WallJump & Dive & GroundPoundJump) | (UpThrow & Vault & WallJump & Dive & SideFlip) | (UpThrow & Vault & WallJump & Dive & TripleJump)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "advanced;advanced;advanced;advanced;advanced;casual",
-        "option_scenarios": "",
+        "difficulty": "advanced;casual;expert;expert;expert;expert;expert",
+        "option_scenarios": "1,2,3,4,5,6,7,8",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor."
@@ -5086,7 +5002,7 @@
         "area_scope": "overworld",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "to_node_id": "CityWorldHomeStage::place::new_place_8",
-        "requirement_expr": "ElectricWire | WallJump | (TripleJump & Vault & Dive & NeutralThrow)",
+        "requirement_expr": "(ElectricWire & NpcTalk) | (WallJump & NpcTalk) | (TripleJump & Vault & Dive & NeutralThrow & NpcTalk)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;casual;advanced",
@@ -5101,7 +5017,7 @@
         "area_scope": "overworld",
         "from_node_id": "CityWorldHomeStage::entrance::gragrareturn::home_out",
         "to_node_id": "CityWorldHomeStage::place::new_place_8",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -5131,10 +5047,10 @@
         "area_scope": "overworld",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj5016",
         "to_node_id": "CityWorldHomeStage::place::new_place_8",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "advanced",
         "option_scenarios": "",
         "bidirectional": "false",
         "source": "editor",
@@ -5446,11 +5362,11 @@
         "area_scope": "overworld",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "to_node_id": "CityWorldHomeStage::entrance::bikereturn::home_out",
-        "requirement_expr": "impossible",
+        "requirement_expr": "Guidepost | Dive | (NeutralThrow & Vault) | WallJump | LedgeGrab | ElectricWire",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced",
+        "option_scenarios": "8",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor."
@@ -5465,25 +5381,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "",
+        "option_scenarios": "1,2,3,4,5,6,7,8",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0302."
-      },
-      {
-        "edge_id": "edge_user_0304",
-        "kingdom": "Metro Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
-        "to_node_id": "CityWorldHomeStage::entrance::bike::home_in",
-        "requirement_expr": "Guidepost | Dive | (NeutralThrow & Vault) | WallJump | LedgeGrab | ElectricWire",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual;advanced;advanced;advanced;advanced;casual",
-        "option_scenarios": "",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor."
       },
       {
         "edge_id": "edge_user_0306",
@@ -5666,21 +5567,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0714",
-        "kingdom": "Metro Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "CityWorldHomeStage::entrance::bike::home_in",
-        "to_node_id": "CityWorldHomeStage::checkpoint::obj5016",
-        "requirement_expr": "impossible",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "advanced",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0305.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0715",
         "kingdom": "Metro Kingdom",
         "area_scope": "overworld",
@@ -5753,7 +5639,112 @@
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": "4,5"
+        "option_scenarios": "4,5,6,8,7"
+      },
+      {
+        "edge_id": "edge_user_0004",
+        "kingdom": "Metro Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CityWorldHomeStage::checkpoint::obj3996",
+        "to_node_id": "CityWorldHomeStage::place::new_place_10",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,4,5,6,7,8"
+      },
+      {
+        "edge_id": "edge_user_0005",
+        "kingdom": "Metro Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
+        "to_node_id": "CityWorldHomeStage::place::new_place_12",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,4,5,6,7,8"
+      },
+      {
+        "edge_id": "edge_user_0382",
+        "kingdom": "Metro Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CityWorldHomeStage::checkpoint::obj5016",
+        "to_node_id": "CityWorldHomeStage::entrance::bike::home_in",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0453",
+        "kingdom": "Metro Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CityWorldHomeStage::entrance::bike::home_in",
+        "to_node_id": "CityWorldHomeStage::checkpoint::obj5016",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0382.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0457",
+        "kingdom": "Metro Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "CityWorldMainTowerStage::entrance::main_exit::sub_far",
+        "to_node_id": "CityWorldMainTowerStage::entrance::main_enter::sub_near",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0558.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0844",
+        "kingdom": "Metro Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CityWorldHomeStage::place::new_place_7",
+        "to_node_id": "CityWorldHomeStage::checkpoint::obj5012",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0275.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0849",
+        "kingdom": "Metro Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
+        "to_node_id": "CityWorldHomeStage::place::new_place_8",
+        "requirement_expr": "(ElectricWire & NpcTalk)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0505.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -5962,7 +5953,7 @@
         "flags": "ShineFlag_Story",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk | KingdomAccess_Metro",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -5995,7 +5986,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:7046:41",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3;4,5,6,7,8"
       },
       {
         "moon_id": "CityWorldHomeStage:7051:42",
@@ -6010,7 +6001,7 @@
         "flags": "ShineFlag_Story",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk | KingdomAccess_Metro",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -6043,7 +6034,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:7051:42",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3;4,5,6,7,8"
       },
       {
         "moon_id": "CityWorldHomeStage:7058:43",
@@ -6058,7 +6049,7 @@
         "flags": "ShineFlag_Story",
         "from_node_id": "CityWorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk | KingdomAccess_Metro",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -6091,7 +6082,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:7058:43",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3;4,5,6,8,7"
       },
       {
         "moon_id": "CityWorldHomeStage:9072:44",
@@ -6106,7 +6097,7 @@
         "flags": "ShineFlag_Story",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj3998",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk | KingdomAccess_Metro",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -6139,7 +6130,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:9072:44",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3;4,5,6,8,7"
       },
       {
         "moon_id": "CityWorldHomeStage:3633:46",
@@ -6154,7 +6145,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -6730,7 +6721,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "state_requirement_expr": "",
-        "requirement_expr": "WallJump | KingdomAccess_Metro",
+        "requirement_expr": "(WallJump & Grab) | (KingdomAccess_Metro & Grab)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -6762,7 +6753,7 @@
         "shine_info_scenario_name": "咲いた！ 小さな屋上の鉢植え",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:10124:69",
-        "difficulty": "casual",
+        "difficulty": "casual;expert",
         "option_scenarios": ""
       },
       {
@@ -6778,7 +6769,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Grab",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -6826,7 +6817,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Grab",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -6922,7 +6913,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "state_requirement_expr": "",
-        "requirement_expr": "(ElectricWire & Climb & KingdomAccess_Mushroom) | (Guidepost & KingdomAccess_Mushroom) | (Backflip & Vault & WallJump & Dive & NeutralThrow & KingdomAccess_Mushroom) | (GroundPoundJump & Vault & Dive & WallJump & NeutralThrow & KingdomAccess_Mushroom) | (SideFlip & Vault & WallJump & Dive & NeutralThrow & KingdomAccess_Mushroom) | (ElectricWire & KingdomAccess_Mushroom) | (TripleJump & Vault & WallJump & Dive & NeutralThrow & KingdomAccess_Mushroom) | (ElectricWire & WallJump & LedgeGrab & Wanwan & KingdomAccess_Mushroom) | (ElectricWire & WallJump & Dive & KingdomAccess_Mushroom) | (ElectricWire & Vault & KingdomAccess_Mushroom & NeutralThrow)",
+        "requirement_expr": "(ElectricWire & Climb & KingdomAccess_Mushroom & NpcTalk) | (Guidepost & KingdomAccess_Mushroom & NpcTalk) | (Backflip & Vault & WallJump & Dive & NeutralThrow & KingdomAccess_Mushroom & NpcTalk) | (GroundPoundJump & Vault & Dive & WallJump & NeutralThrow & KingdomAccess_Mushroom & NpcTalk) | (SideFlip & Vault & WallJump & Dive & NeutralThrow & KingdomAccess_Mushroom & NpcTalk) | (ElectricWire & KingdomAccess_Mushroom & NpcTalk) | (TripleJump & Vault & WallJump & Dive & NeutralThrow & KingdomAccess_Mushroom & NpcTalk) | (ElectricWire & WallJump & LedgeGrab & KingdomAccess_Mushroom & NpcTalk) | (ElectricWire & WallJump & Dive & KingdomAccess_Mushroom & NpcTalk) | (ElectricWire & Vault & KingdomAccess_Mushroom & NeutralThrow & NpcTalk) | (UpThrow & TripleJump & Vault & WallJump & Dive & KingdomAccess_Mushroom & NpcTalk) | (UpThrow & Vault & WallJump & Dive & GroundPoundJump & KingdomAccess_Mushroom & NpcTalk) | (UpThrow & Vault & WallJump & Dive & Backflip & KingdomAccess_Mushroom & NpcTalk) | (UpThrow & Vault & WallJump & Dive & SideFlip & KingdomAccess_Mushroom & NpcTalk)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -6954,8 +6945,8 @@
         "shine_info_scenario_name": "都市の国で ピーチ姫",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:13473:75",
-        "difficulty": "advanced;casual;advanced;advanced;advanced;casual;advanced;advanced;advanced;advanced",
-        "option_scenarios": "1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5"
+        "difficulty": "advanced;casual;advanced;advanced;advanced;casual;advanced;advanced;advanced;advanced;expert;expert;expert;expert",
+        "option_scenarios": "1,2,3,4,5,6,7,8"
       },
       {
         "moon_id": "CityWorldHomeStage:12584:77",
@@ -7018,7 +7009,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "CityWorldHomeStage::place::new_place_7",
         "state_requirement_expr": "",
-        "requirement_expr": "ElectricWire",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -7066,7 +7057,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -7210,7 +7201,7 @@
         "flags": "ShineFlag_Story | ShineFlag_Multi",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "(NpcTalk & Pipe2D)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -7243,7 +7234,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:4110:95",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4,5,6,7,8"
       },
       {
         "moon_id": "CityWorldHomeStage:6939:96",
@@ -7256,9 +7247,9 @@
         "obj_id": "6939",
         "uid": "96",
         "flags": "ShineFlag_None",
-        "from_node_id": "CityWorldHomeStage::checkpoint::obj3996",
+        "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "(NpcTalk & ElectricWire & Grab) | (WallJump & NpcTalk & Grab) | (TripleJump & Vault & Dive & Grab & NpcTalk)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -7290,7 +7281,7 @@
         "shine_info_scenario_name": "ポリーン市長の願い",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:6939:96",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;expert",
         "option_scenarios": ""
       },
       {
@@ -7354,7 +7345,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj5012",
         "state_requirement_expr": "",
-        "requirement_expr": "ElectricWire | Guidepost | (Vault & Dive & NeutralThrow) | WallJump | TripleJump | LongJump | (LongJump & Dive)",
+        "requirement_expr": "ElectricWire | Guidepost | (Vault & Dive & NeutralThrow) | WallJump | TripleJump | LongJump | (LongJump & Dive) | (UpThrow & Vault & Dive)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -7386,7 +7377,7 @@
         "shine_info_scenario_name": "ビルで つかまえたピョン！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:13457:99",
-        "difficulty": "casual;casual;advanced;casual;advanced;advanced;casual",
+        "difficulty": "casual;casual;advanced;casual;advanced;advanced;casual;expert",
         "option_scenarios": ""
       },
       {
@@ -7450,7 +7441,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldShop01Stage::entrance::shop_coin::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -7834,7 +7825,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ShootingCityExStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "Tank | NeutralThrow | DownThrow | SpinThrow",
+        "requirement_expr": "Tank | SingleJump",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -7866,8 +7857,8 @@
         "shine_info_scenario_name": "砲撃の中 さまよって",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "ShootingCityExStage:66:114",
-        "difficulty": "casual;advanced;advanced;advanced",
-        "option_scenarios": ""
+        "difficulty": "casual;glitched",
+        "option_scenarios": "1,2,3,4,5,6,7,8"
       },
       {
         "moon_id": "PoleKillerExStage:1477:115",
@@ -8170,7 +8161,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "BikeSteelExStage::entrance::bike::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Bike | (RollBoost & TripleJump)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -8202,7 +8193,7 @@
         "shine_info_scenario_name": "フルスロットルで 走り抜け！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "BikeSteelExStage:478:123",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -8362,7 +8353,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Bike",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -8458,7 +8449,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -8506,7 +8497,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorld2DSign004Zone::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -8539,7 +8530,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorld2DSign004Zone:346:875",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "3"
       },
       {
         "moon_id": "CityWorldHomeStage:12578:881",
@@ -8554,7 +8545,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
         "state_requirement_expr": "",
-        "requirement_expr": "KingdomAccess_Sand",
+        "requirement_expr": "(KingdomAccess_Sand & NpcTalk)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -8602,7 +8593,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -8650,7 +8641,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "Theater2DExStage::entrance::theater::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -8698,7 +8689,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "Theater2DExStage::entrance::theater::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -8746,7 +8737,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj3994",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "(TimerChallenge & Bike) | (TimerChallenge & Dive) | (TimerChallenge & LongJump) | (TimerChallenge & Roll) | (TimerChallenge & RollBoost)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -8778,7 +8769,7 @@
         "shine_info_scenario_name": "都市の国で チクタク・アスレチック ３",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:14384:938",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;advanced;expert;casual",
         "option_scenarios": ""
       },
       {
@@ -8842,7 +8833,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "CityWorldHomeStage::place::new_place_8",
         "state_requirement_expr": "",
-        "requirement_expr": "ElectricWire | (Guidepost & HackFork) | (Vault & Dive & HackFork)",
+        "requirement_expr": "ElectricWire | (Guidepost & HackFork) | (Vault & Dive & HackFork & NeutralThrow)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -8986,7 +8977,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldHomeStage::checkpoint::obj4904",
         "state_requirement_expr": "",
-        "requirement_expr": "ElectricWire",
+        "requirement_expr": "(ElectricWire & Bike & TimerChallenge) | (ElectricWire & Bike)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -9018,7 +9009,7 @@
         "shine_info_scenario_name": "大ジャンプ！ 屋上の駐輪場！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityWorldHomeStage:14592:979",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -9034,7 +9025,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "CityPeopleRoadStage::entrance::gunsyu::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -9067,7 +9058,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CityPeopleRoadStage:1379:1021",
         "difficulty": "casual",
-        "option_scenarios": "5"
+        "option_scenarios": "5,6,8,7"
       },
       {
         "moon_id": "CityPeopleRoadStage:1390:1022",
@@ -9226,7 +9217,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "CityWorldSandSlotStage::entrance::Bonus::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -9418,7 +9409,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "TrexBikeExStage::entrance::bike02::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Bike | (NeutralThrow & RollBoost & Vault & Dive)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -9450,7 +9441,7 @@
         "shine_info_scenario_name": "バイクで大脱走！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "TrexBikeExStage:3656:1139",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -9608,9 +9599,9 @@
         "obj_id": "399",
         "uid": "839",
         "flags": "ShineFlag_None",
-        "from_node_id": "CityWorldTimerAthletic002Zone::start",
+        "from_node_id": "CityWorldHomeStage::checkpoint::obj5016",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "(ElectricWire & TimerChallenge & Bike)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
@@ -11290,6 +11281,30 @@
         "can_start_with_seed": "false",
         "aliases": "Talk to NPCs; NpcTalk; Talk",
         "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
+      },
+      {
+        "token": "Pipe2D",
+        "token_type": "ability",
+        "display_name": "Enter 2D Pipes",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Enter 2D Pipes; Pipe2D; 2D Pipe; DokanChange2D",
+        "notes": "Going flat: the pipes built from the DokanChange2D archive, which are the only way into an in-stage 2D section. Pipes back out of 2D are never withheld, so anything reached only through a 2D section needs this."
+      },
+      {
+        "token": "TimerChallenge",
+        "token_type": "ability",
+        "display_name": "Timer Challenges",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Timer Challenges; TimerChallenge; P-Switch; Scarecrow",
+        "notes": "Every timed challenge: P-Switches (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer) and scarecrows (CapRack), which all share one AppearSwitchTimer. Without it the timer expires the frame it starts, so anything that needs the timed objects to stay up needs this."
       }
     ],
     "rooms": [
@@ -12001,7 +12016,7 @@
       },
       "CityWorld2DSign004Zone::start": {
         "x": 1576,
-        "y": 3616
+        "y": 3662.2459371143223
       },
       "CityWorldFactory01Zone::stage_change::under001enter::raw": {
         "x": 1455.493519441675,
@@ -12024,8 +12039,8 @@
         "y": 844
       },
       "CityWorldHomeStage::checkpoint::obj3996": {
-        "x": 838,
-        "y": 3216
+        "x": 836.585659543038,
+        "y": 3259.8453095166433
       },
       "CityWorldHomeStage::checkpoint::obj3998": {
         "x": 1904,
@@ -12068,8 +12083,8 @@
         "y": 2096
       },
       "CityWorldHomeStage::entrance::bike::home_in": {
-        "x": 838,
-        "y": 2432
+        "x": 834.7110448811701,
+        "y": 2428.1348658356947
       },
       "CityWorldHomeStage::entrance::bou::home_in": {
         "x": 838,
@@ -12512,8 +12527,8 @@
         "y": 3912
       },
       "CityWorldHomeStage::place::new_place_7": {
-        "x": 428,
-        "y": 3912
+        "x": 461.46028228218444,
+        "y": 3928.2792704202343
       },
       "CityWorldHomeStage::place::new_place_8": {
         "x": 428,
@@ -12548,8 +12563,8 @@
         "y": 5218
       },
       "CityWorldTimerAthletic000Zone::start": {
-        "x": 100,
-        "y": 1406
+        "x": 772.6892596961906,
+        "y": 1326.504272006208
       },
       "CityWorldHomeStage::entrance::under001enter::home_in": {
         "x": 1298,
@@ -12566,6 +12581,14 @@
       "CityWorldHomeStage::place::new_place_9": {
         "x": 266.19035993303555,
         "y": 4941.8179757254475
+      },
+      "CityWorldHomeStage::place::new_place_10": {
+        "x": 761.4287458147322,
+        "y": 3400.8571166992188
+      },
+      "CityWorldHomeStage::place::new_place_12": {
+        "x": 1949.9999521292893,
+        "y": 652.2744978362439
       },
       "moon:CityWorldHomeStage:3203:37": {
         "x": 35.30245371560966,
@@ -12672,8 +12695,8 @@
         "y": 5220
       },
       "moon:CityWorldHomeStage:12586:78": {
-        "x": 100,
-        "y": 3914
+        "x": 96.81061034287998,
+        "y": 3917.189450489668
       },
       "moon:CityWorldHomeStage:12589:81": {
         "x": 1512,
@@ -12688,12 +12711,12 @@
         "y": 3914
       },
       "moon:CityWorldHomeStage:4110:95": {
-        "x": 1638,
-        "y": 1782
+        "x": 1636.585659543038,
+        "y": 1777.7569246754838
       },
       "moon:CityWorldHomeStage:6939:96": {
-        "x": 1178,
-        "y": 3218
+        "x": 1034.8667700410294,
+        "y": 1702.8925260996773
       },
       "moon:CityWorldHomeStage:13057:97": {
         "x": 1248,
@@ -12768,12 +12791,12 @@
         "y": 374.25748947875655
       },
       "moon:BikeSteelExStage:478:123": {
-        "x": 593.0769263304903,
-        "y": 151.48110701711522
+        "x": 579.418374858501,
+        "y": 120.26158737868153
       },
       "moon:BikeSteelExStage:666:124": {
-        "x": 594.844201665167,
-        "y": 438.76901657979715
+        "x": 468.99052824195815,
+        "y": 490.47628899309746
       },
       "moon:SwingSteelExStage:39:125": {
         "x": 1186.0526296595458,
@@ -12888,8 +12911,8 @@
         "y": 3216
       },
       "moon:CityWorldTimerAthletic002Zone:399:839": {
-        "x": 510,
-        "y": 5220
+        "x": 465.0498365104827,
+        "y": 5230.788011802081
       }
     }
   }

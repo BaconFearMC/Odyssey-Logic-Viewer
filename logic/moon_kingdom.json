@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Moon Kingdom",
-  "savedAt": "2026-08-27T23:44:12.691Z",
+  "savedAt": "2026-09-18T01:04:58.071Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-24T01:43:27.351Z",
+    "loadedAt": "2026-09-17T16:39:38.464Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1540,6 +1540,42 @@
         "z": "4050.000",
         "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
         "notes": "Vanilla door MoonWorldHomeStage<->MoonWorldWeddingRoomStage (fixed)."
+      },
+      {
+        "node_id": "MoonWorldHomeStage::stage_change::Come::raw",
+        "kingdom": "Moon Kingdom",
+        "stage": "MoonWorldHomeStage",
+        "stage_display_name": "Moon Kingdom",
+        "area_scope": "overworld",
+        "node_type": "stage_change",
+        "source": "StageData",
+        "entrance_id": "Come",
+        "side": "raw",
+        "obj_id": "obj97130",
+        "display_name": "Stage Change Come",
+        "x": "0.000",
+        "y": "0.000",
+        "z": "0.000",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "notes": "Raw UnitConfigName=WorldWarpHole."
+      },
+      {
+        "node_id": "MoonWorldHomeStage::stage_change::Go::raw",
+        "kingdom": "Moon Kingdom",
+        "stage": "MoonWorldHomeStage",
+        "stage_display_name": "Moon Kingdom",
+        "area_scope": "overworld",
+        "node_type": "stage_change",
+        "source": "StageData",
+        "entrance_id": "Go",
+        "side": "raw",
+        "obj_id": "obj97131",
+        "display_name": "Stage Change Go",
+        "x": "0.000",
+        "y": "0.000",
+        "z": "0.000",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "notes": "Raw UnitConfigName=WorldWarpHole."
       }
     ],
     "routeEdges": [
@@ -2052,6 +2088,66 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0786",
+        "kingdom": "Moon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "MoonWorldHomeStage::checkpoint::obj1348",
+        "to_node_id": "MoonWorldHomeStage::stage_change::Come::raw",
+        "requirement_expr": "Frog | WallJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0787",
+        "kingdom": "Moon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "MoonWorldHomeStage::stage_change::Come::raw",
+        "to_node_id": "MoonWorldHomeStage::checkpoint::obj1348",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0786.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0788",
+        "kingdom": "Moon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "MoonWorldHomeStage::checkpoint::obj345",
+        "to_node_id": "MoonWorldHomeStage::stage_change::Go::raw",
+        "requirement_expr": "WallJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0792",
+        "kingdom": "Moon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "MoonWorldHomeStage::stage_change::Go::raw",
+        "to_node_id": "MoonWorldHomeStage::checkpoint::obj345",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0788.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -2099,9 +2195,9 @@
         "shine_info_object_name": "音符オブジェ(1つ目)",
         "shine_info_scenario_name": "月面で 音符集め",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:263:576:taking_notes_on_the_moon_s_surface",
         "difficulty": "casual;advanced;expert;expert",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:263:576:taking_notes_on_the_moon_s_surface"
       },
       {
         "moon_id": "MoonWorldCaptureParadeStage:246:595",
@@ -2147,9 +2243,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "クッパ石像の下に",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldCaptureParadeStage:246:595",
         "difficulty": "casual;glitched",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldCaptureParadeStage:246:595"
       },
       {
         "moon_id": "MoonWorldHomeStage:937:577",
@@ -2195,9 +2291,9 @@
         "shine_info_object_name": "帽子ひっかけポイント",
         "shine_info_scenario_name": "白い塔の先っちょ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:937:577",
         "difficulty": "casual;casual;advanced;expert;expert;advanced;advanced;expert",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:937:577"
       },
       {
         "moon_id": "MoonWorldHomeStage:1039:578",
@@ -2243,9 +2339,9 @@
         "shine_info_object_name": "フィギュアウォーキングNpc",
         "shine_info_scenario_name": "月面で ウォーキング！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1039:578",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1039:578"
       },
       {
         "moon_id": "MoonWorldHomeStage:461:579",
@@ -2291,9 +2387,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "月の上で かがやいて",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:461:579",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:461:579"
       },
       {
         "moon_id": "MoonWorldHomeStage:877:580",
@@ -2339,9 +2435,9 @@
         "shine_info_object_name": "スフィンクスクイズ",
         "shine_info_scenario_name": "ご立派！ 月のクイズ大正解",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:877:580",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:877:580"
       },
       {
         "moon_id": "MoonWorldHomeStage:997:581",
@@ -2387,9 +2483,9 @@
         "shine_info_object_name": "世界旅行ピーチ",
         "shine_info_scenario_name": "月の国で ピーチ姫",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:997:581",
         "difficulty": "casual;casual;advanced;expert;expert;advanced;advanced;expert",
-        "option_scenarios": "1,2,3"
+        "option_scenarios": "1,2,3",
+        "__editor_id": "MoonWorldHomeStage:997:581"
       },
       {
         "moon_id": "MoonWorldHomeStage:155:582",
@@ -2435,9 +2531,9 @@
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "ガケっぷちの宝箱",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:155:582",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:155:582"
       },
       {
         "moon_id": "MoonWorldHomeStage:217:583",
@@ -2483,9 +2579,9 @@
         "shine_info_object_name": "キック小石",
         "shine_info_scenario_name": "キック！ 月の石コロ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:217:583",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:217:583"
       },
       {
         "moon_id": "MoonWorldHomeStage:753:584",
@@ -2531,9 +2627,9 @@
         "shine_info_object_name": "帽子掛け（タイマー）",
         "shine_info_scenario_name": "月の国で チクタク・アスレチック １",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:753:584",
         "difficulty": "casual;advanced;advanced",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:753:584"
       },
       {
         "moon_id": "MoonWorldHomeStage:953:585",
@@ -2579,9 +2675,9 @@
         "shine_info_object_name": "ウサギ",
         "shine_info_scenario_name": "月で つかまえたピョン！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:953:585",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:953:585"
       },
       {
         "moon_id": "MoonWorldHome2DZone:32:586",
@@ -2627,9 +2723,9 @@
         "shine_info_object_name": "シャインドット_2D",
         "shine_info_scenario_name": "ガケ沿いを 進んで",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHome2DZone:32:586",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHome2DZone:32:586"
       },
       {
         "moon_id": "MoonWorldCaptureParadeKillerZone:296:594",
@@ -2675,9 +2771,9 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "砲台の上に",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldCaptureParadeKillerZone:296:594",
         "difficulty": "casual;advanced;advanced;expert",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldCaptureParadeKillerZone:296:594"
       },
       {
         "moon_id": "MoonWorldCaptureParadeLavaPillarZone:460:596",
@@ -2723,9 +2819,9 @@
         "shine_info_object_name": "鍵付き宝箱",
         "shine_info_scenario_name": "マグマの穴の中",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldCaptureParadeLavaPillarZone:460:596",
-        "difficulty": "casual;advanced",
-        "option_scenarios": ""
+        "difficulty": "casual;expert",
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldCaptureParadeLavaPillarZone:460:596"
       },
       {
         "moon_id": "MoonWorldCaptureParadeKillerZone:199:597",
@@ -2771,9 +2867,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "防壁を まわりこんで",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldCaptureParadeKillerZone:199:597",
         "difficulty": "casual;advanced;advanced",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldCaptureParadeKillerZone:199:597"
       },
       {
         "moon_id": "MoonWorldCaptureParadeStage:345:598:fly_to_the_treasure_chest_and_back",
@@ -2819,9 +2915,9 @@
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "宝箱まで とんで もどって",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldCaptureParadeStage:345:598:fly_to_the_treasure_chest_and_back",
         "difficulty": "casual",
-        "option_scenarios": "1,2,3,4,5"
+        "option_scenarios": "1,2,3,4,5",
+        "__editor_id": "MoonWorldCaptureParadeStage:345:598:fly_to_the_treasure_chest_and_back"
       },
       {
         "moon_id": "MoonWorldWeddingRoomStage:187:593",
@@ -2867,9 +2963,9 @@
         "shine_info_object_name": "シャイン",
         "shine_info_scenario_name": "天井裏で みーつけた！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldWeddingRoomStage:187:593",
         "difficulty": "casual;casual;advanced;expert;expert;advanced;advanced;expert",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldWeddingRoomStage:187:593"
       },
       {
         "moon_id": "MoonWorldSphinxRoom:92:599",
@@ -2915,9 +3011,9 @@
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "スフィン・クイズの かくし金庫",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldSphinxRoom:92:599",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldSphinxRoom:92:599"
       },
       {
         "moon_id": "MoonAthleticExStage:53:601",
@@ -2963,9 +3059,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "大きなふりこを渡って",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonAthleticExStage:53:601",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonAthleticExStage:53:601"
       },
       {
         "moon_id": "MoonAthleticExStage:82:602",
@@ -3011,9 +3107,9 @@
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "ふりこの上のふりこ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonAthleticExStage:82:602",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonAthleticExStage:82:602"
       },
       {
         "moon_id": "Galaxy2DExStage:650:603",
@@ -3059,9 +3155,9 @@
         "shine_info_object_name": "シャインドット_2D",
         "shine_info_scenario_name": "センター・オブ・ギャラクシー",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "Galaxy2DExStage:650:603",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "Galaxy2DExStage:650:603"
       },
       {
         "moon_id": "Galaxy2DExStage:864:604",
@@ -3107,9 +3203,9 @@
         "shine_info_object_name": "シャインドット_2D",
         "shine_info_scenario_name": "ギャラクシーの果て",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "Galaxy2DExStage:864:604",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "Galaxy2DExStage:864:604"
       },
       {
         "moon_id": "MoonWorldHomeStage:1052:671",
@@ -3124,7 +3220,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "MoonWorldHomeStage::checkpoint::obj1348",
         "state_requirement_expr": "",
-        "requirement_expr": "Frog | WallJump | (Vault & NeutralThrow) | (Vault & GroundPound & UpThrow) | (Vault & Dive & UpThrow) | (Backflip & UpThrow & Vault) | (SideFlip & Vault) | (Spin & UpThrow & Vault)",
+        "requirement_expr": "Frog | WallJump | (Vault & NeutralThrow) | (Vault & GroundPound & UpThrow) | (Vault & Dive & UpThrow) | (Backflip & UpThrow & Vault) | (SideFlip & Vault & UpThrow) | (Spin & UpThrow & Vault)",
         "world_peace_token": "WorldPeace_Moon",
         "moon_rock_token": "MoonRockActive_Moon",
         "access_type": "primary",
@@ -3155,9 +3251,9 @@
         "shine_info_object_name": "シャインチップ全取得監視者",
         "shine_info_scenario_name": "集めて！ 月のムーンチップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1052:671",
         "difficulty": "casual;casual;advanced;expert;expert;advanced;advanced;expert",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1052:671"
       },
       {
         "moon_id": "MoonWorldHomeStage:1041:672",
@@ -3203,9 +3299,9 @@
         "shine_info_object_name": "忠犬専用ここ掘れポイント",
         "shine_info_scenario_name": "月で 見つけたワン！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1041:672",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1041:672"
       },
       {
         "moon_id": "MoonWorldHomeStage:1062:693",
@@ -3251,9 +3347,9 @@
         "shine_info_object_name": "コソコソくん(月ワールドクレーター)",
         "shine_info_scenario_name": "クレーターを うごめくモノ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1062:693",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1062:693"
       },
       {
         "moon_id": "MoonWorldHomeStage:1064:707",
@@ -3299,9 +3395,9 @@
         "shine_info_object_name": "駆けっこ開始Npc",
         "shine_info_scenario_name": "月の国 レギュラーカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1064:707",
         "difficulty": "casual;advanced",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1064:707"
       },
       {
         "moon_id": "MoonWorldHomeStage:1078:714",
@@ -3347,9 +3443,9 @@
         "shine_info_object_name": "フィギュアウォーキングNpc",
         "shine_info_scenario_name": "もっと！ 月面で ウォーキング",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1078:714",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1078:714"
       },
       {
         "moon_id": "MoonWorldHomeStage:1125:798",
@@ -3395,9 +3491,9 @@
         "shine_info_object_name": "帽子掛け（タイマー）",
         "shine_info_scenario_name": "月の国で チクタク・アスレチック ２",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1125:798",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1125:798"
       },
       {
         "moon_id": "MoonWorldHomeStage:1199:810",
@@ -3443,9 +3539,9 @@
         "shine_info_object_name": "シャイン【月の石追加版】",
         "shine_info_scenario_name": "絶壁の裏に こっそりと",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1199:810",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1199:810"
       },
       {
         "moon_id": "MoonWorldHomeStage:1216:811",
@@ -3491,9 +3587,9 @@
         "shine_info_object_name": "シャイン【月の石追加版】",
         "shine_info_scenario_name": "カエルで 大ジャンプ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1216:811",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1216:811"
       },
       {
         "moon_id": "MoonWorldHome2DZone:139:828",
@@ -3539,9 +3635,9 @@
         "shine_info_object_name": "音符オブジェ2D(1つ目)_2D",
         "shine_info_scenario_name": "ふわふわ重力で 音符集め",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHome2DZone:139:828",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHome2DZone:139:828"
       },
       {
         "moon_id": "MoonWorldHomeStage:1280:899",
@@ -3587,9 +3683,9 @@
         "shine_info_object_name": "駆けっこ開始Npc",
         "shine_info_scenario_name": "月の国 マスターカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1280:899",
         "difficulty": "casual;advanced",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1280:899"
       },
       {
         "moon_id": "MoonWorldHomeStage:944:911",
@@ -3635,9 +3731,9 @@
         "shine_info_object_name": "世界旅行NPC",
         "shine_info_scenario_name": "月の国まで 来たっすな！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:944:911",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:944:911"
       },
       {
         "moon_id": "MoonWorldHomeStage:1391:1000",
@@ -3683,9 +3779,9 @@
         "shine_info_object_name": "キノピオ隊長",
         "shine_info_scenario_name": "ありがとう！ キノピオ隊長",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1391:1000",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1391:1000"
       },
       {
         "moon_id": "MoonWorldHomeStage:1399:1049",
@@ -3731,9 +3827,9 @@
         "shine_info_object_name": "月の鳥",
         "shine_info_scenario_name": "なぞの飛行物体",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldHomeStage:1399:1049",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldHomeStage:1399:1049"
       },
       {
         "moon_id": "MoonWorldShopRoom:21:1157",
@@ -3779,9 +3875,9 @@
         "shine_info_object_name": "ショップ店員",
         "shine_info_scenario_name": "ハニークレーターで お買い物",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldShopRoom:21:1157",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldShopRoom:21:1157"
       },
       {
         "moon_id": "MoonWorldWeddingRoomZone:260:1164",
@@ -3827,9 +3923,9 @@
         "shine_info_object_name": "雪の民",
         "shine_info_scenario_name": "おだいじに！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldWeddingRoomZone:260:1164",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldWeddingRoomZone:260:1164"
       },
       {
         "moon_id": "MoonWorldWeddingRoomZone:361:1165",
@@ -3875,9 +3971,9 @@
         "shine_info_object_name": "ヒント写真",
         "shine_info_scenario_name": "月の国で見つけた お宝写真",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "__editor_id": "MoonWorldWeddingRoomZone:361:1165",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "",
+        "__editor_id": "MoonWorldWeddingRoomZone:361:1165"
       }
     ],
     "logicTokens": [
@@ -4095,6 +4191,18 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Climb",
+        "notes": ""
+      },
+      {
+        "token": "Swing",
+        "token_type": "ability",
+        "display_name": "Swing",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swing",
         "notes": ""
       },
       {
@@ -4664,13 +4772,13 @@
       {
         "token": "StatueKoopa",
         "token_type": "capture",
-        "display_name": "Bowser Statue",
+        "display_name": "Jizo",
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Bowser Statue",
+        "aliases": "Jizo; Bowser Statue",
         "notes": ""
       },
       {
@@ -4770,6 +4878,66 @@
         "notes": ""
       },
       {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
         "token": "WorldPeace_Cap",
         "token_type": "event",
         "display_name": "WorldPeace_Cap",
@@ -4838,7 +5006,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj3428.",
         "notes": "See progression_events.csv for Sand Kingdom."
       },
       {
@@ -4862,7 +5030,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj5126.",
         "notes": "See progression_events.csv for Wooded Kingdom."
       },
       {
@@ -5006,7 +5174,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj583.",
         "notes": "See progression_events.csv for Snow Kingdom."
       },
       {
@@ -5102,7 +5270,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj144.",
         "notes": "See progression_events.csv for Moon Kingdom."
       },
       {
@@ -5211,7 +5379,7 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Cap Kingdom",
-        "notes": "Requires being able to reach the Cap Kingdom (e.g. a hint-art moon that depends on another kingdom)."
+        "notes": "Requires being able to reach the Cap Kingdom. (e.g. a hint-art moon that depends on another kingdom)."
       },
       {
         "token": "KingdomAccess_Cascade",
@@ -5355,7 +5523,7 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Bowser's Kingdom",
-        "notes": "Requires being able to reach Bowser's Kingdom."
+        "notes": "Requires being able to reach the Bowser's Kingdom."
       },
       {
         "token": "KingdomAccess_Moon",
@@ -5406,76 +5574,76 @@
         "notes": "Requires being able to reach the Darker Side."
       },
       {
-        "token": "Swing",
+        "token": "MoonLowGravity",
         "token_type": "ability",
-        "display_name": "Swing",
+        "display_name": "Moon Kingdom Low Gravity",
         "category": "Movement",
         "prerequisite": "kNoPrerequisite",
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Swing",
-        "notes": ""
+        "aliases": "Moon Low Gravity; Low Gravity",
+        "notes": "Moon Kingdom's reduced gravity. Only meaningful inside Moon Kingdom, so only that kingdom's routes should ever require it."
       },
       {
-        "token": "Turnip",
-        "token_type": "capture",
-        "display_name": "Turnip",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
+        "token": "Swim",
+        "token_type": "ability",
+        "display_name": "Swim",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Turnip; Radish",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+        "aliases": "Swim",
+        "notes": "Swimming as Mario, on the surface as well as underwater. Without it, entering water bubbles him back to safe ground. Water captures (Cheep Cheep, Gushen, Lakitu, Yoshi) are unaffected and do not need it."
       },
       {
-        "token": "Nut",
-        "token_type": "capture",
-        "display_name": "Nut",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
+        "token": "Grab",
+        "token_type": "ability",
+        "display_name": "Grab",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Nut; GrowPlantSeed",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+        "aliases": "Grab; Carry",
+        "notes": "Picking up and carrying objects - seeds, nuts, bags and the like."
       },
       {
-        "token": "Jaxi",
-        "token_type": "capture",
-        "display_name": "Jaxi",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
+        "token": "NpcTalk",
+        "token_type": "ability",
+        "display_name": "Talk to NPCs",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Jaxi; SphinxRide",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+        "aliases": "Talk to NPCs; NpcTalk; Talk",
+        "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
       },
       {
-        "token": "Bike",
-        "token_type": "capture",
-        "display_name": "Bike",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
+        "token": "Pipe2D",
+        "token_type": "ability",
+        "display_name": "Enter 2D Pipes",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Bike; Motorcycle",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+        "aliases": "Enter 2D Pipes; Pipe2D; 2D Pipe; DokanChange2D",
+        "notes": "Going flat: the pipes built from the DokanChange2D archive, which are the only way into an in-stage 2D section. Pipes back out of 2D are never withheld, so anything reached only through a 2D section needs this."
       },
       {
-        "token": "RocketFlower",
-        "token_type": "capture",
-        "display_name": "Rocket Flower",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
+        "token": "TimerChallenge",
+        "token_type": "ability",
+        "display_name": "Timer Challenges",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Rocket Flower",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+        "aliases": "Timer Challenges; TimerChallenge; P-Switch; Scarecrow",
+        "notes": "Every timed challenge: P-Switches (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer) and scarecrows (CapRack), which all share one AppearSwitchTimer. Without it the timer expires the frame it starts, so anything that needs the timed objects to stay up needs this."
       }
     ],
     "rooms": [
@@ -5487,8 +5655,8 @@
         "area_scope": "subarea",
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
-        "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "1",
+        "active_entrance_link_count": "1",
+        "excluded_entrance_link_count": "0",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
       },
@@ -5500,8 +5668,8 @@
         "area_scope": "subarea",
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
-        "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "1",
+        "active_entrance_link_count": "1",
+        "excluded_entrance_link_count": "0",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
       },
@@ -5527,7 +5695,7 @@
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
         "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "0",
+        "excluded_entrance_link_count": "1",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link. Includes embedded map MoonWorldCaptureParadeKillerZone. Includes embedded map MoonWorldCaptureParadeLavaPillarZone."
       },
@@ -5539,8 +5707,8 @@
         "area_scope": "overworld",
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
-        "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "4",
+        "active_entrance_link_count": "4",
+        "excluded_entrance_link_count": "2",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link. Includes embedded map MoonWorldHome2DZone."
       },
@@ -5552,8 +5720,8 @@
         "area_scope": "subarea",
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
-        "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "1",
+        "active_entrance_link_count": "1",
+        "excluded_entrance_link_count": "0",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
       },
@@ -5565,8 +5733,8 @@
         "area_scope": "subarea",
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
-        "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "1",
+        "active_entrance_link_count": "1",
+        "excluded_entrance_link_count": "0",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link."
       },
@@ -5579,7 +5747,7 @@
         "listed_in_stage_warp": "true",
         "has_shine_db_moons": "true",
         "active_entrance_link_count": "0",
-        "excluded_entrance_link_count": "0",
+        "excluded_entrance_link_count": "1",
         "has_raw_stage_data_points": "true",
         "notes": "Every listed room gets a stage_start node even when EntranceDB has no active link. Includes embedded map MoonWorldWeddingRoomZone."
       }
@@ -5612,6 +5780,18 @@
     ],
     "scenarioMetadata": [
       {
+        "stage": "MoonWorldHomeStage",
+        "kingdom": "Moon Kingdom",
+        "stage_display_name": "Moon Kingdom",
+        "area_scope": "overworld",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "MoonWorldHomeStageMap.szs",
+        "source_file": "ScenarioInfo.byml",
+        "notes": "ScenarioInfo type=Array; inspect manually if needed."
+      },
+      {
         "stage": "Galaxy2DExStage",
         "kingdom": "Moon Kingdom",
         "stage_display_name": "8-Bit Galaxy",
@@ -5632,126 +5812,6 @@
         "active_layers": "",
         "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
         "source_archive": "MoonAthleticExStageMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "MoonWorldBasementStage",
-        "kingdom": "Moon Kingdom",
-        "stage_display_name": "Moon Cave Escape",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "MoonWorldBasementStageMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "MoonWorldCaptureParadeStage",
-        "kingdom": "Moon Kingdom",
-        "stage_display_name": "Underground Caverns",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "",
-        "source_archive": "MoonWorldCaptureParadeKillerZoneMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "MoonWorldCaptureParadeStage",
-        "kingdom": "Moon Kingdom",
-        "stage_display_name": "Underground Caverns",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "",
-        "source_archive": "MoonWorldCaptureParadeLavaPillarZoneMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "MoonWorldCaptureParadeStage",
-        "kingdom": "Moon Kingdom",
-        "stage_display_name": "Underground Caverns",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "MoonWorldCaptureParadeStageMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "MoonWorldHomeStage",
-        "kingdom": "Moon Kingdom",
-        "stage_display_name": "Moon Kingdom",
-        "area_scope": "overworld",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "",
-        "source_archive": "MoonWorldHome2DZoneMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "MoonWorldHomeStage",
-        "kingdom": "Moon Kingdom",
-        "stage_display_name": "Moon Kingdom",
-        "area_scope": "overworld",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "MoonWorldHomeStageMap.szs",
-        "source_file": "ScenarioInfo.byml",
-        "notes": "ScenarioInfo type=Array; inspect manually if needed."
-      },
-      {
-        "stage": "MoonWorldShopRoom",
-        "kingdom": "Moon Kingdom",
-        "stage_display_name": "Crazy Cap Store",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "",
-        "source_archive": "MoonWorldShopRoomMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "MoonWorldSphinxRoom",
-        "kingdom": "Moon Kingdom",
-        "stage_display_name": "Moon Kingdom Treasure Vault",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "",
-        "source_archive": "MoonWorldSphinxRoomMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "MoonWorldWeddingRoomStage",
-        "kingdom": "Moon Kingdom",
-        "stage_display_name": "Wedding Room",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "source_archive": "MoonWorldWeddingRoomStageMap.szs",
-        "source_file": "",
-        "notes": "No ScenarioInfo.byml in archive."
-      },
-      {
-        "stage": "MoonWorldWeddingRoomStage",
-        "kingdom": "Moon Kingdom",
-        "stage_display_name": "Wedding Room",
-        "area_scope": "subarea",
-        "scenario_no": "",
-        "active_layers": "",
-        "stage_map_indices": "",
-        "source_archive": "MoonWorldWeddingRoomZoneMap.szs",
         "source_file": "",
         "notes": "No ScenarioInfo.byml in archive."
       },
@@ -5816,6 +5876,18 @@
         "notes": "No ScenarioInfo.byml in archive."
       },
       {
+        "stage": "MoonWorldBasementStage",
+        "kingdom": "Moon Kingdom",
+        "stage_display_name": "Moon Cave Escape",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "MoonWorldBasementStageMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
         "stage": "MoonWorldCaptureParadeStage",
         "kingdom": "Moon Kingdom",
         "stage_display_name": "Underground Caverns",
@@ -5824,6 +5896,30 @@
         "active_layers": "",
         "stage_map_indices": "",
         "source_archive": "MoonWorldCaptureParadeBullZoneMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "MoonWorldCaptureParadeStage",
+        "kingdom": "Moon Kingdom",
+        "stage_display_name": "Underground Caverns",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "",
+        "source_archive": "MoonWorldCaptureParadeKillerZoneMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "MoonWorldCaptureParadeStage",
+        "kingdom": "Moon Kingdom",
+        "stage_display_name": "Underground Caverns",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "",
+        "source_archive": "MoonWorldCaptureParadeLavaPillarZoneMap.szs",
         "source_file": "",
         "notes": "No ScenarioInfo.byml in archive."
       },
@@ -5850,50 +5946,286 @@
         "source_archive": "MoonWorldCaptureParadeMeganeZoneMap.szs",
         "source_file": "",
         "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "MoonWorldCaptureParadeStage",
+        "kingdom": "Moon Kingdom",
+        "stage_display_name": "Underground Caverns",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "MoonWorldCaptureParadeStageMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "MoonWorldHomeStage",
+        "kingdom": "Moon Kingdom",
+        "stage_display_name": "Moon Kingdom",
+        "area_scope": "overworld",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "",
+        "source_archive": "MoonWorldHome2DZoneMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "MoonWorldShopRoom",
+        "kingdom": "Moon Kingdom",
+        "stage_display_name": "Crazy Cap Store",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "",
+        "source_archive": "MoonWorldShopRoomMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "MoonWorldSphinxRoom",
+        "kingdom": "Moon Kingdom",
+        "stage_display_name": "Moon Kingdom Treasure Vault",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "",
+        "source_archive": "MoonWorldSphinxRoomMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "MoonWorldWeddingRoomStage",
+        "kingdom": "Moon Kingdom",
+        "stage_display_name": "Wedding Room",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "source_archive": "MoonWorldWeddingRoomStageMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
+      },
+      {
+        "stage": "MoonWorldWeddingRoomStage",
+        "kingdom": "Moon Kingdom",
+        "stage_display_name": "Wedding Room",
+        "area_scope": "subarea",
+        "scenario_no": "",
+        "active_layers": "",
+        "stage_map_indices": "",
+        "source_archive": "MoonWorldWeddingRoomZoneMap.szs",
+        "source_file": "",
+        "notes": "No ScenarioInfo.byml in archive."
       }
     ],
     "captureGates": [],
     "captureGateObjects": [],
     "nodePositions": {
-      "Galaxy2DExStage::stage_change::dot00::raw": {
-        "x": 120,
-        "y": 1100
+      "MoonWorldHome2DZone::start": {
+        "x": 1724,
+        "y": 796
       },
-      "Galaxy2DExStage::stage_change::dot01::raw": {
-        "x": 1620,
-        "y": 1100
+      "MoonWorldHomeStage::checkpoint::obj1006": {
+        "x": 543,
+        "y": 1432
       },
-      "Galaxy2DExStage::start": {
-        "x": 245.71428571428572,
-        "y": 252.85714285714283
+      "MoonWorldHomeStage::checkpoint::obj127": {
+        "x": 428,
+        "y": 1962
       },
-      "Galaxy2DExStage::entrance::dot00::sub_near": {
-        "x": 604.6666666666667,
-        "y": 669.3333333333333
+      "MoonWorldHomeStage::checkpoint::obj1348": {
+        "x": 428,
+        "y": 2598
       },
-      "Galaxy2DExStage::entrance::dot01::sub_far": {
-        "x": 976.6666666666665,
-        "y": 672
+      "MoonWorldHomeStage::checkpoint::obj345": {
+        "x": 543,
+        "y": 902
       },
-      "MoonAthleticExStage::stage_change::moon::raw": {
-        "x": 120,
-        "y": 1100
+      "MoonWorldHomeStage::entrance::ddd::home_in": {
+        "x": 428,
+        "y": 414
       },
-      "MoonAthleticExStage::stage_change::moon_exit::raw": {
-        "x": 261.3612565445026,
-        "y": 120
+      "MoonWorldHomeStage::entrance::dot00::home_in": {
+        "x": 658,
+        "y": 414
       },
-      "MoonAthleticExStage::start": {
-        "x": 78.18181785854918,
-        "y": 402.04545497263143
+      "MoonWorldHomeStage::entrance::ggg::home_in": {
+        "x": 658,
+        "y": 1586
       },
-      "MoonAthleticExStage::entrance::moon::sub_near": {
-        "x": 350,
-        "y": 1100
+      "MoonWorldHomeStage::entrance::moon::home_in": {
+        "x": 428,
+        "y": 1056
       },
-      "MoonAthleticExStage::entrance::moon_exit::sub_far": {
-        "x": 491.3612565445026,
-        "y": 120
+      "MoonWorldHomeStage::stage_change::MoonWorldRacemanStart::raw": {
+        "x": 920,
+        "y": 3376
+      },
+      "MoonWorldHomeStage::stage_change::aaa::raw": {
+        "x": 100,
+        "y": 3080
+      },
+      "MoonWorldHomeStage::stage_change::bbb::raw": {
+        "x": 510,
+        "y": 3080
+      },
+      "MoonWorldHomeStage::stage_change::ccc::raw": {
+        "x": 920,
+        "y": 3080
+      },
+      "MoonWorldHomeStage::stage_change::ddd::raw": {
+        "x": 100,
+        "y": 3376
+      },
+      "MoonWorldHomeStage::stage_change::dot00::raw": {
+        "x": 1330,
+        "y": 3376
+      },
+      "MoonWorldHomeStage::stage_change::dot01::raw": {
+        "x": 1740,
+        "y": 3376
+      },
+      "MoonWorldHomeStage::stage_change::fff::raw": {
+        "x": 1740,
+        "y": 3080
+      },
+      "MoonWorldHomeStage::stage_change::ggg::raw": {
+        "x": 510,
+        "y": 3376
+      },
+      "MoonWorldHomeStage::stage_change::moon::raw": {
+        "x": 2150,
+        "y": 3376
+      },
+      "MoonWorldHomeStage::stage_change::moon_exit::raw": {
+        "x": 2560,
+        "y": 3376
+      },
+      "MoonWorldHomeStage::stage_change::vvv::raw": {
+        "x": 2560,
+        "y": 3080
+      },
+      "MoonWorldHomeStage::start": {
+        "x": 543,
+        "y": 260
+      },
+      "MoonWorldHomeStage::event::MoonRockActive_Moon": {
+        "x": 658,
+        "y": 1056
+      },
+      "MoonWorldHomeStage::entrance::bbb::home_in": {
+        "x": 428,
+        "y": 1586
+      },
+      "MoonWorldHomeStage::entrance::aaa::home_in": {
+        "x": 428,
+        "y": 2116
+      },
+      "MoonWorldHomeStage::stage_change::Come::raw": {
+        "x": 457.787610619469,
+        "y": 2834.047875568461
+      },
+      "MoonWorldHomeStage::stage_change::Go::raw": {
+        "x": 959.7948017355011,
+        "y": 735.020423714851
+      },
+      "moon:MoonWorldHomeStage:263:576:taking_notes_on_the_moon_s_surface": {
+        "x": 100,
+        "y": 1012
+      },
+      "moon:MoonWorldHomeStage:937:577": {
+        "x": 768,
+        "y": 2708
+      },
+      "moon:MoonWorldHomeStage:1039:578": {
+        "x": 998,
+        "y": 424
+      },
+      "moon:MoonWorldHomeStage:461:579": {
+        "x": 100,
+        "y": 100
+      },
+      "moon:MoonWorldHomeStage:877:580": {
+        "x": 100,
+        "y": 1434
+      },
+      "moon:MoonWorldHomeStage:997:581": {
+        "x": 100,
+        "y": 2708
+      },
+      "moon:MoonWorldHomeStage:155:582": {
+        "x": 100,
+        "y": 796
+      },
+      "moon:MoonWorldHomeStage:217:583": {
+        "x": 998,
+        "y": 850
+      },
+      "moon:MoonWorldHomeStage:753:584": {
+        "x": 998,
+        "y": 208
+      },
+      "moon:MoonWorldHomeStage:953:585": {
+        "x": 100,
+        "y": 904
+      },
+      "moon:MoonWorldHome2DZone:32:586": {
+        "x": 1396,
+        "y": 798
+      },
+      "moon:MoonWorldHomeStage:1052:671": {
+        "x": 768,
+        "y": 2600
+      },
+      "moon:MoonWorldHomeStage:1041:672": {
+        "x": 100,
+        "y": 208
+      },
+      "moon:MoonWorldHomeStage:1062:693": {
+        "x": 100,
+        "y": 316
+      },
+      "moon:MoonWorldHomeStage:1064:707": {
+        "x": 100,
+        "y": 2600
+      },
+      "moon:MoonWorldHomeStage:1078:714": {
+        "x": 100,
+        "y": 424
+      },
+      "moon:MoonWorldHomeStage:1125:798": {
+        "x": 998,
+        "y": 958
+      },
+      "moon:MoonWorldHomeStage:1199:810": {
+        "x": 100,
+        "y": 1964
+      },
+      "moon:MoonWorldHomeStage:1216:811": {
+        "x": 768,
+        "y": 1964
+      },
+      "moon:MoonWorldHome2DZone:139:828": {
+        "x": 2064,
+        "y": 798
+      },
+      "moon:MoonWorldHomeStage:1280:899": {
+        "x": 768,
+        "y": 2492
+      },
+      "moon:MoonWorldHomeStage:944:911": {
+        "x": 998,
+        "y": 100
+      },
+      "moon:MoonWorldHomeStage:1391:1000": {
+        "x": 998,
+        "y": 316
+      },
+      "moon:MoonWorldHomeStage:1399:1049": {
+        "x": 100,
+        "y": 2492
       },
       "MoonWorldBasementStage::stage_change::ClashStart1::raw": {
         "x": 1572.029520295203,
@@ -5902,182 +6234,6 @@
       "MoonWorldBasementStage::start": {
         "x": 110,
         "y": 360
-      },
-      "MoonWorldCaptureParadeKillerZone::start": {
-        "x": 653.212360547021,
-        "y": 343.72823595419095
-      },
-      "MoonWorldCaptureParadeLavaPillarZone::start": {
-        "x": 0,
-        "y": 800.6862590326092
-      },
-      "MoonWorldCaptureParadeStage::stage_change::bbb::raw": {
-        "x": 1620,
-        "y": 120
-      },
-      "MoonWorldCaptureParadeStage::stage_change::ccc::raw": {
-        "x": 189.7261075207688,
-        "y": 1069.9435818192273
-      },
-      "MoonWorldCaptureParadeStage::stage_change::vvv::raw": {
-        "x": 154.5460589520695,
-        "y": 1220
-      },
-      "MoonWorldCaptureParadeStage::start": {
-        "x": 110,
-        "y": 360
-      },
-      "MoonWorldHome2DZone::start": {
-        "x": 1045.9821662678878,
-        "y": 591.068493150685
-      },
-      "MoonWorldHomeStage::checkpoint::obj1006": {
-        "x": 543,
-        "y": 1378
-      },
-      "MoonWorldHomeStage::checkpoint::obj127": {
-        "x": 428,
-        "y": 1908
-      },
-      "MoonWorldHomeStage::checkpoint::obj1348": {
-        "x": 497.5121951219512,
-        "y": 2407.0731707317073
-      },
-      "MoonWorldHomeStage::checkpoint::obj345": {
-        "x": 460.5379609544468,
-        "y": 846.9154013015184
-      },
-      "MoonWorldHomeStage::entrance::ddd::home_in": {
-        "x": 348.7839439655172,
-        "y": 0
-      },
-      "MoonWorldHomeStage::entrance::dot00::home_in": {
-        "x": 817.4705008219224,
-        "y": 527.033157406842
-      },
-      "MoonWorldHomeStage::entrance::ggg::home_in": {
-        "x": 718.2740060466609,
-        "y": 1523.2328516293878
-      },
-      "MoonWorldHomeStage::entrance::moon::home_in": {
-        "x": 25.96437759319022,
-        "y": 653.2000428853976
-      },
-      "MoonWorldHomeStage::stage_change::MoonWorldRacemanStart::raw": {
-        "x": 100,
-        "y": 3216
-      },
-      "MoonWorldHomeStage::stage_change::aaa::raw": {
-        "x": 100,
-        "y": 2920
-      },
-      "MoonWorldHomeStage::stage_change::bbb::raw": {
-        "x": 510,
-        "y": 2920
-      },
-      "MoonWorldHomeStage::stage_change::ccc::raw": {
-        "x": 920,
-        "y": 2920
-      },
-      "MoonWorldHomeStage::stage_change::ddd::raw": {
-        "x": 2150,
-        "y": 2920
-      },
-      "MoonWorldHomeStage::stage_change::dot00::raw": {
-        "x": 510,
-        "y": 3216
-      },
-      "MoonWorldHomeStage::stage_change::dot01::raw": {
-        "x": 920,
-        "y": 3216
-      },
-      "MoonWorldHomeStage::stage_change::fff::raw": {
-        "x": 1330,
-        "y": 2920
-      },
-      "MoonWorldHomeStage::stage_change::ggg::raw": {
-        "x": 2560,
-        "y": 2920
-      },
-      "MoonWorldHomeStage::stage_change::moon::raw": {
-        "x": 1330,
-        "y": 3216
-      },
-      "MoonWorldHomeStage::stage_change::moon_exit::raw": {
-        "x": 1740,
-        "y": 3216
-      },
-      "MoonWorldHomeStage::stage_change::vvv::raw": {
-        "x": 1740,
-        "y": 2920
-      },
-      "MoonWorldHomeStage::start": {
-        "x": 543,
-        "y": 260
-      },
-      "MoonWorldHomeStage::event::MoonRockActive_Moon": {
-        "x": 1396,
-        "y": 1378
-      },
-      "MoonWorldShopRoom::stage_change::ddd::raw": {
-        "x": 120,
-        "y": 120
-      },
-      "MoonWorldShopRoom::start": {
-        "x": 342.9545478213363,
-        "y": 363.4090909437269
-      },
-      "MoonWorldShopRoom::entrance::ddd::sub_far": {
-        "x": 350,
-        "y": 120
-      },
-      "MoonWorldShopRoom::entrance::ddd::sub_near": {
-        "x": 120,
-        "y": 240
-      },
-      "MoonWorldSphinxRoom::stage_change::ggg::raw": {
-        "x": 980,
-        "y": 120
-      },
-      "MoonWorldSphinxRoom::start": {
-        "x": 742.5000028274953,
-        "y": 122.49999893829226
-      },
-      "MoonWorldSphinxRoom::entrance::ggg::sub_far": {
-        "x": 210,
-        "y": 560
-      },
-      "MoonWorldSphinxRoom::entrance::ggg::sub_near": {
-        "x": 211.33333333333334,
-        "y": 160
-      },
-      "MoonWorldWeddingRoomStage::stage_change::aaa::raw": {
-        "x": 1425.5555555555554,
-        "y": 1100
-      },
-      "MoonWorldWeddingRoomStage::stage_change::fff::raw": {
-        "x": 1655.5555555555554,
-        "y": 1012.8166423215224
-      },
-      "MoonWorldWeddingRoomStage::start": {
-        "x": 932.6666666666667,
-        "y": 926.6666666666667
-      },
-      "MoonWorldWeddingRoomZone::stage_change::fff::raw": {
-        "x": 1195.5555555555554,
-        "y": 1012.8166423215224
-      },
-      "MoonWorldWeddingRoomZone::stage_change::kkk::raw": {
-        "x": 1231.111111111111,
-        "y": 833.7569484102955
-      },
-      "MoonWorldWeddingRoomZone::stage_change::ppp::raw": {
-        "x": 1620,
-        "y": 833.7569484102955
-      },
-      "MoonWorldWeddingRoomZone::start": {
-        "x": 1411.6666666666667,
-        "y": 986.0991617426341
       },
       "MoonWorldBasement000Zone::start": {
         "x": 1620,
@@ -6099,201 +6255,65 @@
         "x": 120,
         "y": 721.1188811188811
       },
-      "MoonWorldCaptureParadeBullZone::start": {
-        "x": 1524.6640161290204,
-        "y": 205.8931621792239
+      "MoonWorldCaptureParadeKillerZone::start": {
+        "x": 646.0978179616726,
+        "y": 474.8086337540776
       },
-      "MoonWorldCaptureParadeLiftZone::start": {
-        "x": 331.4399580212315,
-        "y": 623.6197951579866
+      "MoonWorldCaptureParadeLavaPillarZone::start": {
+        "x": 408.51570283171645,
+        "y": 932.2652064010302
       },
-      "MoonWorldCaptureParadeMeganeZone::start": {
-        "x": 801.937718453888,
-        "y": 0
-      },
-      "MoonWorldHomeStage::entrance::bbb::home_in": {
-        "x": 295.6994912602961,
-        "y": 1530.7529816985636
-      },
-      "MoonWorldHomeStage::entrance::bbb::home_out": {
-        "x": 160,
-        "y": 560
-      },
-      "MoonWorldCaptureParadeStage::entrance::bbb::sub_near": {
-        "x": 0,
-        "y": 281.0810893290752
-      },
-      "MoonWorldCaptureParadeStage::entrance::bbb::sub_far": {
-        "x": 1688.1747189083617,
-        "y": 0
-      },
-      "MoonWorldHomeStage::entrance::aaa::home_in": {
-        "x": 257.41840527160537,
-        "y": 2155.268367803119
-      },
-      "MoonWorldHomeStage::entrance::aaa::home_out": {
-        "x": 620,
-        "y": 684
-      },
-      "MoonWorldWeddingRoomStage::entrance::aaa::sub_near": {
-        "x": 210,
-        "y": 160
-      },
-      "MoonWorldWeddingRoomStage::entrance::aaa::sub_far": {
-        "x": 210,
-        "y": 560
-      },
-      "moon:MoonWorldHomeStage:263:576:taking_notes_on_the_moon_s_surface": {
-        "x": 1606.1171875,
-        "y": 1088.0078125
-      },
-      "moon:MoonWorldCaptureParadeStage:246:595": {
-        "x": 243.3198902027026,
-        "y": 107.37536043734144
-      },
-      "moon:MoonWorldHomeStage:937:577": {
-        "x": 681.8461538461538,
-        "y": 2090.153799203726
-      },
-      "moon:MoonWorldHomeStage:1039:578": {
-        "x": 998,
-        "y": 424
-      },
-      "moon:MoonWorldHomeStage:461:579": {
-        "x": 100,
-        "y": 100
-      },
-      "moon:MoonWorldHomeStage:877:580": {
-        "x": 100,
-        "y": 1380
-      },
-      "moon:MoonWorldHomeStage:997:581": {
-        "x": 692.022136531464,
-        "y": 2634.2636568252356
-      },
-      "moon:MoonWorldHomeStage:155:582": {
-        "x": 100,
-        "y": 796
-      },
-      "moon:MoonWorldHomeStage:217:583": {
-        "x": 768,
-        "y": 796
-      },
-      "moon:MoonWorldHomeStage:753:584": {
-        "x": 1059.5234375,
-        "y": 191.3984375
-      },
-      "moon:MoonWorldHomeStage:953:585": {
-        "x": 100,
-        "y": 904
-      },
-      "moon:MoonWorldHome2DZone:32:586": {
-        "x": 1166,
-        "y": 798
-      },
-      "moon:MoonWorldCaptureParadeKillerZone:296:594": {
-        "x": 1090.8449560325143,
-        "y": 427.25186047244745
-      },
-      "moon:MoonWorldCaptureParadeLavaPillarZone:460:596": {
-        "x": 198.1551943349558,
-        "y": 1016.0981500472753
-      },
-      "moon:MoonWorldCaptureParadeKillerZone:199:597": {
-        "x": 976.969246824221,
-        "y": 752.3046722072571
-      },
-      "moon:MoonWorldCaptureParadeStage:345:598:fly_to_the_treasure_chest_and_back": {
-        "x": 455.2843241320257,
-        "y": 9.395606480380138
-      },
-      "moon:MoonWorldWeddingRoomStage:187:593": {
-        "x": 621.5040990943592,
-        "y": 1094.0187727995133
-      },
-      "moon:MoonWorldSphinxRoom:92:599": {
-        "x": 1320,
+      "MoonWorldCaptureParadeStage::stage_change::bbb::raw": {
+        "x": 1620,
         "y": 120
       },
-      "moon:MoonAthleticExStage:53:601": {
-        "x": 617.2929577557953,
-        "y": 229.13582689545785
+      "MoonWorldCaptureParadeStage::stage_change::ccc::raw": {
+        "x": 189.7261075207688,
+        "y": 1069.9435818192273
       },
-      "moon:MoonAthleticExStage:82:602": {
-        "x": 600.8441576452258,
-        "y": 538.2282681694641
+      "MoonWorldCaptureParadeStage::stage_change::vvv::raw": {
+        "x": 154.5460589520695,
+        "y": 1220
       },
-      "moon:Galaxy2DExStage:650:603": {
-        "x": 658.8342974498137,
-        "y": 128.03571339513707
+      "MoonWorldCaptureParadeBullZone::start": {
+        "x": 1426.2855057827364,
+        "y": 424.27157354957865
       },
-      "moon:Galaxy2DExStage:864:604": {
-        "x": 919.1894143759555,
-        "y": 352.8653773732233
+      "MoonWorldCaptureParadeLiftZone::start": {
+        "x": 310.1210391023127,
+        "y": 589.5225143566773
       },
-      "moon:MoonWorldHomeStage:1052:671": {
-        "x": 920.2197558362533,
-        "y": 2447.716683619845
+      "MoonWorldCaptureParadeMeganeZone::start": {
+        "x": 1089.0787936267589,
+        "y": 927.8934883902605
       },
-      "moon:MoonWorldHomeStage:1041:672": {
-        "x": 100,
-        "y": 208
+      "MoonWorldCaptureParadeStage::entrance::bbb::sub_near": {
+        "x": 61.484543323369394,
+        "y": 1337.9804418423055
       },
-      "moon:MoonWorldHomeStage:1062:693": {
-        "x": 100,
-        "y": 316
+      "MoonWorldCaptureParadeStage::entrance::bbb::sub_far": {
+        "x": 1390,
+        "y": 120
       },
-      "moon:MoonWorldHomeStage:1064:707": {
-        "x": 0,
-        "y": 2483.755480262322
+      "moon:MoonWorldCaptureParadeStage:246:595": {
+        "x": 152.90729056757914,
+        "y": 1511.7549982851342
       },
-      "moon:MoonWorldHomeStage:1078:714": {
-        "x": 100,
-        "y": 424
+      "moon:MoonWorldCaptureParadeKillerZone:296:594": {
+        "x": 950.646828753654,
+        "y": 563.0785516894362
       },
-      "moon:MoonWorldHomeStage:1125:798": {
-        "x": 768,
-        "y": 904
+      "moon:MoonWorldCaptureParadeLavaPillarZone:460:596": {
+        "x": 803.8029765011704,
+        "y": 1122.3351717779515
       },
-      "moon:MoonWorldHomeStage:1199:810": {
-        "x": 100,
-        "y": 1910
+      "moon:MoonWorldCaptureParadeKillerZone:199:597": {
+        "x": 587.8624715919575,
+        "y": 652.2476620721219
       },
-      "moon:MoonWorldHomeStage:1216:811": {
-        "x": 1140.1875,
-        "y": 1786.1670793805804
-      },
-      "moon:MoonWorldHome2DZone:139:828": {
-        "x": 1834,
-        "y": 798
-      },
-      "moon:MoonWorldHomeStage:1280:899": {
-        "x": 0,
-        "y": 2581.8515625
-      },
-      "moon:MoonWorldHomeStage:944:911": {
-        "x": 638.1526064262473,
-        "y": 0
-      },
-      "moon:MoonWorldHomeStage:1391:1000": {
-        "x": 998,
-        "y": 316
-      },
-      "moon:MoonWorldHomeStage:1399:1049": {
-        "x": 845.1171874999998,
-        "y": 2323.0625
-      },
-      "moon:MoonWorldShopRoom:21:1157": {
-        "x": 791.4285714285713,
-        "y": 364.2857142857142
-      },
-      "moon:MoonWorldWeddingRoomZone:260:1164": {
-        "x": 774.769230769231,
-        "y": 806.3588992387822
-      },
-      "moon:MoonWorldWeddingRoomZone:361:1165": {
-        "x": 1551.611111111111,
-        "y": 691.9170868475956
+      "moon:MoonWorldCaptureParadeStage:345:598:fly_to_the_treasure_chest_and_back": {
+        "x": 434.853606077459,
+        "y": 1264.3601839289347
       }
     }
   }

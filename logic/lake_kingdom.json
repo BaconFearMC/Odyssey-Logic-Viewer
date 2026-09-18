@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Lake Kingdom",
-  "savedAt": "2026-09-03T22:31:51.738Z",
+  "savedAt": "2026-09-18T03:37:30.604Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-09-03T19:31:37.440Z",
+    "loadedAt": "2026-09-17T16:39:38.464Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1462,7 +1462,7 @@
         "entrance_id": "",
         "side": "",
         "obj_id": "",
-        "display_name": "Swim Moons with Cheep Cheep Only",
+        "display_name": "Underwater Moons",
         "x": "",
         "y": "",
         "z": "",
@@ -1504,6 +1504,24 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "LakeWorldHomeStage::place::new_place_19",
+        "kingdom": "Lake Kingdom",
+        "stage": "LakeWorldHomeStage",
+        "stage_display_name": "Lake Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Lake KFR",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -1513,14 +1531,14 @@
         "area_scope": "subarea",
         "from_node_id": "TrampolineWallCatchExStage::entrance::CapTrampolineA::sub_near",
         "to_node_id": "TrampolineWallCatchExStage::entrance::CapTrampolineB::sub_far",
-        "requirement_expr": "LedgeGrab | (LongJump & Dive & Vault & WallJump) | (TripleJump & Dive & Vault) | (DoubleJump & Dive & Vault & WallJump & NeutralThrow)",
+        "requirement_expr": "LedgeGrab | (Dive & Vault & NeutralThrow) | (NeutralThrow & WallJump)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual;advanced;advanced;advanced",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced;expert",
+        "option_scenarios": "1,2,3,4"
       },
       {
         "edge_id": "edge_user_0027",
@@ -1663,11 +1681,11 @@
         "area_scope": "overworld",
         "from_node_id": "LakeWorldHomeStage::start",
         "to_node_id": "LakeWorldHomeStage::place::new_place",
-        "requirement_expr": "(Vault & Dive & NeutralThrow) | (TripleJump & WallJump & Dive) | (Fastener & Swim) | KingdomAccess_Lake | (Kuribo & UpThrow) | (NeutralThrow & Kuribo & Vault) | (NeutralThrow & Kuribo & Backflip) | (NeutralThrow & Kuribo & DoubleJump) | (NeutralThrow & Kuribo & GroundPoundJump) | (NeutralThrow & SideFlip & Kuribo)",
+        "requirement_expr": "(Vault & Dive & NeutralThrow) | (TripleJump & WallJump & Dive) | (Fastener & Swim) | KingdomAccess_Lake | (Kuribo & UpThrow) | (NeutralThrow & Kuribo & Vault) | (NeutralThrow & Kuribo & Backflip) | (NeutralThrow & Kuribo & DoubleJump) | (NeutralThrow & Kuribo & GroundPoundJump) | (NeutralThrow & SideFlip & Kuribo) | (UpThrow & Vault & Dive) | (NeutralThrow & Vault & WallJump) | (DownThrow & Vault & WallJump & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "advanced;advanced;casual;casual;expert;expert;expert;expert;expert;expert",
-        "option_scenarios": "1,2,3,4;1,2,3,4;1,2,3,4;2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4",
+        "difficulty": "advanced;advanced;casual;casual;expert;expert;expert;expert;expert;expert;advanced;advanced;advanced",
+        "option_scenarios": "1,2,3,4;1,2,3,4;1,2,3,4;2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor."
@@ -1858,7 +1876,7 @@
         "area_scope": "overworld",
         "from_node_id": "LakeWorldTownZone::checkpoint::obj220",
         "to_node_id": "LakeWorldTimerAthletic000Zone::start",
-        "requirement_expr": "free",
+        "requirement_expr": "TimerChallenge",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2132,7 +2150,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2143,7 +2161,7 @@
         "area_scope": "overworld",
         "from_node_id": "LakeWorldHomeStage::entrance::Goton::home_in",
         "to_node_id": "LakeWorldHomeStage::place::new_place_16",
-        "requirement_expr": "Pukupuku",
+        "requirement_expr": "Pukupuku | Swim",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2158,14 +2176,14 @@
         "area_scope": "overworld",
         "from_node_id": "LakeWorldTownZone::checkpoint::obj693",
         "to_node_id": "LakeWorldHomeStage::place::new_place_16",
-        "requirement_expr": "Swim",
+        "requirement_expr": "Swim | (DownThrow & Pukupuku)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
+        "difficulty": "casual;advanced",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4"
       },
       {
         "edge_id": "edge_user_0744",
@@ -2252,7 +2270,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2263,10 +2281,10 @@
         "area_scope": "overworld",
         "from_node_id": "LakeWorldTownZone::checkpoint::obj693",
         "to_node_id": "LakeWorldHomeStage::place::new_place_17",
-        "requirement_expr": "(GroundPound & Swim) | Swim | (Swim & Pukupuku)",
+        "requirement_expr": "(GroundPound & Swim) | Swim | (Swim & Pukupuku) | (DownThrow & Pukupuku)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "advanced;expert;casual",
+        "difficulty": "advanced;expert;casual;advanced",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -2278,7 +2296,7 @@
         "area_scope": "overworld",
         "from_node_id": "LakeWorldHomeStage::place::new_place_16",
         "to_node_id": "LakeWorldHomeStage::entrance::Goton::home_in",
-        "requirement_expr": "impossible",
+        "requirement_expr": "Pukupuku | Swim",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2383,7 +2401,7 @@
         "area_scope": "overworld",
         "from_node_id": "LakeWorld2DZone::start",
         "to_node_id": "LakeWorldHomeStage::place::new_place_10",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2459,6 +2477,126 @@
         "from_node_id": "LakeWorldTownZone::checkpoint::obj220",
         "to_node_id": "LakeWorldHomeStage::place::new_place_13",
         "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0815",
+        "kingdom": "Lake Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LakeWorldHomeStage::place::new_place_16",
+        "to_node_id": "LakeWorldTownZone::checkpoint::obj839",
+        "requirement_expr": "Swim | Pukupuku",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0741.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0816",
+        "kingdom": "Lake Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LakeWorldHomeStage::place::new_place_16",
+        "to_node_id": "LakeWorldTownZone::checkpoint::obj693",
+        "requirement_expr": "Swim | Pukupuku",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0743.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0817",
+        "kingdom": "Lake Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LakeWorldTownZone::checkpoint::obj583",
+        "to_node_id": "LakeWorldHomeStage::place::new_place_16",
+        "requirement_expr": "(DownThrow & Pukupuku) | Swim",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0818",
+        "kingdom": "Lake Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LakeWorldTownZone::checkpoint::obj1323",
+        "to_node_id": "LakeWorldHomeStage::place::new_place_16",
+        "requirement_expr": "(DownThrow & Pukupuku) | Swim",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0819",
+        "kingdom": "Lake Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LakeWorldHomeStage::place::new_place_16",
+        "to_node_id": "LakeWorldTownZone::checkpoint::obj1323",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0818.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0820",
+        "kingdom": "Lake Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LakeWorldHomeStage::place::new_place_16",
+        "to_node_id": "LakeWorldTownZone::checkpoint::obj583",
+        "requirement_expr": "Swim | Pukupuku",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0817.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0821",
+        "kingdom": "Lake Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LakeWorldTownZone::checkpoint::obj220",
+        "to_node_id": "LakeWorldTownZone::checkpoint::obj583",
+        "requirement_expr": "Swim | Dive",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0845",
+        "kingdom": "Lake Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LakeWorldHomeStage::start",
+        "to_node_id": "LakeWorldHomeStage::place::new_place_19",
+        "requirement_expr": "NpcTalk",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2578,7 +2716,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorldHomeStage::place::new_place_17",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -2594,9 +2732,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-65500.000",
+        "placement_x": "-344500.000",
         "placement_y": "-24500.000",
-        "placement_z": "-12800.000",
+        "placement_z": "-69500.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_LakeWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "0",
@@ -2674,7 +2812,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorldHomeStage::place::new_place_16",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "GroundPound | Pukupuku",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -2690,9 +2828,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-61400.000",
+        "placement_x": "-340400.000",
         "placement_y": "-3305.220",
-        "placement_z": "-10800.000",
+        "placement_z": "-67500.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_LakeWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "0",
@@ -2770,7 +2908,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorld2DZone::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -2818,7 +2956,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorldTownZone::checkpoint::obj220",
         "state_requirement_expr": "",
-        "requirement_expr": "KingdomAccess_Mushroom",
+        "requirement_expr": "(KingdomAccess_Mushroom & NpcTalk)",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -2882,9 +3020,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-62400.000",
+        "placement_x": "-341400.000",
         "placement_y": "625.000",
-        "placement_z": "-11600.000",
+        "placement_z": "-68300.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_LakeWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "0",
@@ -2978,9 +3116,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "-46225.000",
+        "placement_x": "-325225.000",
         "placement_y": "-1590.092",
-        "placement_z": "-10050.000",
+        "placement_z": "-66750.000",
         "placement_source_archives": "LakeWorldTownZoneMap.szs",
         "placement_source_files": "LakeWorldTownZoneMap.byml",
         "placement_count": "4",
@@ -3026,9 +3164,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "-35800.000",
+        "placement_x": "-314800.000",
         "placement_y": "-300.000",
-        "placement_z": "-9450.000",
+        "placement_z": "-66150.000",
         "placement_source_archives": "LakeWorldTownZoneMap.szs",
         "placement_source_files": "LakeWorldTownZoneMap.byml",
         "placement_count": "4",
@@ -3074,9 +3212,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-58350.000",
+        "placement_x": "-337350.000",
         "placement_y": "-3650.000",
-        "placement_z": "-12600.000",
+        "placement_z": "-69300.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_LakeWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "0",
@@ -3106,7 +3244,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorldTownZone::checkpoint::obj693",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -3488,9 +3626,9 @@
         "obj_id": "1117",
         "uid": "425",
         "flags": "ShineFlag_None",
-        "from_node_id": "TrampolineWallCatchExStage::entrance::CapTrampolineA::sub_near",
+        "from_node_id": "TrampolineWallCatchExStage::entrance::CapTrampolineB::sub_far",
         "state_requirement_expr": "",
-        "requirement_expr": "LedgeGrab | (LongJump & Dive & Vault & WallJump & NeutralThrow) | (TripleJump & Dive & Vault & NeutralThrow) | (DoubleJump & Dive & Vault & WallJump & NeutralThrow)",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -3522,7 +3660,7 @@
         "shine_info_available_scenarios": "1;2;3;4",
         "shine_info_object_name": "シャイン【2m置き】",
         "shine_info_scenario_name": "とんで つかんで とび降りて",
-        "difficulty": "casual;advanced;advanced;advanced",
+        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -3538,7 +3676,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "TrampolineWallCatchExStage::entrance::CapTrampolineA::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "LedgeGrab | (LongJump & Dive & Vault & WallJump & NeutralThrow) | (TripleJump & Dive & Vault & NeutralThrow) | (DoubleJump & Dive & Vault & WallJump & NeutralThrow)",
+        "requirement_expr": "LedgeGrab | (Dive & Vault & NeutralThrow)",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -3570,8 +3708,8 @@
         "shine_info_available_scenarios": "1;2;3;4",
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "とんで つかんで 上へ上へ",
-        "difficulty": "casual;advanced;advanced;advanced",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced",
+        "option_scenarios": "1,2,3,4"
       },
       {
         "moon_id": "LakeWorldShopStage:12:430",
@@ -3586,7 +3724,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorldShopStage::entrance::LakeWorldShop::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -3728,9 +3866,9 @@
         "obj_id": "848",
         "uid": "709",
         "flags": "ShineFlag_None",
-        "from_node_id": "LakeWorldHomeStage::start",
+        "from_node_id": "LakeWorldHomeStage::place::new_place_19",
         "state_requirement_expr": "",
-        "requirement_expr": "(Vault & Dive & NeutralThrow) | (TripleJump & WallJump & Dive & Swim) | (Fastener & Pukupuku & Swim) | (Fastener & Swim) | (Fastener & Dive & Swim) | (UpThrow & Kuribo & Swim) | (NeutralThrow & Kuribo & Vault & Swim) | (NeutralThrow & Kuribo & Backflip & Swim) | (SideFlip & NeutralThrow & Kuribo & Swim) | (GroundPoundJump & NeutralThrow & Kuribo & Swim) | (NeutralThrow & Kuribo & DoubleJump & Swim)",
+        "requirement_expr": "(Vault & Dive & NeutralThrow) | (TripleJump & WallJump & Dive & Swim) | (Fastener & Pukupuku & Swim) | (Fastener & Swim) | (Fastener & Dive & Swim) | (UpThrow & Kuribo & Swim) | (NeutralThrow & Kuribo & Vault & Swim) | (NeutralThrow & Kuribo & Backflip & Swim) | (SideFlip & NeutralThrow & Kuribo & Swim) | (GroundPoundJump & NeutralThrow & Kuribo & Swim) | (NeutralThrow & Kuribo & DoubleJump & Swim) | (Fastener & Swim & RollBoost)",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -3762,8 +3900,8 @@
         "shine_info_available_scenarios": "3;4",
         "shine_info_object_name": "駆けっこ開始Npc",
         "shine_info_scenario_name": "湖の国 レギュラーカップ",
-        "difficulty": "advanced;advanced;casual;advanced;casual;expert;expert;expert;expert;expert;expert",
-        "option_scenarios": ""
+        "difficulty": "advanced;advanced;casual;advanced;casual;expert;expert;expert;expert;expert;expert;casual",
+        "option_scenarios": "1,2,3,4"
       },
       {
         "moon_id": "LakeWorldTownZone:1277:715",
@@ -3778,7 +3916,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorldTownZone::checkpoint::obj839",
         "state_requirement_expr": "",
-        "requirement_expr": "Swim",
+        "requirement_expr": "(Swim & TimerChallenge)",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -3842,9 +3980,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "-47200.000",
+        "placement_x": "-326200.000",
         "placement_y": "-24577.137",
-        "placement_z": "-9450.000",
+        "placement_z": "-66150.000",
         "placement_source_archives": "LakeWorldTownZoneMap.szs",
         "placement_source_files": "LakeWorldTownZoneMap.byml",
         "placement_count": "1",
@@ -3872,9 +4010,9 @@
         "obj_id": "859",
         "uid": "720",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "LakeWorldHomeStage::start",
+        "from_node_id": "LakeWorldHomeStage::place::new_place_19",
         "state_requirement_expr": "",
-        "requirement_expr": "(NeutralThrow & Vault & Dive) | (TripleJump & WallJump & Dive & Swim) | (Fastener & GroundPound & Swim) | (Fastener & Pukupuku & Swim) | (Fastener & Dive & Swim) | (UpThrow & Kuribo & Swim) | (NeutralThrow & Kuribo & Vault & Swim) | (NeutralThrow & Kuribo & Backflip & Swim) | (NeutralThrow & Fastener & Swim) | (SpinThrow & Fastener & Swim) | (NeutralThrow & DoubleJump & Kuribo & Swim) | (NeutralThrow & Kuribo & GroundPoundJump & Swim) | (NeutralThrow & Kuribo & SideFlip & Swim)",
+        "requirement_expr": "(NeutralThrow & Vault & Dive) | (TripleJump & WallJump & Dive & Swim) | (Fastener & GroundPound & Swim) | (Fastener & Pukupuku & Swim) | (Fastener & Dive & Swim) | (UpThrow & Kuribo & Swim) | (NeutralThrow & Kuribo & Vault & Swim) | (NeutralThrow & Kuribo & Backflip & Swim) | (NeutralThrow & Fastener & Swim) | (SpinThrow & Fastener & Swim) | (NeutralThrow & DoubleJump & Kuribo & Swim) | (NeutralThrow & Kuribo & GroundPoundJump & Swim) | (NeutralThrow & Kuribo & SideFlip & Swim) | (Swim & Fastener & Roll) | (Fastener & Swim & RollBoost)",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -3906,8 +4044,8 @@
         "shine_info_available_scenarios": "4",
         "shine_info_object_name": "駆けっこ開始Npc",
         "shine_info_scenario_name": "湖の国 マスターカップ",
-        "difficulty": "advanced;advanced;advanced;casual;casual;expert;expert;expert;expert;expert;expert;expert;expert",
-        "option_scenarios": ""
+        "difficulty": "advanced;advanced;advanced;casual;casual;expert;expert;expert;expert;expert;expert;expert;expert;advanced;casual",
+        "option_scenarios": "1,2,3,4"
       },
       {
         "moon_id": "LakeWorldTownZone:1315:771",
@@ -3938,9 +4076,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "-45750.000",
+        "placement_x": "-324750.000",
         "placement_y": "1450.000",
-        "placement_z": "-5200.000",
+        "placement_z": "-61900.000",
         "placement_source_archives": "LakeWorldTownZoneMap.szs",
         "placement_source_files": "LakeWorldTownZoneMap.byml",
         "placement_count": "1",
@@ -3970,7 +4108,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorldTownZone::checkpoint::obj220",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -4018,7 +4156,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorldTownZone::checkpoint::obj220",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -4066,7 +4204,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorldTownZone::checkpoint::obj220",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -4450,7 +4588,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LakeWorldTownZone::checkpoint::obj693",
         "state_requirement_expr": "",
-        "requirement_expr": "Swim",
+        "requirement_expr": "(Swim & Grab)",
         "world_peace_token": "WorldPeace_Lake",
         "moon_rock_token": "MoonRockActive_Lake",
         "access_type": "primary",
@@ -6130,6 +6268,30 @@
         "can_start_with_seed": "false",
         "aliases": "Talk to NPCs; NpcTalk; Talk",
         "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
+      },
+      {
+        "token": "Pipe2D",
+        "token_type": "ability",
+        "display_name": "Enter 2D Pipes",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Enter 2D Pipes; Pipe2D; 2D Pipe; DokanChange2D",
+        "notes": "Going flat: the pipes built from the DokanChange2D archive, which are the only way into an in-stage 2D section. Pipes back out of 2D are never withheld, so anything reached only through a 2D section needs this."
+      },
+      {
+        "token": "TimerChallenge",
+        "token_type": "ability",
+        "display_name": "Timer Challenges",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Timer Challenges; TimerChallenge; P-Switch; Scarecrow",
+        "notes": "Every timed challenge: P-Switches (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer) and scarecrows (CapRack), which all share one AppearSwitchTimer. Without it the timer expires the frame it starts, so anything that needs the timed objects to stay up needs this."
       }
     ],
     "rooms": [
@@ -6720,8 +6882,8 @@
         "y": 2772
       },
       "LakeWorldTownZone::stage_change::Come::raw": {
-        "x": 849.9402985074627,
-        "y": 2651.4030032940764
+        "x": 1833.4498893758032,
+        "y": 1355.040315691799
       },
       "LakeWorldTownZone::stage_change::FastenerEx::raw": {
         "x": 1248,
@@ -6847,13 +7009,25 @@
         "x": 700,
         "y": 360
       },
+      "LakeWorldHomeStage::place::new_place_16": {
+        "x": 3007.9758348072414,
+        "y": 1392.1742015773966
+      },
+      "LakeWorldHomeStage::place::new_place_17": {
+        "x": 2816.6729012182204,
+        "y": 1236.208337077217
+      },
+      "LakeWorldHomeStage::place::new_place_18": {
+        "x": 1005.686274509804,
+        "y": 638.5098158892463
+      },
       "moon:LakeWorldHomeStage:715:401": {
         "x": 100,
         "y": 424
       },
       "moon:LakeWorldHomeStage:396:402": {
-        "x": 998,
-        "y": 478
+        "x": 996.4233661045322,
+        "y": 479.5766940401956
       },
       "moon:LakeWorldTownZone:371:403": {
         "x": 2834.6974473110467,
@@ -6912,8 +7086,8 @@
         "y": 1600
       },
       "moon:LakeWorldTownZone:903:417": {
-        "x": 510,
-        "y": 2774
+        "x": 1612.1779950452637,
+        "y": 1493.819330100845
       },
       "moon:LakeWorldTimerAthletic000Zone:175:420": {
         "x": 1.7093391219077514,
@@ -6932,8 +7106,8 @@
         "y": 2164.6360090388807
       },
       "moon:TrampolineWallCatchExStage:1117:425": {
-        "x": 1116.7682926829268,
-        "y": 368.47560975609764
+        "x": 1472.589224644214,
+        "y": 428.17710229341105
       },
       "moon:TrampolineWallCatchExStage:1238:426": {
         "x": 1119.9999999999998,
@@ -6952,8 +7126,8 @@
         "y": 508.4191910345902
       },
       "moon:LakeWorldHomeStage:848:709": {
-        "x": 998,
-        "y": 370
+        "x": 932.6177857755055,
+        "y": 28.736645004213017
       },
       "moon:LakeWorldTownZone:1277:715": {
         "x": 772.4406986559851,
@@ -6964,8 +7138,8 @@
         "y": 1103.686262542126
       },
       "moon:LakeWorldHomeStage:859:720": {
-        "x": 100,
-        "y": 316
+        "x": 913.291199273111,
+        "y": 194.80367968982296
       },
       "moon:LakeWorldTownZone:1315:771": {
         "x": 2738.6665948606005,
@@ -7005,7 +7179,7 @@
       },
       "moon:LakeWorldHomeStage:974:1078": {
         "x": 100,
-        "y": 532
+        "y": 319.9064090409162
       },
       "moon:LakeWorldHomeStage:976:1094": {
         "x": 100,
@@ -7015,17 +7189,9 @@
         "x": 1032,
         "y": 2264
       },
-      "LakeWorldHomeStage::place::new_place_16": {
-        "x": 3007.9758348072414,
-        "y": 1392.1742015773966
-      },
-      "LakeWorldHomeStage::place::new_place_17": {
-        "x": 2816.6729012182204,
-        "y": 1236.208337077217
-      },
-      "LakeWorldHomeStage::place::new_place_18": {
-        "x": 1005.686274509804,
-        "y": 638.5098158892463
+      "LakeWorldHomeStage::place::new_place_19": {
+        "x": 541.6255144985687,
+        "y": 116.82894795944675
       }
     }
   }

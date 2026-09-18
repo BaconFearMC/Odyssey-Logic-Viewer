@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Cascade Kingdom",
-  "savedAt": "2026-09-03T03:47:01.942Z",
+  "savedAt": "2026-09-17T23:46:36.365Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-08-25T23:46:10.074Z",
+    "loadedAt": "2026-09-17T16:39:38.464Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1174,7 +1174,7 @@
         "entrance_id": "",
         "side": "",
         "obj_id": "",
-        "display_name": "Dark Side Hint Art",
+        "display_name": "Dark Side Hint Art - Cascade",
         "x": "",
         "y": "",
         "z": "",
@@ -1468,6 +1468,24 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_18",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cascade KFR",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -1477,7 +1495,7 @@
         "area_scope": "subarea",
         "from_node_id": "Lift2DExStage::entrance::Lift2D::sub_near",
         "to_node_id": "Lift2DExStage::entrance::Lift2DExit::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "true",
@@ -1582,14 +1600,14 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
-        "requirement_expr": "WanwanBig | (TripleJump & Dive & WallJump & Backflip) | (Backflip & Vault & Dive & WallJump & NeutralThrow) | (SideFlip & Vault & Dive & WallJump & NeutralThrow) | (TripleJump & Vault & Dive & WallJump & NeutralThrow) | (GroundPoundJump & Vault & Dive & WallJump & NeutralThrow) | TRex",
+        "requirement_expr": "(WanwanBig & Pipe2D) | (TripleJump & Dive & WallJump & Backflip) | (Backflip & Vault & Dive & WallJump & NeutralThrow) | (SideFlip & Vault & Dive & WallJump & NeutralThrow) | (TripleJump & Vault & Dive & WallJump & NeutralThrow) | (GroundPoundJump & Vault & Dive & WallJump & NeutralThrow) | (TRex & Pipe2D) | Pipe2D",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;casual",
+        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;casual;casual",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
+        "option_scenarios": "1;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1;2,3,4"
       },
       {
         "edge_id": "edge_user_0170",
@@ -2282,21 +2300,6 @@
         "option_scenarios": "2,3,4"
       },
       {
-        "edge_id": "edge_user_0761",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "subarea",
-        "from_node_id": "Lift2DExStage::entrance::Lift2D::sub_near",
-        "to_node_id": "Lift2DExStage::place::new_place",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0011",
         "kingdom": "Cascade Kingdom",
         "area_scope": "overworld",
@@ -2325,6 +2328,36 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0467",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_18",
+        "requirement_expr": "NpcTalk",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0799",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "Lift2DExStage::entrance::Lift2DExit::sub_far",
+        "to_node_id": "Lift2DExStage::place::new_place",
+        "requirement_expr": "Pipe2D | (NeutralThrow & Vault & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -2341,7 +2374,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2581,7 +2614,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
         "state_requirement_expr": "",
-        "requirement_expr": "KingdomAccess_Mushroom",
+        "requirement_expr": "(KingdomAccess_Mushroom & NpcTalk)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2677,7 +2710,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2725,7 +2758,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "WanwanBig | TRex | SingleJump",
+        "requirement_expr": "(WanwanBig & Pipe2D) | (TRex & Pipe2D) | Pipe2D",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3059,7 +3092,7 @@
         "obj_id": "6784",
         "uid": "221",
         "flags": "ShineFlag_None",
-        "from_node_id": "Lift2DExStage::entrance::Lift2D::sub_near",
+        "from_node_id": "Lift2DExStage::entrance::Lift2DExit::sub_far",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3109,7 +3142,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "Lift2DExStage::entrance::Lift2D::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3349,7 +3382,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "TimerChallenge",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3397,7 +3430,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
         "state_requirement_expr": "",
-        "requirement_expr": "TripleJump | Backflip | SideFlip | Spin | GroundPoundJump | (DoubleJump & Dive) | (WallJump & Dive)",
+        "requirement_expr": "(TripleJump & TimerChallenge) | (Backflip & TimerChallenge) | (SideFlip & TimerChallenge) | (Spin & TimerChallenge) | (GroundPoundJump & TimerChallenge) | (DoubleJump & Dive & TimerChallenge) | (WallJump & Dive & TimerChallenge)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3539,7 +3572,7 @@
         "obj_id": "2741",
         "uid": "708",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_18",
         "state_requirement_expr": "",
         "requirement_expr": "LongJump | Roll | Spin | TripleJump | Dive | LedgeGrab | WallJump | (Vault & NeutralThrow) | KingdomAccess_Cascade",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3573,7 +3606,7 @@
         "shine_info_scenario_name": "滝の国 レギュラーカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:2741:708",
-        "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;advanced",
+        "difficulty": "casual;casual;casual;casual;casual;advanced;advanced;advanced;expert",
         "option_scenarios": ""
       },
       {
@@ -3589,7 +3622,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3829,7 +3862,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3875,7 +3908,7 @@
         "obj_id": "2947",
         "uid": "894",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_18",
         "state_requirement_expr": "",
         "requirement_expr": "LongJump | Roll | Spin | TripleJump | Dive | LedgeGrab | WallJump | (Vault & NeutralThrow)",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3909,7 +3942,7 @@
         "shine_info_scenario_name": "滝の国 マスターカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:2947:894",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;casual;casual;advanced;advanced;advanced",
         "option_scenarios": ""
       },
       {
@@ -3925,7 +3958,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Sand & KingdomAccess_Metro)",
+        "requirement_expr": "(KingdomAccess_Sand & KingdomAccess_Metro & NpcTalk)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -4464,6 +4497,18 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Climb",
+        "notes": ""
+      },
+      {
+        "token": "Swing",
+        "token_type": "ability",
+        "display_name": "Swing",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swing",
         "notes": ""
       },
       {
@@ -5033,13 +5078,13 @@
       {
         "token": "StatueKoopa",
         "token_type": "capture",
-        "display_name": "Bowser Statue",
+        "display_name": "Jizo",
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Bowser Statue",
+        "aliases": "Jizo; Bowser Statue",
         "notes": ""
       },
       {
@@ -5139,6 +5184,66 @@
         "notes": ""
       },
       {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
         "token": "WorldPeace_Cap",
         "token_type": "event",
         "display_name": "WorldPeace_Cap",
@@ -5207,7 +5312,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj3428.",
         "notes": "See progression_events.csv for Sand Kingdom."
       },
       {
@@ -5231,7 +5336,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj5126.",
         "notes": "See progression_events.csv for Wooded Kingdom."
       },
       {
@@ -5375,7 +5480,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj583.",
         "notes": "See progression_events.csv for Snow Kingdom."
       },
       {
@@ -5471,7 +5576,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj144.",
         "notes": "See progression_events.csv for Moon Kingdom."
       },
       {
@@ -5580,7 +5685,7 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Cap Kingdom",
-        "notes": "Requires being able to reach the Cap Kingdom (e.g. a hint-art moon that depends on another kingdom)."
+        "notes": "Requires being able to reach the Cap Kingdom. (e.g. a hint-art moon that depends on another kingdom)."
       },
       {
         "token": "KingdomAccess_Cascade",
@@ -5724,7 +5829,7 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Bowser's Kingdom",
-        "notes": "Requires being able to reach Bowser's Kingdom."
+        "notes": "Requires being able to reach the Bowser's Kingdom."
       },
       {
         "token": "KingdomAccess_Moon",
@@ -5775,78 +5880,6 @@
         "notes": "Requires being able to reach the Darker Side."
       },
       {
-        "token": "Swing",
-        "token_type": "ability",
-        "display_name": "Swing",
-        "category": "Movement",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Swing",
-        "notes": ""
-      },
-      {
-        "token": "Turnip",
-        "token_type": "capture",
-        "display_name": "Turnip",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Turnip; Radish",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "Nut",
-        "token_type": "capture",
-        "display_name": "Nut",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Nut; GrowPlantSeed",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "Jaxi",
-        "token_type": "capture",
-        "display_name": "Jaxi",
-        "category": "Capture",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Jaxi; SphinxRide",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "Bike",
-        "token_type": "capture",
-        "display_name": "Bike",
-        "category": "Capture",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Bike; Motorcycle",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "RocketFlower",
-        "token_type": "capture",
-        "display_name": "Rocket Flower",
-        "category": "Capture",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Rocket Flower",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
         "token": "MoonLowGravity",
         "token_type": "ability",
         "display_name": "Moon Kingdom Low Gravity",
@@ -5893,6 +5926,30 @@
         "can_start_with_seed": "false",
         "aliases": "Talk to NPCs; NpcTalk; Talk",
         "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
+      },
+      {
+        "token": "Pipe2D",
+        "token_type": "ability",
+        "display_name": "Enter 2D Pipes",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Enter 2D Pipes; Pipe2D; 2D Pipe; DokanChange2D",
+        "notes": "Going flat: the pipes built from the DokanChange2D archive, which are the only way into an in-stage 2D section. Pipes back out of 2D are never withheld, so anything reached only through a 2D section needs this."
+      },
+      {
+        "token": "TimerChallenge",
+        "token_type": "ability",
+        "display_name": "Timer Challenges",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Timer Challenges; TimerChallenge; P-Switch; Scarecrow",
+        "notes": "Every timed challenge: P-Switches (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer) and scarecrows (CapRack), which all share one AppearSwitchTimer. Without it the timer expires the frame it starts, so anything that needs the timed objects to stay up needs this."
       }
     ],
     "rooms": [
@@ -6103,12 +6160,12 @@
         "y": 120
       },
       "Lift2DExStage::entrance::Lift2D::sub_near": {
-        "x": 517.3076934583441,
-        "y": 790.3846132552483
+        "x": 524.1369319777801,
+        "y": 743.5553151893184
       },
       "Lift2DExStage::entrance::Lift2DExit::sub_far": {
-        "x": 1188.4615339118347,
-        "y": 666.1538499099969
+        "x": 1155.2907873178942,
+        "y": 727.6172943173901
       },
       "TrexPoppunExStage::stage_change::RexPoppunEx::raw": {
         "x": 120,
@@ -6278,166 +6335,6 @@
         "x": 681.0064509114986,
         "y": 1326.254391236338
       },
-      "moon:WaterfallWorldHomeStage:1717:204": {
-        "x": 83.30343007915553,
-        "y": 1437.0923482849603
-      },
-      "moon:WaterfallWorldHomeStage:214:205": {
-        "x": 1233.1984958285389,
-        "y": 1462.874300086265
-      },
-      "moon:WaterfallWorldHomeStage:407:206": {
-        "x": 984.5859273928837,
-        "y": 1376.2806382825427
-      },
-      "moon:WaterfallWorldHomeStage:1033:207": {
-        "x": 2034.7822022520206,
-        "y": 213.93333636525108
-      },
-      "moon:WaterfallWorldHomeStage:1526:208": {
-        "x": 100,
-        "y": 1332
-      },
-      "moon:WaterfallWorldHomeStage:2467:209": {
-        "x": 100,
-        "y": 1764
-      },
-      "moon:WaterfallWorldHomeStage:2490:210": {
-        "x": 2021.9985970213686,
-        "y": 0
-      },
-      "moon:WaterfallWorldHomeStage:1119:211": {
-        "x": 46.51734115196223,
-        "y": 662.88329925543
-      },
-      "moon:WaterfallWorldHomeStage:124:212": {
-        "x": 1719.2022978862242,
-        "y": 899.3319225043363
-      },
-      "moon:WaterfallWorldHomeStage:1027:213": {
-        "x": 358.6882161415622,
-        "y": 936.2269529668197
-      },
-      "moon:WaterfallWorldHomeStage:1028:214": {
-        "x": 314.6097210789287,
-        "y": 729.6188525374735
-      },
-      "moon:WaterfallWorldHomeStage:1029:215": {
-        "x": 115.67441860465112,
-        "y": 1211.5813953488373
-      },
-      "moon:WaterfallWorldHomeStage:1928:216": {
-        "x": 1749.3147916943672,
-        "y": 779.9631314826992
-      },
-      "moon:WaterfallWorldHomeStage:2455:217": {
-        "x": 331.67900477462877,
-        "y": 643.6507074335275
-      },
-      "moon:WaterfallWorldHomeStage:21:218": {
-        "x": 1013.1365266987641,
-        "y": 1645.1276832336343
-      },
-      "moon:Lift2DExStage:6784:221": {
-        "x": 941.9230738414462,
-        "y": 589.952584296861
-      },
-      "moon:Lift2DExStage:6019:222": {
-        "x": 963.0447090264323,
-        "y": 839.8419429566065
-      },
-      "moon:CapAppearExStage:304:223": {
-        "x": 554.3750036408892,
-        "y": 759.2769352119271
-      },
-      "moon:CapAppearExStage:342:224": {
-        "x": 507.708335716937,
-        "y": 480.9283500306467
-      },
-      "moon:WanwanClashExStage:371:225": {
-        "x": 790.1013466889176,
-        "y": 480.49395039490787
-      },
-      "moon:WanwanClashExStage:504:226": {
-        "x": 1109.0624957173713,
-        "y": 603.1249958352419
-      },
-      "moon:WaterfallWorldHomeStage:2618:669": {
-        "x": 310.49245798731874,
-        "y": 476.6154871682909
-      },
-      "moon:WaterfallWorldHomeStage:2691:670": {
-        "x": 490.3588813334006,
-        "y": 1787.2577150121633
-      },
-      "moon:WindBlowExStage:167:673": {
-        "x": 737.5025635955996,
-        "y": 728.5476035762924
-      },
-      "moon:WindBlowExStage:299:674": {
-        "x": 712.921892291911,
-        "y": 431.5384636810545
-      },
-      "moon:WaterfallWorldHomeStage:2741:708": {
-        "x": 1163.431844614838,
-        "y": 108.61915398989333
-      },
-      "moon:WaterfallWorldHomeStage:2778:770": {
-        "x": 47.72957342818427,
-        "y": 774.0585480692955
-      },
-      "moon:WaterfallWorldHomeStage:2819:822": {
-        "x": 1809.3995381814898,
-        "y": 540.3473702492278
-      },
-      "moon:WaterfallWorldHomeStage:2821:823": {
-        "x": 1810.117322004796,
-        "y": 654.8512346548879
-      },
-      "moon:WaterfallWorldHomeStage:2823:825": {
-        "x": 100,
-        "y": 1656
-      },
-      "moon:WaterfallWorldHomeStage:2824:826": {
-        "x": 84.69444536045154,
-        "y": 575.1308550907127
-      },
-      "moon:WaterfallWorldHomeStage:2898:866": {
-        "x": 100,
-        "y": 1548
-      },
-      "moon:WaterfallWorldHomeStage:2947:894": {
-        "x": 963.1325898660989,
-        "y": 183.93678517161362
-      },
-      "moon:WaterfallWorldHomeStage:2423:906": {
-        "x": 31.304997569027137,
-        "y": 899.0301696563372
-      },
-      "moon:WaterfallWorldHomeStage:3110:1004": {
-        "x": 320.40630172443457,
-        "y": 562.0230468044078
-      },
-      "moon:WaterfallWorldHomeStage:3208:1041": {
-        "x": 327.19528303692783,
-        "y": 811.4421195704194
-      },
-      "moon:TrexPoppunExStage:169:1115": {
-        "x": 823.5714285714286,
-        "y": 377.00892855833183
-      },
-      "moon:TrexPoppunExStage:18:1116": {
-        "x": 221.56250085128704,
-        "y": 174.68750045838533
-      },
-      "moon:WaterfallWorldHomeStage:3284:1145": {
-        "x": 94.25510653368315,
-        "y": 460.52430269732184
-      },
-      "moon:WaterfallWorldHomeStage:3523:1167": {
-        "x": 100.45382585751975,
-        "y": 1860.395778364116
-      },
       "WaterfallWorldHomeStage::place::new_place_3": {
         "x": 556.5738778738839,
         "y": 1956.5897031832128
@@ -6499,8 +6396,172 @@
         "y": 2208.8246099192493
       },
       "Lift2DExStage::place::new_place": {
-        "x": 831.073427242851,
-        "y": 991.6384327104098
+        "x": 1169.6099828354577,
+        "y": 897.9799110116674
+      },
+      "moon:WaterfallWorldHomeStage:1717:204": {
+        "x": 83.30343007915553,
+        "y": 1437.0923482849603
+      },
+      "moon:WaterfallWorldHomeStage:214:205": {
+        "x": 1233.1984958285389,
+        "y": 1462.874300086265
+      },
+      "moon:WaterfallWorldHomeStage:407:206": {
+        "x": 984.5859273928837,
+        "y": 1376.2806382825427
+      },
+      "moon:WaterfallWorldHomeStage:1033:207": {
+        "x": 2034.7822022520206,
+        "y": 213.93333636525108
+      },
+      "moon:WaterfallWorldHomeStage:1526:208": {
+        "x": 100,
+        "y": 1332
+      },
+      "moon:WaterfallWorldHomeStage:2467:209": {
+        "x": 100,
+        "y": 1764
+      },
+      "moon:WaterfallWorldHomeStage:2490:210": {
+        "x": 2021.9985970213686,
+        "y": 0
+      },
+      "moon:WaterfallWorldHomeStage:1119:211": {
+        "x": 46.51734115196223,
+        "y": 662.88329925543
+      },
+      "moon:WaterfallWorldHomeStage:124:212": {
+        "x": 1719.2022978862242,
+        "y": 899.3319225043363
+      },
+      "moon:WaterfallWorldHomeStage:1027:213": {
+        "x": 358.6882161415622,
+        "y": 936.2269529668197
+      },
+      "moon:WaterfallWorldHomeStage:1028:214": {
+        "x": 314.6097210789287,
+        "y": 729.6188525374735
+      },
+      "moon:WaterfallWorldHomeStage:1029:215": {
+        "x": 115.67441860465112,
+        "y": 1211.5813953488373
+      },
+      "moon:WaterfallWorldHomeStage:1928:216": {
+        "x": 1749.3147916943672,
+        "y": 779.9631314826992
+      },
+      "moon:WaterfallWorldHomeStage:2455:217": {
+        "x": 331.67900477462877,
+        "y": 643.6507074335275
+      },
+      "moon:WaterfallWorldHomeStage:21:218": {
+        "x": 1013.1365266987641,
+        "y": 1645.1276832336343
+      },
+      "moon:Lift2DExStage:6784:221": {
+        "x": 1160.4596740939235,
+        "y": 574.3428430859235
+      },
+      "moon:Lift2DExStage:6019:222": {
+        "x": 734.7520856460969,
+        "y": 616.427368356759
+      },
+      "moon:CapAppearExStage:304:223": {
+        "x": 554.3750036408892,
+        "y": 759.2769352119271
+      },
+      "moon:CapAppearExStage:342:224": {
+        "x": 507.708335716937,
+        "y": 480.9283500306467
+      },
+      "moon:WanwanClashExStage:371:225": {
+        "x": 790.1013466889176,
+        "y": 480.49395039490787
+      },
+      "moon:WanwanClashExStage:504:226": {
+        "x": 1109.0624957173713,
+        "y": 603.1249958352419
+      },
+      "moon:WaterfallWorldHomeStage:2618:669": {
+        "x": 310.49245798731874,
+        "y": 476.6154871682909
+      },
+      "moon:WaterfallWorldHomeStage:2691:670": {
+        "x": 490.3588813334006,
+        "y": 1787.2577150121633
+      },
+      "moon:WindBlowExStage:167:673": {
+        "x": 737.5025635955996,
+        "y": 728.5476035762924
+      },
+      "moon:WindBlowExStage:299:674": {
+        "x": 712.921892291911,
+        "y": 431.5384636810545
+      },
+      "moon:WaterfallWorldHomeStage:2741:708": {
+        "x": 1115.5913039207774,
+        "y": 229.81550471634435
+      },
+      "moon:WaterfallWorldHomeStage:2778:770": {
+        "x": 47.72957342818427,
+        "y": 774.0585480692955
+      },
+      "moon:WaterfallWorldHomeStage:2819:822": {
+        "x": 1809.3995381814898,
+        "y": 540.3473702492278
+      },
+      "moon:WaterfallWorldHomeStage:2821:823": {
+        "x": 1810.117322004796,
+        "y": 654.8512346548879
+      },
+      "moon:WaterfallWorldHomeStage:2823:825": {
+        "x": 100,
+        "y": 1656
+      },
+      "moon:WaterfallWorldHomeStage:2824:826": {
+        "x": 84.69444536045154,
+        "y": 575.1308550907127
+      },
+      "moon:WaterfallWorldHomeStage:2898:866": {
+        "x": 100,
+        "y": 1548
+      },
+      "moon:WaterfallWorldHomeStage:2947:894": {
+        "x": 821.2053280334636,
+        "y": 177.55803627364756
+      },
+      "moon:WaterfallWorldHomeStage:2423:906": {
+        "x": 31.304997569027137,
+        "y": 899.0301696563372
+      },
+      "moon:WaterfallWorldHomeStage:3110:1004": {
+        "x": 320.40630172443457,
+        "y": 562.0230468044078
+      },
+      "moon:WaterfallWorldHomeStage:3208:1041": {
+        "x": 327.19528303692783,
+        "y": 811.4421195704194
+      },
+      "moon:TrexPoppunExStage:169:1115": {
+        "x": 823.5714285714286,
+        "y": 377.00892855833183
+      },
+      "moon:TrexPoppunExStage:18:1116": {
+        "x": 221.56250085128704,
+        "y": 174.68750045838533
+      },
+      "moon:WaterfallWorldHomeStage:3284:1145": {
+        "x": 94.25510653368315,
+        "y": 460.52430269732184
+      },
+      "moon:WaterfallWorldHomeStage:3523:1167": {
+        "x": 100.45382585751975,
+        "y": 1860.395778364116
+      },
+      "WaterfallWorldHomeStage::place::new_place_18": {
+        "x": 780.4640299513208,
+        "y": 429.40052142478737
       }
     }
   }

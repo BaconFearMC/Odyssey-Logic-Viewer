@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Mushroom Kingdom",
-  "savedAt": "2026-09-03T19:45:00.228Z",
+  "savedAt": "2026-09-16T16:08:34.264Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-09-03T19:31:37.440Z",
+    "loadedAt": "2026-09-16T16:01:06.854Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2935,10 +2935,10 @@
         "area_scope": "overworld",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj162",
         "to_node_id": "PeachWorldHomeStage::entrance::BossForestA::home_in",
-        "requirement_expr": "Climb | (NeutralThrow & Vault & WallJump & Dive) | Yoshi",
+        "requirement_expr": "Climb | (NeutralThrow & Vault & WallJump & Dive) | Yoshi | (NeutralThrow & TripleJump & Vault)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;advanced;advanced",
+        "difficulty": "casual;advanced;advanced;expert",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -5596,7 +5596,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj162",
         "state_requirement_expr": "",
-        "requirement_expr": "Yoshi | (NeutralThrow & Vault & WallJump & Dive & Climb) | (Climb & NeutralThrow) | (NeutralThrow & Vault & Dive)",
+        "requirement_expr": "Yoshi | (NeutralThrow & Vault & WallJump & Dive & Climb) | (Climb & NeutralThrow) | (NeutralThrow & Vault & Dive) | (UpThrow & Vault & Dive) | (DownThrow & Vault & Dive)",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5628,7 +5628,7 @@
         "shine_info_scenario_name": "お城の屋根の上",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:2364:1134",
-        "difficulty": "casual;casual;advanced;advanced",
+        "difficulty": "casual;casual;advanced;advanced;advanced;expert",
         "option_scenarios": ""
       },
       {
@@ -7660,6 +7660,30 @@
         "can_start_with_seed": "false",
         "aliases": "Talk to NPCs; NpcTalk; Talk",
         "notes": "Holding a conversation with an NPC. Without it the talk prompt still appears but pressing it gets a refusal from Cappy instead of the dialog, so any moon an NPC hands over needs this."
+      },
+      {
+        "token": "Pipe2D",
+        "token_type": "ability",
+        "display_name": "Enter 2D Pipes",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Enter 2D Pipes; Pipe2D; 2D Pipe; DokanChange2D",
+        "notes": "Going flat: the pipes built from the DokanChange2D archive, which are the only way into an in-stage 2D section. Pipes back out of 2D are never withheld, so anything reached only through a 2D section needs this."
+      },
+      {
+        "token": "TimerChallenge",
+        "token_type": "ability",
+        "display_name": "Timer Challenges",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Timer Challenges; TimerChallenge; P-Switch; Scarecrow",
+        "notes": "Every timed challenge: P-Switches (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer) and scarecrows (CapRack), which all share one AppearSwitchTimer. Without it the timer expires the frame it starts, so anything that needs the timed objects to stay up needs this."
       }
     ],
     "rooms": [
