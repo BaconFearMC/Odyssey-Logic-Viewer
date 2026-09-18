@@ -1310,7 +1310,16 @@ function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
     const truthy = t.always_unlocked === true || t.always_unlocked === 1 ||
       /^(true|1|yes)$/i.test(String(t.always_unlocked).trim());
-    if(truthy) ALWAYS_UNLOCKED_TOKENS[t.token] = true;
+    // Jaxi / Bike / RocketFlower are "override prop" captures: the raw
+    // export marks them always_unlocked=true because no real capture
+    // action is needed to trigger the override, NOT because riding a
+    // Jaxi/Scooter or holding a Rocket Flower is a trivial, always-met
+    // requirement. Treating that flag at face value made moon cards
+    // silently drop the Jaxi/Scooter/Rocket-Flower chip as "Free" on
+    // every moon that actually requires it. These Movement Ability dial
+    // tokens (FORCE_ABILITY_FILTER_TOKENS) are real requirements and must
+    // never be marked always-unlocked from the source data.
+    if(truthy && !FORCE_ABILITY_FILTER_TOKENS[t.token]) ALWAYS_UNLOCKED_TOKENS[t.token] = true;
     if (ICON_MANIFEST[t.token]) return; // don't clobber an already-known token
     const color = (CATEGORY_STYLE[t.category] || {}).color || "#34406e";
     const squashed = squash(t.display_name);
