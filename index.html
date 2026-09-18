@@ -3548,21 +3548,13 @@ function makeFilterIconEl(token, sizeClass){
   return wrap;
 }
 
-// Movement Ability dial tokens confirmed against sAbilities[] but not
-// yet wired into the randomizer/UI logic elsewhere in this project.
-// Rendered greyed-out and non-selectable in the Ability filter panel;
-// clicking one shows a "Not Implemented Yet" message instead of
-// toggling a filter that wouldn't actually do anything yet.
-const NOT_IMPLEMENTED_ABILITY_TOKENS = {
-  MoonLowGravity: true,
-  Grab: true,
-  Bike: true,
-  Jaxi: true,
-  RocketFlower: true,
-  NpcTalk: true,
-  TimerChallenge: true,
-  Pipe2D: true,
-};
+// Movement Ability dial tokens confirmed against sAbilities[] — all of
+// them (including Jaxi/Bike "Scooter") are now fully wired into the
+// filter UI and filtering logic, so none are held back as "not
+// implemented" any more. Left as an empty map (rather than deleting the
+// mechanism outright) so a future dial token can still be greyed out
+// here the same way, without touching setupFilterBar()/renderOptions().
+const NOT_IMPLEMENTED_ABILITY_TOKENS = {};
 
 let notImplementedToastTimer = null;
 function showNotImplementedToast(){
