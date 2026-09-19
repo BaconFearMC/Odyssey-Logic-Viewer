@@ -782,6 +782,14 @@
     border:1px solid var(--border);
     border-radius:12px;
   }
+  .entrance-reqs{ display:flex; flex-direction:column; gap:6px; margin-top:8px; padding-top:8px; border-top:1px dashed rgba(128,128,128,.35); }
+  .entrance-reqs.in-modal{ border-top:none; margin-top:4px; padding-top:0; }
+  .entrance-req-row{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .entrance-req-label{ font-size:12px; font-weight:600; opacity:.85; white-space:nowrap; }
+  .impossible-tag{ font-size:12px; font-weight:700; color:#e5484d; }
+  .group-subarea-summary{ padding:8px 14px 10px; border-top:1px solid rgba(128,128,128,.25); }
+  .group-subarea-title{ font-size:13px; font-weight:700; margin-bottom:2px; }
+  .group-subarea-summary .entrance-reqs{ margin-top:4px; padding-top:0; border-top:none; }
   .node-entrance-label{
     font-size:13.5px;
     font-weight:700;
@@ -3169,6 +3177,152 @@ function buildNodeReachIndex(nodes, edges){
   return { reachExprs, reachBranches };
 }
 
+/* =========================================================
+   PER-ENTRANCE REQUIREMENTS (subareas)
+   For a subarea moon: "what does it cost if I come in through THIS
+   pipe?" = cheapest-path cost from that entrance to the moon's own
+   from_node (walking the subarea's own routeEdges, honouring
+   bidirectional/impossible) crossed with the moon's OWN requirement.
+   No path at all => Impossible. Same-node => just the moon's own cost.
+   ========================================================= */
+const ENTRANCE_PIPE_LABEL = { sub_near: "Entrance Pipe", sub_far: "Exit Pipe" };
+const TIER_RANK = {}; TIER_ORDER.forEach((t, i) => { TIER_RANK[t] = i; });
+
+function pipeLabel(en, all){
+  const base = ENTRANCE_PIPE_LABEL[en.side];
+  return all.filter(x => x.side === en.side).length > 1 ? base + " (" + en.entrance_id + ")" : base;
+}
+
+function subareaEntrances(nodes, stage){
+  return (nodes || []).filter(n => n.stage === stage && n.node_type === "substage_entrance"
+    && n.source === "EntranceDB" && (n.side === "sub_near" || n.side === "sub_far"))
+    .sort((a, b) => (a.side === "sub_near" ? 0 : 1) - (b.side === "sub_near" ? 0 : 1));
+}
+
+function crossBranches(A, B){
+  const out = [];
+  A.forEach(a => B.forEach(b => {
+    let sc;
+    if(a.scenarios && b.scenarios) sc = a.scenarios.filter(n => b.scenarios.includes(n));
+    else sc = a.scenarios || b.scenarios || null;
+    if(sc && sc.length === 0) return; // no scenario where both hold
+    const group = Array.from(new Set(a.group.concat(b.group)));
+    const tier = (TIER_RANK[a.tier] || 0) >= (TIER_RANK[b.tier] || 0) ? a.tier : b.tier;
+    out.push({ group, scenarios: sc, tier });
+  }));
+  return out;
+}
+
+function edgeBranches(e){
+  const req = (e.requirement_expr || "").trim();
+  if(!req || req.toLowerCase() === "free") return [{ group: [], scenarios: null, tier: "casual" }];
+  const tiers = tiersForGroups(exprToDNF(req), e.difficulty);
+  return exprToScenarioDNF(req, e.option_scenarios).map((b, i) => ({ group: b.group.slice(), scenarios: b.scenarios || null, tier: tiers[i] || "unrated" }));
+}
+
+// Branches (or null = impossible) for walking fromId -> toId inside one stage.
+function reachWithinStage(nodeMap, edges, stage, fromId, toId){
+  if(fromId === toId) return [{ group: [], scenarios: null, tier: "casual" }];
+  const adj = {};
+  const add = (a, b, e) => { (adj[a] = adj[a] || []).push({ to: b, e }); };
+  (edges || []).forEach(e => {
+    const a = nodeMap[e.from_node_id], b = nodeMap[e.to_node_id];
+    if(!a || !b || a.stage !== stage || b.stage !== stage) return;
+    const req = (e.requirement_expr || "").trim().toLowerCase();
+    if(req === "impossible") return;
+    add(e.from_node_id, e.to_node_id, e);
+    if(String(e.bidirectional).toLowerCase() === "true") add(e.to_node_id, e.from_node_id, e);
+  });
+  let result = [];
+  const seen = new Set([fromId]);
+  (function dfs(cur, acc, depth){
+    if(depth > 8 || result.length > 200) return;
+    if(cur === toId){ result = result.concat(acc); return; }
+    (adj[cur] || []).forEach(({ to, e }) => {
+      if(seen.has(to)) return;
+      seen.add(to);
+      dfs(to, crossBranches(acc, edgeBranches(e)), depth + 1);
+      seen.delete(to);
+    });
+  })(fromId, [{ group: [], scenarios: null, tier: "casual" }], 0);
+  return result.length ? result : null;
+}
+
+// Cleans + dedupes branches; returns { impossible } | { free } | { lanes }
+function summarizeBranches(branches, kingdomName){
+  if(!branches || !branches.length) return { impossible: true };
+  const seenKeys = new Set();
+  const clean = [];
+  branches.forEach(b => {
+    const group = b.group.filter(tok => !ALWAYS_UNLOCKED_TOKENS[tok]
+      && !(KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] && KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] === kingdomName));
+    const key = group.slice().sort().join("+") + "|" + b.tier + "|" + (b.scenarios ? b.scenarios.join(",") : "");
+    if(seenKeys.has(key)) return;
+    seenKeys.add(key);
+    clean.push({ group, scenarios: b.scenarios, tier: b.tier });
+  });
+  if(clean.some(b => b.group.length === 0 && !b.scenarios)) return { free: true };
+  const lanes = buildTierLanesFromBranches(clean);
+  return lanes ? { lanes } : { free: true };
+}
+
+function computeEntranceReqs(row, ownMoon, ws, nodeMap, kingdomName){
+  const node = nodeMap[row.from_node_id];
+  if(!node || node.area_scope !== "subarea") return null;
+  const entrances = subareaEntrances(ws.logicNodes, node.stage);
+  if(entrances.length < 2) return null;
+  const own = (ownMoon.tierLanes && ownMoon.tierLanes.length)
+    ? ownMoon.tierLanes.reduce((acc, lane) => acc.concat(lane.groups.map(g => ({ group: g.slice(), scenarios: g.scenarios || null, tier: lane.tier }))), [])
+    : [{ group: [], scenarios: null, tier: "casual" }];
+  return entrances.map(en => {
+    const reach = reachWithinStage(nodeMap, ws.routeEdges, node.stage, en.node_id, row.from_node_id);
+    const summary = summarizeBranches(reach ? crossBranches(reach, own) : null, kingdomName);
+    return Object.assign({ label: pipeLabel(en, entrances) }, summary);
+  });
+}
+
+// Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
+function renderEntranceReqs(list, className){
+  const wrap = document.createElement("div");
+  wrap.className = className || "entrance-reqs";
+  list.forEach(r => {
+    const row = document.createElement("div");
+    row.className = "entrance-req-row";
+    const lab = document.createElement("span");
+    lab.className = "entrance-req-label";
+    lab.textContent = r.label + ":";
+    row.appendChild(lab);
+    if(r.impossible){
+      const t = document.createElement("span"); t.className = "impossible-tag"; t.textContent = "Impossible"; row.appendChild(t);
+    } else if(r.free){
+      const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; row.appendChild(t);
+    } else {
+      row.appendChild(renderReachTierLanes(r.lanes));
+    }
+    wrap.appendChild(row);
+  });
+  return wrap;
+}
+
+// Room-traversal summary for a whole subarea: what it costs to get from
+// each pipe to the other one.
+function computeRoomTraversal(kingdomName, stage){
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  if(!data) return null;
+  const ens = subareaEntrances(data.nodes, stage);
+  if(ens.length < 2) return null;
+  return ens.map(from => {
+    const to = ens.find(x => x !== from);
+    const summary = summarizeBranches(reachWithinStage(data.nodeMap, data.edges, stage, from.node_id, to.node_id), kingdomName);
+    return Object.assign({ label: "From the " + pipeLabel(from, ens) }, summary);
+  });
+}
+
+// Custom-node groups that should list the requirements of certain subareas below their header.
+const GROUP_SUBAREA_SUMMARIES = {
+  "Top of the Pyramid": ["SandWorldPyramid000Stage", "SandWorldPyramid001Stage"],
+};
+
 function loadKingdomFile(fileData, sourceLabel, forcedName){
   const ws = fileData.workspace;
   // forcedName (from KINGDOM_MANIFEST, keyed off the filename) always wins so
@@ -3195,7 +3349,14 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
   const { reachExprs: nodeReachExpr, reachBranches: nodeReachBranches } = buildNodeReachIndex(ws.logicNodes || [], ws.routeEdges || []);
 
-  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, nodeReachExpr, nodeReachBranches)));
+  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => {
+    const moon = parseMoon(row, nodeMap, checkpointLookup, kingdomName, nodeReachExpr, nodeReachBranches);
+    if(moon.subareaStage){
+      const ownOnly = parseMoon(row, nodeMap, checkpointLookup, kingdomName, {}, {});
+      moon.entranceReqs = computeEntranceReqs(row, ownOnly, ws, nodeMap, kingdomName);
+    }
+    return moon;
+  }));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons; // always overwrite; never merge with a stale prior entry
@@ -3206,7 +3367,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   // reach requirements, and for a subarea, walk every substage_entrance
   // node that shares its stage. Always overwritten wholesale on reload,
   // same as KINGDOMS above, so it can never point at stale nodes.
-  KINGDOM_NODE_DATA[kingdomName] = { nodeMap, nodes: ws.logicNodes || [], reachBranches: nodeReachBranches };
+  KINGDOM_NODE_DATA[kingdomName] = { nodeMap, nodes: ws.logicNodes || [], edges: ws.routeEdges || [], reachBranches: nodeReachBranches };
 }
 
 function setStatus(text, isError){
@@ -3404,7 +3565,7 @@ function buildMoonCard(moon){
     // listing EVERY entrance into this subarea and what each one requires —
     // a subarea can have more than one way in (e.g. Freezing Waterway's
     // near vs. far pipe), and each one can have its own cost.
-    const openThisSubarea = () => openNodeInfo({ kind:"subarea", kingdom: moon.kingdom, stage: moon.subareaStage, subareaName: moon.subarea });
+    const openThisSubarea = () => openNodeInfo({ kind:"subarea", kingdom: moon.kingdom, stage: moon.subareaStage, subareaName: moon.subarea, entranceReqs: moon.entranceReqs, moonName: moon.name });
     info.addEventListener("click", openThisSubarea);
     info.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openThisSubarea(); } });
 
@@ -3461,6 +3622,7 @@ function buildMoonCard(moon){
   }
 
   card.appendChild(buildMovementOptions(moon));
+  if(moon.entranceReqs) card.appendChild(renderEntranceReqs(moon.entranceReqs));
   return card;
 }
 
@@ -3678,6 +3840,25 @@ function buildCheckpointGroup(checkpointName, entry){
   header.appendChild(chevron);
 
   group.appendChild(header);
+
+  const subStages = GROUP_SUBAREA_SUMMARIES[checkpointName.replace(/\s*Checkpoint\s*$/i, "")];
+  if(subStages){
+    const kName = (entry.moons && entry.moons[0]) ? entry.moons[0].kingdom : KINGDOM_ORDER[currentKingdomIndex];
+    const data = KINGDOM_NODE_DATA[kName];
+    subStages.forEach(st => {
+      const trav = computeRoomTraversal(kName, st);
+      const node = data && data.nodes.find(n => n.stage === st);
+      if(!trav || !node) return;
+      const box = document.createElement("div");
+      box.className = "group-subarea-summary";
+      const t = document.createElement("div");
+      t.className = "group-subarea-title";
+      t.textContent = node.stage_display_name;
+      box.appendChild(t);
+      box.appendChild(renderEntranceReqs(trav));
+      group.appendChild(box);
+    });
+  }
 
   const body = document.createElement("div");
   body.className = "checkpoint-group-body";
@@ -4321,14 +4502,14 @@ function appendReachRequirement(parent, branches){
 // (sub_near / sub_far) — falls back to its raw display_name for any
 // other/legacy side value rather than showing nothing.
 function entranceSideLabel(node){
-  if(node.side === "sub_near") return "Near Entrance";
-  if(node.side === "sub_far") return "Far Entrance";
+  if(node.side === "sub_near") return "Entrance Pipe";
+  if(node.side === "sub_far") return "Exit Pipe";
   return node.display_name || node.entrance_id || "Entrance";
 }
 
 // { kind: "subarea" | "checkpoint" | "custom_place", kingdom, stage?,
 //   subareaName?, nodeId?, fallbackName? }
-function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName }){
+function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName, entranceReqs, moonName }){
   const data = KINGDOM_NODE_DATA[kingdom];
   nodeModalBody.innerHTML = "";
 
@@ -4343,25 +4524,20 @@ function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName 
     kindTag.textContent = "Subarea";
     nodeModalBody.appendChild(kindTag);
 
-    const entrances = data ? (data.nodes || []).filter(n => n.stage === stage && n.node_type === "substage_entrance") : [];
-    if(entrances.length === 0){
+    if(moonName){
+      const sub = document.createElement("div");
+      sub.className = "node-modal-kind";
+      sub.textContent = "For: " + moonName;
+      nodeModalBody.appendChild(sub);
+    }
+    const reqs = entranceReqs || computeRoomTraversal(kingdom, stage);
+    if(!reqs){
       const p = document.createElement("p");
       p.className = "node-modal-empty";
       p.textContent = "No entrance data available for this subarea yet.";
       nodeModalBody.appendChild(p);
     } else {
-      entrances.forEach(en => {
-        const block = document.createElement("div");
-        block.className = "node-entrance-block";
-
-        const label = document.createElement("div");
-        label.className = "node-entrance-label";
-        label.textContent = entranceSideLabel(en);
-        block.appendChild(label);
-
-        appendReachRequirement(block, data.reachBranches[en.node_id]);
-        nodeModalBody.appendChild(block);
-      });
+      nodeModalBody.appendChild(renderEntranceReqs(reqs, "entrance-reqs in-modal"));
     }
   } else {
     const node = data ? data.nodeMap[nodeId] : null;
