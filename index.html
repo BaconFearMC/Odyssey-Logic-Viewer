@@ -3270,15 +3270,22 @@ function computeEntranceReqs(row, ownMoon, ws, nodeMap, kingdomName){
   const node = nodeMap[row.from_node_id];
   if(!node || node.area_scope !== "subarea") return null;
   const entrances = subareaEntrances(ws.logicNodes, node.stage);
-  if(entrances.length < 2) return null;
+  // Only clean one-Entrance-Pipe + one-Exit-Pipe subareas (unambiguous labels).
+  if(entrances.length !== 2 || entrances[0].side === entrances[1].side) return null;
   const own = (ownMoon.tierLanes && ownMoon.tierLanes.length)
     ? ownMoon.tierLanes.reduce((acc, lane) => acc.concat(lane.groups.map(g => ({ group: g.slice(), scenarios: g.scenarios || null, tier: lane.tier }))), [])
     : [{ group: [], scenarios: null, tier: "casual" }];
-  return entrances.map(en => {
+  const rows = entrances.map(en => {
     const reach = reachWithinStage(nodeMap, ws.routeEdges, node.stage, en.node_id, row.from_node_id);
     const summary = summarizeBranches(reach ? crossBranches(reach, own) : null, kingdomName);
     return Object.assign({ label: pipeLabel(en, entrances) }, summary);
   });
+  // Only worth showing when the pipes actually differ (e.g. Free from one,
+  // Gushen from the other). If every pipe costs the same, the moon keeps its
+  // normal single requirement line exactly as before.
+  const sig = r => r.impossible ? "X" : r.free ? "F" : JSON.stringify(r.lanes.map(l => [l.tier, l.groups.map(g => g.slice().sort().join("+") + "@" + (g.scenarios || ""))]));
+  if(new Set(rows.map(sig)).size <= 1) return null;
+  return rows;
 }
 
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
