@@ -1806,7 +1806,6 @@ function astToDNF(node){
 // Moons forced to display as plain "Free" regardless of the checkpoint-reach
 // cost folded in from the route graph. Add exact moon_name strings here.
 const FORCE_FREE_MOONS = new Set([
-  "Moon Shards in the Sand",
 ]);
 
 const SCENARIO_DATA_HIDDEN_MOONS = new Set([
@@ -3365,7 +3364,10 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   const { reachExprs: nodeReachExpr, reachBranches: nodeReachBranches } = buildNodeReachIndex(ws.logicNodes || [], ws.routeEdges || []);
 
   const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => {
-    const moon = parseMoon(row, nodeMap, checkpointLookup, kingdomName, nodeReachExpr, nodeReachBranches);
+    // A moon shows ONLY its own requirement. The cost of reaching its
+    // checkpoint/custom node/subarea pipe is node info and lives in the
+    // click-to-inspect popup, not folded into the moon (so {} , {} here).
+    const moon = parseMoon(row, nodeMap, checkpointLookup, kingdomName, {}, {});
     if(moon.subareaStage){
       const ownOnly = parseMoon(row, nodeMap, checkpointLookup, kingdomName, {}, {});
       moon.entranceReqs = computeEntranceReqs(row, ownOnly, ws, nodeMap, kingdomName);
