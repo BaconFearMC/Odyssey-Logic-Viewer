@@ -3196,14 +3196,24 @@ const ENTRANCE_PIPE_LABEL = { sub_near: "Entrance Pipe", sub_far: "Exit Pipe" };
 const TIER_RANK = {}; TIER_ORDER.forEach((t, i) => { TIER_RANK[t] = i; });
 
 function pipeLabel(en, all){
-  const base = ENTRANCE_PIPE_LABEL[en.side];
+  const base = all.length === 1 ? "Entrance Pipe" : ENTRANCE_PIPE_LABEL[en.side];
   return all.filter(x => x.side === en.side).length > 1 ? base + " (" + en.entrance_id + ")" : base;
 }
 
 function subareaEntrances(nodes, stage){
-  return (nodes || []).filter(n => n.stage === stage && n.node_type === "substage_entrance"
+  const raw = (nodes || []).filter(n => n.stage === stage && n.node_type === "substage_entrance"
     && n.source === "EntranceDB" && (n.side === "sub_near" || n.side === "sub_far"))
     .sort((a, b) => (a.side === "sub_near" ? 0 : 1) - (b.side === "sub_near" ? 0 : 1));
+  // A link whose in- and out-entrance are the SAME id (e.g. Dinosaur Nest's
+  // RexPoppunEx) is one physical pipe, not an entrance + an exit: collapse its
+  // near/far nodes into a single pipe (keeping both node ids as aliases).
+  const out = [];
+  raw.forEach(n => {
+    const twin = out.find(o => o.entrance_id === n.entrance_id && o.side !== n.side);
+    if(twin){ twin.aliasNodes.push(n); return; }
+    out.push(Object.assign({}, n, { aliasNodes: [n] }));
+  });
+  return out;
 }
 
 function crossBranches(A, B){
@@ -3238,10 +3248,11 @@ function reachWithinStage(nodeMap, edges, stage, fromId, toId){
     const req = (e.requirement_expr || "").trim().toLowerCase();
     if(req === "impossible") return;
     add(e.from_node_id, e.to_node_id, e);
-    if(String(e.bidirectional).toLowerCase() === "true") add(e.to_node_id, e.from_node_id, e);
+    if(/^(true|1|yes|y)$/i.test(String(e.bidirectional).trim())) add(e.to_node_id, e.from_node_id, e);
   });
   let result = [];
   const seen = new Set([fromId]);
+  reachWithinStage.lastWhy = null;
   (function dfs(cur, acc, depth){
     if(depth > 8 || result.length > 200) return;
     if(cur === toId){ result = result.concat(acc); return; }
@@ -3252,6 +3263,12 @@ function reachWithinStage(nodeMap, edges, stage, fromId, toId){
       seen.delete(to);
     });
   })(fromId, [{ group: [], scenarios: null, tier: "casual" }], 0);
+  if(!result.length){
+    const explicit = (edges || []).some(e => e.from_node_id === fromId && String(e.requirement_expr || "").trim().toLowerCase() === "impossible");
+    reachWithinStage.lastWhy = (adj[fromId] || []).length === 0
+      ? (explicit ? "only explicit 'impossible' edges leave this pipe" : "no edges leave this pipe in the data")
+      : "edges leave this pipe but none lead to the moon's tracked node";
+  }
   return result.length ? result : null;
 }
 
@@ -3273,26 +3290,44 @@ function summarizeBranches(branches, kingdomName){
   return lanes ? { lanes } : { free: true };
 }
 
+const PIPE_PROXIMITY = 2500; // game units: a moon this close to a pipe is physically AT that pipe
+
+function moonPlacement(row){
+  const p = [row.placement_x, row.placement_y, row.placement_z].map(v => parseFloat(v));
+  return p.every(v => Number.isFinite(v)) ? p : null;
+}
+
 function computeEntranceReqs(row, ownMoon, ws, nodeMap, kingdomName){
   const node = nodeMap[row.from_node_id];
   if(!node || node.area_scope !== "subarea") return null;
   const entrances = subareaEntrances(ws.logicNodes, node.stage);
-  // Only clean one-Entrance-Pipe + one-Exit-Pipe subareas (unambiguous labels).
-  if(entrances.length !== 2 || entrances[0].side === entrances[1].side) return null;
+  // 1 pipe (one-entrance subareas like Dinosaur Nest) or an unambiguous
+  // Entrance Pipe + Exit Pipe pair. Anything busier is skipped.
+  if(entrances.length < 1 || entrances.length > 2) return null;
+  if(entrances.length === 2 && entrances[0].side === entrances[1].side) return null;
   const own = (ownMoon.tierLanes && ownMoon.tierLanes.length)
     ? ownMoon.tierLanes.reduce((acc, lane) => acc.concat(lane.groups.map(g => ({ group: g.slice(), scenarios: g.scenarios || null, tier: lane.tier }))), [])
     : [{ group: [], scenarios: null, tier: "casual" }];
-  const rows = entrances.map(en => {
-    const reach = reachWithinStage(nodeMap, ws.routeEdges, node.stage, en.node_id, row.from_node_id);
+  const place = moonPlacement(row);
+  return entrances.map(en => {
+    let reach = null;
+    en.aliasNodes.forEach(alias => {
+      const r = reachWithinStage(nodeMap, ws.routeEdges, node.stage, alias.node_id, row.from_node_id);
+      if(r) reach = (reach || []).concat(r);
+    });
+    // Interpreted from placement: if the moon physically sits at this pipe
+    // (within PIPE_PROXIMITY), coming in through it needs no traversal at all
+    // — only the moon's own requirement.
+    let atPipe = false;
+    if(place) en.aliasNodes.forEach(alias => {
+      const q = [alias.x, alias.y, alias.z].map(v => parseFloat(v));
+      if(q.every(v => Number.isFinite(v)) && Math.hypot(place[0]-q[0], place[1]-q[1], place[2]-q[2]) <= PIPE_PROXIMITY) atPipe = true;
+    });
+    if(atPipe) reach = (reach || []).concat([{ group: [], scenarios: null, tier: "casual" }]);
     const summary = summarizeBranches(reach ? crossBranches(reach, own) : null, kingdomName);
+    if(!reach) console.info(`[${kingdomName}] "${row.moon_name}": Impossible from ${pipeLabel(en, entrances)} (${en.node_id}) -> ${row.from_node_id}: ${reachWithinStage.lastWhy}`);
     return Object.assign({ label: pipeLabel(en, entrances) }, summary);
   });
-  // Only worth showing when the pipes actually differ (e.g. Free from one,
-  // Gushen from the other). If every pipe costs the same, the moon keeps its
-  // normal single requirement line exactly as before.
-  const sig = r => r.impossible ? "X" : r.free ? "F" : JSON.stringify(r.lanes.map(l => [l.tier, l.groups.map(g => g.slice().sort().join("+") + "@" + (g.scenarios || ""))]));
-  if(new Set(rows.map(sig)).size <= 1) return null;
-  return rows;
 }
 
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
@@ -3324,10 +3359,15 @@ function computeRoomTraversal(kingdomName, stage){
   const data = KINGDOM_NODE_DATA[kingdomName];
   if(!data) return null;
   const ens = subareaEntrances(data.nodes, stage);
-  if(ens.length < 2) return null;
+  if(ens.length !== 2) return null; // one-entrance subareas have no pipe-to-pipe route
   return ens.map(from => {
     const to = ens.find(x => x !== from);
-    const summary = summarizeBranches(reachWithinStage(data.nodeMap, data.edges, stage, from.node_id, to.node_id), kingdomName);
+    let br = null;
+    from.aliasNodes.forEach(fa => to.aliasNodes.forEach(ta => {
+      const r = reachWithinStage(data.nodeMap, data.edges, stage, fa.node_id, ta.node_id);
+      if(r) br = (br || []).concat(r);
+    }));
+    const summary = summarizeBranches(br, kingdomName);
     return Object.assign({ label: "From the " + pipeLabel(from, ens) }, summary);
   });
 }
@@ -4565,7 +4605,8 @@ function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName,
     if(!reqs){
       const p = document.createElement("p");
       p.className = "node-modal-empty";
-      p.textContent = "No entrance data available for this subarea yet.";
+      const nEnt = data ? subareaEntrances(data.nodes, stage).length : 0;
+      p.textContent = nEnt === 1 ? "This subarea only has one entrance." : "No entrance data available for this subarea yet.";
       nodeModalBody.appendChild(p);
     } else {
       nodeModalBody.appendChild(renderEntranceReqs(reqs, "entrance-reqs in-modal"));
