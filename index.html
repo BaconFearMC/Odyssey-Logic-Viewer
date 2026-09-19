@@ -251,7 +251,10 @@
     border:1px solid var(--border);
     flex-shrink:0;
     margin-top:1px;
+    cursor:pointer;
+    transition:opacity 0.12s ease;
   }
+  .checkpoint-group-icon:hover{ opacity:0.75; }
   .checkpoint-group-name{
     flex:1;
     min-width:0;
@@ -359,7 +362,7 @@
     bottom:10px; right:10px;
     width:48.6px; height:48.6px;
     display:inline-flex; align-items:center; justify-content:center;
-    cursor:help;
+    cursor:pointer;
   }
   .checkpoint-info + .checkpoint-info{
     right:calc(10px + 48.6px + 6px);
@@ -695,6 +698,96 @@
     display:block;
     margin:0 auto 14px;
   }
+
+  /* ---- Node-inspect popup -------------------------------------------
+     Clicking a Subarea/Checkpoint/Custom-Node icon (on a moon card, a
+     moon panel, or a checkpoint-group header) opens this: a simple
+     centered modal showing what it actually costs to reach that specific
+     location — same tier-lane treatment as a moon's own requirements,
+     reusing the .tier-stack/.tier-lane/.option-chip classes so it looks
+     native everywhere it's already used. A Subarea shows every one of its
+     entrances (a subarea can have more than one way in, each with its
+     own cost) instead of just one flat answer. */
+  .node-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(10,10,12,0.72);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index:105;
+    align-items:flex-start;
+    justify-content:center;
+    padding:9vh 16px 0;
+  }
+  .node-overlay.open{ display:flex; }
+  .node-modal{
+    position:relative;
+    width:100%;
+    max-width:560px;
+    background:linear-gradient(180deg, var(--bg-panel), var(--bg-chip));
+    border:1px solid var(--gold);
+    border-radius:18px;
+    box-shadow:0 0 0 1px rgba(230,194,0,0.15), 0 24px 70px rgba(0,0,0,0.6), 0 0 40px rgba(230,194,0,0.08);
+    overflow:hidden;
+    max-height:76vh;
+    display:flex;
+    flex-direction:column;
+    animation: searchModalIn 0.22s cubic-bezier(.2,.9,.3,1.1);
+  }
+  .node-modal-close{
+    position:absolute;
+    top:12px; right:14px;
+    background:none; border:none; cursor:pointer;
+    color:var(--text-dim);
+    font-size:26px; line-height:1;
+    z-index:2;
+    transition:color 0.15s ease, transform 0.15s ease;
+  }
+  .node-modal-close:hover{ color:var(--red); transform:rotate(90deg); }
+  .node-modal-body{
+    overflow-y:auto;
+    padding:26px 24px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .node-modal-title{
+    margin:0;
+    padding-right:28px;
+    font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
+    font-size:20px;
+    font-weight:700;
+    color:var(--gold);
+    line-height:1.3;
+  }
+  .node-modal-kind{
+    margin-top:-12px;
+    font-size:11.5px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+  }
+  .node-modal-empty{
+    font-size:13.5px;
+    color:var(--text-dim);
+    margin:0;
+  }
+  .node-entrance-block{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    padding:14px 16px;
+    background:var(--bg-chip);
+    border:1px solid var(--border);
+    border-radius:12px;
+  }
+  .node-entrance-label{
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--text);
+  }
+  .node-entrance-block .free-tag{ font-size:12.5px; }
 
   /* ---- Logic Video overlay -----------------------------------------
      Clicking any requirement branch ("node") on a moon card first
@@ -1190,6 +1283,13 @@
     <button type="button" class="video-close" id="videoClose" aria-label="Close">&times;</button>
     <div class="video-info-box" id="videoInfoBox"></div>
     <div class="video-stage" id="videoStage"></div>
+  </div>
+</div>
+
+<div class="node-overlay" id="nodeOverlay">
+  <div class="node-modal" id="nodeModal">
+    <button type="button" class="node-modal-close" id="nodeModalClose" aria-label="Close">&times;</button>
+    <div class="node-modal-body" id="nodeModalBody"></div>
   </div>
 </div>
 
@@ -1977,7 +2077,11 @@ function buildCheckpointLookup(nodes, edges){
     let name = displayNameOf[cpId] || cpId;
     // Strip the trailing "(objXXX)" the editor appends to checkpoint names.
     name = name.replace(/\s*\([^)]*\)\s*$/, "");
-    lookup[nodeId] = { name, type: sourceType[cpId] || "checkpoint" };
+    // `id` is the source checkpoint/custom_place's own raw node_id (cpId,
+    // NOT the possibly-different node the BFS reached it from) — needed so
+    // the click-to-inspect popup can look up that source node's own reach
+    // requirements (see buildNodeReachIndex) instead of just displaying its name.
+    lookup[nodeId] = { name, type: sourceType[cpId] || "checkpoint", id: cpId };
   });
   return lookup;
 }
@@ -2102,12 +2206,18 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
   }));
 
   let subarea = null;
+  let subareaStage = null; // raw stage key (e.g. "WaterTubeExStage"), not the display name — used to find sibling entrances
   const node = nodeMap[row.from_node_id];
-  if(node && node.area_scope === "subarea") subarea = node.stage_display_name;
+  if(node && node.area_scope === "subarea"){
+    subarea = node.stage_display_name;
+    subareaStage = node.stage;
+  }
+  const subareaNodeId = subarea ? row.from_node_id : null;
 
   const checkpointEntry = (checkpointLookup && checkpointLookup[row.from_node_id]) || null;
   const checkpoint = checkpointEntry ? checkpointEntry.name : null;
   const checkpointType = checkpointEntry ? checkpointEntry.type : null;
+  const checkpointNodeId = checkpointEntry ? checkpointEntry.id : null;
 
   if(/^Secret Path/i.test(row.moon_name)){
     dnf = [["PaintingAccess"]];
@@ -2171,8 +2281,11 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
     orGroups: isFree ? [] : dnf,
     tierLanes,
     subarea,
+    subareaStage,
+    subareaNodeId,
     checkpoint,
     checkpointType,
+    checkpointNodeId,
     badges,
     hintIdx: Number.isNaN(hintIdx) ? null : hintIdx,
   };
@@ -2988,29 +3101,52 @@ function sortMoonsByHintOrder(moons){
    ========================================================= */
 let KINGDOMS = {};
 let KINGDOM_ORDER = [];
+// kingdom display name -> { nodeMap, nodes, reachBranches } — see loadKingdomFile.
+let KINGDOM_NODE_DATA = {};
 
 /* =========================================================
-   CUSTOM-NODE REACH REQUIREMENTS — a custom_place (e.g. Bullet
-   Bill Maze's "Rooftop") is a hand-placed *destination*, not a
-   free-standing checkpoint: getting there costs whatever the
-   incoming routeEdge(s) say (Backflip & WallJump, etc). A moon
-   whose from_node_id IS a custom_place needs that reach cost
-   folded into its own requirement_expr, or the moon reads as
-   flatly "free" while actually gating on movement/captures.
-   Built once per kingdom load, generically, for every custom_place
-   node with inbound edges — no per-kingdom/per-node special-casing,
-   so this covers all 17 kingdoms automatically as new custom nodes
-   are added in logic_nodes.csv.
-   ========================================================= */
-function buildCustomNodeReachExpr(nodes, edges){
-  const isCustom = {};
-  (nodes || []).forEach(n => { if(n.node_type === "custom_place") isCustom[n.node_id] = true; });
+   NODE REACH REQUIREMENTS — ANY node (a custom_place like
+   Bullet Bill Maze's "Rooftop", but just as much a plain
+   substage_entrance like a subarea's far-side pipe) can be a
+   hand-placed *destination* that isn't free to reach: getting
+   there costs whatever the incoming routeEdge(s) say (Backflip &
+   WallJump, Hosui, etc). A moon whose from_node_id IS one of
+   these nodes needs that reach cost folded into its own
+   requirement_expr, or the moon reads as flatly "free" while
+   actually gating on movement/captures/abilities.
 
-  const reachExprs = {}; // custom node_id -> OR-joined string of all viable inbound edge exprs (legacy shape, kept for any other caller)
-  const reachBranches = {}; // custom node_id -> [{group:[tok,...], scenarios:[...]|null}, ...] (scenario-tagged, one entry per edge's own top-level OR branch)
+   This used to only run for node_type === "custom_place" nodes,
+   which silently missed subarea entrances that are only reachable
+   via another entrance in the same subarea — e.g. Freezing
+   Waterway's far-side pipe (WaterTubeExStage's EX_2DHosui_Exit)
+   only opens up after swimming through with Hosui from the near
+   side, but "Through the Freezing Waterway" (from_node_id = that
+   far entrance) rendered as completely Free. Dropping the
+   custom_place-only filter fixes that automatically, for every
+   subarea's entrances in every kingdom, with no per-node or
+   per-kingdom special-casing — the exact same one-hop
+   inbound-edge fold already used for custom nodes just now
+   applies uniformly to every node_id that has a real (non-free,
+   non-impossible) inbound routeEdge.
+
+   Every returned branch also carries its own `tier` (paired off
+   that edge's own `difficulty` column exactly the way moonAccess's
+   difficulty column pairs off requirement_expr — see
+   tiersForGroups), so a reach requirement can be shown with its
+   own Casual/Advanced/Expert/Glitched lane, not just as a flat
+   list of tokens. This is what powers the click-to-inspect node
+   popup (see openNodeInfo) in addition to feeding into parseMoon.
+
+   Built once per kingdom load, generically, for every node with
+   inbound edges — no per-kingdom/per-node special-casing, so this
+   covers all 17 kingdoms automatically as new nodes/edges are
+   added in logic_nodes.csv / route_edges.csv.
+   ========================================================= */
+function buildNodeReachIndex(nodes, edges){
+  const reachExprs = {}; // node_id -> OR-joined string of all viable inbound edge exprs (legacy shape, kept for any other caller)
+  const reachBranches = {}; // node_id -> [{group:[tok,...], scenarios:[...]|null, tier, fromNodeId, edgeId}, ...] (one entry per edge's own top-level OR branch)
   (edges || []).forEach(e => {
-    if(!isCustom[e.to_node_id]) return;
-    if(!e.from_node_id) return;
+    if(!e.to_node_id || !e.from_node_id) return;
     const req = (e.requirement_expr || "").trim();
     if(!req || req.toLowerCase() === "impossible") return;
     if(req.toLowerCase() === "free") return; // free-to-reach: nothing to fold in
@@ -3019,9 +3155,15 @@ function buildCustomNodeReachExpr(nodes, edges){
 
     // Scenario-tagged version: each edge is resolved to its OWN branches
     // (with its OWN option_scenarios) BEFORE being combined across edges,
-    // so two different inbound edges into the same custom node never have
-    // their scenario lists cross-mixed against each other's branch counts.
-    const taggedBranches = exprToScenarioDNF(req, e.option_scenarios);
+    // so two different inbound edges into the same node never have their
+    // scenario lists cross-mixed against each other's branch counts. Tiers
+    // are paired the same way, off this same edge's own `difficulty`
+    // column, so branch i of THIS edge always keeps its own tier/scenario
+    // even after being concatenated with other edges' branches below.
+    const dnf = exprToDNF(req);
+    const tiers = tiersForGroups(dnf, e.difficulty);
+    const taggedBranches = exprToScenarioDNF(req, e.option_scenarios)
+      .map((b, i) => Object.assign({}, b, { tier: tiers[i] || "unrated", fromNodeId: e.from_node_id, edgeId: e.edge_id }));
     reachBranches[e.to_node_id] = (reachBranches[e.to_node_id] || []).concat(taggedBranches);
   });
   return { reachExprs, reachBranches };
@@ -3051,12 +3193,20 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   console.log(`[${kingdomName}] loaded ${(ws.logicNodes||[]).length} nodes (${customPlaceCount} custom_place), ${(ws.routeEdges||[]).length} edges`);
 
   const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
-  const { reachExprs: customNodeReachExpr, reachBranches: customNodeReachBranches } = buildCustomNodeReachExpr(ws.logicNodes || [], ws.routeEdges || []);
+  const { reachExprs: nodeReachExpr, reachBranches: nodeReachBranches } = buildNodeReachIndex(ws.logicNodes || [], ws.routeEdges || []);
 
-  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachExpr, customNodeReachBranches)));
+  const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => parseMoon(row, nodeMap, checkpointLookup, kingdomName, nodeReachExpr, nodeReachBranches)));
 
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons; // always overwrite; never merge with a stale prior entry
+
+  // Kept around (keyed by kingdom display name, same as moon.kingdom) so the
+  // click-to-inspect node popup — triggered long after this load, from
+  // whichever kingdom is currently on screen — can look up any node's own
+  // reach requirements, and for a subarea, walk every substage_entrance
+  // node that shares its stage. Always overwritten wholesale on reload,
+  // same as KINGDOMS above, so it can never point at stale nodes.
+  KINGDOM_NODE_DATA[kingdomName] = { nodeMap, nodes: ws.logicNodes || [], reachBranches: nodeReachBranches };
 }
 
 function setStatus(text, isError){
@@ -3076,7 +3226,7 @@ async function tryAutoload(){
   let loaded = 0;
   for(const entry of KINGDOM_MANIFEST){
     try{
-      const res = await fetch("logic/" + entry.file + ".json");
+      const res = await fetch("logic/graph-editor/saves/kingdoms/" + entry.file + ".json");
       if(!res.ok) continue;
       const data = await res.json();
       loadKingdomFile(data, entry.file + ".json", entry.name);
@@ -3236,7 +3386,8 @@ function buildMoonCard(moon){
     const info = document.createElement("span");
     info.className = "checkpoint-info";
     info.tabIndex = 0; // keyboard-focusable, same pattern as makeIcon()
-    info.setAttribute("aria-label", moon.subarea);
+    info.setAttribute("aria-label", moon.subarea + " — click for entrance requirements");
+    info.setAttribute("role", "button");
 
     const img = document.createElement("img");
     img.src = "icon/infosubarea.png";
@@ -3248,6 +3399,14 @@ function buildMoonCard(moon){
     tip.className = "icon-tooltip";
     tip.textContent = moon.subarea;
     info.appendChild(tip);
+
+    // Clicking (or Enter/Space while focused) opens the node-inspect popup
+    // listing EVERY entrance into this subarea and what each one requires —
+    // a subarea can have more than one way in (e.g. Freezing Waterway's
+    // near vs. far pipe), and each one can have its own cost.
+    const openThisSubarea = () => openNodeInfo({ kind:"subarea", kingdom: moon.kingdom, stage: moon.subareaStage, subareaName: moon.subarea });
+    info.addEventListener("click", openThisSubarea);
+    info.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openThisSubarea(); } });
 
     card.appendChild(info);
   }
@@ -3268,7 +3427,8 @@ function buildMoonCard(moon){
     const info = document.createElement("span");
     info.className = "checkpoint-info";
     info.tabIndex = 0; // keyboard-focusable, same pattern as makeIcon()
-    info.setAttribute("aria-label", label);
+    info.setAttribute("aria-label", label + " — click for its requirements");
+    info.setAttribute("role", "button");
 
     const img = document.createElement("img");
     // Custom Nodes (node_type === "custom_place") get their own icon;
@@ -3285,6 +3445,17 @@ function buildMoonCard(moon){
     tip.className = "icon-tooltip";
     tip.textContent = label;
     info.appendChild(tip);
+
+    // Clicking (or Enter/Space while focused) opens the node-inspect popup
+    // showing what it actually costs to reach this checkpoint/custom node.
+    const openThisCheckpoint = () => openNodeInfo({
+      kind: moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint",
+      kingdom: moon.kingdom,
+      nodeId: moon.checkpointNodeId,
+      fallbackName: shortName,
+    });
+    info.addEventListener("click", openThisCheckpoint);
+    info.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openThisCheckpoint(); } });
 
     card.appendChild(info);
   }
@@ -3479,6 +3650,20 @@ function buildCheckpointGroup(checkpointName, entry){
     icon.src = isLoadingZone ? "icon/customnode.png" : "icon/infocheckpoint.png";
     icon.alt = "";
     icon.onerror = function(){ this.style.display = "none"; };
+    icon.title = "Click for this location's own requirements";
+    // Opens the node-inspect popup for this checkpoint/custom node instead
+    // of toggling the group — stopPropagation keeps the header's own
+    // open/close click handler (added below) from also firing.
+    icon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const firstMoon = entry.moons && entry.moons[0];
+      openNodeInfo({
+        kind: isLoadingZone ? "custom_place" : "checkpoint",
+        kingdom: firstMoon ? firstMoon.kingdom : KINGDOM_ORDER[currentKingdomIndex],
+        nodeId: firstMoon ? firstMoon.checkpointNodeId : null,
+        fallbackName: checkpointName.replace(/\s*Checkpoint\s*$/i, ""),
+      });
+    });
     header.appendChild(icon);
   }
 
@@ -4021,6 +4206,198 @@ document.addEventListener("keydown", (e) => {
 searchInput.addEventListener("input", () => renderSearchResults(searchInput.value));
 
 /* =========================================================
+   NODE-INSPECT POPUP — clicking a Subarea/Checkpoint/Custom-Node icon
+   (on a moon card, a moon panel, or a checkpoint-group header) opens
+   this: what does it actually cost to reach THIS specific location,
+   broken out by logic level (Casual/Advanced/Expert/Glitched), sourced
+   from buildNodeReachIndex's per-node branch data. A Subarea shows
+   EVERY one of its entrances side by side (a subarea can have more than
+   one way in, each with its own cost — e.g. Freezing Waterway's near
+   entrance is Free, its far entrance needs Hosui) instead of collapsing
+   to a single answer that only ever reflected whichever entrance a
+   given moon happened to be tagged from.
+   ========================================================= */
+const nodeOverlay = document.getElementById("nodeOverlay");
+const nodeModalBody = document.getElementById("nodeModalBody");
+const nodeModalClose = document.getElementById("nodeModalClose");
+
+// Turns a flat list of reach branches (one per viable inbound edge
+// OR-branch, each already tagged with its own tier — see
+// buildNodeReachIndex) into the same { tier, label, groups } lane shape
+// buildMovementOptions/parseMoon use, so rendering code doesn't need two
+// different data shapes for "a moon's requirements" vs. "a node's reach
+// requirements". Returns null (meaning: free, nothing to fold in) when
+// there are no branches at all.
+function buildTierLanesFromBranches(branches){
+  if(!branches || branches.length === 0) return null;
+  const tierLanes = [];
+  TIER_ORDER.forEach(tierKey => {
+    const groups = branches
+      .filter(b => b.tier === tierKey)
+      .map(b => Object.assign(b.group.slice(), { scenarios: b.scenarios }));
+    if(groups.length) tierLanes.push({ tier: tierKey, label: TIER_LABEL[tierKey], groups });
+  });
+  return tierLanes.length ? tierLanes : null;
+}
+
+// Renders tier lanes read-only (no click-to-video handlers — this popup
+// can already be opened from on top of the checkpoint-group view, and
+// these chips describe a *node's* reach cost, not a specific moon's
+// clickable requirement branch, so they shouldn't try to look up a
+// logic-clip video at all). Deliberately reuses the exact same
+// .tier-stack/.tier-lane/.tier-pill/.option-chip classes the moon cards
+// use, so it looks native without any popup-specific CSS for the chips
+// themselves.
+function renderReachTierLanes(tierLanes){
+  const stack = document.createElement("div");
+  stack.className = "tier-stack";
+  tierLanes.forEach(lane => {
+    const laneEl = document.createElement("div");
+    laneEl.className = "tier-lane " + lane.tier;
+
+    const pill = document.createElement("span");
+    pill.className = "tier-pill";
+    pill.textContent = lane.label;
+    laneEl.appendChild(pill);
+
+    const optsEl = document.createElement("div");
+    optsEl.className = "tier-options";
+    lane.groups.forEach((andGroup, i) => {
+      if(i > 0){
+        const sep = document.createElement("span");
+        sep.className = "or-sep " + lane.tier;
+        sep.textContent = "or";
+        optsEl.appendChild(sep);
+      }
+      const chip = document.createElement("div");
+      if(andGroup.length === 0){
+        chip.className = "option-chip free-chip";
+        chip.textContent = "Free";
+      } else {
+        chip.className = "option-chip";
+        andGroup.forEach((token, j) => {
+          if(j > 0){
+            const plus = document.createElement("span");
+            plus.className = "and-plus";
+            plus.textContent = "+";
+            chip.appendChild(plus);
+          }
+          chip.appendChild(makeIcon(token));
+        });
+      }
+      const scenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
+      if(scenarioLabel){
+        const tag = document.createElement("span");
+        tag.className = "scenario-tag";
+        tag.textContent = scenarioLabel;
+        chip.appendChild(tag);
+      }
+      optsEl.appendChild(chip);
+    });
+
+    laneEl.appendChild(optsEl);
+    stack.appendChild(laneEl);
+  });
+  return stack;
+}
+
+// Appends either a tiered requirement stack or a plain "Free" tag to
+// `parent`, for the given reach branches — the one bit of rendering
+// logic shared by every section of the popup (a single node, or one row
+// per subarea entrance).
+function appendReachRequirement(parent, branches){
+  const tierLanes = buildTierLanesFromBranches(branches);
+  if(!tierLanes){
+    const free = document.createElement("span");
+    free.className = "free-tag";
+    free.textContent = "Free";
+    parent.appendChild(free);
+  } else {
+    parent.appendChild(renderReachTierLanes(tierLanes));
+  }
+}
+
+// Human-friendly label for a substage_entrance node's `side` field
+// (sub_near / sub_far) — falls back to its raw display_name for any
+// other/legacy side value rather than showing nothing.
+function entranceSideLabel(node){
+  if(node.side === "sub_near") return "Near Entrance";
+  if(node.side === "sub_far") return "Far Entrance";
+  return node.display_name || node.entrance_id || "Entrance";
+}
+
+// { kind: "subarea" | "checkpoint" | "custom_place", kingdom, stage?,
+//   subareaName?, nodeId?, fallbackName? }
+function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName }){
+  const data = KINGDOM_NODE_DATA[kingdom];
+  nodeModalBody.innerHTML = "";
+
+  if(kind === "subarea"){
+    const title = document.createElement("h3");
+    title.className = "node-modal-title";
+    title.textContent = subareaName || stage || "Subarea";
+    nodeModalBody.appendChild(title);
+
+    const kindTag = document.createElement("div");
+    kindTag.className = "node-modal-kind";
+    kindTag.textContent = "Subarea";
+    nodeModalBody.appendChild(kindTag);
+
+    const entrances = data ? (data.nodes || []).filter(n => n.stage === stage && n.node_type === "substage_entrance") : [];
+    if(entrances.length === 0){
+      const p = document.createElement("p");
+      p.className = "node-modal-empty";
+      p.textContent = "No entrance data available for this subarea yet.";
+      nodeModalBody.appendChild(p);
+    } else {
+      entrances.forEach(en => {
+        const block = document.createElement("div");
+        block.className = "node-entrance-block";
+
+        const label = document.createElement("div");
+        label.className = "node-entrance-label";
+        label.textContent = entranceSideLabel(en);
+        block.appendChild(label);
+
+        appendReachRequirement(block, data.reachBranches[en.node_id]);
+        nodeModalBody.appendChild(block);
+      });
+    }
+  } else {
+    const node = data ? data.nodeMap[nodeId] : null;
+    let displayName = (node && node.display_name) || fallbackName || "Location";
+    displayName = displayName.replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "");
+
+    const title = document.createElement("h3");
+    title.className = "node-modal-title";
+    title.textContent = displayName;
+    nodeModalBody.appendChild(title);
+
+    const kindTag = document.createElement("div");
+    kindTag.className = "node-modal-kind";
+    kindTag.textContent = kind === "custom_place" ? "Custom Node" : "Checkpoint";
+    nodeModalBody.appendChild(kindTag);
+
+    const block = document.createElement("div");
+    block.className = "node-entrance-block";
+    appendReachRequirement(block, data && nodeId ? data.reachBranches[nodeId] : null);
+    nodeModalBody.appendChild(block);
+  }
+
+  nodeOverlay.classList.add("open");
+}
+
+function closeNodeInfo(){
+  nodeOverlay.classList.remove("open");
+}
+
+nodeModalClose.addEventListener("click", closeNodeInfo);
+nodeOverlay.addEventListener("click", (e) => { if(e.target === nodeOverlay) closeNodeInfo(); });
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Escape" && nodeOverlay.classList.contains("open")) closeNodeInfo();
+});
+
+/* =========================================================
    LOGIC VIDEO OVERLAY — clicking a requirement branch ("node") on a
    moon card first silently checks whether a clip exists for it. Only
    once a real file is found does the overlay open: a fancy info box on
@@ -4186,7 +4563,7 @@ async function init(){
     buildSearchIndex();
     initFilterBars();
   } else {
-    setStatus("No kingdom files found in /logic/ yet — add some to the /logic/ folder.", true);
+    setStatus("No kingdom files found in /logic/graph-editor/saves/kingdoms/ yet — add some there.", true);
   }
 }
 
