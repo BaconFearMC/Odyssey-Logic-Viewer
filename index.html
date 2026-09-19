@@ -697,13 +697,13 @@
   }
 
   /* ---- Logic Video overlay -----------------------------------------
-     Clicking any requirement branch ("node") on a moon card opens this
-     right away: a fancy info box on the left (moon name + logic-level +
-     that branch's requirement chips) slides + fades in, and a video
-     stage on the right pops in shortly after, playing
-     assets/logicvideos/<autoname>.mp4 or .webp for that exact branch —
-     or showing a small "Nothing yet…" note tucked into its bottom-right
-     corner if neither file exists yet. */
+     Clicking any requirement branch ("node") on a moon card first
+     silently checks for assets/logicvideos/<autoname>.mp4 / .webp. Only
+     once a real file is found does this open: a fancy info box on the
+     left (moon name + logic-level + that branch's requirement chips)
+     slides + fades in, then the video pops in on the right shortly
+     after. When nothing exists yet, this overlay never opens at all —
+     see .nothing-yet-toast instead, which is entirely separate. */
   .video-overlay{
     display:none;
     position:fixed;
@@ -814,18 +814,30 @@
     object-fit:contain;
     background:#000;
   }
-  .video-nothing-yet{
-    display:none;
-    position:absolute;
-    bottom:8px; right:10px;
-    font-size:10.5px;
-    font-style:italic;
+  /* Separate from the video player entirely: a small toast that slides
+     up from off the bottom of the screen when a clicked branch has no
+     clip yet. The overlay never opens in that case at all. */
+  .nothing-yet-toast{
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    z-index:200;
+    background:#1c1c20;
     color:var(--text-dim);
-    background:rgba(0,0,0,0.5);
-    padding:3px 8px;
-    border-radius:12px;
     border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 16px;
+    font-size:13px;
+    font-weight:600;
+    box-shadow:0 12px 30px rgba(0,0,0,0.5);
+    transform:translateY(140%);
+    opacity:0;
+    transition:transform 0.28s cubic-bezier(.2,.9,.3,1.1), opacity 0.28s ease;
     pointer-events:none;
+  }
+  .nothing-yet-toast.show{
+    transform:translateY(0);
+    opacity:1;
   }
   /* Hover affordance so it's clear a requirement branch is clickable. */
   .option-chip, .free-chip{ cursor:pointer; transition:transform 0.12s ease, box-shadow 0.12s ease; }
@@ -1177,11 +1189,11 @@
   <div class="video-modal" id="videoModal">
     <button type="button" class="video-close" id="videoClose" aria-label="Close">&times;</button>
     <div class="video-info-box" id="videoInfoBox"></div>
-    <div class="video-stage" id="videoStage">
-      <div class="video-nothing-yet" id="videoNothingYet">Nothing yet…</div>
-    </div>
+    <div class="video-stage" id="videoStage"></div>
   </div>
 </div>
+
+<div class="nothing-yet-toast" id="nothingYetToast">Nothing yet…</div>
 
 
 <script>
@@ -3294,7 +3306,7 @@ function buildMovementOptions(moon, boxed){
     free.className = "free-tag";
     free.textContent = "Free";
     free.style.cursor = "pointer";
-    free.addEventListener("click", () => openLogicVideo(moon, "free", "Free", [], 1));
+    free.addEventListener("click", () => handleNodeClick(moon, "free", "Free", [], 1));
     row.appendChild(free);
     return row;
   }
@@ -3333,7 +3345,7 @@ function buildMovementOptions(moon, boxed){
         const chip = document.createElement("div");
         chip.className = "option-chip free-chip";
         chip.textContent = "Free";
-        chip.addEventListener("click", () => openLogicVideo(moon, lane.tier, lane.label, andGroup, i + 1));
+        chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, i + 1));
         const freeScenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
         if(freeScenarioLabel){
           const tag = document.createElement("span");
@@ -3359,7 +3371,7 @@ function buildMovementOptions(moon, boxed){
       }
       const chip = document.createElement("div");
       chip.className = "option-chip";
-      chip.addEventListener("click", () => openLogicVideo(moon, lane.tier, lane.label, andGroup, i + 1));
+      chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, i + 1));
       andGroup.forEach((token, j)=>{
         if(j > 0){
           const plus = document.createElement("span");
@@ -4010,24 +4022,86 @@ searchInput.addEventListener("input", () => renderSearchResults(searchInput.valu
 
 /* =========================================================
    LOGIC VIDEO OVERLAY — clicking a requirement branch ("node") on a
-   moon card opens this straight away. Left side is a fancy info box
-   (moon name, logic-level pill, that branch's own requirement chips)
-   that slides + fades in; the video stage on the right pops in shortly
-   after, once assets/logicvideos/<autoname>.mp4 or .webp has been given
-   a chance to load — falling back to a small "Nothing yet…" note tucked
-   into its bottom-right corner if neither file exists.
+   moon card first silently checks whether a clip exists for it. Only
+   once a real file is found does the overlay open: a fancy info box on
+   the left (moon name, logic-level pill, that branch's own requirement
+   chips) slides + fades in, then the found video/image pops in on the
+   right shortly after. If nothing exists yet, the overlay never opens —
+   a small toast slides up from the bottom-right of the screen instead,
+   entirely separate from the video player.
    ========================================================= */
 const videoOverlay = document.getElementById("videoOverlay");
 const videoInfoBox = document.getElementById("videoInfoBox");
 const videoStage = document.getElementById("videoStage");
-const videoNothingYet = document.getElementById("videoNothingYet");
 const videoClose = document.getElementById("videoClose");
+const nothingYetToast = document.getElementById("nothingYetToast");
 
 const TIER_PILL_LABEL = { free: "Free" };
 
-function openLogicVideo(moon, tierKey, tierLabel, andGroup, indexInTier){
-  const baseName = videoAutoName(moon.name, tierKey, indexInTier);
+// Guards against a slow check from an earlier click resolving after a
+// newer click has already fired — only the most recent request may act.
+let videoCheckToken = 0;
+let nothingYetTimer = null;
 
+// Entry point for every clickable requirement branch. Checks for a real
+// clip first; opens the overlay only if one is found, otherwise pops the
+// toast and leaves the overlay untouched.
+function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier){
+  const baseName = videoAutoName(moon.name, tierKey, indexInTier);
+  const myToken = ++videoCheckToken;
+  findLogicVideo(baseName, (mediaEl) => {
+    if(myToken !== videoCheckToken) return; // superseded by a newer click
+    if(mediaEl){
+      openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl);
+    } else {
+      showNothingYetToast();
+    }
+  });
+}
+
+// Tries assets/logicvideos/<baseName>.mp4, then .webp, then gives up.
+// Calls back with the loaded <video>/<img> element (ready to insert), or
+// null if neither file exists — building the actual display element up
+// front so a hit can be dropped straight into the stage with no second
+// network round trip.
+function findLogicVideo(baseName, onSettled){
+  let settled = false;
+  const video = document.createElement("video");
+  video.className = "logic-video";
+  video.controls = true;
+  video.autoplay = true;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.preload = "auto";
+  video.addEventListener("loadeddata", () => {
+    if(settled) return;
+    settled = true;
+    onSettled(video);
+  }, { once: true });
+  video.addEventListener("error", () => {
+    if(settled) return;
+    settled = true;
+    const img = document.createElement("img");
+    img.className = "logic-video";
+    img.alt = "";
+    img.addEventListener("load", () => onSettled(img), { once: true });
+    img.addEventListener("error", () => onSettled(null), { once: true });
+    img.src = "assets/logicvideos/" + baseName + ".webp";
+  }, { once: true });
+  video.src = "assets/logicvideos/" + baseName + ".mp4";
+}
+
+function showNothingYetToast(){
+  if(nothingYetTimer) clearTimeout(nothingYetTimer);
+  nothingYetToast.classList.add("show");
+  nothingYetTimer = setTimeout(() => {
+    nothingYetToast.classList.remove("show");
+    nothingYetTimer = null;
+  }, 2200);
+}
+
+function openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl){
   // --- Left info box -----------------------------------------------
   videoInfoBox.innerHTML = "";
   videoInfoBox.classList.remove("play-in");
@@ -4084,40 +4158,12 @@ function openLogicVideo(moon, tierKey, tierLabel, andGroup, indexInTier){
     if(el.tagName === "VIDEO") el.pause();
     el.remove();
   });
-  videoNothingYet.style.display = "none";
+  videoStage.appendChild(mediaEl);
   videoStage.classList.remove("play-in");
   void videoStage.offsetWidth;
   videoStage.classList.add("play-in");
-  loadLogicVideo(baseName);
 
   videoOverlay.classList.add("open");
-}
-
-// Tries assets/logicvideos/<baseName>.mp4 first; if that fails, tries
-// .webp; if that also fails, leaves the small "Nothing yet…" note
-// (already sitting in the corner of the stage, hidden by default) visible.
-function loadLogicVideo(baseName){
-  const video = document.createElement("video");
-  video.className = "logic-video";
-  video.controls = true;
-  video.autoplay = true;
-  video.muted = true;
-  video.loop = true;
-  video.playsInline = true;
-  video.addEventListener("error", () => {
-    video.remove();
-    const img = document.createElement("img");
-    img.className = "logic-video";
-    img.alt = "";
-    img.addEventListener("error", () => {
-      img.remove();
-      videoNothingYet.style.display = "block";
-    });
-    img.src = "assets/logicvideos/" + baseName + ".webp";
-    videoStage.appendChild(img);
-  });
-  video.src = "assets/logicvideos/" + baseName + ".mp4";
-  videoStage.appendChild(video);
 }
 
 function closeLogicVideo(){
