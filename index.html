@@ -3373,6 +3373,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
     return moon;
   }));
 
+  console.log(`[${kingdomName}] per-pipe subarea rows on ${moons.filter(m => m.entranceReqs).length} moon(s): ` + moons.filter(m => m.entranceReqs).map(m => m.name).join(", "));
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons; // always overwrite; never merge with a stale prior entry
 
@@ -3636,7 +3637,15 @@ function buildMoonCard(moon){
     card.appendChild(info);
   }
 
-  card.appendChild(buildMovementOptions(moon));
+  // Subarea moons whose pipes differ show per-pipe rows INSTEAD of the single
+  // requirement line (the rows already include the moon's own cost).
+  if(moon.entranceReqs){
+    const rows = renderEntranceReqs(moon.entranceReqs);
+    rows.style.borderTop = "none"; rows.style.marginTop = "0"; rows.style.paddingTop = "0";
+    card.appendChild(rows);
+  } else {
+    card.appendChild(buildMovementOptions(moon));
+  }
   return card;
 }
 
@@ -3797,7 +3806,13 @@ function buildMoonPanel(moon){
 
   const body = document.createElement("div");
   body.className = "moon-panel-body";
-  body.appendChild(buildMovementOptions(moon, true));
+  if(moon.entranceReqs){
+    const rows = renderEntranceReqs(moon.entranceReqs);
+    rows.style.borderTop = "none"; rows.style.marginTop = "0"; rows.style.paddingTop = "0";
+    body.appendChild(rows);
+  } else {
+    body.appendChild(buildMovementOptions(moon, true));
+  }
   panel.appendChild(body);
 
   header.addEventListener("click", () => panel.classList.toggle("open"));
