@@ -697,14 +697,13 @@
   }
 
   /* ---- Logic Video overlay -----------------------------------------
-     Clicking any requirement branch ("node") on a moon card first
-     silently probes assets/logicvideos/<autoname>.mp4 / .webp for that
-     exact branch (see probeLogicVideo). This overlay only ever opens
-     once that probe finds a real file to show — a branch with no clip
-     yet does nothing on click, no overlay, no message. When it does
-     open: a fancy info box on the left (moon name + logic-level + that
-     branch's requirement chips), and the found video/image pops in on
-     the right. */
+     Clicking any requirement branch ("node") on a moon card opens this
+     right away: a fancy info box on the left (moon name + logic-level +
+     that branch's requirement chips) slides + fades in, and a video
+     stage on the right pops in shortly after, playing
+     assets/logicvideos/<autoname>.mp4 or .webp for that exact branch —
+     or showing a small "Nothing yet…" note tucked into its bottom-right
+     corner if neither file exists yet. */
   .video-overlay{
     display:none;
     position:fixed;
@@ -772,6 +771,20 @@
   }
   .video-info-box .tier-pill{ align-self:flex-start; }
   .video-info-box .tier-options{ display:flex; flex-wrap:wrap; gap:6px; }
+  /* The clicked branch's own requirement icons get a dedicated, roomier
+     treatment here vs. the compact moon-card chip they're normally shown
+     in: the chip stretches to fill the info box's width and centers its
+     icons in that space, growing them a little (not just leaving the
+     card's small 48.6px icons floating in extra empty room). */
+  .video-info-box .option-chip{
+    width:100%;
+    justify-content:center;
+    padding:16px 10px;
+    gap:10px;
+  }
+  .video-info-box .icon-wrap{ width:60px; height:60px; }
+  .video-info-box .icon,
+  .video-info-box .icon-fallback{ width:60px; height:60px; font-size:19px; }
   /* Right: video stage. Pops in ~180ms after the info box starts, so the
      sequence reads left-to-right instead of both halves landing at once. */
   .video-stage{
@@ -800,6 +813,19 @@
     width:100%; height:100%;
     object-fit:contain;
     background:#000;
+  }
+  .video-nothing-yet{
+    display:none;
+    position:absolute;
+    bottom:8px; right:10px;
+    font-size:10.5px;
+    font-style:italic;
+    color:var(--text-dim);
+    background:rgba(0,0,0,0.5);
+    padding:3px 8px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    pointer-events:none;
   }
   /* Hover affordance so it's clear a requirement branch is clickable. */
   .option-chip, .free-chip{ cursor:pointer; transition:transform 0.12s ease, box-shadow 0.12s ease; }
@@ -1151,7 +1177,9 @@
   <div class="video-modal" id="videoModal">
     <button type="button" class="video-close" id="videoClose" aria-label="Close">&times;</button>
     <div class="video-info-box" id="videoInfoBox"></div>
-    <div class="video-stage" id="videoStage"></div>
+    <div class="video-stage" id="videoStage">
+      <div class="video-nothing-yet" id="videoNothingYet">Nothing yet…</div>
+    </div>
   </div>
 </div>
 
@@ -3266,7 +3294,7 @@ function buildMovementOptions(moon, boxed){
     free.className = "free-tag";
     free.textContent = "Free";
     free.style.cursor = "pointer";
-    free.addEventListener("click", () => handleNodeClick(moon, "free", "Free", [], 1));
+    free.addEventListener("click", () => openLogicVideo(moon, "free", "Free", [], 1));
     row.appendChild(free);
     return row;
   }
@@ -3305,7 +3333,7 @@ function buildMovementOptions(moon, boxed){
         const chip = document.createElement("div");
         chip.className = "option-chip free-chip";
         chip.textContent = "Free";
-        chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, i + 1));
+        chip.addEventListener("click", () => openLogicVideo(moon, lane.tier, lane.label, andGroup, i + 1));
         const freeScenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
         if(freeScenarioLabel){
           const tag = document.createElement("span");
@@ -3331,7 +3359,7 @@ function buildMovementOptions(moon, boxed){
       }
       const chip = document.createElement("div");
       chip.className = "option-chip";
-      chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, i + 1));
+      chip.addEventListener("click", () => openLogicVideo(moon, lane.tier, lane.label, andGroup, i + 1));
       andGroup.forEach((token, j)=>{
         if(j > 0){
           const plus = document.createElement("span");
@@ -3982,73 +4010,24 @@ searchInput.addEventListener("input", () => renderSearchResults(searchInput.valu
 
 /* =========================================================
    LOGIC VIDEO OVERLAY — clicking a requirement branch ("node") on a
-   moon card first silently probes assets/logicvideos/<autoname>.mp4 /
-   .webp for that exact branch (probeLogicVideo). This overlay only
-   opens once that probe finds a real file — a branch with no clip yet
-   does nothing on click. When it does open: a fancy info box on the
-   left (moon name, logic-level pill, that branch's own requirement
-   chips) slides + fades in, and the found video/image pops in on the
-   right shortly after.
+   moon card opens this straight away. Left side is a fancy info box
+   (moon name, logic-level pill, that branch's own requirement chips)
+   that slides + fades in; the video stage on the right pops in shortly
+   after, once assets/logicvideos/<autoname>.mp4 or .webp has been given
+   a chance to load — falling back to a small "Nothing yet…" note tucked
+   into its bottom-right corner if neither file exists.
    ========================================================= */
 const videoOverlay = document.getElementById("videoOverlay");
 const videoInfoBox = document.getElementById("videoInfoBox");
 const videoStage = document.getElementById("videoStage");
+const videoNothingYet = document.getElementById("videoNothingYet");
 const videoClose = document.getElementById("videoClose");
 
 const TIER_PILL_LABEL = { free: "Free" };
 
-// Guards against a slow probe from a previous click resolving after a
-// newer click has already fired — only the most recent request is allowed
-// to actually open the overlay.
-let videoProbeToken = 0;
-
-// Entry point for every clickable requirement branch. Probes for a real
-// clip first and does nothing at all — no overlay, no message — if
-// neither an .mp4 nor a .webp exists yet for this exact branch.
-function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier){
+function openLogicVideo(moon, tierKey, tierLabel, andGroup, indexInTier){
   const baseName = videoAutoName(moon.name, tierKey, indexInTier);
-  const myToken = ++videoProbeToken;
-  probeLogicVideo(baseName, (mediaEl) => {
-    if(myToken !== videoProbeToken) return; // superseded by a newer click
-    if(!mediaEl) return; // nothing to show — leave the overlay closed
-    openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl);
-  });
-}
 
-// Tries assets/logicvideos/<baseName>.mp4, then .webp, then gives up.
-// Calls back with the loaded <video>/<img> element (ready to insert), or
-// null if neither file exists. Builds the actual display element up
-// front so a successful probe can be dropped straight into the stage
-// with no second network round trip.
-function probeLogicVideo(baseName, onSettled){
-  let settled = false;
-  const video = document.createElement("video");
-  video.className = "logic-video";
-  video.controls = true;
-  video.autoplay = true;
-  video.muted = true;
-  video.loop = true;
-  video.playsInline = true;
-  video.preload = "auto";
-  video.addEventListener("loadeddata", () => {
-    if(settled) return;
-    settled = true;
-    onSettled(video);
-  }, { once: true });
-  video.addEventListener("error", () => {
-    if(settled) return;
-    settled = true;
-    const img = document.createElement("img");
-    img.className = "logic-video";
-    img.alt = "";
-    img.addEventListener("load", () => onSettled(img), { once: true });
-    img.addEventListener("error", () => onSettled(null), { once: true });
-    img.src = "assets/logicvideos/" + baseName + ".webp";
-  }, { once: true });
-  video.src = "assets/logicvideos/" + baseName + ".mp4";
-}
-
-function openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl){
   // --- Left info box -----------------------------------------------
   videoInfoBox.innerHTML = "";
   videoInfoBox.classList.remove("play-in");
@@ -4105,12 +4084,40 @@ function openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl){
     if(el.tagName === "VIDEO") el.pause();
     el.remove();
   });
-  videoStage.appendChild(mediaEl);
+  videoNothingYet.style.display = "none";
   videoStage.classList.remove("play-in");
   void videoStage.offsetWidth;
   videoStage.classList.add("play-in");
+  loadLogicVideo(baseName);
 
   videoOverlay.classList.add("open");
+}
+
+// Tries assets/logicvideos/<baseName>.mp4 first; if that fails, tries
+// .webp; if that also fails, leaves the small "Nothing yet…" note
+// (already sitting in the corner of the stage, hidden by default) visible.
+function loadLogicVideo(baseName){
+  const video = document.createElement("video");
+  video.className = "logic-video";
+  video.controls = true;
+  video.autoplay = true;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.addEventListener("error", () => {
+    video.remove();
+    const img = document.createElement("img");
+    img.className = "logic-video";
+    img.alt = "";
+    img.addEventListener("error", () => {
+      img.remove();
+      videoNothingYet.style.display = "block";
+    });
+    img.src = "assets/logicvideos/" + baseName + ".webp";
+    videoStage.appendChild(img);
+  });
+  video.src = "assets/logicvideos/" + baseName + ".mp4";
+  videoStage.appendChild(video);
 }
 
 function closeLogicVideo(){
