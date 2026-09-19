@@ -1803,6 +1803,12 @@ function astToDNF(node){
    ========================================================= */
 // Moons whose scenario-tag chips should be hidden entirely (e.g. a
 // non-story moon where the scenario split in the data is misleading).
+// Moons forced to display as plain "Free" regardless of the checkpoint-reach
+// cost folded in from the route graph. Add exact moon_name strings here.
+const FORCE_FREE_MOONS = new Set([
+  "Moon Shards in the Sand",
+]);
+
 const SCENARIO_DATA_HIDDEN_MOONS = new Set([
   "Found with Cap Kingdom Art",
   "Fog-Shrouded Platform",
@@ -2263,6 +2269,8 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
       tiers = tiers.map(() => overrideTier);
     }
   }
+
+  if(FORCE_FREE_MOONS.has(row.moon_name)){ dnf = []; tiers = []; scenarios = []; }
 
   const isFree = dnf.every(g => g.length === 0);
   const hintIdx = parseInt(row.shine_info_hint_idx, 10);
@@ -3628,15 +3636,7 @@ function buildMoonCard(moon){
     card.appendChild(info);
   }
 
-  // Subarea moons with per-pipe rows show ONLY those rows (they already
-  // include the moon's own cost), so the old single requirement line is skipped.
-  if(moon.entranceReqs){
-    const rows = renderEntranceReqs(moon.entranceReqs);
-    rows.style.borderTop = "none"; rows.style.marginTop = "0"; rows.style.paddingTop = "0";
-    card.appendChild(rows);
-  } else {
-    card.appendChild(buildMovementOptions(moon));
-  }
+  card.appendChild(buildMovementOptions(moon));
   return card;
 }
 
@@ -3797,13 +3797,7 @@ function buildMoonPanel(moon){
 
   const body = document.createElement("div");
   body.className = "moon-panel-body";
-  if(moon.entranceReqs){
-    const rows = renderEntranceReqs(moon.entranceReqs);
-    rows.style.borderTop = "none"; rows.style.marginTop = "0"; rows.style.paddingTop = "0";
-    body.appendChild(rows);
-  } else {
-    body.appendChild(buildMovementOptions(moon, true));
-  }
+  body.appendChild(buildMovementOptions(moon, true));
   panel.appendChild(body);
 
   header.addEventListener("click", () => panel.classList.toggle("open"));
