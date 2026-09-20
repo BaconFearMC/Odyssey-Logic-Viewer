@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Wooded Kingdom",
-  "savedAt": "2026-09-18T03:47:33.123Z",
+  "savedAt": "2026-09-19T17:59:37.740Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-09-17T16:39:38.464Z",
+    "loadedAt": "2026-09-19T17:01:46.592Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -3826,6 +3826,42 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_28",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "High Up on a Rock Wall Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_29",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Charging Station Area",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -4090,10 +4126,10 @@
         "area_scope": "overworld",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
         "to_node_id": "ForestWorldHomeStage::checkpoint::obj447",
-        "requirement_expr": "Senobi | (LongJump & TripleJump & Dive) | (Vault & Dive & NeutralThrow) | (LongJump & WallJump & Dive & NeutralThrow) | (SideFlip & WallJump & Dive & NeutralThrow) | (Vault & WallJump & NeutralThrow) | (FireBros & Dive) | (UpThrow & WallJump) | (NeutralThrow & WallJump) | (DownThrow & WallJump)",
+        "requirement_expr": "Senobi | (LongJump & TripleJump & Dive) | (Vault & Dive & NeutralThrow) | (LongJump & WallJump & Dive & NeutralThrow) | (SideFlip & WallJump & Dive & NeutralThrow) | (Vault & WallJump & NeutralThrow) | (FireBros & Dive) | (UpThrow & WallJump) | (NeutralThrow & WallJump) | (DownThrow & WallJump) | (FireBros & WallJump & NeutralThrow) | (FireBros & WallJump & UpThrow) | (FireBros & WallJump & DownThrow) | FireBros",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;advanced;expert;expert;expert",
+        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;advanced;expert;expert;expert;advanced;advanced;advanced;expert",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -4379,7 +4415,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced;casual;expert",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "1,2,3,4,5"
@@ -4409,7 +4445,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -4424,7 +4460,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -4514,7 +4550,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "3,4,5"
@@ -4559,7 +4595,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;casual;casual;casual;expert",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "5"
@@ -4574,7 +4610,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "5"
@@ -4619,7 +4655,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "5"
@@ -4634,7 +4670,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "5"
@@ -4805,21 +4841,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0072",
-        "kingdom": "Wooded Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
-        "to_node_id": "ForestWorldHomeStage::entrance::EX_Mist::home_in",
-        "requirement_expr": "BazookaElectric",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": "2,3,4,5"
-      },
-      {
         "edge_id": "edge_user_0073",
         "kingdom": "Wooded Kingdom",
         "area_scope": "overworld",
@@ -4848,21 +4869,6 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0073.",
         "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0075",
-        "kingdom": "Wooded Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
-        "to_node_id": "ForestWorldHomeStage::entrance::EX_AnimalChase::home_in",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": "5"
       },
       {
         "edge_id": "edge_user_0076",
@@ -5087,21 +5093,6 @@
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0085.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0272",
-        "kingdom": "Wooded Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "ForestWorldHomeStage::entrance::EX_Mist::home_in",
-        "to_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0072.",
         "option_scenarios": ""
       },
       {
@@ -5793,21 +5784,6 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0048.",
         "option_scenarios": "5,4,3"
-      },
-      {
-        "edge_id": "edge_user_0671",
-        "kingdom": "Wooded Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "ForestWorldHomeStage::entrance::EX_AnimalChase::home_in",
-        "to_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0075.",
-        "option_scenarios": "1,2,3,4,5"
       },
       {
         "edge_id": "edge_user_0673",
@@ -6678,6 +6654,381 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0853",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_28",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "5"
+      },
+      {
+        "edge_id": "edge_user_0854",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_28",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0853.",
+        "option_scenarios": "5"
+      },
+      {
+        "edge_id": "edge_user_0855",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_28",
+        "requirement_expr": "Senobi | (NeutralThrow & Vault) | (UpThrow & Vault & Dive) | (WallJump & Dive) | (TripleJump & WallJump) | (GroundPoundJump & WallJump & LedgeGrab) | (UpThrow & Vault & WallJump) | (UpThrow & Vault & Backflip) | (UpThrow & Vault & GroundPoundJump) | (UpThrow & Vault & SideFlip) | (UpThrow & Vault & Spin) | (UpThrow & Vault & TripleJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0856",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_28",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0855.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0857",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_2",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0040.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0858",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_8",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0052.",
+        "option_scenarios": "5"
+      },
+      {
+        "edge_id": "edge_user_0859",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_8",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0054.",
+        "option_scenarios": "5"
+      },
+      {
+        "edge_id": "edge_user_0860",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_3",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0043.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0861",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_3",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj447",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0042.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0862",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_10",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0057.",
+        "option_scenarios": "5"
+      },
+      {
+        "edge_id": "edge_user_0863",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_10",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj447",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0058.",
+        "option_scenarios": "5"
+      },
+      {
+        "edge_id": "edge_user_0864",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_6",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0049.",
+        "option_scenarios": "3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0865",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0866",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0865.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0867",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_26",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0868",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "to_node_id": "ForestWorldHomeStage::entrance::EX_Mist::home_in",
+        "requirement_expr": "BazookaElectric",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0869",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::entrance::EX_Mist::home_in",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0868.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0870",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0871",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0870.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0872",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "to_node_id": "ForestWorldHomeStage::entrance::EX_AnimalChase::home_in",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "5"
+      },
+      {
+        "edge_id": "edge_user_0873",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::entrance::EX_AnimalChase::home_in",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0872.",
+        "option_scenarios": "1,2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0671",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "to_node_id": "ForestWorldHomeStage::place::new_place",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0874",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0671.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0875",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_4",
+        "requirement_expr": "(NeutralThrow & Vault & WallJump & LongJump) | (NeutralThrow & Vault & WallJump & Dive & Roll)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0876",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_4",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_29",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0875.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -6884,7 +7235,7 @@
         "obj_id": "2309",
         "uid": "134",
         "flags": "ShineFlag_None",
-        "from_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_29",
         "state_requirement_expr": "",
         "requirement_expr": "Tank | KingdomAccess_Wooded",
         "world_peace_token": "WorldPeace_Wooded",
@@ -6918,7 +7269,7 @@
         "shine_info_scenario_name": "発見！ 岩壁の中",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "difficulty": "casual;expert",
-        "option_scenarios": "",
+        "option_scenarios": "2,3,4,5",
         "__editor_id": "ForestWorldHomeStage:2309:134"
       },
       {
@@ -8420,7 +8771,7 @@
         "obj_id": "6110",
         "uid": "177",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_28",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Wooded",
@@ -9686,9 +10037,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-773800.000",
-        "placement_y": "371030.000",
-        "placement_z": "-832100.000",
+        "placement_x": "-890600.000",
+        "placement_y": "427030.000",
+        "placement_z": "-957700.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_ForestWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -12573,12 +12924,12 @@
         "y": 0
       },
       "ForestWorldHomeStage::entrance::EX_AnimalChase::home_in": {
-        "x": 495.3834683071306,
-        "y": 1197.6221790609125
+        "x": 520.5541205282531,
+        "y": 1159.8661740574348
       },
       "ForestWorldHomeStage::entrance::EX_Mist::home_in": {
-        "x": 127.93219384499697,
-        "y": 862.953932572709
+        "x": 949.6299916528943,
+        "y": 942.1537198076684
       },
       "ForestWorldHomeStage::entrance::EX_RailCollision::home_in": {
         "x": 2359.5252041024405,
@@ -13128,6 +13479,10 @@
         "x": 2749.30241074673,
         "y": 1339.1628900572312
       },
+      "ForestWorldHomeStage::place::new_place_27": {
+        "x": 556.3880827791868,
+        "y": 849.8148710115225
+      },
       "moon:ForestWorldHomeStage:1064:129": {
         "x": 1570.1617626104523,
         "y": 721.2143575074778
@@ -13145,8 +13500,8 @@
         "y": 882.8192389207835
       },
       "moon:ForestWorldHomeStage:2309:134": {
-        "x": 314.3051625286854,
-        "y": 1243.0080227086098
+        "x": 722.4040900924851,
+        "y": 1179.208251217006
       },
       "moon:ForestWorldHomeStage:4052:135": {
         "x": 167.12186386053162,
@@ -13273,8 +13628,8 @@
         "y": 307.96042337642393
       },
       "moon:ForestWorldHomeStage:6110:177": {
-        "x": 2336.6615211282265,
-        "y": 727.9845750732833
+        "x": 3583.8775359574092,
+        "y": 1662.261237968527
       },
       "moon:ForestWorldTowerStage:220:179": {
         "x": 160.81256846286746,
@@ -13420,9 +13775,13 @@
         "x": 350,
         "y": 1220
       },
-      "ForestWorldHomeStage::place::new_place_27": {
-        "x": 634.6967904323652,
-        "y": 893.1643779946223
+      "ForestWorldHomeStage::place::new_place_28": {
+        "x": 3329.0271764161625,
+        "y": 1661.2594885731862
+      },
+      "ForestWorldHomeStage::place::new_place_29": {
+        "x": 747.9160665442236,
+        "y": 1032.253709924882
       }
     }
   }

@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Dark Side",
-  "savedAt": "2026-09-17T16:57:20.094Z",
+  "savedAt": "2026-09-20T04:49:34.286Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-09-17T16:39:38.464Z",
+    "loadedAt": "2026-09-19T17:01:46.592Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1990,6 +1990,24 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "Special1WorldHomeStage::place::new_place_3",
+        "kingdom": "Dark Side",
+        "stage": "Special1WorldHomeStage",
+        "stage_display_name": "Dark Side",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Dark Side Captain Toad Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2314,7 +2332,7 @@
         "area_scope": "subarea",
         "from_node_id": "BikeSteelNoCapExStage::entrance::BikeSteelNoCapEx::sub_near",
         "to_node_id": "BikeSteelNoCapExStage::entrance::BikeSteelNoCapEx_Exit::sub_far",
-        "requirement_expr": "(LongJump & RollBoost) | RollBoost | LongJump | Dive",
+        "requirement_expr": "(LongJump & RollBoost & TimerChallenge) | (RollBoost & TimerChallenge) | (LongJump & TimerChallenge) | (Dive & TimerChallenge)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced;advanced;advanced",
@@ -2434,6 +2452,66 @@
         "area_scope": "overworld",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "to_node_id": "Special1WorldHomeStage::stage_change::Come::raw",
+        "requirement_expr": "ElectricWire",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0910",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::stage_change::Come::raw",
+        "to_node_id": "Special1WorldHomeStage::start",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0911",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::start",
+        "to_node_id": "Special1WorldHomeStage::stage_change::Come::raw",
+        "requirement_expr": "ElectricWire",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0910.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0912",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::stage_change::Come::raw",
+        "to_node_id": "Special1WorldHomeStage::place::new_place_3",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0913",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "to_node_id": "Special1WorldHomeStage::place::new_place_3",
         "requirement_expr": "ElectricWire",
         "requirement_notes": "",
         "edge_type": "human_route",
@@ -2602,7 +2680,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "BikeSteelNoCapExStage::entrance::BikeSteelNoCapEx::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "LongJump | RollBoost | (RollBoost & LongJump) | Dive",
+        "requirement_expr": "(LongJump & TimerChallenge) | (RollBoost & TimerChallenge) | (RollBoost & LongJump & TimerChallenge) | (Dive & TimerChallenge)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3080,9 +3158,9 @@
         "obj_id": "469",
         "uid": "1122",
         "flags": "ShineFlag_None",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_3",
         "state_requirement_expr": "",
-        "requirement_expr": "ElectricWire",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3322,7 +3400,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Seaside & GroundPound)",
+        "requirement_expr": "(KingdomAccess_Seaside & GroundPound & Swim) | (KingdomAccess_Seaside & DownThrow & Pukupuku) | (KingdomAccess_Seaside & NeutralThrow & Pukupuku)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3354,7 +3432,7 @@
         "shine_info_scenario_name": "月の国 裏で見つけた お宝写真 ６",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "Special1WorldHomeStage:482:1127",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;advanced",
         "option_scenarios": "1,2,3,4,5"
       },
       {
@@ -3418,7 +3496,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Snow & GroundPound & Byugo) | (Vault & NeutralThrow & KingdomAccess_Snow & GroundPound) | (KingdomAccess_Snow & Dive & GroundPound) | (KingdomAccess_Snow & TripleJump & GroundPound)",
+        "requirement_expr": "(GroundPound & @SnowWorldLobby000Stage::place::new_place_2)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3450,7 +3528,7 @@
         "shine_info_scenario_name": "月の国 裏で見つけた お宝写真 ５",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "Special1WorldHomeStage:486:1129",
-        "difficulty": "casual;advanced;advanced;advanced",
+        "difficulty": "advanced",
         "option_scenarios": "1,2"
       },
       {
@@ -6029,8 +6107,8 @@
         "y": 844
       },
       "Special1WorldHomeStage::stage_change::Come::raw": {
-        "x": 1124.0434826780454,
-        "y": 344.5850843022019
+        "x": 107.42836529189663,
+        "y": 715.1531768470702
       },
       "Special1WorldHomeStage::stage_change::Go::raw": {
         "x": 1023.0631144565377,
@@ -6039,6 +6117,10 @@
       "Special1WorldHomeStage::place::new_place_2": {
         "x": 878.6047647165698,
         "y": 339.534912109375
+      },
+      "Special1WorldHomeStage::place::new_place_3": {
+        "x": 128.0665829989755,
+        "y": 879.4789322964123
       },
       "moon:Special1WorldHomeStage:130:1055": {
         "x": 1276.8723098995697,
@@ -6093,12 +6175,12 @@
         "y": 1018.4210518638183
       },
       "moon:Special1WorldHomeStage:469:1122": {
-        "x": 100,
-        "y": 846
+        "x": 0,
+        "y": 1043.1702779868222
       },
       "moon:Special1WorldHomeStage:475:1123": {
-        "x": 364,
-        "y": 1062
+        "x": 362.900019856251,
+        "y": 1057.5999955018983
       },
       "moon:Special1WorldHomeStage:476:1124": {
         "x": 364,
@@ -6117,7 +6199,7 @@
         "y": 954
       },
       "moon:Special1WorldHomeStage:485:1128": {
-        "x": 1492,
+        "x": 1496.878048780488,
         "y": 1062
       },
       "moon:Special1WorldHomeStage:486:1129": {

@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Mushroom Kingdom",
-  "savedAt": "2026-09-16T16:08:34.264Z",
+  "savedAt": "2026-09-20T04:48:17.216Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-09-16T16:01:06.854Z",
+    "loadedAt": "2026-09-19T17:01:46.592Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2746,6 +2746,24 @@
         "z": "-900.000",
         "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
         "notes": "Vanilla door PeachWorldPictureBossKnuckleStage<->RevengeBossKnuckleStage (fixed)."
+      },
+      {
+        "node_id": "PeachWorldHomeStage::place::new_place",
+        "kingdom": "Mushroom Kingdom",
+        "stage": "PeachWorldHomeStage",
+        "stage_display_name": "Mushroom Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Mushroom KFR",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2935,7 +2953,7 @@
         "area_scope": "overworld",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj162",
         "to_node_id": "PeachWorldHomeStage::entrance::BossForestA::home_in",
-        "requirement_expr": "Climb | (NeutralThrow & Vault & WallJump & Dive) | Yoshi | (NeutralThrow & TripleJump & Vault)",
+        "requirement_expr": "Climb | (NeutralThrow & Vault & WallJump & Dive) | Yoshi | (NeutralThrow & TripleJump & Vault & RocketFlower)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced;advanced;expert",
@@ -3948,6 +3966,21 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0909",
+        "kingdom": "Mushroom Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "PeachWorldHomeStage::checkpoint::obj1145",
+        "to_node_id": "PeachWorldHomeStage::place::new_place",
+        "requirement_expr": "NpcTalk",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -3964,7 +3997,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -4012,7 +4045,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj162",
         "state_requirement_expr": "",
-        "requirement_expr": "Kuribo",
+        "requirement_expr": "(Kuribo & Swim) | Kuribo",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -4044,8 +4077,8 @@
         "shine_info_scenario_name": "ピーチ城のガールフレンド",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:794:606",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced",
+        "option_scenarios": "1,2,3"
       },
       {
         "moon_id": "PeachWorldHomeStage:992:607",
@@ -4444,7 +4477,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -4492,7 +4525,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -4540,7 +4573,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldShopStage::entrance::PeachWorldShopA::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -4730,9 +4763,9 @@
         "obj_id": "1678",
         "uid": "967",
         "flags": "ShineFlag_None",
-        "from_node_id": "PeachWorldHomeStage::checkpoint::obj1145",
+        "from_node_id": "PeachWorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "RocketFlower | Dive | LongJump | RollBoost",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -4764,7 +4797,7 @@
         "shine_info_scenario_name": "キノコ王国 レギュラーカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:1678:967",
-        "difficulty": "casual",
+        "difficulty": "casual;expert;advanced;casual",
         "option_scenarios": ""
       },
       {
@@ -4778,9 +4811,9 @@
         "obj_id": "1679",
         "uid": "968",
         "flags": "ShineFlag_None",
-        "from_node_id": "PeachWorldHomeStage::checkpoint::obj1145",
+        "from_node_id": "PeachWorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "RocketFlower | RollBoost",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -4924,7 +4957,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj1143",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "TimerChallenge",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5068,7 +5101,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "FukuwaraiMarioStage::entrance::Fukuwarai2::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "FukuwaraiFacePartsMario",
+        "requirement_expr": "(FukuwaraiFacePartsMario & NpcTalk)",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5116,7 +5149,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "FukuwaraiMarioStage::entrance::Fukuwarai2::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "FukuwaraiFacePartsMario",
+        "requirement_expr": "(FukuwaraiFacePartsMario & NpcTalk)",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5212,7 +5245,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "DotHardExStage::entrance::PeachWorldEx2a::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5260,7 +5293,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "DotHardExStage::entrance::PeachWorldEx2a::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5308,7 +5341,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Grab | KingdomAccess_Mushroom",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5340,7 +5373,7 @@
         "shine_info_scenario_name": "咲いた！ 庭園の種",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:1100:1108",
-        "difficulty": "casual",
+        "difficulty": "casual;expert",
         "option_scenarios": ""
       },
       {
@@ -5356,7 +5389,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Grab | KingdomAccess_Mushroom",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5388,7 +5421,7 @@
         "shine_info_scenario_name": "咲いた！ お花畑の種",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:1101:1109",
-        "difficulty": "casual",
+        "difficulty": "casual;expert",
         "option_scenarios": ""
       },
       {
@@ -5404,7 +5437,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj1145",
         "state_requirement_expr": "",
-        "requirement_expr": "Swim",
+        "requirement_expr": "(Swim & Grab) | Swim",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5436,7 +5469,7 @@
         "shine_info_scenario_name": "咲いた！ キノ湖の種",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:1102:1110",
-        "difficulty": "casual",
+        "difficulty": "casual;expert",
         "option_scenarios": ""
       },
       {
@@ -5452,7 +5485,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj1145",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Grab | KingdomAccess_Mushroom",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5484,7 +5517,7 @@
         "shine_info_scenario_name": "咲いた！ 牧場の種",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:1103:1111",
-        "difficulty": "casual",
+        "difficulty": "casual;expert",
         "option_scenarios": ""
       },
       {
@@ -5548,7 +5581,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj162",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Pipe2D",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -8735,8 +8768,8 @@
         "y": 2902
       },
       "PeachWorldHomeStage::stage_change::Go::raw": {
-        "x": 1233.232859990368,
-        "y": 397.8630178791203
+        "x": 1254.1328184140216,
+        "y": 703.6621975352565
       },
       "PeachWorldHomeStage::stage_change::MofumofuA::raw": {
         "x": 1740,
@@ -9123,8 +9156,8 @@
         "y": 100
       },
       "moon:PeachWorldHomeStage:1554:913": {
-        "x": 364,
-        "y": 532
+        "x": 367.29998239279985,
+        "y": 527.600079425004
       },
       "moon:PeachWorldShopStage:21:933": {
         "x": 657.6278810316082,
@@ -9143,12 +9176,12 @@
         "y": 2452.8888888888887
       },
       "moon:PeachWorldHomeStage:1678:967": {
-        "x": 838,
-        "y": 1172
+        "x": 1976.3471144988139,
+        "y": 1167.269978024141
       },
       "moon:PeachWorldHomeStage:1679:968": {
-        "x": 1736,
-        "y": 1118
+        "x": 1997.490216511182,
+        "y": 1054.5592090950597
       },
       "moon:YoshiCloudExStage:668:974": {
         "x": 488.74999051797204,
@@ -9163,8 +9196,8 @@
         "y": 2374
       },
       "moon:PeachWorldHomeStage:1719:978": {
-        "x": 1589.5,
-        "y": 521.5
+        "x": 1255.1009169908616,
+        "y": 420.30023223608544
       },
       "moon:PeachWorldHomeStage:1762:984": {
         "x": 100,
@@ -9249,6 +9282,10 @@
       "moon:PeachWorldCastleStage:131:1152": {
         "x": 941.2797606280739,
         "y": 419.30723345058385
+      },
+      "PeachWorldHomeStage::place::new_place": {
+        "x": 1729.740633029302,
+        "y": 1120.4271526358684
       }
     }
   }

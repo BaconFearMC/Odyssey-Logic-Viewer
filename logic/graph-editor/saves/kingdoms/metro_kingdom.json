@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Metro Kingdom",
-  "savedAt": "2026-09-18T05:03:55.295Z",
+  "savedAt": "2026-09-20T04:50:29.025Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-09-17T16:39:38.464Z",
+    "loadedAt": "2026-09-19T17:01:46.592Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -3637,7 +3637,7 @@
         "area_scope": "subarea",
         "from_node_id": "TrexBikeExStage::entrance::bike02::sub_near",
         "to_node_id": "TrexBikeExStage::entrance::bike02return::sub_far",
-        "requirement_expr": "Bike | RollBoost",
+        "requirement_expr": "(Bike & TimerChallenge) | (RollBoost & TimerChallenge)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "false",
@@ -9409,7 +9409,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "TrexBikeExStage::entrance::bike02::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "Bike | (NeutralThrow & RollBoost & Vault & Dive)",
+        "requirement_expr": "(Bike & TimerChallenge) | (NeutralThrow & RollBoost & Vault & Dive & TimerChallenge)",
         "world_peace_token": "WorldPeace_Metro",
         "moon_rock_token": "MoonRockActive_Metro",
         "access_type": "primary",
