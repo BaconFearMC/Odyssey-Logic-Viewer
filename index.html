@@ -940,6 +940,21 @@
     transform:translateY(0);
     opacity:1;
   }
+  /* Small "has a video" badge pinned to the top-right corner of a node
+     (requirement chip / Free tag) whenever a clip exists for it. */
+  .option-chip, .free-tag{ position:relative; }
+  .free-tag{ display:inline-block; }
+  .has-video-badge{
+    position:absolute; top:-6px; right:-6px;
+    width:15px; height:15px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--gold); color:#111;
+    box-shadow:0 1px 4px rgba(0,0,0,0.5);
+    pointer-events:none; z-index:2;
+    animation: videoBadgeIn 0.25s cubic-bezier(.34,1.56,.4,1) both;
+  }
+  .has-video-badge svg{ width:7px; height:7px; margin-left:1px; display:block; }
+  @keyframes videoBadgeIn{ from{ transform:scale(0); opacity:0; } to{ transform:scale(1); opacity:1; } }
   /* Hover affordance so it's clear a requirement branch is clickable. */
   .option-chip, .free-chip{ cursor:pointer; transition:transform 0.12s ease, box-shadow 0.12s ease; }
   .option-chip:hover, .free-chip:hover{
@@ -3705,6 +3720,7 @@ function buildMovementOptions(moon, boxed){
     free.textContent = "Free";
     free.style.cursor = "pointer";
     free.addEventListener("click", () => handleNodeClick(moon, "free", "Free", [], 1));
+    attachVideoBadge(free, moon, "free", 1);
     row.appendChild(free);
     return row;
   }
@@ -3744,6 +3760,7 @@ function buildMovementOptions(moon, boxed){
         chip.className = "option-chip free-chip";
         chip.textContent = "Free";
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, i + 1));
+        attachVideoBadge(chip, moon, lane.tier, i + 1);
         const freeScenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
         if(freeScenarioLabel){
           const tag = document.createElement("span");
@@ -3770,6 +3787,7 @@ function buildMovementOptions(moon, boxed){
       const chip = document.createElement("div");
       chip.className = "option-chip";
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, i + 1));
+      attachVideoBadge(chip, moon, lane.tier, i + 1);
       andGroup.forEach((token, j)=>{
         if(j > 0){
           const plus = document.createElement("span");
@@ -4667,6 +4685,42 @@ const TIER_PILL_LABEL = { free: "Free" };
 // newer click has already fired — only the most recent request may act.
 let videoCheckToken = 0;
 let nothingYetTimer = null;
+
+// Cache of baseName -> Promise<boolean> so each clip is only probed once,
+// no matter how many times the cards are re-rendered.
+const videoExistsCache = new Map();
+
+// Quietly checks whether assets/logicvideos/<baseName>.mp4 (or .webp) exists.
+function logicVideoExists(baseName){
+  if(videoExistsCache.has(baseName)) return videoExistsCache.get(baseName);
+  const p = new Promise(resolve => {
+    const v = document.createElement("video");
+    v.preload = "metadata";
+    v.muted = true;
+    v.addEventListener("loadedmetadata", () => { v.removeAttribute("src"); v.load(); resolve(true); }, { once: true });
+    v.addEventListener("error", () => {
+      const img = new Image();
+      img.addEventListener("load", () => resolve(true), { once: true });
+      img.addEventListener("error", () => resolve(false), { once: true });
+      img.src = "assets/logicvideos/" + baseName + ".webp";
+    }, { once: true });
+    v.src = "assets/logicvideos/" + baseName + ".mp4";
+  });
+  videoExistsCache.set(baseName, p);
+  return p;
+}
+
+// Adds a small play-icon badge to the top-right of a node if it has a clip.
+function attachVideoBadge(nodeEl, moon, tierKey, indexInTier){
+  logicVideoExists(videoAutoName(moon.name, tierKey, indexInTier)).then(found => {
+    if(!found || nodeEl.querySelector(":scope > .has-video-badge")) return;
+    const badge = document.createElement("span");
+    badge.className = "has-video-badge";
+    badge.title = "Has video";
+    badge.innerHTML = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0.5 L9.5 5 L1 9.5 Z" fill="currentColor"/></svg>';
+    nodeEl.appendChild(badge);
+  });
+}
 
 // Entry point for every clickable requirement branch. Checks for a real
 // clip first; opens the overlay only if one is found, otherwise pops the
