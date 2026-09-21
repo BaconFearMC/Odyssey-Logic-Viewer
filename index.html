@@ -1689,12 +1689,12 @@ function mergeTokensIntoManifest(logicTokens){
    separately-maintained master list that could drift out of sync
    with the actual data.
    ========================================================= */
-// Explicit Ability display order, matching AbilityRando.cpp's own
-// sDisplayAbilityOrder[] (prerequisites before dependents, cap throws
-// first, Movement Ability dials last in their setup-page order). Single
-// Jump / Cap Return Jump are always-unlocked and never reach this list,
-// so they're omitted here too. Any token not in this list falls back to
-// first-seen order, appended after everything that is.
+// Formerly used to sort the Ability filter grid/chips into
+// AbilityRando.cpp's own sDisplayAbilityOrder[] (setup-page order).
+// The filter grid/chips are now sorted alphabetically by display label
+// instead (see buildFilterLists() below), so this list and its index
+// are unused there, but are kept in case some other feature wants the
+// game's native ability order later.
 const ABILITY_DISPLAY_ORDER = [
   "NeutralThrow", "UpThrow", "DownThrow", "SpinThrow",
   "Vault", "Crouch", "Backflip", "LongJump", "Roll", "RollBoost",
@@ -1732,11 +1732,8 @@ function buildFilterLists(){
       captures.push(token);
     }
   });
-  abilities.sort((a, b) => {
-    const ai = ABILITY_DISPLAY_ORDER_INDEX.hasOwnProperty(a) ? ABILITY_DISPLAY_ORDER_INDEX[a] : Infinity;
-    const bi = ABILITY_DISPLAY_ORDER_INDEX.hasOwnProperty(b) ? ABILITY_DISPLAY_ORDER_INDEX[b] : Infinity;
-    return ai - bi;
-  });
+  // Alphabetical by display label (left to right), not game/setup order.
+  abilities.sort((a, b) => filterLabelFor(a).localeCompare(filterLabelFor(b), undefined, { sensitivity: "base" }));
   return { abilities, captures };
 }
 
