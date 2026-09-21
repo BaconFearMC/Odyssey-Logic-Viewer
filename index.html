@@ -426,10 +426,35 @@
     line-height:1.4; white-space:nowrap;
     color:var(--text-dim); background:var(--bg); border:1px solid var(--border);
   }
-  .tier-lane.casual .option-chip{ border-color:var(--tier-casual-border); }
-  .tier-lane.advanced .option-chip{ border-color:var(--tier-advanced-border); }
-  .tier-lane.expert .option-chip{ border-color:var(--tier-expert-border); }
-  .tier-lane.glitched .option-chip{ border-color:var(--tier-glitched-border); }
+  /* Difficulty is now carried by the chip itself, not just the lane's
+     outline: a colored left accent bar plus a faint tier-tinted gradient
+     wash, so a casual/advanced/expert/glitched route reads at a glance
+     even scrolled away from its tier-pill label. */
+  .tier-lane.casual .option-chip{
+    border-color:var(--tier-casual-border);
+    border-left-color:var(--tier-casual);
+    background:linear-gradient(135deg, var(--tier-casual-bg) 0%, var(--bg-chip) 72%);
+  }
+  .tier-lane.advanced .option-chip{
+    border-color:var(--tier-advanced-border);
+    border-left-color:var(--tier-advanced);
+    background:linear-gradient(135deg, var(--tier-advanced-bg) 0%, var(--bg-chip) 72%);
+  }
+  .tier-lane.expert .option-chip{
+    border-color:var(--tier-expert-border);
+    border-left-color:var(--tier-expert);
+    background:linear-gradient(135deg, var(--tier-expert-bg) 0%, var(--bg-chip) 72%);
+  }
+  .tier-lane.glitched .option-chip{
+    border-color:var(--tier-glitched-border);
+    border-left-color:var(--tier-glitched);
+    background:linear-gradient(135deg, var(--tier-glitched-bg) 0%, var(--bg-chip) 72%);
+  }
+  .tier-lane.unrated .option-chip{ border-left-color:var(--border); }
+  .tier-lane.casual .option-chip:hover{ box-shadow:0 3px 12px rgba(79,214,138,0.28); }
+  .tier-lane.advanced .option-chip:hover{ box-shadow:0 3px 12px rgba(224,169,74,0.28); }
+  .tier-lane.expert .option-chip:hover{ box-shadow:0 3px 12px rgba(255,107,107,0.28); }
+  .tier-lane.glitched .option-chip:hover{ box-shadow:0 3px 12px rgba(180,148,240,0.28); }
   .tier-lane .or-sep.casual{ color:var(--tier-casual); }
   .tier-lane .or-sep.advanced{ color:var(--tier-advanced); }
   .tier-lane .or-sep.expert{ color:var(--tier-expert); }
@@ -441,8 +466,24 @@
     min-width:0;
     background:var(--bg-chip);
     border:1px solid var(--border);
-    border-radius:8px;
-    padding:5px 7px;
+    border-left:3px solid var(--border);
+    border-radius:9px;
+    padding:5px 8px 5px 6px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.3);
+    /* Entrance: slides down from above, overshoots into a little "pop",
+       then settles. Delay is staggered per-chip in JS (see buildMovementOptions)
+       so a moon's options cascade in left-to-right/lane-by-lane instead of
+       all popping at once. */
+    animation: optionChipIn 0.46s cubic-bezier(.25,.8,.35,1.15) both;
+  }
+  @keyframes optionChipIn{
+    0%{ opacity:0; transform:translateY(-16px) scale(0.82); }
+    55%{ opacity:1; transform:translateY(3px) scale(1.06); }
+    78%{ transform:translateY(-2px) scale(0.97); }
+    100%{ opacity:1; transform:translateY(0) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .option-chip{ animation:none; }
   }
   /* Boxed tier variant used inside checkpoint-view moon panels: each tier
      gets its own outlined section (label + chips inside one bordered box),
@@ -478,12 +519,62 @@
   .tier-stack.boxed .tier-lane.glitched .tier-pill{ color:var(--tier-glitched); }
   .tier-stack.boxed .option-chip{
     border-color:var(--border);
+    border-left-color:var(--border);
     border-radius:4px;
     padding:5px 8px;
     background:var(--bg-chip);
+    box-shadow:none;
   }
   .tier-stack.boxed .free-chip{ border-color:var(--gold); }
   .and-plus{ font-size:11px; color:var(--text-dim); margin:0 1px; }
+  /* ---- Collapsible options (>6 branches) --------------------------------
+     A moon with more than 6 reachability options gets noisy fast, so past
+     that count the box collapses to a "peek": the first option shown in
+     full, just the top sliver of the second cropped under a fade, and a
+     small expand toggle pinned to the box's own top-right corner. Height is
+     measured off the real chips in JS (see measureOptionsCollapsible) since
+     chip height varies with icon/AND count — this is just the shell. */
+  .options-collapsible{
+    position:relative;
+    overflow:hidden;
+    transition:max-height 0.4s cubic-bezier(.22,.9,.32,1);
+  }
+  .options-collapsible.collapsed{ max-height:var(--collapsed-h, 70px); }
+  .options-collapsible.expanded{ max-height:2000px; }
+  .options-fade{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    height:32px;
+    background:linear-gradient(to bottom, rgba(35,36,39,0), var(--bg-panel) 75%);
+    pointer-events:none;
+    opacity:1;
+    transition:opacity 0.25s ease;
+  }
+  .options-collapsible.expanded .options-fade{ opacity:0; }
+  .options-expand-btn{
+    position:absolute;
+    top:2px; right:0;
+    width:22px; height:22px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:var(--bg-chip);
+    color:var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    box-shadow:0 1px 4px rgba(0,0,0,0.45);
+    z-index:3;
+    transition:transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  }
+  .options-expand-btn:hover{
+    background:var(--gold); color:#1b1c1f;
+    box-shadow:0 2px 8px rgba(0,0,0,0.5);
+    transform:scale(1.08);
+  }
+  .options-expand-btn svg{ width:12px; height:12px; display:block; transition:transform 0.25s ease; }
+  .options-expand-btn.is-open svg{ transform:rotate(180deg); }
+  @media (prefers-reduced-motion: reduce){
+    .options-collapsible{ transition:none; }
+  }
   .free-chip{
     font-size:12px; font-style:italic; color:var(--text-dim);
     padding:8px 10px;
@@ -3703,6 +3794,39 @@ function buildMoonCard(moon){
   return card;
 }
 
+// Restarts an already-rendered chip's CSS entrance animation (clear the
+// inline override, force a reflow, reapply with a fresh delay) — used when
+// uncollapsing an options box so the chips that were hidden under the fade
+// actually slide-and-pop in again, instead of the animation being a no-op
+// because it already silently finished while clipped off-screen.
+function replayChipEntrance(chip, staggerIndex){
+  chip.style.animation = "none";
+  void chip.offsetWidth; // force reflow so the browser "forgets" the old run
+  chip.style.animationDelay = (Math.min(staggerIndex, 12) * 0.05) + "s";
+  chip.style.animation = "";
+}
+
+// Measures a collapsed options box off its own real chips — first chip's
+// full height plus a ~40% peek of the second — rather than guessing a fixed
+// pixel value, since chip height varies with icon/AND count and can wrap.
+// Safe to call while the box is hidden inside a closed moon-panel/
+// checkpoint-group: a zero-height read just leaves it unmeasured so the
+// open handlers below retry once it's actually visible.
+function measureOptionsCollapsible(wrap){
+  if(wrap.dataset.measured === "1") return;
+  const chips = wrap.querySelectorAll(".option-chip");
+  if(chips.length < 2){ wrap.dataset.measured = "1"; return; }
+  const wrapTop = wrap.getBoundingClientRect().top;
+  const secondRect = chips[1].getBoundingClientRect();
+  if(secondRect.height === 0) return; // still hidden behind a closed ancestor
+  const collapsedH = Math.round((secondRect.top - wrapTop) + secondRect.height * 0.42);
+  wrap.style.setProperty("--collapsed-h", Math.max(collapsedH, 44) + "px");
+  wrap.dataset.measured = "1";
+}
+function measureOptionsCollapsiblesIn(root){
+  (root || document).querySelectorAll(".options-collapsible:not([data-measured='1'])").forEach(measureOptionsCollapsible);
+}
+
 // Builds just the movement-options portion of a moon (the "Free" tag or the
 // tier-stack of OR/AND requirement chips). Shared by the moon-card grid view
 // and the moon-panel body in the checkpoint-grouped view, since a moon's set
@@ -3730,6 +3854,11 @@ function buildMovementOptions(moon, boxed){
   const stack = document.createElement("div");
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
 
+  // Runs across every branch in every lane (not reset per-lane) so the
+  // slide-down-into-pop entrance reads as one continuous cascade down the
+  // whole moon rather than restarting at each tier.
+  let chipIndex = 0;
+
   moon.tierLanes.forEach(lane => {
     const laneEl = document.createElement("div");
     laneEl.className = "tier-lane " + lane.tier;
@@ -3755,6 +3884,8 @@ function buildMovementOptions(moon, boxed){
       if(andGroup.length === 0){
         const chip = document.createElement("div");
         chip.className = "option-chip free-chip";
+        chip.style.animationDelay = (Math.min(chipIndex, 12) * 0.05) + "s";
+        chipIndex++;
         chip.textContent = "Free";
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, i + 1));
         attachVideoBadge(chip, moon, lane.tier, i + 1);
@@ -3783,6 +3914,8 @@ function buildMovementOptions(moon, boxed){
       }
       const chip = document.createElement("div");
       chip.className = "option-chip";
+      chip.style.animationDelay = (Math.min(chipIndex, 12) * 0.05) + "s";
+      chipIndex++;
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, i + 1));
       attachVideoBadge(chip, moon, lane.tier, i + 1);
       andGroup.forEach((token, j)=>{
@@ -3813,6 +3946,46 @@ function buildMovementOptions(moon, boxed){
     laneEl.appendChild(optsEl);
     stack.appendChild(laneEl);
   });
+
+  // More than 6 reachability options gets noisy fast, so past that count
+  // the box collapses to a peek: the first option shown in full, just the
+  // top sliver of the second cropped under a fade, and a small expand
+  // toggle pinned to the box's own top-right corner.
+  const totalOptions = moon.tierLanes.reduce((sum, lane) => sum + lane.groups.length, 0);
+  if(totalOptions > 6){
+    const wrap = document.createElement("div");
+    wrap.className = "options-collapsible collapsed";
+    wrap.dataset.measured = "0";
+    wrap.appendChild(stack);
+
+    const fade = document.createElement("div");
+    fade.className = "options-fade";
+    wrap.appendChild(fade);
+
+    const expandBtn = document.createElement("button");
+    expandBtn.type = "button";
+    expandBtn.className = "options-expand-btn";
+    expandBtn.setAttribute("aria-label", "Show all " + totalOptions + " options");
+    expandBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+    expandBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const opening = wrap.classList.contains("collapsed");
+      wrap.classList.toggle("collapsed", !opening);
+      wrap.classList.toggle("expanded", opening);
+      expandBtn.classList.toggle("is-open", opening);
+      expandBtn.setAttribute("aria-label", opening ? "Show fewer options" : "Show all " + totalOptions + " options");
+      if(opening){
+        // Replay the slide-down-into-pop entrance for every chip beyond the
+        // peeked first two, staggered, so revealing them feels alive rather
+        // than the box just snapping open on already-settled chips.
+        const chips = stack.querySelectorAll(".option-chip");
+        chips.forEach((chip, i) => { if(i >= 2) replayChipEntrance(chip, i - 2); });
+      }
+    });
+    wrap.appendChild(expandBtn);
+
+    return wrap;
+  }
 
   return stack;
 }
@@ -3872,7 +4045,10 @@ function buildMoonPanel(moon){
   }
   panel.appendChild(body);
 
-  header.addEventListener("click", () => panel.classList.toggle("open"));
+  header.addEventListener("click", () => {
+    panel.classList.toggle("open");
+    if(panel.classList.contains("open")) measureOptionsCollapsiblesIn(panel);
+  });
 
   return panel;
 }
@@ -3951,7 +4127,10 @@ function buildCheckpointGroup(checkpointName, entry){
   entry.moons.forEach(moon => body.appendChild(buildMoonPanel(moon)));
   group.appendChild(body);
 
-  header.addEventListener("click", () => group.classList.toggle("open"));
+  header.addEventListener("click", () => {
+    group.classList.toggle("open");
+    if(group.classList.contains("open")) measureOptionsCollapsiblesIn(group);
+  });
 
   return group;
 }
@@ -4085,6 +4264,7 @@ function renderGrid(){
     grid.style.display = "";
     checkpointGroups.style.display = "none";
     moons.forEach(moon => grid.appendChild(buildMoonCard(moon)));
+    measureOptionsCollapsiblesIn(grid);
   }
   applyFilterMatchHighlight();
 }
@@ -4444,6 +4624,7 @@ function goToMoon(kingdomName, moonName){
       const group = panel.closest(".checkpoint-group");
       if(group) group.classList.add("open");
       panel.classList.add("open");
+      measureOptionsCollapsiblesIn(panel);
       panel.scrollIntoView({ behavior: "smooth", block: "center" });
       setTimeout(() => {
         panel.classList.add("pop-highlight");
