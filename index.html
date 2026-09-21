@@ -401,17 +401,28 @@
      up so the three (or four) tiers stay visually distinct at a glance. */
   .tier-stack{ display:flex; flex-direction:column; gap:6px; width:100%; }
   .tier-lane{ display:flex; align-items:flex-start; gap:8px; }
+  /* Difficulty chip shape: chunky rounded badge (not a thin capsule pill),
+     a thick outline, and a solid color-block fill instead of a faint
+     tinted background — reads like a Mario Odyssey moon-count/kingdom
+     badge rather than a generic web "tag". The four tier hues
+     (--tier-casual/advanced/expert/glitched) are unchanged; only how they're
+     applied changes — the primary hue now IS the fill, not just the text,
+     so each difficulty reads as a distinct solid color block at a glance.
+     A flat, hard-edged drop shadow (no blur) gives it the slight
+     sticker/embossed "pop" of chunky platformer UI instead of a soft css
+     glow. */
   .tier-pill{
     flex:0 0 auto;
-    font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;
-    padding:3px 7px; border-radius:20px; border:1px solid;
-    line-height:1.4; white-space:nowrap; margin-top:2px;
+    font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;
+    padding:4px 10px; border-radius:8px; border:2.5px solid;
+    line-height:1.5; white-space:nowrap; margin-top:2px;
+    box-shadow:0 2px 0 0 rgba(0,0,0,0.4);
   }
-  .tier-lane.casual .tier-pill{ color:var(--tier-casual); background:var(--tier-casual-bg); border-color:var(--tier-casual-border); }
-  .tier-lane.advanced .tier-pill{ color:var(--tier-advanced); background:var(--tier-advanced-bg); border-color:var(--tier-advanced-border); }
-  .tier-lane.expert .tier-pill{ color:var(--tier-expert); background:var(--tier-expert-bg); border-color:var(--tier-expert-border); }
-  .tier-lane.glitched .tier-pill{ color:var(--tier-glitched); background:var(--tier-glitched-bg); border-color:var(--tier-glitched-border); }
-  .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); }
+  .tier-lane.casual .tier-pill{ color:#0e2317; background:var(--tier-casual); border-color:var(--tier-casual-border); }
+  .tier-lane.advanced .tier-pill{ color:#2a1a05; background:var(--tier-advanced); border-color:var(--tier-advanced-border); }
+  .tier-lane.expert .tier-pill{ color:#330d0d; background:var(--tier-expert); border-color:var(--tier-expert-border); }
+  .tier-lane.glitched .tier-pill{ color:#1e1035; background:var(--tier-glitched); border-color:var(--tier-glitched-border); }
+  .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; }
   .tier-options{
     display:flex; align-items:center; gap:6px; flex-wrap:wrap; max-width:100%; min-width:0;
   }
@@ -503,20 +514,27 @@
   .tier-stack.boxed .tier-lane.expert{ border-color:var(--tier-expert-border); }
   .tier-stack.boxed .tier-lane.glitched{ border-color:var(--tier-glitched-border); }
   .tier-stack.boxed .tier-lane.unrated{ border-color:var(--border); }
+  /* Same chunky solid-color-block badge as the grid-view .tier-pill above,
+     just sized down to sit as a corner tag on the boxed section instead of
+     a free-floating lane label. */
   .tier-stack.boxed .tier-pill{
     flex:none;
-    background:none;
-    border:none;
-    padding:0;
-    font-size:11px;
+    align-self:flex-start;
+    padding:3px 9px;
+    border-radius:7px;
+    border:2px solid;
+    font-size:10px;
+    font-weight:800;
     text-transform:uppercase;
     letter-spacing:0.4px;
     margin-top:0;
+    box-shadow:0 1.5px 0 0 rgba(0,0,0,0.4);
   }
-  .tier-stack.boxed .tier-lane.casual .tier-pill{ color:var(--tier-casual); }
-  .tier-stack.boxed .tier-lane.advanced .tier-pill{ color:var(--tier-advanced); }
-  .tier-stack.boxed .tier-lane.expert .tier-pill{ color:var(--tier-expert); }
-  .tier-stack.boxed .tier-lane.glitched .tier-pill{ color:var(--tier-glitched); }
+  .tier-stack.boxed .tier-lane.casual .tier-pill{ color:#0e2317; background:var(--tier-casual); border-color:var(--tier-casual-border); }
+  .tier-stack.boxed .tier-lane.advanced .tier-pill{ color:#2a1a05; background:var(--tier-advanced); border-color:var(--tier-advanced-border); }
+  .tier-stack.boxed .tier-lane.expert .tier-pill{ color:#330d0d; background:var(--tier-expert); border-color:var(--tier-expert-border); }
+  .tier-stack.boxed .tier-lane.glitched .tier-pill{ color:#1e1035; background:var(--tier-glitched); border-color:var(--tier-glitched-border); }
+  .tier-stack.boxed .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; }
   .tier-stack.boxed .option-chip{
     border-color:var(--border);
     border-left-color:var(--border);
@@ -3442,7 +3460,9 @@ function computeEntranceReqs(row, ownMoon, ws, nodeMap, kingdomName){
 }
 
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
-function renderEntranceReqs(list, className){
+// disableCollapse is forwarded straight through to renderReachTierLanes/
+// wrapOptionsIfCollapsible — see the note there.
+function renderEntranceReqs(list, className, disableCollapse){
   const wrap = document.createElement("div");
   wrap.className = className || "entrance-reqs";
   list.forEach(r => {
@@ -3457,7 +3477,7 @@ function renderEntranceReqs(list, className){
     } else if(r.free){
       const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; row.appendChild(t);
     } else {
-      row.appendChild(renderReachTierLanes(r.lanes));
+      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse));
     }
     wrap.appendChild(row);
   });
@@ -3848,12 +3868,20 @@ function measureOptionsCollapsiblesIn(root){
 // its fade + expand toggle. Centralizing this means the collapse behavior
 // can't silently go missing from one rendering path (e.g. subarea entrance
 // rows) while working on another.
-function wrapOptionsIfCollapsible(stack, totalOptions){
+function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse){
   stack.querySelectorAll(".option-chip").forEach((chip, i) => {
     chip.style.animationDelay = (Math.min(i, 12) * 0.05) + "s";
   });
 
-  if(totalOptions <= 6) return stack;
+  // The Node Info popup (openNodeInfo) renders a node's own reach
+  // requirement in full every time, so it never needs — and must never
+  // show — the peek/expand affordance: the popup is the "show me
+  // everything about this node" view, and there's nothing left to expand
+  // into. Callers that open from that popup pass disableCollapse=true
+  // straight through renderReachTierLanes/renderEntranceReqs/
+  // appendReachRequirement so the arrow is never constructed for that
+  // render path, rather than being built and then hidden with CSS.
+  if(disableCollapse || totalOptions <= 6) return stack;
 
   const wrap = document.createElement("div");
   wrap.className = "options-collapsible collapsed";
@@ -4714,7 +4742,7 @@ function buildTierLanesFromBranches(branches){
 // .tier-stack/.tier-lane/.tier-pill/.option-chip classes the moon cards
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
-function renderReachTierLanes(tierLanes){
+function renderReachTierLanes(tierLanes, disableCollapse){
   const stack = document.createElement("div");
   stack.className = "tier-stack";
   tierLanes.forEach(lane => {
@@ -4765,14 +4793,15 @@ function renderReachTierLanes(tierLanes){
     stack.appendChild(laneEl);
   });
   const totalOptions = tierLanes.reduce((sum, lane) => sum + lane.groups.length, 0);
-  return wrapOptionsIfCollapsible(stack, totalOptions);
+  return wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse);
 }
 
 // Appends either a tiered requirement stack or a plain "Free" tag to
 // `parent`, for the given reach branches — the one bit of rendering
 // logic shared by every section of the popup (a single node, or one row
-// per subarea entrance).
-function appendReachRequirement(parent, branches){
+// per subarea entrance). disableCollapse is forwarded straight through to
+// renderReachTierLanes/wrapOptionsIfCollapsible — see the note there.
+function appendReachRequirement(parent, branches, disableCollapse){
   const tierLanes = buildTierLanesFromBranches(branches);
   if(!tierLanes){
     const free = document.createElement("span");
@@ -4780,7 +4809,7 @@ function appendReachRequirement(parent, branches){
     free.textContent = "Free";
     parent.appendChild(free);
   } else {
-    parent.appendChild(renderReachTierLanes(tierLanes));
+    parent.appendChild(renderReachTierLanes(tierLanes, disableCollapse));
   }
 }
 
@@ -4824,7 +4853,7 @@ function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName,
       p.textContent = nEnt === 1 ? "This subarea only has one entrance." : "No entrance data available for this subarea yet.";
       nodeModalBody.appendChild(p);
     } else {
-      nodeModalBody.appendChild(renderEntranceReqs(reqs, "entrance-reqs in-modal"));
+      nodeModalBody.appendChild(renderEntranceReqs(reqs, "entrance-reqs in-modal", true));
     }
   } else {
     const node = data ? data.nodeMap[nodeId] : null;
@@ -4843,7 +4872,7 @@ function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName,
 
     const block = document.createElement("div");
     block.className = "node-entrance-block";
-    appendReachRequirement(block, data && nodeId ? data.reachBranches[nodeId] : null);
+    appendReachRequirement(block, data && nodeId ? data.reachBranches[nodeId] : null, true);
     nodeModalBody.appendChild(block);
   }
 
