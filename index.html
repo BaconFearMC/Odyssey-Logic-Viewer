@@ -1298,6 +1298,95 @@
     color:var(--text-dim);
     font-size:12.5px;
   }
+  /* Merged filter's two mode tabs — "what can I do" (AND: fully
+     achievable with only the selected items) vs "what does that
+     unlock" (OR: any moon that references at least one selected item
+     anywhere in its requirements). Picking a tab changes how
+     moonMatchesFilters() evaluates the current Ability/Capture
+     selection and updates the question at the end of filter-summary. */
+  .filter-mode-tabs{
+    display:flex;
+    gap:8px;
+    width:100%;
+  }
+  .filter-mode-tab{
+    flex:1 1 0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--bg-chip);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 16px;
+    color:var(--text-dim);
+    font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
+    cursor:pointer;
+    text-align:left;
+    transition:background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .filter-mode-icon{
+    flex:0 0 auto;
+    font-size:22px;
+    line-height:1;
+    filter:grayscale(1) opacity(0.6);
+    transition:filter 0.15s ease;
+  }
+  .filter-mode-tab.active .filter-mode-icon{ filter:none; }
+  .filter-mode-text{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    min-width:0;
+  }
+  .filter-mode-title{
+    font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--text-dim);
+    transition:color 0.15s ease;
+  }
+  .filter-mode-tab.active .filter-mode-title{ color:var(--gold); }
+  .filter-mode-subtitle{
+    font-size:11px;
+    color:var(--text-dim);
+    opacity:0.8;
+    white-space:normal;
+  }
+  .filter-mode-tab:hover{ background:rgba(255,255,255,0.05); }
+  .filter-mode-tab.active{
+    background:var(--gold-light);
+    border-color:var(--gold);
+    color:var(--gold);
+  }
+  /* Section headings inside the merged filter panel — Abilities on
+     top, Captures below, per the "merge but keep Captures under
+     Abilities" layout. */
+  .filter-section-heading{
+    font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin:14px 0 4px;
+    text-align:left;
+  }
+  .filter-section-heading:first-child{ margin-top:4px; }
+  /* Live summary sentence shown under the merged filter once at least
+     one Ability/Capture is selected, e.g. "I have the Abilities
+     SideFlip and Roll. I have the Capture Boulder. What can I do?" */
+  .filter-summary{
+    width:100%;
+    background:var(--bg-chip);
+    border:1px solid var(--border);
+    border-left:3px solid var(--gold);
+    border-radius:8px;
+    padding:10px 14px;
+    font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
+    font-size:13px;
+    color:var(--text);
+    text-align:left;
+  }
   /* Matching requirement-icon highlight on moon cards, when a filter is
      active: any icon-wrap whose token is currently selected in either
      filter gets a gold ring so it's obvious *why* the moon matched. */
@@ -1341,11 +1430,11 @@
   <span>UNMARKED (Bug Fixing)</span>
 </button>
 
-<button class="corner-btn" id="glitchToggle" type="button" aria-label="Cycle Glitched logic filter">
+<button class="corner-btn active" id="glitchToggle" type="button" aria-label="Cycle Glitched logic filter">
   <span class="icon-svg" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v4M15 3v4M4 11h16M6 11v6a2 2 0 0 0 2 2h1M18 11v6a2 2 0 0 1-2 2h-1M10 19h4"/></svg>
   </span>
-  <span id="glitchToggleLabel">Glitched: All</span>
+  <span id="glitchToggleLabel">Glitched: Hidden</span>
 </button>
 
 <button class="corner-btn" id="viewModeToggle" type="button" aria-label="Switch between moon view and checkpoint view">
@@ -1360,34 +1449,41 @@
 <div id="loadStatus" class="load-status"></div>
 
 <div class="filter-bars" id="filterBars">
-  <div class="filter-bar" id="abilityFilterBar">
-    <div class="filter-bar-row" id="abilityFilterRow">
+  <div class="filter-mode-tabs" id="filterModeTabs">
+    <button type="button" class="filter-mode-tab active" id="filterModeCanDo" data-mode="cando">
+      <span class="filter-mode-icon" aria-hidden="true">🧭</span>
+      <span class="filter-mode-text">
+        <span class="filter-mode-title">What Can I Do?</span>
+        <span class="filter-mode-subtitle">See what's reachable with just what you've got</span>
+      </span>
+    </button>
+    <button type="button" class="filter-mode-tab" id="filterModeUnlocks" data-mode="unlocks">
+      <span class="filter-mode-icon" aria-hidden="true">🔓</span>
+      <span class="filter-mode-text">
+        <span class="filter-mode-title">What Does This Unlock?</span>
+        <span class="filter-mode-subtitle">See every moon that uses what you picked</span>
+      </span>
+    </button>
+  </div>
+  <div class="filter-bar" id="tokenFilterBar">
+    <div class="filter-bar-row" id="tokenFilterRow">
       <span class="filter-bar-label">
         <span class="icon-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg></span>
-        <span>Ability</span>
+        <span>Filters</span>
       </span>
-      <div class="filter-bar-chips" id="abilityFilterChips"></div>
-      <button type="button" class="filter-bar-clear" id="abilityFilterClear" aria-label="Clear Ability filter" style="display:none;">&times;</button>
+      <div class="filter-bar-chips" id="tokenFilterChips"></div>
+      <button type="button" class="filter-bar-clear" id="tokenFilterClear" aria-label="Clear Ability/Capture filter" style="display:none;">&times;</button>
     </div>
-    <div class="filter-bar-panel" id="abilityFilterPanel">
+    <div class="filter-bar-panel" id="tokenFilterPanel">
+      <div class="filter-section-heading">Abilities</div>
       <input type="text" class="filter-bar-search" id="abilityFilterSearch" placeholder="Search abilities…" autocomplete="off">
       <div class="filter-bar-grid" id="abilityFilterGrid"></div>
-    </div>
-  </div>
-  <div class="filter-bar" id="captureFilterBar">
-    <div class="filter-bar-row" id="captureFilterRow">
-      <span class="filter-bar-label">
-        <span class="icon-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg></span>
-        <span>Capture</span>
-      </span>
-      <div class="filter-bar-chips" id="captureFilterChips"></div>
-      <button type="button" class="filter-bar-clear" id="captureFilterClear" aria-label="Clear Capture filter" style="display:none;">&times;</button>
-    </div>
-    <div class="filter-bar-panel" id="captureFilterPanel">
+      <div class="filter-section-heading">Captures</div>
       <input type="text" class="filter-bar-search" id="captureFilterSearch" placeholder="Search captures…" autocomplete="off">
       <div class="filter-bar-grid" id="captureFilterGrid"></div>
     </div>
   </div>
+  <div class="filter-summary" id="filterSummary" style="display:none;"></div>
 </div>
 
 <div class="kingdom-pager" id="kingdomPager">
@@ -4236,12 +4332,12 @@ let currentKingdomIndex = 0;
 let unmarkedMode = false;
 
 // Glitched-logic filter cycles through three states on the current kingdom:
-// "all" (default) -> "hide" (no Glitched-lane moons) -> "only" (only
-// Glitched-lane moons) -> back to "all". Same reset-on-navigate rule as
-// unmarkedMode.
+// "hide" (default — no Glitched-lane moons) -> "only" (only Glitched-lane
+// moons) -> "all" (everything) -> back to "hide". Same reset-on-navigate
+// rule as unmarkedMode.
 const GLITCH_MODES = ["all", "hide", "only"];
 const GLITCH_LABELS = { all: "Glitched: All", hide: "Glitched: Hidden", only: "Glitched: Only" };
-let glitchMode = "all";
+let glitchMode = "hide";
 
 // Renders the grid for whatever kingdom/unmarkedMode is currently active,
 // without touching the pager name/icon/dots. Used by both kingdom
@@ -4259,6 +4355,21 @@ let viewMode = "moon"; // "moon" | "checkpoint" — persists across kingdom navi
    ========================================================= */
 let selectedAbilities = new Set();
 let selectedCaptures = new Set();
+// Populated once by setupMergedFilterBar()/buildFilterLists() — kept
+// around (in game order) so the filter-summary sentence and the merged
+// chips row can list selections in a stable, story-correct order.
+let FILTER_LIST_ABILITIES = [];
+let FILTER_LIST_CAPTURES = [];
+
+// Which question the merged filter is currently answering:
+//  "cando"   — "I have V, X, Y, and Z. What can I do?" (AND logic: only
+//              moons fully completable using nothing but the selected
+//              Abilities/Captures, i.e. at least one whole OR-branch is
+//              covered by the selection).
+//  "unlocks" — "I have V, X, Y, and Z. What does that unlock?" (OR logic:
+//              any moon that references at least one selected item
+//              anywhere in its requirements — the original behavior).
+let filterMode = "cando";
 
 function moonTokens(moon){
   const set = new Set();
@@ -4273,8 +4384,19 @@ function moonTokens(moon){
   return set;
 }
 
-function moonMatchesFilters(moon){
-  if(selectedAbilities.size === 0 && selectedCaptures.size === 0) return true;
+// True if `tok` (or whatever it folds to — see ABILITY_FILTER_FOLD_TOKENS)
+// is one of the currently-selected Ability/Capture filter items.
+function tokenIsSelected(tok){
+  if(selectedAbilities.has(tok) || selectedCaptures.has(tok)) return true;
+  const folded = ABILITY_FILTER_FOLD_TOKENS[tok];
+  if(folded && (selectedAbilities.has(folded) || selectedCaptures.has(folded))) return true;
+  return false;
+}
+
+// "What does that unlock?" — OR logic. A moon passes if ANY selected
+// token — ability or capture — appears anywhere in its requirements (any
+// OR-branch, any AND-slot).
+function moonMatchesUnlocks(moon){
   const groups = moon.orGroups || [];
   // Free moons have no requirements to match against, so they always pass
   // through an active filter rather than being excluded by it.
@@ -4293,6 +4415,22 @@ function moonMatchesFilters(moon){
   selectedAbilities.forEach(t => { if(toks.has(t)) any = true; });
   selectedCaptures.forEach(t => { if(toks.has(t)) any = true; });
   return any;
+}
+
+// "What can I do?" — AND logic. A moon passes only if at least one whole
+// OR-branch of its requirements is fully covered by the currently
+// selected Abilities/Captures (i.e. you could actually go get it right
+// now with nothing but what's selected).
+function moonMatchesCanDo(moon){
+  const groups = moon.orGroups || [];
+  if(groups.length === 0) return true;
+  if(groups.some(group => group.length === 0)) return true;
+  return groups.some(group => group.every(tok => tokenIsSelected(tok)));
+}
+
+function moonMatchesFilters(moon){
+  if(selectedAbilities.size === 0 && selectedCaptures.size === 0) return true;
+  return filterMode === "cando" ? moonMatchesCanDo(moon) : moonMatchesUnlocks(moon);
 }
 
 function renderGrid(){
@@ -4320,7 +4458,9 @@ function renderGrid(){
     } else if(glitchMode === "only"){
       emptyState.textContent = "No Glitched-logic moons in this kingdom!";
     } else if(tokenFiltering){
-      emptyState.textContent = "No moons in this kingdom match the selected Ability/Capture filters.";
+      emptyState.textContent = filterMode === "cando"
+        ? "None of the moons in this kingdom are fully doable with just the selected Abilities/Captures."
+        : "No moons in this kingdom match the selected Ability/Capture filters.";
     } else {
       emptyState.textContent = "No moons left to show with this filter.";
     }
@@ -4366,11 +4506,11 @@ function renderKingdom(name){
   const unmarkedBtn = document.getElementById("unmarkedToggle");
   if(unmarkedBtn) unmarkedBtn.classList.remove("active");
 
-  glitchMode = "all";
+  glitchMode = "hide";
   const glitchBtn = document.getElementById("glitchToggle");
   if(glitchBtn){
-    glitchBtn.classList.remove("active");
-    document.getElementById("glitchToggleLabel").textContent = GLITCH_LABELS.all;
+    glitchBtn.classList.toggle("active", glitchMode !== "all");
+    document.getElementById("glitchToggleLabel").textContent = GLITCH_LABELS[glitchMode];
   }
 
   currentKingdomIndex = KINGDOM_ORDER.indexOf(name);
@@ -4498,36 +4638,78 @@ function showNotImplementedToast(){
   notImplementedToastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
 }
 
-function setupFilterBar(kind, tokens, selectedSet){
-  const barEl = document.getElementById(kind + "FilterBar");
-  const rowEl = document.getElementById(kind + "FilterRow");
-  const chipsEl = document.getElementById(kind + "FilterChips");
-  const clearBtn = document.getElementById(kind + "FilterClear");
-  const panelEl = document.getElementById(kind + "FilterPanel");
-  const searchEl = document.getElementById(kind + "FilterSearch");
-  const gridEl = document.getElementById(kind + "FilterGrid");
+// Builds a comma-separated, Oxford-comma'd list: ["A"] -> "A",
+// ["A","B"] -> "A and B", ["A","B","C"] -> "A, B, and C".
+function joinWithAnd(list){
+  if(list.length === 0) return "";
+  if(list.length === 1) return list[0];
+  if(list.length === 2) return list[0] + " and " + list[1];
+  return list.slice(0, -1).join(", ") + ", and " + list[list.length - 1];
+}
+
+// Renders the live "I have the Abilities ... I have the Captures ...
+// What can I do? / What does that unlock?" sentence under the merged
+// filter, reflecting the current selections and the active tab.
+function updateFilterSummary(){
+  const summaryEl = document.getElementById("filterSummary");
+  if(!summaryEl) return;
+  const abilityNames = FILTER_LIST_ABILITIES.filter(t => selectedAbilities.has(t)).map(filterLabelFor);
+  const captureNames = FILTER_LIST_CAPTURES.filter(t => selectedCaptures.has(t)).map(filterLabelFor);
+  if(abilityNames.length === 0 && captureNames.length === 0){
+    summaryEl.style.display = "none";
+    summaryEl.textContent = "";
+    return;
+  }
+  const parts = [];
+  if(abilityNames.length){
+    parts.push("I have the Abilit" + (abilityNames.length === 1 ? "y" : "ies") + " " + joinWithAnd(abilityNames) + ".");
+  }
+  if(captureNames.length){
+    parts.push("I have the Capture" + (captureNames.length === 1 ? "" : "s") + " " + joinWithAnd(captureNames) + ".");
+  }
+  parts.push(filterMode === "cando" ? "What can I do?" : "What does that specifically unlock for me?");
+  summaryEl.style.display = "block";
+  summaryEl.textContent = "🎮 " + parts.join(" ");
+}
+
+// The two filter bars (Ability, Capture) are merged into a single
+// collapsible block — one header row/chip strip/clear button that opens
+// one shared panel, with the Abilities picker on top and the Captures
+// picker below it. Selecting anything from either grid re-renders the
+// combined chip strip, the filter-summary sentence, and the moon grid.
+function setupMergedFilterBar(tokens){
+  const { abilities, captures } = tokens;
+  FILTER_LIST_ABILITIES = abilities;
+  FILTER_LIST_CAPTURES = captures;
+
+  const barEl = document.getElementById("tokenFilterBar");
+  const rowEl = document.getElementById("tokenFilterRow");
+  const chipsEl = document.getElementById("tokenFilterChips");
+  const clearBtn = document.getElementById("tokenFilterClear");
+  const abilitySearchEl = document.getElementById("abilityFilterSearch");
+  const captureSearchEl = document.getElementById("captureFilterSearch");
+  const abilityGridEl = document.getElementById("abilityFilterGrid");
+  const captureGridEl = document.getElementById("captureFilterGrid");
 
   function renderChips(){
     chipsEl.innerHTML = "";
-    if(selectedSet.size === 0){
+    if(selectedAbilities.size === 0 && selectedCaptures.size === 0){
       const empty = document.createElement("span");
       empty.className = "filter-bar-empty";
-      empty.textContent = "Any " + (kind === "ability" ? "Ability" : "Capture");
+      empty.textContent = "Any Ability / Capture";
       chipsEl.appendChild(empty);
       clearBtn.style.display = "none";
       return;
     }
-    tokens.forEach(token => {
-      if(!selectedSet.has(token)) return;
-      chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip"));
-    });
+    abilities.forEach(token => { if(selectedAbilities.has(token)) chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip")); });
+    captures.forEach(token => { if(selectedCaptures.has(token)) chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip")); });
     clearBtn.style.display = "";
   }
 
-  function renderOptions(query){
+  function renderOptions(kind, tokenList, selectedSet, gridEl, query){
     const q = (query || "").trim().toLowerCase();
     gridEl.innerHTML = "";
-    const matches = tokens.filter(token => {
+    const matches = tokenList.filter(token => {
       const label = filterLabelFor(token);
       return !q || label.toLowerCase().includes(q);
     });
@@ -4566,6 +4748,7 @@ function setupFilterBar(kind, tokens, selectedSet){
           else selectedSet.add(token);
           btn.classList.toggle("selected", selectedSet.has(token));
           renderChips();
+          updateFilterSummary();
           renderGrid();
         });
       }
@@ -4573,29 +4756,57 @@ function setupFilterBar(kind, tokens, selectedSet){
     });
   }
 
+  function refreshOpenPanels(){
+    if(!barEl.classList.contains("open")) return;
+    renderOptions("ability", abilities, selectedAbilities, abilityGridEl, abilitySearchEl.value);
+    renderOptions("capture", captures, selectedCaptures, captureGridEl, captureSearchEl.value);
+  }
+
   rowEl.addEventListener("click", (e) => {
     if(e.target === clearBtn) return;
     barEl.classList.toggle("open");
-    if(barEl.classList.contains("open")) renderOptions(searchEl.value);
+    refreshOpenPanels();
   });
   clearBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    selectedSet.clear();
+    selectedAbilities.clear();
+    selectedCaptures.clear();
     renderChips();
-    if(barEl.classList.contains("open")) renderOptions(searchEl.value);
+    refreshOpenPanels();
+    updateFilterSummary();
     renderGrid();
   });
-  searchEl.addEventListener("input", () => renderOptions(searchEl.value));
-  searchEl.addEventListener("click", (e) => e.stopPropagation());
+  abilitySearchEl.addEventListener("input", () => renderOptions("ability", abilities, selectedAbilities, abilityGridEl, abilitySearchEl.value));
+  abilitySearchEl.addEventListener("click", (e) => e.stopPropagation());
+  captureSearchEl.addEventListener("input", () => renderOptions("capture", captures, selectedCaptures, captureGridEl, captureSearchEl.value));
+  captureSearchEl.addEventListener("click", (e) => e.stopPropagation());
 
   renderChips();
 }
 
+// Wires up the two "I have V, X, Y, and Z..." tabs. Switching tabs only
+// changes how moonMatchesFilters() interprets the current Ability/Capture
+// selection (AND vs OR) and the trailing question in filter-summary — it
+// never touches the selection itself.
+function setupFilterModeTabs(){
+  const tabs = document.querySelectorAll(".filter-mode-tab");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      if(tab.dataset.mode === filterMode) return;
+      filterMode = tab.dataset.mode;
+      tabs.forEach(t => t.classList.toggle("active", t === tab));
+      updateFilterSummary();
+      renderGrid();
+    });
+  });
+}
+
 let filterBarsInitialized = false;
 function initFilterBars(){
-  const { abilities, captures } = buildFilterLists();
-  setupFilterBar("ability", abilities, selectedAbilities);
-  setupFilterBar("capture", captures, selectedCaptures);
+  const tokens = buildFilterLists();
+  setupMergedFilterBar(tokens);
+  setupFilterModeTabs();
+  updateFilterSummary();
   filterBarsInitialized = true;
 }
 
