@@ -203,3 +203,5 @@ ForestWorldCloudBonusExStage::place::new_place,Wooded Kingdom,ForestWorldCloudBo
 ForestWorldHomeStage::place::new_place_25,Wooded Kingdom,ForestWorldHomeStage,Wooded Kingdom,overworld,custom_place,editor,,,,Taking Notes: Stretching Free,,,,,Human-authored logic place.,
 ForestWorldHomeStage::place::new_place_26,Wooded Kingdom,ForestWorldHomeStage,Wooded Kingdom,overworld,custom_place,editor,,,,Over the Cliff's Edge Area,,,,,Human-authored logic place.,
 ForestWorldHomeStage::place::new_place_27,Wooded Kingdom,ForestWorldHomeStage,Wooded Kingdom,overworld,custom_place,editor,,,,Wooded KFR,,,,,Human-authored logic place.,
+ForestWorldHomeStage::place::new_place_28,Wooded Kingdom,ForestWorldHomeStage,Wooded Kingdom,overworld,custom_place,editor,,,,High Up on a Rock Wall Free,,,,,Human-authored logic place.,
+ForestWorldHomeStage::place::new_place_29,Wooded Kingdom,ForestWorldHomeStage,Wooded Kingdom,overworld,custom_place,editor,,,,Charging Station Area,,,,,Human-authored logic place.,

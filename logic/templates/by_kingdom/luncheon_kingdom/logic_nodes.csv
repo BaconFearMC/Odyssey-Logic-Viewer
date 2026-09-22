@@ -125,3 +125,5 @@ LavaWorldHomeStage::place::new_place_7,Luncheon Kingdom,LavaWorldHomeStage,Lunch
 LavaWorldCaveZone::start,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,embedded_zone,,,,LavaWorldCaveZone,-3300.000,-46100.000,126100.000,1;2;3;6;7;8,Embedded map landmark from LavaWorldCaveZone.,
 LavaWorldHomeStage::place::new_place_3,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,Post 2nd Story Moon,,,,,Human-authored logic place.,
 LavaWorldHomeStage::place::new_place_8,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,Meat Multi Free,,,,,Human-authored logic place.,
+LavaWorldHomeStage::place::new_place_9,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,Surrounded By Tall Mountains Free,,,,,Human-authored logic place.,
+LavaWorldHomeStage::place::new_place_10,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,Luncheon KFR,,,,,Human-authored logic place.,
