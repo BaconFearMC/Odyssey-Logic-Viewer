@@ -435,10 +435,6 @@
     max-width:100%;
   }
   .free-tag{ font-size:12px; color:var(--text-dim); font-style:italic; }
-  .or-sep{
-    font-size:10px; color:var(--gold); font-weight:700;
-    text-transform:uppercase; letter-spacing:0.5px;
-  }
   /* ---- Difficulty tier lanes -------------------------------------------
      Each moon can be reached by several alternate routes (OR-branches),
      and every route belongs to exactly one difficulty tier: Casual,
@@ -468,7 +464,7 @@
   .tier-lane.glitched .tier-pill{ color:#1e1035; background:var(--tier-glitched); border-color:var(--tier-glitched-border); }
   .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; clip-path:none; padding:4px 10px; }
   .tier-options{
-    display:flex; align-items:center; gap:6px; flex-wrap:wrap; max-width:100%; min-width:0;
+    display:flex; flex-direction:column; align-items:flex-start; gap:6px; max-width:100%; min-width:0;
   }
   /* Scenario Data: small pill appended inside an option-chip when that
      specific branch is only valid in certain in-game scenarios (e.g. only
@@ -509,10 +505,6 @@
   .tier-lane.advanced .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(224,169,74,0.35); }
   .tier-lane.expert .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(255,107,107,0.35); }
   .tier-lane.glitched .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(180,148,240,0.35); }
-  .tier-lane .or-sep.casual{ color:var(--tier-casual); }
-  .tier-lane .or-sep.advanced{ color:var(--tier-advanced); }
-  .tier-lane .or-sep.expert{ color:var(--tier-expert); }
-  .tier-lane .or-sep.glitched{ color:var(--tier-glitched); }
   .option-chip{
     display:flex; align-items:center; gap:3px;
     flex-wrap:wrap;
@@ -4109,12 +4101,6 @@ function buildMovementOptions(moon, boxed){
     optsEl.className = "tier-options";
 
     lane.groups.forEach((andGroup, i)=>{
-      if(i > 0){
-        const sep = document.createElement("span");
-        sep.className = "or-sep " + lane.tier;
-        sep.textContent = "or";
-        optsEl.appendChild(sep);
-      }
       // A branch can end up with no tokens after filtering out things like
       // Single Jump or "access to the kingdom you're already in" — that
       // branch is genuinely free, so say so instead of showing an empty chip.
@@ -5024,12 +5010,6 @@ function renderReachTierLanes(tierLanes, disableCollapse){
     const optsEl = document.createElement("div");
     optsEl.className = "tier-options";
     lane.groups.forEach((andGroup, i) => {
-      if(i > 0){
-        const sep = document.createElement("span");
-        sep.className = "or-sep " + lane.tier;
-        sep.textContent = "or";
-        optsEl.appendChild(sep);
-      }
       const chip = document.createElement("div");
       if(andGroup.length === 0){
         chip.className = "option-chip free-chip";
