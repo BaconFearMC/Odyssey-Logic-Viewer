@@ -1806,12 +1806,13 @@ function mergeTokensIntoManifest(logicTokens){
    separately-maintained master list that could drift out of sync
    with the actual data.
    ========================================================= */
-// Formerly used to sort the Ability filter grid/chips into
-// AbilityRando.cpp's own sDisplayAbilityOrder[] (setup-page order).
-// The filter grid/chips are now sorted alphabetically by display label
-// instead (see buildFilterLists() below), so this list and its index
-// are unused there, but are kept in case some other feature wants the
-// game's native ability order later.
+// Sorts the Ability filter grid/chips into AbilityRando.cpp's own
+// sDisplayAbilityOrder[] (setup-page order) when a token is present in it;
+// anything not in that list (e.g. Captures, which aren't abilities) keeps
+// whatever relative order it already had. The Filter panel intentionally
+// stays in this game/setup order rather than alphabetical — alphabetizing
+// lives on the moon cards themselves (see the display-only sort applied
+// in buildMovementOptions/renderReachTierLanes/openLogicVideo), not here.
 const ABILITY_DISPLAY_ORDER = [
   "NeutralThrow", "UpThrow", "DownThrow", "SpinThrow",
   "Vault", "Crouch", "Backflip", "LongJump", "Roll", "RollBoost",
@@ -1849,19 +1850,44 @@ function buildFilterLists(){
       captures.push(token);
     }
   });
-  // Alphabetical by display label (left to right), not game/setup order.
-  abilities.sort((a, b) => filterLabelFor(a).localeCompare(filterLabelFor(b), undefined, { sensitivity: "base" }));
+  // Game/setup order (sDisplayAbilityOrder[]), not alphabetical. Any token
+  // not present in ABILITY_DISPLAY_ORDER (shouldn't normally happen, but
+  // keeps this fail-safe rather than fail-silent) is pushed to the end, in
+  // whatever order it was first seen.
+  abilities.sort((a, b) => {
+    const ai = ABILITY_DISPLAY_ORDER_INDEX.hasOwnProperty(a) ? ABILITY_DISPLAY_ORDER_INDEX[a] : Infinity;
+    const bi = ABILITY_DISPLAY_ORDER_INDEX.hasOwnProperty(b) ? ABILITY_DISPLAY_ORDER_INDEX[b] : Infinity;
+    return ai - bi;
+  });
   return { abilities, captures };
 }
 
-// Display label for a token inside the filter UI only (picker grid, chips,
-// tooltips) — falls back to the token's real display_name from logicTokens.
-// Moon-card requirement chips elsewhere are untouched by this and keep
-// showing each token's real display_name.
+// Display label for a token, shared by the Filter UI (picker grid, chips,
+// tooltips) and the moon-card display-order sort below — falls back to the
+// token's real display_name from logicTokens.
 function filterLabelFor(token){
   if(FILTER_LABEL_OVERRIDES[token]) return FILTER_LABEL_OVERRIDES[token];
   const info = ICON_MANIFEST[token];
   return info ? info.label : token;
+}
+
+// Alphabetizes a copy of an AND-group's tokens by display label for
+// rendering on the moon cards/checkpoint panels/Node Info popup/video
+// modal — i.e. everywhere a moon's own requirement icons show up as the
+// player pages through each kingdom's tab. Sorts off each token's own
+// ICON_MANIFEST label (the same string makeIcon() actually renders/shows
+// in its tooltip), not filterLabelFor()'s Filter-panel-only overrides, so
+// the sort order always matches what's on screen. Returns a plain copy
+// (never mutates andGroup in place), since andGroup is also read
+// elsewhere (its .length, its .scenarios tag, and the exact same
+// reference passed into handleNodeClick/openLogicVideo) and none of that
+// should change just because the icons inside one chip render in a
+// different order. This is deliberately the opposite of buildFilterLists()
+// above: the Filter panel stays in game/setup order, only the on-card
+// display sorts alphabetically.
+function sortedTokensForDisplay(tokens){
+  const labelOf = token => (ICON_MANIFEST[token] ? ICON_MANIFEST[token].label : token);
+  return tokens.slice().sort((a, b) => labelOf(a).localeCompare(labelOf(b), undefined, { sensitivity: "base" }));
 }
 
 /* =========================================================
@@ -3999,7 +4025,7 @@ function buildMovementOptions(moon, boxed){
       chip.className = "option-chip";
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, i + 1));
       attachVideoBadge(chip, moon, lane.tier, i + 1);
-      andGroup.forEach((token, j)=>{
+      sortedTokensForDisplay(andGroup).forEach((token, j)=>{
         if(j > 0){
           const plus = document.createElement("span");
           plus.className = "and-plus";
@@ -4769,7 +4795,7 @@ function renderReachTierLanes(tierLanes, disableCollapse){
         chip.textContent = "Free";
       } else {
         chip.className = "option-chip";
-        andGroup.forEach((token, j) => {
+        sortedTokensForDisplay(andGroup).forEach((token, j) => {
           if(j > 0){
             const plus = document.createElement("span");
             plus.className = "and-plus";
@@ -5039,7 +5065,7 @@ function openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl){
   } else {
     const chip = document.createElement("div");
     chip.className = "option-chip";
-    andGroup.forEach((token, j) => {
+    sortedTokensForDisplay(andGroup).forEach((token, j) => {
       if(j > 0){
         const plus = document.createElement("span");
         plus.className = "and-plus";
