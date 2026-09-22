@@ -43,12 +43,22 @@
     --subarea-bg: #3a2e17;
     --subarea-border: #55431f;
     --danger: #ff4d5e;
-    --shadow: 0 2px 6px rgba(0,0,0,0.35);
-    --shadow-hover: 0 6px 16px rgba(0,0,0,0.45);
+    /* Flat, hard-edged offsets instead of soft blurred glows — reads as a
+       stamped/embossed game panel rather than a CSS card. */
+    --ink: rgba(0,0,0,0.5);
+    --shadow: 2px 3px 0 rgba(0,0,0,0.4);
+    --shadow-hover: 3px 4px 0 rgba(0,0,0,0.5);
+    --panel-line: rgba(255,255,255,0.06);
+    /* Chamfer sizes for the cut-corner "game panel" silhouette used across
+       buttons, cards and modals instead of uniform border-radius. */
+    --cut-sm: 6px;
+    --cut-md: 11px;
+    --cut-lg: 18px;
     /* Difficulty tiers — one alternate path (OR-branch) through a moon's
        requirement_expr can be casual, advanced, expert, or (rarely) a
        glitched/OOB trick. Each tier gets its own color so a card never
-       makes an "advanced" route look interchangeable with a "casual" one. */
+       makes an "advanced" route look interchangeable with a "casual" one.
+       This is the palette the whole redesign is built around — unchanged. */
     --tier-casual: #4fd68a;
     --tier-casual-bg: #1e3327;
     --tier-casual-border: #2b4a37;
@@ -68,6 +78,12 @@
     margin:0;
     position:relative;
     background: var(--bg);
+    /* A faint fixed dot-grid reads as "menu backdrop", not empty page —
+       Odyssey's map/course-select screens sit on a subtly textured field
+       rather than flat black. Extremely low contrast, never competes with
+       content. */
+    background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 26px 26px;
     color:var(--text);
     font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
     padding:32px 20px 80px;
@@ -78,93 +94,117 @@
   }
   .icon-svg{ width:1em; height:1em; display:inline-block; vertical-align:-0.15em; object-fit:contain; }
 
+  /* ---- Corner buttons ---------------------------------------------------
+     Styled like an in-game HUD control: a chamfered slab with a thick
+     bottom-weighted border and a hard offset shadow that reads as a
+     pressable button rather than a rounded website pill. */
   .corner-btn{
     position:absolute;
     top:24px;
     display:flex; align-items:center; gap:8px;
     background:var(--bg-panel);
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:6px 14px;
+    border:2px solid var(--border);
+    border-bottom-width:3px;
+    clip-path: polygon(var(--cut-sm) 0, 100% 0, 100% calc(100% - var(--cut-sm)), calc(100% - var(--cut-sm)) 100%, 0 100%, 0 var(--cut-sm));
+    padding:7px 15px;
     margin:0 0 20px;
     cursor:pointer;
     font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
-    font-size:13px;
+    font-size:12.5px;
     font-weight:700;
+    letter-spacing:0.3px;
+    text-transform:uppercase;
     color:var(--text);
-    box-shadow:var(--shadow);
-    transition:background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    filter: drop-shadow(2px 3px 0 var(--ink));
+    transition:background 0.12s ease, transform 0.08s ease, filter 0.12s ease;
     z-index:20;
   }
-  .corner-btn:hover{ box-shadow:var(--shadow-hover); transform:translateY(-1px); }
-  .corner-btn .icon-svg{ width:20.25px; height:20.25px; }
+  .corner-btn:hover{ filter: drop-shadow(2px 4px 0 var(--ink)); transform:translateY(-1px); }
+  .corner-btn:active{ transform:translateY(1px); filter: drop-shadow(1px 1px 0 var(--ink)); }
+  .corner-btn .icon-svg{ width:18px; height:18px; }
   #searchToggle{ left:24px; }
   #unmarkedToggle{ right:24px; }
   #unmarkedToggle.active{
     background:var(--red);
-    border-color:var(--red);
+    border-color:#a52530;
     color:#fff;
   }
   #glitchToggle{ right:24px; top:66px; }
   #glitchToggle.active{
     background:var(--tier-glitched);
-    border-color:var(--tier-glitched);
-    color:#fff;
+    border-color:var(--tier-glitched-border);
+    color:#1e1035;
   }
   #viewModeToggle{ right:24px; top:108px; }
   #viewModeToggle.active{
     background:var(--gold);
-    border-color:var(--gold);
+    border-color:#8a7500;
     color:#1b1c1f;
   }
 
+  /* ---- Title plate --------------------------------------------------
+     A stage-title banner rather than a plain <h1>: chamfered slab with a
+     double-line gold border and a short accent tick underneath, echoing
+     the course-clear/level-name plates from Odyssey's HUD. */
   h1{
     font-family: "FontDB", 'Segoe UI', system-ui, sans-serif;
     font-weight:700;
-    font-size:28px;
+    font-size:22px;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
     margin:0 0 4px;
+    padding:12px 30px;
     color:var(--gold);
+    background:var(--bg-panel);
+    border:2px solid var(--gold);
+    box-shadow: inset 0 0 0 3px var(--bg-panel), inset 0 0 0 4px rgba(230,194,0,0.35);
+    clip-path: polygon(var(--cut-lg) 0, 100% 0, 100% calc(100% - var(--cut-lg)), calc(100% - var(--cut-lg)) 100%, 0 100%, 0 var(--cut-lg));
+    filter: drop-shadow(3px 4px 0 var(--ink));
     display:flex;
     align-items:center;
     justify-content:center;
     gap:10px;
   }
-  h1 .icon-svg{ width:35.1px; height:35.1px; color:var(--gold); }
-  .subtitle{color:var(--text-dim); font-size:14px; margin:0 0 20px;}
+  h1 .icon-svg{ width:26px; height:26px; color:var(--gold); }
+  .subtitle{color:var(--text-dim); font-size:14px; margin:14px 0 20px;}
 
   .load-status{ font-size:12.5px; color:var(--text-dim); margin-bottom:20px; }
   .load-status.error{ color:var(--danger); }
 
+  /* ---- Kingdom pager -----------------------------------------------------
+     A chamfered console strip with chevron "d-pad" arrows instead of
+     circular material buttons, and diamond page markers instead of dots. */
   .kingdom-pager{
     display:flex; align-items:center; gap:16px;
     width:100%;
     max-width:1400px;
     margin:0 0 24px;
     background:var(--bg-panel);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:14px 18px;
-    box-shadow:var(--shadow);
+    border:2px solid var(--border);
+    clip-path: polygon(var(--cut-md) 0, 100% 0, 100% calc(100% - var(--cut-md)), calc(100% - var(--cut-md)) 100%, 0 100%, 0 var(--cut-md));
+    padding:14px 20px;
+    filter: drop-shadow(2px 3px 0 var(--ink));
   }
   .pager-arrow{
     flex:0 0 auto;
-    width:40px; height:40px;
-    border-radius:50%;
+    width:42px; height:42px;
     background:var(--red);
-    border:none;
+    border:2px solid #a52530;
     color:#fff;
     line-height:1;
     cursor:pointer;
+    /* Chevron/pennant silhouette — a pointed directional control instead
+       of a plain circle. #pagerNext mirrors it via transform below. */
+    clip-path: polygon(30% 0, 100% 50%, 30% 100%, 30% 70%, 0 70%, 0 30%, 30% 30%);
     display:flex; align-items:center; justify-content:center;
-    transition:transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    transition:transform 0.12s ease, background 0.12s ease;
   }
-  .pager-arrow .icon-svg{ width:21.6px; height:21.6px; }
-  .pager-arrow:hover{
-    background:var(--gold);
-    box-shadow:2px 2px 6px rgba(0,0,0,0.25);
-    transform:scale(1.08);
-  }
-  .pager-arrow:active{ transform:scale(0.95); }
+  .pager-arrow .icon-svg{ display:none; } /* shape now carries the direction; glyph is redundant */
+  #pagerPrev{ transform:scaleX(-1); }
+  #pagerPrev:hover{ transform:scaleX(-1) translateX(-3px); }
+  #pagerPrev:active{ transform:scaleX(-1) translateX(-1px) scale(0.94); }
+  #pagerNext:hover{ background:var(--gold); border-color:#8a7500; color:#1b1c1f; transform:translateX(3px); }
+  #pagerNext:active{ transform:translateX(1px) scale(0.94); }
   .pager-center{
     flex:1 1 auto;
     display:flex; flex-direction:column; align-items:center;
@@ -173,7 +213,9 @@
   }
   .pager-name{
     font-family: "FontDB", 'Segoe UI', system-ui, sans-serif;
-    font-size:20px; font-weight:700;
+    font-size:19px; font-weight:700;
+    letter-spacing:0.3px;
+    text-transform:uppercase;
     color:var(--gold);
     text-align:center;
     white-space:nowrap;
@@ -183,20 +225,23 @@
     transition:opacity 0.15s ease;
   }
   .pager-dots{
-    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+    display:flex; align-items:center; gap:7px; flex-wrap:wrap;
     justify-content:center;
   }
+  /* Small diamonds (rotated squares) instead of circular dots — a
+     recognizable Mario/Odyssey UI accent, used sparingly. */
   .pager-dot{
-    width:8px; height:8px; border-radius:50%;
+    width:7px; height:7px; border-radius:1px;
+    transform:rotate(45deg);
     background:var(--border);
     border:none; padding:0; cursor:pointer;
     transition:transform 0.15s ease, background 0.15s ease, width 0.15s ease;
   }
-  .pager-dot:hover{ background:var(--gold-light); transform:scale(1.3); }
+  .pager-dot:hover{ background:var(--gold-light); transform:rotate(45deg) scale(1.3); }
   .pager-dot.active{
     background:var(--gold);
-    width:20px; border-radius:4px;
-    transform:none;
+    width:7px; border-radius:1px;
+    transform:rotate(45deg) scale(1.25);
   }
   .grid{
     display:grid;
@@ -219,9 +264,8 @@
   }
   .checkpoint-group{
     background:var(--bg-panel);
-    border:1px solid var(--border);
-    border-left:3px solid var(--gold);
-    border-radius:8px;
+    border:2px solid var(--border);
+    border-left:4px solid var(--gold);
     overflow:hidden;
     text-align:left;
     min-width:0;
@@ -246,7 +290,6 @@
   }
   .checkpoint-group-icon{
     width:20px; height:20px;
-    border-radius:5px;
     object-fit:cover;
     border:1px solid var(--border);
     flex-shrink:0;
@@ -285,7 +328,7 @@
     padding:8px 10px;
     background:var(--bg-chip);
     border:1px solid var(--border);
-    border-radius:6px;
+    border-left:2px solid var(--border);
     cursor:pointer;
     text-align:left;
     color:var(--text);
@@ -293,7 +336,7 @@
     font-size:12.5px;
     font-weight:700;
   }
-  .moon-panel-header:hover{ background:rgba(255,255,255,0.05); }
+  .moon-panel-header:hover{ background:rgba(255,255,255,0.05); border-left-color:var(--gold); }
   .moon-panel{ display:flex; flex-direction:column; }
   .moon-panel-chevron{
     width:14px; height:14px;
@@ -313,19 +356,22 @@
     color:var(--text-dim);
     font-size:14px;
   }
+  /* ---- Moon card ---------------------------------------------------------
+     Chamfered panel with a gold top rail instead of a uniform rounded box —
+     the top edge reads like a name-plate tab welded to the card. */
   .moon-card{
     background:var(--bg-panel);
-    border:1px solid var(--border);
-    border-radius:8px;
+    border:2px solid var(--border);
+    border-top:3px solid var(--gold);
     padding:14px 16px 66px;
     position:relative;
-    box-shadow:var(--shadow);
+    filter: drop-shadow(2px 3px 0 var(--ink));
     text-align:left;
-    transition:transform 0.15s ease, box-shadow 0.15s ease;
+    transition:transform 0.15s ease, filter 0.15s ease;
   }
   .moon-card:hover{
     transform:translateY(-2px);
-    box-shadow:var(--shadow-hover);
+    filter: drop-shadow(2px 5px 0 var(--ink));
   }
   .moon-name{
     font-size:14px;
@@ -341,9 +387,10 @@
     display:flex; gap:4px;
   }
   .badge{
-    width:29.7px; height:29.7px; border-radius:8px;
+    width:29.7px; height:29.7px;
     display:flex; align-items:center; justify-content:center;
     border:1px solid var(--border);
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
   }
   .badge .icon-svg{ width:17.55px; height:17.55px; }
   .badge.moonrock{ background:var(--moonrock-bg); color:var(--moonrock); border-color:var(--moonrock-border);}
@@ -369,9 +416,9 @@
   }
   .checkpoint-info img{
     width:48.6px; height:48.6px;
-    border-radius:8px;
     object-fit:cover;
     border:1px solid var(--border);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
     opacity:0.85;
     transition:opacity 0.15s ease;
   }
@@ -398,23 +445,20 @@
      Advanced, or Expert (plus the rare Glitched trick). Instead of mixing
      every route into one "or"-chain, each tier that actually has a route
      gets its own labeled lane, colored consistently everywhere it shows
-     up so the three (or four) tiers stay visually distinct at a glance. */
+     up so the three (or four) tiers stay visually distinct at a glance.
+     This is the palette/shape the rest of the redesign is built around —
+     kept exactly as before, just reshaped into a small pennant/tag instead
+     of a rounded pill. */
   .tier-stack{ display:flex; flex-direction:column; gap:6px; width:100%; }
   .tier-lane{ display:flex; align-items:flex-start; gap:8px; }
-  /* Difficulty chip shape: chunky rounded badge (not a thin capsule pill),
-     a thick outline, and a solid color-block fill instead of a faint
-     tinted background — reads like a Mario Odyssey moon-count/kingdom
-     badge rather than a generic web "tag". The four tier hues
-     (--tier-casual/advanced/expert/glitched) are unchanged; only how they're
-     applied changes — the primary hue now IS the fill, not just the text,
-     so each difficulty reads as a distinct solid color block at a glance.
-     A flat, hard-edged drop shadow (no blur) gives it the slight
-     sticker/embossed "pop" of chunky platformer UI instead of a soft css
-     glow. */
   .tier-pill{
     flex:0 0 auto;
     font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;
-    padding:4px 10px; border-radius:8px; border:2.5px solid;
+    padding:4px 10px 4px 12px;
+    border:2px solid;
+    /* Pennant/tag silhouette: a pointed left edge instead of a rounded
+       capsule — reads as a game "rank" flag rather than a web tag. */
+    clip-path: polygon(0 50%, 8px 0, 100% 0, 100% 100%, 8px 100%);
     line-height:1.5; white-space:nowrap; margin-top:2px;
     box-shadow:0 2px 0 0 rgba(0,0,0,0.4);
   }
@@ -422,7 +466,7 @@
   .tier-lane.advanced .tier-pill{ color:#2a1a05; background:var(--tier-advanced); border-color:var(--tier-advanced-border); }
   .tier-lane.expert .tier-pill{ color:#330d0d; background:var(--tier-expert); border-color:var(--tier-expert-border); }
   .tier-lane.glitched .tier-pill{ color:#1e1035; background:var(--tier-glitched); border-color:var(--tier-glitched-border); }
-  .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; }
+  .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; clip-path:none; padding:4px 10px; }
   .tier-options{
     display:flex; align-items:center; gap:6px; flex-wrap:wrap; max-width:100%; min-width:0;
   }
@@ -433,39 +477,38 @@
   .scenario-tag{
     flex:0 0 auto;
     font-size:8.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;
-    padding:2px 5px; border-radius:20px;
+    padding:2px 6px;
     line-height:1.4; white-space:nowrap;
     color:var(--text-dim); background:var(--bg); border:1px solid var(--border);
   }
-  /* Difficulty is now carried by the chip itself, not just the lane's
-     outline: a colored left accent bar plus a faint tier-tinted gradient
-     wash, so a casual/advanced/expert/glitched route reads at a glance
+  /* Difficulty is carried by the chip itself via a solid left accent bar
+     (flat tint, no diagonal gradient wash) so a route reads at a glance
      even scrolled away from its tier-pill label. */
   .tier-lane.casual .option-chip{
     border-color:var(--tier-casual-border);
     border-left-color:var(--tier-casual);
-    background:linear-gradient(135deg, var(--tier-casual-bg) 0%, var(--bg-chip) 72%);
+    background:var(--tier-casual-bg);
   }
   .tier-lane.advanced .option-chip{
     border-color:var(--tier-advanced-border);
     border-left-color:var(--tier-advanced);
-    background:linear-gradient(135deg, var(--tier-advanced-bg) 0%, var(--bg-chip) 72%);
+    background:var(--tier-advanced-bg);
   }
   .tier-lane.expert .option-chip{
     border-color:var(--tier-expert-border);
     border-left-color:var(--tier-expert);
-    background:linear-gradient(135deg, var(--tier-expert-bg) 0%, var(--bg-chip) 72%);
+    background:var(--tier-expert-bg);
   }
   .tier-lane.glitched .option-chip{
     border-color:var(--tier-glitched-border);
     border-left-color:var(--tier-glitched);
-    background:linear-gradient(135deg, var(--tier-glitched-bg) 0%, var(--bg-chip) 72%);
+    background:var(--tier-glitched-bg);
   }
   .tier-lane.unrated .option-chip{ border-left-color:var(--border); }
-  .tier-lane.casual .option-chip:hover{ box-shadow:0 3px 12px rgba(79,214,138,0.28); }
-  .tier-lane.advanced .option-chip:hover{ box-shadow:0 3px 12px rgba(224,169,74,0.28); }
-  .tier-lane.expert .option-chip:hover{ box-shadow:0 3px 12px rgba(255,107,107,0.28); }
-  .tier-lane.glitched .option-chip:hover{ box-shadow:0 3px 12px rgba(180,148,240,0.28); }
+  .tier-lane.casual .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(79,214,138,0.35); }
+  .tier-lane.advanced .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(224,169,74,0.35); }
+  .tier-lane.expert .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(255,107,107,0.35); }
+  .tier-lane.glitched .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(180,148,240,0.35); }
   .tier-lane .or-sep.casual{ color:var(--tier-casual); }
   .tier-lane .or-sep.advanced{ color:var(--tier-advanced); }
   .tier-lane .or-sep.expert{ color:var(--tier-expert); }
@@ -478,9 +521,8 @@
     background:var(--bg-chip);
     border:1px solid var(--border);
     border-left:3px solid var(--border);
-    border-radius:9px;
     padding:5px 8px 5px 6px;
-    box-shadow:0 1px 3px rgba(0,0,0,0.3);
+    box-shadow:1px 2px 0 0 rgba(0,0,0,0.3);
     /* Entrance: slides down from above, overshoots into a little "pop",
        then settles. Delay is staggered per-chip in JS (see buildMovementOptions)
        so a moon's options cascade in left-to-right/lane-by-lane instead of
@@ -506,7 +548,6 @@
     align-items:stretch;
     gap:6px;
     border:1px solid var(--border);
-    border-radius:6px;
     padding:7px 9px;
   }
   .tier-stack.boxed .tier-lane.casual{ border-color:var(--tier-casual-border); }
@@ -514,14 +555,10 @@
   .tier-stack.boxed .tier-lane.expert{ border-color:var(--tier-expert-border); }
   .tier-stack.boxed .tier-lane.glitched{ border-color:var(--tier-glitched-border); }
   .tier-stack.boxed .tier-lane.unrated{ border-color:var(--border); }
-  /* Same chunky solid-color-block badge as the grid-view .tier-pill above,
-     just sized down to sit as a corner tag on the boxed section instead of
-     a free-floating lane label. */
   .tier-stack.boxed .tier-pill{
     flex:none;
     align-self:flex-start;
-    padding:3px 9px;
-    border-radius:7px;
+    padding:3px 9px 3px 11px;
     border:2px solid;
     font-size:10px;
     font-weight:800;
@@ -534,11 +571,10 @@
   .tier-stack.boxed .tier-lane.advanced .tier-pill{ color:#2a1a05; background:var(--tier-advanced); border-color:var(--tier-advanced-border); }
   .tier-stack.boxed .tier-lane.expert .tier-pill{ color:#330d0d; background:var(--tier-expert); border-color:var(--tier-expert-border); }
   .tier-stack.boxed .tier-lane.glitched .tier-pill{ color:#1e1035; background:var(--tier-glitched); border-color:var(--tier-glitched-border); }
-  .tier-stack.boxed .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; }
+  .tier-stack.boxed .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; clip-path:none; padding:3px 9px; }
   .tier-stack.boxed .option-chip{
     border-color:var(--border);
     border-left-color:var(--border);
-    border-radius:4px;
     padding:5px 8px;
     background:var(--bg-chip);
     box-shadow:none;
@@ -563,10 +599,6 @@
     position:absolute;
     left:0; right:0; bottom:0;
     height:var(--fade-h, 48px);
-    /* Strong, unmistakable fade: stays fully transparent barely at all,
-       ramps to a solid wash by the halfway point, and is fully opaque well
-       before the bottom edge — reads as "this is cut off", not a subtle
-       vignette. */
     background:linear-gradient(to bottom,
       rgba(35,36,39,0) 0%,
       rgba(35,36,39,0.65) 40%,
@@ -580,21 +612,20 @@
   .options-expand-btn{
     position:absolute;
     top:4px; right:4px;
-    width:34px; height:34px;
-    border-radius:50%;
-    border:1.5px solid var(--gold);
+    width:32px; height:32px;
+    border:2px solid var(--gold);
     background:var(--bg-chip);
     color:var(--gold);
+    clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
-    box-shadow:0 2px 8px rgba(0,0,0,0.5);
+    filter: drop-shadow(1px 2px 0 var(--ink));
     z-index:3;
-    transition:transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    transition:transform 0.15s ease, background 0.15s ease;
   }
   .options-expand-btn:hover{
     background:var(--gold); color:#1b1c1f;
-    box-shadow:0 3px 12px rgba(0,0,0,0.55);
-    transform:scale(1.1);
+    transform:scale(1.08);
   }
   .options-expand-btn svg{ width:18px; height:18px; display:block; transition:transform 0.25s ease; }
   .options-expand-btn.is-open svg{ transform:rotate(180deg); }
@@ -606,9 +637,6 @@
     padding:8px 10px;
     position:relative; /* positioning context for the scenario-explainer tooltip below */
   }
-  /* Wider variant of .icon-tooltip for the Free+Scenario explainer, which is
-     a full sentence rather than a short label — the base .icon-tooltip is
-     white-space:nowrap and would overflow badly at that length. */
   .icon-tooltip.wide{
     white-space:normal;
     width:260px;
@@ -620,15 +648,16 @@
     opacity:1;
     visibility:visible;
   }
-  .icon{ width:48.6px; height:48.6px; border-radius:8px; object-fit:cover; display:block; border:1px solid var(--border); }
+  .icon{ width:48.6px; height:48.6px; object-fit:cover; display:block; border:1px solid var(--border); clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
   .icon-fallback{
-    width:48.6px; height:48.6px; border-radius:8px;
+    width:48.6px; height:48.6px;
     display:flex; align-items:center; justify-content:center;
     font-size:16px; font-weight:700; letter-spacing:0.2px;
     font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
     color:#fff;
     background:var(--icon-color, #34406e);
     border:1px solid var(--border);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
   }
   .icon-wrap{
     position:relative; display:inline-flex;
@@ -643,7 +672,6 @@
     color:#fff;
     border:1px solid var(--border);
     padding:4px 8px;
-    border-radius:6px;
     font-size:11px;
     line-height:1.3;
     white-space:nowrap;
@@ -652,7 +680,7 @@
     transition:opacity 0.1s ease;
     pointer-events:none;
     z-index:30;
-    box-shadow:0 4px 12px rgba(0,0,0,0.25);
+    box-shadow:1px 2px 0 rgba(0,0,0,0.4);
   }
   .icon-wrap:hover .icon-tooltip,
   .icon-wrap:focus-visible .icon-tooltip,
@@ -672,14 +700,13 @@
   }
   .pager-kingdom-icon img{
     width:28px; height:28px;
-    border-radius:6px;
     object-fit:cover;
     border:1px solid var(--border);
+    clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
     display:block;
   }
   .pager-kingdom-icon .icon-fallback{
     width:28px; height:28px;
-    border-radius:6px;
     font-size:10px;
   }
 
@@ -688,13 +715,13 @@
     width:100%;
     max-width:1400px;
     background:var(--bg-panel);
-    border:1px solid var(--border);
-    border-radius:10px;
+    border:2px solid var(--border);
+    clip-path: polygon(var(--cut-md) 0, 100% 0, 100% calc(100% - var(--cut-md)), calc(100% - var(--cut-md)) 100%, 0 100%, 0 var(--cut-md));
     padding:28px 20px;
     text-align:center;
     color:var(--text-dim);
     font-size:14px;
-    box-shadow:var(--shadow);
+    filter: drop-shadow(2px 3px 0 var(--ink));
   }
 
   /* ---- Moon card "found you!" pop + sway animation --------------------
@@ -711,18 +738,19 @@
   .moon-card.pop-highlight,
   .moon-panel.pop-highlight{
     animation: moonPopSway 0.9s cubic-bezier(.34,1.56,.64,1);
-    box-shadow: 0 0 0 3px var(--gold), var(--shadow-hover);
+    outline: 3px solid var(--gold);
+    outline-offset:2px;
     z-index:5;
   }
 
-  /* ---- Search overlay --------------------------------------------------*/
+  /* ---- Search overlay ---------------------------------------------------
+     Flat, unblurred scrim (no backdrop-filter) plus a chamfered modal with
+     a solid double-border, matching the rest of the menu chrome. */
   .search-overlay{
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(10,10,12,0.72);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    background:rgba(8,8,10,0.82);
     z-index:100;
     align-items:flex-start;
     justify-content:center;
@@ -732,14 +760,15 @@
   .search-modal{
     width:100%;
     max-width:820px;
-    background:linear-gradient(180deg, var(--bg-panel), var(--bg-chip));
-    border:1px solid var(--gold);
-    border-radius:18px;
-    box-shadow:0 0 0 1px rgba(230,194,0,0.15), 0 24px 70px rgba(0,0,0,0.6), 0 0 40px rgba(230,194,0,0.08);
+    background:var(--bg-panel);
+    border:2px solid var(--gold);
+    box-shadow: inset 0 0 0 3px var(--bg-panel), inset 0 0 0 4px rgba(230,194,0,0.3);
+    clip-path: polygon(var(--cut-lg) 0, 100% 0, 100% calc(100% - var(--cut-lg)), calc(100% - var(--cut-lg)) 100%, 0 100%, 0 var(--cut-lg));
     overflow:hidden;
     display:flex;
     flex-direction:column;
     max-height:76vh;
+    filter: drop-shadow(3px 5px 0 var(--ink));
     animation: searchModalIn 0.22s cubic-bezier(.2,.9,.3,1.1);
   }
   @keyframes searchModalIn{
@@ -749,7 +778,7 @@
   .search-input-row{
     display:flex; align-items:center; gap:14px;
     padding:20px 22px;
-    border-bottom:1px solid var(--border);
+    border-bottom:2px solid var(--border);
     color:var(--gold);
     background:rgba(230,194,0,0.05);
   }
@@ -780,13 +809,14 @@
   .search-result{
     display:flex; align-items:center; gap:14px;
     padding:12px 14px;
-    border-radius:10px;
     cursor:pointer;
     text-align:left;
-    transition:background 0.12s ease, transform 0.12s ease;
+    border-left:3px solid transparent;
+    transition:background 0.12s ease, transform 0.12s ease, border-color 0.12s ease;
   }
   .search-result:hover, .search-result.active{
     background:var(--gold-light);
+    border-left-color:var(--gold);
     transform:translateX(2px);
   }
   .search-result-icon{
@@ -795,10 +825,11 @@
     display:inline-flex; align-items:center; justify-content:center;
   }
   .search-result-icon img{
-    width:36px; height:36px; border-radius:8px; object-fit:cover;
+    width:36px; height:36px; object-fit:cover;
     border:1px solid var(--border);
+    clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
   }
-  .search-result-icon .icon-fallback{ width:36px; height:36px; font-size:12px; border-radius:8px; }
+  .search-result-icon .icon-fallback{ width:36px; height:36px; font-size:12px; }
   .search-result-text{ display:flex; flex-direction:column; min-width:0; }
   .search-result-name{ font-size:15.5px; color:var(--text); font-weight:600; }
   .search-result-kingdom{ font-size:12px; color:var(--gold); margin-top:2px; }
@@ -829,9 +860,7 @@
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(10,10,12,0.72);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    background:rgba(8,8,10,0.82);
     z-index:105;
     align-items:flex-start;
     justify-content:center;
@@ -842,14 +871,15 @@
     position:relative;
     width:100%;
     max-width:560px;
-    background:linear-gradient(180deg, var(--bg-panel), var(--bg-chip));
-    border:1px solid var(--gold);
-    border-radius:18px;
-    box-shadow:0 0 0 1px rgba(230,194,0,0.15), 0 24px 70px rgba(0,0,0,0.6), 0 0 40px rgba(230,194,0,0.08);
+    background:var(--bg-panel);
+    border:2px solid var(--gold);
+    box-shadow: inset 0 0 0 3px var(--bg-panel), inset 0 0 0 4px rgba(230,194,0,0.3);
+    clip-path: polygon(var(--cut-lg) 0, 100% 0, 100% calc(100% - var(--cut-lg)), calc(100% - var(--cut-lg)) 100%, 0 100%, 0 var(--cut-lg));
     overflow:hidden;
     max-height:76vh;
     display:flex;
     flex-direction:column;
+    filter: drop-shadow(3px 5px 0 var(--ink));
     animation: searchModalIn 0.22s cubic-bezier(.2,.9,.3,1.1);
   }
   .node-modal-close{
@@ -897,7 +927,7 @@
     padding:14px 16px;
     background:var(--bg-chip);
     border:1px solid var(--border);
-    border-radius:12px;
+    border-left:3px solid var(--gold);
   }
   .entrance-reqs{ display:flex; flex-direction:column; gap:6px; margin-top:8px; padding-top:8px; border-top:1px dashed rgba(128,128,128,.35); }
   .entrance-reqs.in-modal{ border-top:none; margin-top:4px; padding-top:0; }
@@ -926,9 +956,7 @@
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(10,10,12,0.78);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background:rgba(6,6,8,0.88);
     z-index:110;
     align-items:center;
     justify-content:center;
@@ -960,16 +988,17 @@
      once per element otherwise. */
   .video-info-box{
     flex:0 0 300px;
-    background:linear-gradient(180deg, var(--bg-panel), var(--bg-chip));
-    border:1px solid var(--gold);
-    border-radius:16px;
-    box-shadow:0 0 0 1px rgba(230,194,0,0.15), 0 24px 70px rgba(0,0,0,0.6), 0 0 40px rgba(230,194,0,0.08);
+    background:var(--bg-panel);
+    border:2px solid var(--gold);
+    box-shadow: inset 0 0 0 3px var(--bg-panel), inset 0 0 0 4px rgba(230,194,0,0.3);
+    clip-path: polygon(var(--cut-lg) 0, 100% 0, 100% calc(100% - var(--cut-lg)), calc(100% - var(--cut-lg)) 100%, 0 100%, 0 var(--cut-lg));
     padding:22px 20px;
     display:flex;
     flex-direction:column;
     gap:14px;
     overflow-y:auto;
     opacity:0;
+    filter: drop-shadow(3px 5px 0 var(--ink));
   }
   .video-info-box.play-in{
     animation: videoInfoIn 0.36s cubic-bezier(.2,.9,.3,1.1) forwards;
@@ -1009,8 +1038,7 @@
     flex:1 1 auto;
     position:relative;
     background:#000;
-    border:1px solid var(--border);
-    border-radius:16px;
+    border:2px solid var(--border);
     overflow:hidden;
     display:flex;
     align-items:center;
@@ -1042,12 +1070,12 @@
     z-index:200;
     background:#1c1c20;
     color:var(--text-dim);
-    border:1px solid var(--border);
-    border-radius:10px;
+    border:2px solid var(--border);
+    border-left:3px solid var(--gold);
     padding:10px 16px;
     font-size:13px;
     font-weight:600;
-    box-shadow:0 12px 30px rgba(0,0,0,0.5);
+    filter: drop-shadow(2px 3px 0 var(--ink));
     transform:translateY(140%);
     opacity:0;
     transition:transform 0.28s cubic-bezier(.2,.9,.3,1.1), opacity 0.28s ease;
@@ -1076,7 +1104,7 @@
   .option-chip, .free-chip{ cursor:pointer; transition:transform 0.12s ease, box-shadow 0.12s ease; }
   .option-chip:hover, .free-chip:hover{
     transform:translateY(-1px);
-    box-shadow:0 3px 10px rgba(0,0,0,0.35);
+    box-shadow:1px 3px 0 0 rgba(0,0,0,0.4);
   }
   @media (max-width: 760px){
     .video-modal{ flex-direction:column; overflow-y:auto; }
@@ -1108,9 +1136,8 @@
   }
   .filter-bar{
     background:var(--bg-chip);
-    border:1px solid var(--border);
-    border-radius:10px;
-    box-shadow:var(--shadow);
+    border:2px solid var(--border);
+    filter: drop-shadow(2px 3px 0 var(--ink));
     overflow:hidden;
   }
   .filter-bar-row{
@@ -1153,15 +1180,14 @@
   }
   .filter-bar-chip{
     width:48px; height:48px;
-    border-radius:7px;
     border:2px solid var(--gold);
-    box-shadow:0 0 0 1px rgba(0,0,0,0.3);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
     flex:0 0 auto;
     overflow:hidden;
   }
   .filter-bar-chip img, .filter-bar-chip .icon-fallback{
     width:100%; height:100%;
-    border:none; border-radius:0;
+    border:none;
   }
   .filter-bar-empty{
     font-size:12.5px;
@@ -1185,7 +1211,7 @@
   .filter-bar-panel{
     display:none;
     padding:4px 14px 16px;
-    border-top:1px solid var(--border);
+    border-top:2px solid var(--border);
   }
   .filter-bar.open .filter-bar-panel{ display:block; }
   .filter-bar-search{
@@ -1195,7 +1221,7 @@
     padding:8px 12px;
     background:var(--bg);
     border:1px solid var(--border);
-    border-radius:8px;
+    border-bottom:2px solid var(--border);
     color:var(--text);
     font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
     font-size:13px;
@@ -1232,19 +1258,18 @@
     border:none;
     cursor:pointer;
     padding:5px;
-    border-radius:8px;
   }
   .filter-option:hover{ background:rgba(255,255,255,0.05); }
   .filter-option-icon{
     width:60px; height:60px;
-    border-radius:8px;
     border:2px solid var(--border);
+    clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
     overflow:hidden;
     display:flex; align-items:center; justify-content:center;
   }
   .filter-option-icon img, .filter-option-icon .icon-fallback{
     width:100%; height:100%;
-    border:none; border-radius:0;
+    border:none;
   }
   .filter-option.selected .filter-option-icon{
     border-color:var(--gold);
@@ -1278,9 +1303,8 @@
     transform:translateX(-50%) translateY(12px);
     background:rgba(20,20,26,0.95);
     color:var(--text);
-    border:1px solid var(--border);
+    border:2px solid var(--border);
     padding:10px 18px;
-    border-radius:8px;
     font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
     font-size:13px;
     opacity:0;
@@ -1303,10 +1327,13 @@
      unlock" (OR: any moon that references at least one selected item
      anywhere in its requirements). Picking a tab changes how
      moonMatchesFilters() evaluates the current Ability/Capture
-     selection and updates the question at the end of filter-summary. */
+     selection and updates the question at the end of filter-summary.
+     Styled like two adjoining game-menu tabs rather than segmented
+     web buttons: flat, chamfered only on the outer top corners, sitting
+     shoulder to shoulder. */
   .filter-mode-tabs{
     display:flex;
-    gap:8px;
+    gap:3px;
     width:100%;
   }
   .filter-mode-tab{
@@ -1315,8 +1342,8 @@
     align-items:center;
     gap:10px;
     background:var(--bg-chip);
-    border:1px solid var(--border);
-    border-radius:10px;
+    border:2px solid var(--border);
+    border-bottom-width:3px;
     padding:10px 16px;
     color:var(--text-dim);
     font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
@@ -1324,6 +1351,8 @@
     text-align:left;
     transition:background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
+  .filter-mode-tab:first-child{ clip-path: polygon(var(--cut-sm) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut-sm)); }
+  .filter-mode-tab:last-child{ clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut-sm)), calc(100% - var(--cut-sm)) 100%, 0 100%); }
   .filter-mode-icon{
     flex:0 0 auto;
     font-size:22px;
@@ -1365,10 +1394,12 @@
     font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
     font-size:12.5px;
     font-weight:700;
-    letter-spacing:0.02em;
+    letter-spacing:0.08em;
     text-transform:uppercase;
     color:var(--gold);
     margin:14px 0 4px;
+    padding-left:9px;
+    border-left:3px solid var(--gold);
     text-align:left;
   }
   .filter-section-heading:first-child{ margin-top:4px; }
@@ -1378,9 +1409,8 @@
   .filter-summary{
     width:100%;
     background:var(--bg-chip);
-    border:1px solid var(--border);
-    border-left:3px solid var(--gold);
-    border-radius:8px;
+    border:2px solid var(--border);
+    border-left:4px solid var(--gold);
     padding:10px 14px;
     font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
     font-size:13px;
