@@ -501,14 +501,32 @@
     background:var(--tier-glitched-bg);
   }
   .tier-lane.unrated .option-chip{ border-left-color:var(--border); }
+  /* Bare tier-modifier classes (no .tier-lane ancestor needed) — used by
+     the logic-video overlay's info box, which renders a single pill/chip
+     outside of a tier-lane wrapper but still needs the same tier colors. */
+  .tier-pill.casual{ color:#0e2317; background:var(--tier-casual); border-color:var(--tier-casual-border); }
+  .tier-pill.advanced{ color:#2a1a05; background:var(--tier-advanced); border-color:var(--tier-advanced-border); }
+  .tier-pill.expert{ color:#330d0d; background:var(--tier-expert); border-color:var(--tier-expert-border); }
+  .tier-pill.glitched{ color:#1e1035; background:var(--tier-glitched); border-color:var(--tier-glitched-border); }
+  .tier-pill.unrated{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; clip-path:none; padding:4px 10px; }
+  .option-chip.casual{ border-color:var(--tier-casual-border); border-left-color:var(--tier-casual); background:var(--tier-casual-bg); }
+  .option-chip.advanced{ border-color:var(--tier-advanced-border); border-left-color:var(--tier-advanced); background:var(--tier-advanced-bg); }
+  .option-chip.expert{ border-color:var(--tier-expert-border); border-left-color:var(--tier-expert); background:var(--tier-expert-bg); }
+  .option-chip.glitched{ border-color:var(--tier-glitched-border); border-left-color:var(--tier-glitched); background:var(--tier-glitched-bg); }
+  .option-chip.unrated{ border-left-color:var(--border); }
   .tier-lane.casual .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(79,214,138,0.35); }
   .tier-lane.advanced .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(224,169,74,0.35); }
   .tier-lane.expert .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(255,107,107,0.35); }
   .tier-lane.glitched .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(180,148,240,0.35); }
   .option-chip{
     display:flex; align-items:center; gap:3px;
-    flex-wrap:wrap;
+    /* A method's full ability/capture chain must stay on one line — never
+       wrap internally. If it's wider than the card, the chip itself
+       scrolls horizontally rather than breaking to a second row. */
+    flex-wrap:nowrap;
     max-width:100%;
+    overflow-x:auto;
+    scrollbar-width:thin;
     min-width:0;
     background:var(--bg-chip);
     border:1px solid var(--border);
@@ -586,7 +604,10 @@
     transition:max-height 0.4s cubic-bezier(.22,.9,.32,1);
   }
   .options-collapsible.collapsed{ max-height:var(--collapsed-h, 84px); }
-  .options-collapsible.expanded{ max-height:2000px; }
+  /* Generously high rather than "none" so the open/close transition still
+     animates, but high enough that no real moveset, however long, ever
+     gets clipped once expanded. */
+  .options-collapsible.expanded{ max-height:20000px; }
   .options-fade{
     position:absolute;
     left:0; right:0; bottom:0;
@@ -1008,22 +1029,26 @@
     font-size:19px; font-weight:700; color:var(--gold);
     line-height:1.3;
   }
-  .video-info-box .tier-pill{ align-self:flex-start; }
-  .video-info-box .tier-options{ display:flex; flex-wrap:wrap; gap:6px; }
+  .video-info-box .tier-pill{
+    align-self:center;
+    font-size:13px;
+    padding:6px 18px 6px 20px;
+  }
+  .video-info-box .tier-options{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px; width:100%; }
   /* The clicked branch's own requirement icons get a dedicated, roomier
      treatment here vs. the compact moon-card chip they're normally shown
      in: the chip stretches to fill the info box's width and centers its
-     icons in that space, growing them a little (not just leaving the
-     card's small 48.6px icons floating in extra empty room). */
+     icons in that space, growing them well beyond the card's small
+     48.6px icons so they read as the focal point of the box. */
   .video-info-box .option-chip{
     width:100%;
     justify-content:center;
-    padding:16px 10px;
-    gap:10px;
+    padding:20px 10px;
+    gap:12px;
   }
-  .video-info-box .icon-wrap{ width:60px; height:60px; }
+  .video-info-box .icon-wrap{ width:78px; height:78px; }
   .video-info-box .icon,
-  .video-info-box .icon-fallback{ width:60px; height:60px; font-size:19px; }
+  .video-info-box .icon-fallback{ width:78px; height:78px; font-size:24px; }
   /* Right: video stage. Pops in ~180ms after the info box starts, so the
      sequence reads left-to-right instead of both halves landing at once. */
   .video-stage{
@@ -5272,20 +5297,21 @@ function openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl){
   videoInfoBox.appendChild(nameEl);
 
   const pill = document.createElement("span");
-  pill.className = "tier-pill";
+  pill.className = "tier-pill" + (TIER_LABEL[tierKey] ? " " + tierKey : "");
   pill.textContent = tierLabel || TIER_PILL_LABEL[tierKey] || tierKey;
   videoInfoBox.appendChild(pill);
 
   const optsEl = document.createElement("div");
   optsEl.className = "tier-options";
+  const tierClass = TIER_LABEL[tierKey] ? " " + tierKey : "";
   if(!andGroup || andGroup.length === 0){
     const chip = document.createElement("div");
-    chip.className = "option-chip free-chip";
+    chip.className = "option-chip free-chip" + tierClass;
     chip.textContent = "Free";
     optsEl.appendChild(chip);
   } else {
     const chip = document.createElement("div");
-    chip.className = "option-chip";
+    chip.className = "option-chip" + tierClass;
     sortedTokensForDisplay(andGroup).forEach((token, j) => {
       if(j > 0){
         const plus = document.createElement("span");
