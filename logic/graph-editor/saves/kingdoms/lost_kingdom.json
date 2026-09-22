@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Lost Kingdom",
-  "savedAt": "2026-09-18T04:00:12.250Z",
+  "savedAt": "2026-09-21T16:00:35.228Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-09-17T16:39:38.464Z",
+    "loadedAt": "2026-09-21T15:55:37.132Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2026,7 +2026,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ClashWorldHomeStage::checkpoint::obj2899",
         "state_requirement_expr": "",
-        "requirement_expr": "NeutralThrow | SpinThrow",
+        "requirement_expr": "NeutralThrow | SpinThrow | UpThrow",
         "world_peace_token": "WorldPeace_Lost",
         "moon_rock_token": "MoonRockActive_Lost",
         "access_type": "primary",
@@ -2057,7 +2057,7 @@
         "shine_info_object_name": "シャインチップ全取得監視者",
         "shine_info_scenario_name": "集めて！ 密林のムーンチップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced",
         "option_scenarios": "",
         "__editor_id": "ClashWorldHomeStage:70:386"
       },
@@ -4877,6 +4877,22 @@
         "x": 100,
         "y": 254
       },
+      "ClashWorldShopStage::stage_change::Kinopio::raw": {
+        "x": 1620,
+        "y": 238.59939759036143
+      },
+      "ClashWorldShopStage::stage_change::kinopio::raw": {
+        "x": 1620,
+        "y": 120
+      },
+      "ClashWorldShopStage::entrance::Kinopio::sub_far": {
+        "x": 1850,
+        "y": 238.59939759036143
+      },
+      "ClashWorldShopStage::entrance::Kinopio::sub_near": {
+        "x": 1390,
+        "y": 238.59939759036143
+      },
       "ImomuPoisonExStage::stage_change::imomu_01::raw": {
         "x": 1620,
         "y": 1100
@@ -4932,6 +4948,10 @@
       "ClashWorldHomeStage::place::new_place_4": {
         "x": 63.137218998927665,
         "y": 1080.5098398246018
+      },
+      "ClashWorldHomeStage::place::new_place_5": {
+        "x": 953.5555348365482,
+        "y": 210.12444104536655
       },
       "moon:ClashWorldHomeStage:83:372": {
         "x": 142.31853393550284,
@@ -5025,6 +5045,10 @@
         "x": 628,
         "y": 954
       },
+      "moon:ClashWorldShopStage:19:398": {
+        "x": 1210.6586385230519,
+        "y": 396.5453752970981
+      },
       "moon:ImomuPoisonExStage:3970:399": {
         "x": 120,
         "y": 261.53846153846155
@@ -5068,30 +5092,6 @@
       "moon:ClashWorldHomeStage:3284:1077": {
         "x": 1560,
         "y": 1062
-      },
-      "ClashWorldHomeStage::place::new_place_5": {
-        "x": 953.5555348365482,
-        "y": 210.12444104536655
-      },
-      "ClashWorldShopStage::stage_change::Kinopio::raw": {
-        "x": 1620,
-        "y": 238.59939759036143
-      },
-      "ClashWorldShopStage::stage_change::kinopio::raw": {
-        "x": 1620,
-        "y": 120
-      },
-      "ClashWorldShopStage::entrance::Kinopio::sub_far": {
-        "x": 1850,
-        "y": 238.59939759036143
-      },
-      "ClashWorldShopStage::entrance::Kinopio::sub_near": {
-        "x": 1390,
-        "y": 238.59939759036143
-      },
-      "moon:ClashWorldShopStage:19:398": {
-        "x": 1210.6586385230519,
-        "y": 396.5453752970981
       }
     }
   }

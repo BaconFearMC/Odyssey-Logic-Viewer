@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Darker Side",
-  "savedAt": "2026-09-16T03:35:48.952Z",
+  "savedAt": "2026-09-22T05:34:40.045Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-09-15T19:52:37.179Z",
+    "loadedAt": "2026-09-21T21:06:32.263Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -919,11 +919,11 @@
         "area_scope": "overworld",
         "from_node_id": "Special2WorldHomeStage::start",
         "to_node_id": "Special2WorldHomeStage::entrance::CP_Entrance::home_in",
-        "requirement_expr": "free",
+        "requirement_expr": "Frog",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -1122,6 +1122,21 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0976",
+        "kingdom": "Darker Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special2WorldHomeStage::entrance::CP_Entrance::home_in",
+        "to_node_id": "Special2WorldHomeStage::start",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0437.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -1138,7 +1153,7 @@
         "flags": "ShineFlag_Story | ShineFlag_Multi",
         "from_node_id": "Special2WorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "(Frog & Climb & Bubble & Senobi & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & WallJump & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & Vault & Yoshi & Kakku & ElectricWire & Swing & NeutralThrow) | (Frog & Climb & Bubble & Dive & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & Senobi & Yoshi & WallJump & Kakku & HackFork & Tsukkun & Koopa & ElectricWire & Swing & Swim) | (Frog & NeutralThrow & TripleJump & Vault & WallJump & Dive & LedgeGrab & Bubble & Kakku & ElectricWire & Climb)",
+        "requirement_expr": "(Frog & Climb & Bubble & Senobi & Yoshi & Kakku & ElectricWire & Swing & MoonLowGravity) | (Frog & Climb & Bubble & WallJump & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & Vault & Yoshi & Kakku & ElectricWire & Swing & NeutralThrow) | (Frog & Climb & Bubble & Dive & Yoshi & Kakku & ElectricWire & Swing) | (Frog & Climb & Bubble & Senobi & Yoshi & WallJump & Kakku & HackFork & Tsukkun & Koopa & ElectricWire & Swing & Swim) | (Frog & NeutralThrow & TripleJump & Vault & WallJump & Dive & LedgeGrab & Bubble & Kakku & ElectricWire & Climb)",
         "world_peace_token": "WorldPeace_Darker",
         "moon_rock_token": "MoonRockActive_Darker",
         "access_type": "primary",

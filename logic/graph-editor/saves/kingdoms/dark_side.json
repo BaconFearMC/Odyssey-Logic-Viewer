@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 2,
   "kingdom": "Dark Side",
-  "savedAt": "2026-09-20T04:49:34.286Z",
+  "savedAt": "2026-09-22T05:33:39.410Z",
   "workspace": {
     "schemaVersion": 2,
-    "loadedAt": "2026-09-19T17:01:46.592Z",
+    "loadedAt": "2026-09-21T21:06:32.263Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1974,24 +1974,6 @@
         "notes": "Raw UnitConfigName=WorldWarpHole."
       },
       {
-        "node_id": "Special1WorldHomeStage::place::new_place_2",
-        "kingdom": "Dark Side",
-        "stage": "Special1WorldHomeStage",
-        "stage_display_name": "Dark Side",
-        "area_scope": "overworld",
-        "node_type": "custom_place",
-        "source": "editor",
-        "entrance_id": "",
-        "side": "",
-        "obj_id": "",
-        "display_name": "Captain Toad",
-        "x": "",
-        "y": "",
-        "z": "",
-        "scenario_indices": "",
-        "notes": "Human-authored logic place."
-      },
-      {
         "node_id": "Special1WorldHomeStage::place::new_place_3",
         "kingdom": "Dark Side",
         "stage": "Special1WorldHomeStage",
@@ -2003,6 +1985,78 @@
         "side": "",
         "obj_id": "",
         "display_name": "Dark Side Captain Toad Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "Special1WorldHomeStage::place::new_place_4",
+        "kingdom": "Dark Side",
+        "stage": "Special1WorldHomeStage",
+        "stage_display_name": "Dark Side",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Lower Area",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "Special1WorldHomeStage::place::new_place_5",
+        "kingdom": "Dark Side",
+        "stage": "Special1WorldHomeStage",
+        "stage_display_name": "Dark Side",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Dark Side Mech Fight",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "Special1WorldHomeStage::place::new_place_2",
+        "kingdom": "Dark Side",
+        "stage": "Special1WorldHomeStage",
+        "stage_display_name": "Dark Side",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "1st Ledge",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "Special1WorldHomeStage::place::new_place_6",
+        "kingdom": "Dark Side",
+        "stage": "Special1WorldHomeStage",
+        "stage_display_name": "Dark Side",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Upper Area",
         "x": "",
         "y": "",
         "z": "",
@@ -2077,12 +2131,12 @@
         "area_scope": "overworld",
         "from_node_id": "Special1WorldHomeStage::start",
         "to_node_id": "Special1WorldHomeStage::place::new_place",
-        "requirement_expr": "ElectricWire",
+        "requirement_expr": "ElectricWire | (NeutralThrow & GroundPound & RollBoost & Vault & MoonLowGravity) | (NeutralThrow & GroundPound & RollBoost & Vault & Dive & MoonLowGravity) | (TripleJump & GroundPound & RollBoost & MoonLowGravity) | (TripleJump & LongJump & MoonLowGravity)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "",
-        "bidirectional": "true",
+        "difficulty": "casual;expert;advanced;expert;expert",
+        "option_scenarios": "1,2",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor."
       },
@@ -2092,21 +2146,6 @@
         "area_scope": "overworld",
         "from_node_id": "Special1WorldHomeStage::place::new_place",
         "to_node_id": "Special1WorldHomeStage::entrance::LavaWorldUpDownYoshiEx::home_in",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0416",
-        "kingdom": "Dark Side",
-        "area_scope": "overworld",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
-        "to_node_id": "Special1WorldHomeStage::entrance::PackunPoisonNoCapEx::home_in",
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
@@ -2141,22 +2180,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0419",
-        "kingdom": "Dark Side",
-        "area_scope": "overworld",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
-        "to_node_id": "Special1WorldHomeStage::entrance::BikeSteelNoCapEx::home_in",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2168,21 +2192,6 @@
         "from_node_id": "Special1WorldHomeStage::start",
         "to_node_id": "Special1WorldHomeStage::entrance::KillerRoadNoCapEx::home_in",
         "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0421",
-        "kingdom": "Dark Side",
-        "area_scope": "overworld",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
-        "to_node_id": "Special1WorldHomeStage::entrance::StackerRoomStart::home_in",
-        "requirement_expr": "ElectricWire",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2432,21 +2441,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0002",
-        "kingdom": "Dark Side",
-        "area_scope": "overworld",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
-        "to_node_id": "Special1WorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0003",
         "kingdom": "Dark Side",
         "area_scope": "overworld",
@@ -2520,6 +2514,246 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0960",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "to_node_id": "Special1WorldHomeStage::start",
+        "requirement_expr": "ElectricWire",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0377.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0961",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::stage_change::Go::raw",
+        "to_node_id": "Special1WorldHomeStage::start",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0962",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::start",
+        "to_node_id": "Special1WorldHomeStage::stage_change::Go::raw",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0961.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0963",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_4",
+        "to_node_id": "Special1WorldHomeStage::place::new_place",
+        "requirement_expr": "MoonLowGravity",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0964",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "to_node_id": "Special1WorldHomeStage::place::new_place_4",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0963.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0965",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::stage_change::Go::raw",
+        "to_node_id": "Special1WorldHomeStage::place::new_place_4",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0966",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::entrance::CapThrowerRoomStart::home_in",
+        "to_node_id": "Special1WorldHomeStage::place::new_place_5",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0968",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_4",
+        "to_node_id": "Special1WorldHomeStage::entrance::PackunPoisonNoCapEx::home_in",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0969",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_4",
+        "to_node_id": "Special1WorldHomeStage::entrance::ShootingCityYoshiEx::home_in",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0970",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::entrance::SenobiTowerYoshiEx::home_in",
+        "to_node_id": "Special1WorldHomeStage::place::new_place",
+        "requirement_expr": "MoonLowGravity | WallJump | Dive | (NeutralThrow & Vault) | (UpThrow & Vault) | (DownThrow & Vault & LedgeGrab) | (Backflip & LedgeGrab) | (GroundPoundJump & LedgeGrab) | (SideFlip & LedgeGrab) | (Spin & LedgeGrab) | TripleJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0418.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0971",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "to_node_id": "Special1WorldHomeStage::place::new_place_2",
+        "requirement_expr": "MoonLowGravity | KingdomAccess_Dark",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0972",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_2",
+        "to_node_id": "Special1WorldHomeStage::place::new_place_6",
+        "requirement_expr": "MoonLowGravity | WallJump | Dive | (NeutralThrow & Vault) | (UpThrow & Vault) | (DownThrow & Vault & LedgeGrab) | (Backflip & LedgeGrab) | (GroundPoundJump & LedgeGrab) | (SideFlip & LedgeGrab) | (Spin & LedgeGrab) | TripleJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0973",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_6",
+        "to_node_id": "Special1WorldHomeStage::place::new_place_5",
+        "requirement_expr": "ElectricWire",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2"
+      },
+      {
+        "edge_id": "edge_user_0967",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_6",
+        "to_node_id": "Special1WorldHomeStage::entrance::StackerRoomStart::home_in",
+        "requirement_expr": "ElectricWire",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0974",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_6",
+        "to_node_id": "Special1WorldHomeStage::entrance::BikeSteelNoCapEx::home_in",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0975",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::entrance::BikeSteelNoCapEx::home_in",
+        "to_node_id": "Special1WorldHomeStage::place::new_place_6",
+        "requirement_expr": "MoonLowGravity | WallJump | LedgeGrab | (NeutralThrow & Backflip) | (NeutralThrow & GroundPoundJump) | (NeutralThrow & SideFlip) | Spin | TripleJump | Dive | (Vault & NeutralThrow) | (UpThrow & Vault) | (DownThrow & Vault)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0974.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -2534,9 +2768,9 @@
         "obj_id": "130",
         "uid": "1055",
         "flags": "ShineFlag_Story | ShineFlag_Multi",
-        "from_node_id": "Special1WorldHomeStage::entrance::CapThrowerRoomStart::home_in",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_5",
         "state_requirement_expr": "",
-        "requirement_expr": "(ElectricWire & GroundPound) | (ElectricWire & HammerBros) | (ElectricWire & Vault & Dive & NeutralThrow & GroundPound) | (ElectricWire & GroundPound & Backflip) | (GroundPound & Dive & UpThrow & ElectricWire)",
+        "requirement_expr": "(GroundPound & MoonLowGravity) | (HammerBros & MoonLowGravity) | (Vault & Dive & NeutralThrow & GroundPound & MoonLowGravity) | (GroundPound & Backflip & MoonLowGravity) | (GroundPound & Dive & UpThrow & ElectricWire & MoonLowGravity)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3206,7 +3440,7 @@
         "obj_id": "475",
         "uid": "1123",
         "flags": "ShineFlag_HintArt",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_6",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Luncheon & GroundPound & @LavaWorldHomeStage::place::new_place)",
         "world_peace_token": "WorldPeace_Dark",
@@ -3302,7 +3536,7 @@
         "obj_id": "478",
         "uid": "1125",
         "flags": "ShineFlag_HintArt",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_6",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Ruined & GroundPound)",
         "world_peace_token": "WorldPeace_Dark",
@@ -3350,7 +3584,7 @@
         "obj_id": "480",
         "uid": "1126",
         "flags": "ShineFlag_HintArt",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_6",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Lost & GroundPound)",
         "world_peace_token": "WorldPeace_Dark",
@@ -3398,7 +3632,7 @@
         "obj_id": "482",
         "uid": "1127",
         "flags": "ShineFlag_HintArt",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_2",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Seaside & GroundPound & Swim) | (KingdomAccess_Seaside & DownThrow & Pukupuku) | (KingdomAccess_Seaside & NeutralThrow & Pukupuku)",
         "world_peace_token": "WorldPeace_Dark",
@@ -3446,7 +3680,7 @@
         "obj_id": "485",
         "uid": "1128",
         "flags": "ShineFlag_HintArt",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_6",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Lake & GroundPound & @LakeWorldTownZone::checkpoint::obj693)",
         "world_peace_token": "WorldPeace_Dark",
@@ -3494,7 +3728,7 @@
         "obj_id": "486",
         "uid": "1129",
         "flags": "ShineFlag_HintArt",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_4",
         "state_requirement_expr": "",
         "requirement_expr": "(GroundPound & @SnowWorldLobby000Stage::place::new_place_2)",
         "world_peace_token": "WorldPeace_Dark",
@@ -5851,8 +6085,8 @@
         "y": 758.076924439189
       },
       "Special1WorldHomeStage::entrance::BikeSteelNoCapEx::home_in": {
-        "x": 922,
-        "y": 998
+        "x": 1630.2410635199244,
+        "y": 1643.1179537687005
       },
       "Special1WorldHomeStage::entrance::BikeSteelNoCapEx_Exit::home_out": {
         "x": 1805.958549222798,
@@ -5863,60 +6097,60 @@
         "y": 210.79556898288016
       },
       "Special1WorldHomeStage::entrance::BombTailRoomStart::home_in": {
-        "x": 428,
-        "y": 1640
+        "x": 1299.324387476143,
+        "y": 130.39408667759184
       },
       "Special1WorldHomeStage::entrance::CapThrowerRoomGoal::home_out": {
         "x": 1035.0777202072538,
         "y": 210.79556898288016
       },
       "Special1WorldHomeStage::entrance::CapThrowerRoomStart::home_in": {
-        "x": 706.5294117647059,
-        "y": 1474.235294117647
+        "x": 1749.7947926240809,
+        "y": 117.50058778394168
       },
       "Special1WorldHomeStage::entrance::FireBlowerRoomGoal::home_out": {
         "x": 1285.80310880829,
         "y": 331.7824773413897
       },
       "Special1WorldHomeStage::entrance::FireBlowerRoomStart::home_in": {
-        "x": 658,
-        "y": 1640
+        "x": 1521.3887483539017,
+        "y": 17.67446263961579
       },
       "Special1WorldHomeStage::entrance::KillerRoadNoCapEx::home_in": {
-        "x": 100,
-        "y": 254
+        "x": 0,
+        "y": 266.62463543478964
       },
       "Special1WorldHomeStage::entrance::KillerRoadNoCapEx::home_out": {
         "x": 350,
         "y": 1099.8519637462236
       },
       "Special1WorldHomeStage::entrance::LavaWorldUpDownYoshiEx::home_in": {
-        "x": 1152,
-        "y": 998
+        "x": 1098.9766120811526,
+        "y": 756.8698407627737
       },
       "Special1WorldHomeStage::entrance::LavaWorldUpDownYoshiEx_Exit::home_out": {
         "x": 1456.217616580311,
         "y": 775.3071500503524
       },
       "Special1WorldHomeStage::entrance::PackunPoisonNoCapEx::home_in": {
-        "x": 692,
-        "y": 1110
+        "x": 208.47725843570316,
+        "y": 1511.462813506337
       },
       "Special1WorldHomeStage::entrance::PackunPoisonNoCapEx_Exit::home_out": {
         "x": 1867.5647668393783,
         "y": 723.0010070493454
       },
       "Special1WorldHomeStage::entrance::SenobiTowerYoshiEx::home_in": {
-        "x": 922,
-        "y": 1110
+        "x": 1123.9939646884613,
+        "y": 610.0650840404832
       },
       "Special1WorldHomeStage::entrance::SenobiTowerYoshiEx_Exit::home_out": {
         "x": 872.4352331606217,
         "y": 712.1450151057402
       },
       "Special1WorldHomeStage::entrance::ShootingCityYoshiEx::home_in": {
-        "x": 1152,
-        "y": 1110
+        "x": 664.6898543207215,
+        "y": 1497.5757549817029
       },
       "Special1WorldHomeStage::entrance::ShootingCityYoshiEx_Exit::home_out": {
         "x": 1397.2020725388602,
@@ -5927,8 +6161,8 @@
         "y": 91.78247734138972
       },
       "Special1WorldHomeStage::entrance::StackerRoomStart::home_in": {
-        "x": 692,
-        "y": 998
+        "x": 1273.9948440174767,
+        "y": 297.33371099867685
       },
       "Special1WorldHomeStage::stage_change::BikeSteelNoCapEx::raw": {
         "x": 2150,
@@ -6103,28 +6337,24 @@
         "y": 422.50000063499266
       },
       "Special1WorldHomeStage::place::new_place": {
-        "x": 922,
-        "y": 844
+        "x": 759.9494805826943,
+        "y": 602.8765255908718
       },
       "Special1WorldHomeStage::stage_change::Come::raw": {
-        "x": 107.42836529189663,
-        "y": 715.1531768470702
+        "x": 463.44259910934977,
+        "y": 88.97219308623517
       },
       "Special1WorldHomeStage::stage_change::Go::raw": {
-        "x": 1023.0631144565377,
-        "y": 663.0163850451553
-      },
-      "Special1WorldHomeStage::place::new_place_2": {
-        "x": 878.6047647165698,
-        "y": 339.534912109375
+        "x": 130.12886454795125,
+        "y": 1253.6214864492322
       },
       "Special1WorldHomeStage::place::new_place_3": {
-        "x": 128.0665829989755,
-        "y": 879.4789322964123
+        "x": 765.6099982286097,
+        "y": 125.78928908760389
       },
       "moon:Special1WorldHomeStage:130:1055": {
-        "x": 1276.8723098995697,
-        "y": 1386.4361549497849
+        "x": 2120.536679864386,
+        "y": 332.59276098066493
       },
       "moon:KillerRoadNoCapExStage:3:1062": {
         "x": 851.1469778233316,
@@ -6175,48 +6405,64 @@
         "y": 1018.4210518638183
       },
       "moon:Special1WorldHomeStage:469:1122": {
-        "x": 0,
-        "y": 1043.1702779868222
+        "x": 760.0018935034789,
+        "y": 0
       },
       "moon:Special1WorldHomeStage:475:1123": {
-        "x": 362.900019856251,
-        "y": 1057.5999955018983
+        "x": 2102.907102111748,
+        "y": 1292.6498837709455
       },
       "moon:Special1WorldHomeStage:476:1124": {
-        "x": 364,
-        "y": 846
+        "x": 370.38141948559934,
+        "y": 838.5549821996451
       },
       "moon:Special1WorldHomeStage:478:1125": {
-        "x": 1492,
-        "y": 630
+        "x": 2019.5327223114218,
+        "y": 1173.4863278263983
       },
       "moon:Special1WorldHomeStage:480:1126": {
-        "x": 1492,
-        "y": 954
+        "x": 1954.6546451357826,
+        "y": 1594.2715876315015
       },
       "moon:Special1WorldHomeStage:482:1127": {
-        "x": 364,
-        "y": 954
+        "x": 988.3179537160361,
+        "y": 1410.2732256501833
       },
       "moon:Special1WorldHomeStage:485:1128": {
-        "x": 1496.878048780488,
-        "y": 1062
+        "x": 2074.398699064883,
+        "y": 1449.2170822356184
       },
       "moon:Special1WorldHomeStage:486:1129": {
-        "x": 1492,
-        "y": 846
+        "x": 448.47156752310957,
+        "y": 1542.84301432607
       },
       "moon:Special1WorldHomeStage:487:1130": {
         "x": 364,
         "y": 738
       },
       "moon:Special1WorldHomeStage:488:1131": {
-        "x": 1492,
-        "y": 738
+        "x": 363.74942227903216,
+        "y": 521.9041005219079
       },
       "moon:Special1WorldHomeStage:489:1132": {
         "x": 364,
         "y": 630
+      },
+      "Special1WorldHomeStage::place::new_place_4": {
+        "x": 439.3019299195359,
+        "y": 1366.032745287559
+      },
+      "Special1WorldHomeStage::place::new_place_5": {
+        "x": 1747.0020960764841,
+        "y": 334.03878102959953
+      },
+      "Special1WorldHomeStage::place::new_place_2": {
+        "x": 978.2104401123286,
+        "y": 1221.1868116678133
+      },
+      "Special1WorldHomeStage::place::new_place_6": {
+        "x": 1608.2921716433007,
+        "y": 1394.3660714212087
       }
     }
   }
