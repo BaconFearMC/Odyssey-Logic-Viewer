@@ -519,13 +519,13 @@
   .tier-lane.expert .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(255,107,107,0.35); }
   .tier-lane.glitched .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(180,148,240,0.35); }
   .option-chip{
-    display:flex; align-items:center; gap:3px;
-    /* A method's full ability/capture chain must stay on one line — never
-       wrap internally. If it's wider than the card, the chip itself
-       scrolls horizontally rather than breaking to a second row. */
-    flex-wrap:nowrap;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    /* A method's full ability/capture chain is laid out as centered rows
+       of at most 3 icons each (see appendAndGroupIcons/balancedRowCounts),
+       balanced so row sizes differ by at most one — e.g. 4 icons render as
+       2+2, 7 as 3+2+2 — instead of a single line that would scroll or
+       overflow the card once it's wider than the box. */
     max-width:100%;
-    overflow-x:visible;
     min-width:0;
     background:var(--bg-chip);
     border:1px solid var(--border);
@@ -590,6 +590,13 @@
   }
   .tier-stack.boxed .free-chip{ border-color:var(--gold); }
   .and-plus{ font-size:11px; color:var(--text-dim); margin:0 1px; }
+  .option-chip-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:nowrap;
+    gap:3px;
+  }
   /* ---- Collapsible options (>6 branches) --------------------------------
      A moon with more than 6 reachability options gets noisy fast, so past
      that count the box collapses to a "peek": the first option shown in
@@ -3772,6 +3779,50 @@ async function tryAutoload(){
 /* =========================================================
    RENDERER
    ========================================================= */
+// Splits `total` items into rows of at most `max` items each, balanced so
+// row sizes never differ by more than 1 (e.g. 4 -> [2,2], 5 -> [3,2],
+// 7 -> [3,2,2], 8 -> [3,3,2]) instead of greedily filling each row to
+// `max` first (which would give 4 -> [3,1]). Used to keep an option
+// chip's full AND-chain visible — and centered/balanced-looking — without
+// ever needing to scroll or overflow its box.
+function balancedRowCounts(total, max){
+  if(total <= 0) return [];
+  const rowCount = Math.ceil(total / max);
+  const base = Math.floor(total / rowCount);
+  const remainder = total % rowCount;
+  const rows = [];
+  for(let i = 0; i < rowCount; i++){
+    rows.push(base + (i < remainder ? 1 : 0));
+  }
+  return rows;
+}
+
+// Renders an AND-chain's ability/capture icons into `chip` as centered
+// rows of at most 3 icons each (via balancedRowCounts), with a "+"
+// between icons within the same row. Replaces the old single nowrap
+// line, so a chip with 4+ requirements stays fully visible — wrapping
+// into a compact, centered block — rather than scrolling or overflowing.
+function appendAndGroupIcons(chip, andGroup){
+  const tokens = sortedTokensForDisplay(andGroup);
+  const rows = balancedRowCounts(tokens.length, 3);
+  let idx = 0;
+  rows.forEach(rowCount => {
+    const rowEl = document.createElement("div");
+    rowEl.className = "option-chip-row";
+    for(let k = 0; k < rowCount; k++){
+      if(k > 0){
+        const plus = document.createElement("span");
+        plus.className = "and-plus";
+        plus.textContent = "+";
+        rowEl.appendChild(plus);
+      }
+      rowEl.appendChild(makeIcon(tokens[idx]));
+      idx++;
+    }
+    chip.appendChild(rowEl);
+  });
+}
+
 function makeIcon(token){
   const info = ICON_MANIFEST[token];
   const label = info ? info.label : token;
@@ -4161,15 +4212,7 @@ function buildMovementOptions(moon, boxed){
       chip.className = "option-chip";
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, i + 1));
       attachVideoBadge(chip, moon, lane.tier, i + 1);
-      sortedTokensForDisplay(andGroup).forEach((token, j)=>{
-        if(j > 0){
-          const plus = document.createElement("span");
-          plus.className = "and-plus";
-          plus.textContent = "+";
-          chip.appendChild(plus);
-        }
-        chip.appendChild(makeIcon(token));
-      });
+      appendAndGroupIcons(chip, andGroup);
       // Scenario Data: this branch's own scenario restriction (option b —
       // each branch gets its own independent tag, never merged into a
       // combined sentence with sibling branches). andGroup.scenarios is
@@ -5040,15 +5083,7 @@ function renderReachTierLanes(tierLanes, disableCollapse){
         chip.textContent = "Free";
       } else {
         chip.className = "option-chip";
-        sortedTokensForDisplay(andGroup).forEach((token, j) => {
-          if(j > 0){
-            const plus = document.createElement("span");
-            plus.className = "and-plus";
-            plus.textContent = "+";
-            chip.appendChild(plus);
-          }
-          chip.appendChild(makeIcon(token));
-        });
+        appendAndGroupIcons(chip, andGroup);
       }
       const scenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
       if(scenarioLabel){
@@ -5311,15 +5346,7 @@ function openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl){
   } else {
     const chip = document.createElement("div");
     chip.className = "option-chip" + tierClass;
-    sortedTokensForDisplay(andGroup).forEach((token, j) => {
-      if(j > 0){
-        const plus = document.createElement("span");
-        plus.className = "and-plus";
-        plus.textContent = "+";
-        chip.appendChild(plus);
-      }
-      chip.appendChild(makeIcon(token));
-    });
+    appendAndGroupIcons(chip, andGroup);
     optsEl.appendChild(chip);
   }
   videoInfoBox.appendChild(optsEl);
