@@ -91,3 +91,4 @@ edge_user_0802,Bowser's Kingdom,overworld,SkyWorldHomeStage::place::new_place,Sk
 edge_user_0803,Bowser's Kingdom,overworld,SkyWorldHomeStage::place::new_place_14,SkyWorldHomeStage::place::new_place_12,impossible,,human_route,advanced,false,editor,Reverse of edge_user_0801.,,
 edge_user_0804,Bowser's Kingdom,overworld,SkyWorldHomeStage::place::new_place_14,SkyWorldHomeStage::place::new_place,impossible,,human_route,advanced,false,editor,Reverse of edge_user_0802.,,
 edge_user_0814,Bowser's Kingdom,overworld,SkyWorldHomeStage::checkpoint::obj2697,SkyWorldHomeStage::place::new_place_3,SideFlip,,human_route,glitched,true,editor,Created in graph editor.,,
+edge_user_0908,Bowser's Kingdom,overworld,SkyWorldCastleZone::checkpoint::obj1891,SkyWorldHomeStage::place::new_place_15,NpcTalk,,human_route,casual,true,editor,Created in graph editor.,"2,3,4",
