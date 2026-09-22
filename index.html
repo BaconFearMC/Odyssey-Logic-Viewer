@@ -373,6 +373,43 @@
     transform:translateY(-2px);
     filter: drop-shadow(2px 5px 0 var(--ink));
   }
+  /* ---- Collapsed-by-default moon card --------------------------------
+     Only the name, a compact tier-only summary, and a chevron show until
+     the header is clicked — the full requirement breakdown (.moon-card-body)
+     stays hidden so a page of moons stays scannable instead of every card
+     expanding to its full height at once. Matches the same click-to-open
+     convention already used by .moon-panel-header / .checkpoint-group-header
+     elsewhere on the page. */
+  .moon-card-header{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    cursor:pointer;
+    padding-right:95px; /* keep clear of the badges pinned top-right */
+    margin:-2px -2px 0;
+    padding-top:2px; padding-left:2px; padding-bottom:2px;
+  }
+  .moon-card-header:hover .moon-name{ color:var(--gold); }
+  .moon-card-header:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .moon-card-header .moon-name{ flex:1 1 auto; padding-right:0; margin:0; transition:color 0.12s ease; }
+  .moon-card-summary{
+    flex:0 0 auto;
+    display:flex; flex-wrap:wrap; gap:4px;
+    max-width:120px;
+    justify-content:flex-end;
+  }
+  .moon-card-summary .tier-pill{ margin-top:0; }
+  .moon-card-chevron{
+    flex:0 0 auto;
+    width:14px; height:14px;
+    margin-top:2px;
+    color:var(--text-dim);
+    transition:transform 0.15s ease, color 0.15s ease;
+  }
+  .moon-card-header:hover .moon-card-chevron{ color:var(--gold); }
+  .moon-card.open .moon-card-chevron{ transform:rotate(180deg); color:var(--gold); }
+  .moon-card-body{ display:none; margin-top:10px; }
+  .moon-card.open .moon-card-body{ display:block; }
   .moon-name{
     font-size:14px;
     font-weight:600;
@@ -435,10 +472,6 @@
     max-width:100%;
   }
   .free-tag{ font-size:12px; color:var(--text-dim); font-style:italic; }
-  .or-sep{
-    font-size:10px; color:var(--gold); font-weight:700;
-    text-transform:uppercase; letter-spacing:0.5px;
-  }
   /* ---- Difficulty tier lanes -------------------------------------------
      Each moon can be reached by several alternate routes (OR-branches),
      and every route belongs to exactly one difficulty tier: Casual,
@@ -467,6 +500,14 @@
   .tier-lane.expert .tier-pill{ color:#330d0d; background:var(--tier-expert); border-color:var(--tier-expert-border); }
   .tier-lane.glitched .tier-pill{ color:#1e1035; background:var(--tier-glitched); border-color:var(--tier-glitched-border); }
   .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; clip-path:none; padding:4px 10px; }
+  /* Standalone versions of the same four tier colors, for the collapsed
+     moon-card header's compact summary row — same pennant, no .tier-lane
+     wrapper needed since there are no options underneath it to color. */
+  .tier-pill.casual{ color:#0e2317; background:var(--tier-casual); border-color:var(--tier-casual-border); }
+  .tier-pill.advanced{ color:#2a1a05; background:var(--tier-advanced); border-color:var(--tier-advanced-border); }
+  .tier-pill.expert{ color:#330d0d; background:var(--tier-expert); border-color:var(--tier-expert-border); }
+  .tier-pill.glitched{ color:#1e1035; background:var(--tier-glitched); border-color:var(--tier-glitched-border); }
+  .tier-pill.free-summary{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; clip-path:none; padding:4px 10px; }
   .tier-options{
     display:flex; align-items:center; gap:6px; flex-wrap:wrap; max-width:100%; min-width:0;
   }
@@ -483,25 +524,37 @@
   }
   /* Difficulty is carried by the chip itself via a solid left accent bar
      (flat tint, no diagonal gradient wash) so a route reads at a glance
-     even scrolled away from its tier-pill label. */
+     even scrolled away from its tier-pill label. Alternate routes within
+     the same tier used to be glued together with an "or" label; now each
+     one is just its own tile with the same accent color repeated along
+     the bottom edge, so the separation between routes reads from the
+     shape/color alone. */
   .tier-lane.casual .option-chip{
     border-color:var(--tier-casual-border);
     border-left-color:var(--tier-casual);
+    border-bottom-color:var(--tier-casual);
+    border-bottom-width:3px;
     background:var(--tier-casual-bg);
   }
   .tier-lane.advanced .option-chip{
     border-color:var(--tier-advanced-border);
     border-left-color:var(--tier-advanced);
+    border-bottom-color:var(--tier-advanced);
+    border-bottom-width:3px;
     background:var(--tier-advanced-bg);
   }
   .tier-lane.expert .option-chip{
     border-color:var(--tier-expert-border);
     border-left-color:var(--tier-expert);
+    border-bottom-color:var(--tier-expert);
+    border-bottom-width:3px;
     background:var(--tier-expert-bg);
   }
   .tier-lane.glitched .option-chip{
     border-color:var(--tier-glitched-border);
     border-left-color:var(--tier-glitched);
+    border-bottom-color:var(--tier-glitched);
+    border-bottom-width:3px;
     background:var(--tier-glitched-bg);
   }
   .tier-lane.unrated .option-chip{ border-left-color:var(--border); }
@@ -509,10 +562,6 @@
   .tier-lane.advanced .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(224,169,74,0.35); }
   .tier-lane.expert .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(255,107,107,0.35); }
   .tier-lane.glitched .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(180,148,240,0.35); }
-  .tier-lane .or-sep.casual{ color:var(--tier-casual); }
-  .tier-lane .or-sep.advanced{ color:var(--tier-advanced); }
-  .tier-lane .or-sep.expert{ color:var(--tier-expert); }
-  .tier-lane .or-sep.glitched{ color:var(--tier-glitched); }
   .option-chip{
     display:flex; align-items:center; gap:3px;
     flex-wrap:wrap;
@@ -3851,15 +3900,72 @@ function hasGlitchedLane(moon){
   return (moon.tierLanes || []).some(lane => lane.tier === "glitched");
 }
 
+// Compact, options-free preview of a moon's difficulty for the collapsed
+// card header — just the tier pill(s) that apply, no option chips — so a
+// collapsed moon-card still tells you at a glance whether it's a casual
+// grab or needs Expert tech, without the full breakdown underneath.
+function buildTierSummary(moon){
+  const row = document.createElement("div");
+  row.className = "moon-card-summary";
+  if(!moon.tierLanes || moon.tierLanes.length === 0){
+    const free = document.createElement("span");
+    free.className = "tier-pill free-summary";
+    free.textContent = "Free";
+    row.appendChild(free);
+    return row;
+  }
+  moon.tierLanes.forEach(lane => {
+    const pill = document.createElement("span");
+    pill.className = "tier-pill " + lane.tier;
+    pill.textContent = lane.label;
+    row.appendChild(pill);
+  });
+  return row;
+}
+
 function buildMoonCard(moon){
   const card = document.createElement("div");
   card.className = "moon-card";
   card.dataset.moonName = moon.name;
 
+  // Collapsed by default: only the name + a compact tier-only summary show
+  // until the header is clicked — the full tier-stack (or entrance rows)
+  // lives inside .moon-card-body, which CSS hides until .moon-card carries
+  // .open. Keeps a page of moons scannable instead of every one expanding
+  // to its full requirement breakdown at once.
+  const header = document.createElement("div");
+  header.className = "moon-card-header";
+  header.tabIndex = 0;
+  header.setAttribute("role", "button");
+  header.setAttribute("aria-expanded", "false");
+
   const name = document.createElement("p");
   name.className = "moon-name";
   name.textContent = moon.name;
-  card.appendChild(name);
+  header.appendChild(name);
+
+  const summary = buildTierSummary(moon);
+  if(summary) header.appendChild(summary);
+
+  const chevron = document.createElement("span");
+  chevron.className = "moon-card-chevron";
+  chevron.setAttribute("aria-hidden", "true");
+  chevron.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  header.appendChild(chevron);
+
+  const toggleCard = () => {
+    const opening = !card.classList.contains("open");
+    card.classList.toggle("open", opening);
+    header.setAttribute("aria-expanded", String(opening));
+    // The >6-options peek/expand affordance inside the body measures off
+    // real chip heights, which read as zero while hidden behind display:none
+    // — so (re)try the measurement now that the body is actually visible.
+    if(opening) measureOptionsCollapsiblesIn(card);
+  };
+  header.addEventListener("click", toggleCard);
+  header.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggleCard(); } });
+
+  card.appendChild(header);
 
   if(moon.badges && moon.badges.length){
     const badgeRow = document.createElement("div");
@@ -3964,13 +4070,16 @@ function buildMoonCard(moon){
 
   // Subarea moons whose pipes differ show per-pipe rows INSTEAD of the single
   // requirement line (the rows already include the moon's own cost).
+  const body = document.createElement("div");
+  body.className = "moon-card-body";
   if(moon.entranceReqs){
     const rows = renderEntranceReqs(moon.entranceReqs);
     rows.style.borderTop = "none"; rows.style.marginTop = "0"; rows.style.paddingTop = "0";
-    card.appendChild(rows);
+    body.appendChild(rows);
   } else {
-    card.appendChild(buildMovementOptions(moon));
+    body.appendChild(buildMovementOptions(moon));
   }
+  card.appendChild(body);
   return card;
 }
 
@@ -4109,12 +4218,10 @@ function buildMovementOptions(moon, boxed){
     optsEl.className = "tier-options";
 
     lane.groups.forEach((andGroup, i)=>{
-      if(i > 0){
-        const sep = document.createElement("span");
-        sep.className = "or-sep " + lane.tier;
-        sep.textContent = "or";
-        optsEl.appendChild(sep);
-      }
+      // Alternate routes within a tier used to be glued together with an
+      // "or" label between chips; now each route is its own tile and the
+      // matching accent-colored border (left + bottom, set per tier above)
+      // carries that separation instead.
       // A branch can end up with no tokens after filtering out things like
       // Single Jump or "access to the kingdom you're already in" — that
       // branch is genuinely free, so say so instead of showing an empty chip.
@@ -5024,12 +5131,6 @@ function renderReachTierLanes(tierLanes, disableCollapse){
     const optsEl = document.createElement("div");
     optsEl.className = "tier-options";
     lane.groups.forEach((andGroup, i) => {
-      if(i > 0){
-        const sep = document.createElement("span");
-        sep.className = "or-sep " + lane.tier;
-        sep.textContent = "or";
-        optsEl.appendChild(sep);
-      }
       const chip = document.createElement("div");
       if(andGroup.length === 0){
         chip.className = "option-chip free-chip";
