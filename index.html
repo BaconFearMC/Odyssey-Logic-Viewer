@@ -3635,34 +3635,6 @@ function computeEntranceReqs(row, ownMoon, ws, nodeMap, kingdomName){
   });
 }
 
-// Per-source breakdown for a Checkpoint/Custom Node, generic across every
-// kingdom (no per-node/per-kingdom special-casing — same principle as
-// computeEntranceReqs below). A node can have more than one *viable*
-// (non-"impossible") inbound routeEdge — e.g. Top Hat Tower Checkpoint is
-// reachable for free from the tower's own exit door AND, separately, for
-// free from Push-Block Peril's Dokan exit pipe. buildNodeReachIndex
-// deliberately drops "free" edges (nothing to fold cost-wise into a
-// downstream moon's requirement), which used to mean two-or-more distinct
-// free entrances collapsed into one undifferentiated "Free" tag with no
-// indication there was more than one way in. Returns null when there's
-// only one (or zero) viable inbound edge — that case is already handled
-// fine by the flat appendReachRequirement() path, so this only kicks in
-// once a genuine OR between named sources exists.
-function computeNodeSourceReqs(kingdomName, nodeId){
-  const data = KINGDOM_NODE_DATA[kingdomName];
-  if(!data || !nodeId) return null;
-  const incoming = (data.edges || []).filter(e => e.to_node_id === nodeId);
-  const viable = incoming.filter(e => (e.requirement_expr || "").trim().toLowerCase() !== "impossible");
-  if(viable.length < 2) return null;
-  return viable.map(e => {
-    const srcNode = data.nodeMap[e.from_node_id];
-    const rawLabel = (srcNode && srcNode.display_name) || e.from_node_id;
-    const label = rawLabel.replace(/\s*\([^)]*\)\s*$/, "");
-    const summary = summarizeBranches(edgeBranches(e), kingdomName);
-    return Object.assign({ label: "From " + label }, summary);
-  });
-}
-
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
 // disableCollapse is forwarded straight through to renderReachTierLanes/
 // wrapOptionsIfCollapsible — see the note there.
@@ -5207,17 +5179,7 @@ function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName,
 
     const block = document.createElement("div");
     block.className = "node-entrance-block";
-    // If this node has more than one viable (non-impossible) inbound
-    // route, show each source on its own labeled row (e.g. "From Home
-    // return: Goal: Free" / "From Home return: PushBlockExStageEntDokan:
-    // Free") instead of collapsing every free-to-reach source into one
-    // bare "Free" tag that hides that there was a choice at all.
-    const sourceReqs = kingdom ? computeNodeSourceReqs(kingdom, nodeId) : null;
-    if(sourceReqs){
-      block.appendChild(renderEntranceReqs(sourceReqs, "entrance-reqs in-modal", true));
-    } else {
-      appendReachRequirement(block, data && nodeId ? data.reachBranches[nodeId] : null, true);
-    }
+    appendReachRequirement(block, data && nodeId ? data.reachBranches[nodeId] : null, true);
     nodeModalBody.appendChild(block);
   }
 
