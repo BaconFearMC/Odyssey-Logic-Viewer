@@ -2035,9 +2035,49 @@ function filterLabelFor(token){
 // different order. This is deliberately the opposite of buildFilterLists()
 // above: the Filter panel stays in game/setup order, only the on-card
 // display sorts alphabetically.
+// Real in-game kingdom progression order (not alphabetical) — used only to
+// order Kingdom Access tokens within a chip, since "reachable in story
+// order" reads far more naturally there than an A-Z jumble would.
+const KINGDOM_ACCESS_CHIP_ORDER = [
+  "Cap Kingdom", "Cascade Kingdom", "Sand Kingdom", "Lake Kingdom", "Wooded Kingdom",
+  "Cloud Kingdom", "Lost Kingdom", "Metro Kingdom", "Snow Kingdom", "Seaside Kingdom",
+  "Luncheon Kingdom", "Ruined Kingdom", "Bowser's Kingdom", "Moon Kingdom",
+  "Mushroom Kingdom", "Dark Side", "Darker Side",
+];
+const KINGDOM_ACCESS_CHIP_RANK = {};
+KINGDOM_ACCESS_CHIP_ORDER.forEach((k, i) => { KINGDOM_ACCESS_CHIP_RANK[k] = i; });
+
+// Group rank for a token within an AND-chain chip: Abilities (Movement +
+// CapThrow, token_type === "ability") first, then Captures
+// (token_type === "capture"), then Kingdom Access (token_type ===
+// "kingdom") last. Anything else (world_peace/moon_rock/Logic/Special —
+// not expected inside a moon's own AND group, but handled rather than
+// silently mis-sorted) falls after all three, alphabetically.
+function tokenGroupRank(token){
+  const type = ICON_MANIFEST[token] ? ICON_MANIFEST[token].tokenType : null;
+  if(type === "ability") return 0;
+  if(type === "capture") return 1;
+  if(type === "kingdom") return 2;
+  return 3;
+}
+
 function sortedTokensForDisplay(tokens){
   const labelOf = token => (ICON_MANIFEST[token] ? ICON_MANIFEST[token].label : token);
-  return tokens.slice().sort((a, b) => labelOf(a).localeCompare(labelOf(b), undefined, { sensitivity: "base" }));
+  return tokens.slice().sort((a, b) => {
+    const ra = tokenGroupRank(a), rb = tokenGroupRank(b);
+    if(ra !== rb) return ra - rb;
+    // Kingdom Access tokens sort by real kingdom order, not alphabetically;
+    // everything else (Abilities, Captures, and the rare "other" bucket)
+    // sorts A-Z by display label.
+    if(ra === 2){
+      const rankA = KINGDOM_ACCESS_CHIP_RANK[KINGDOM_ACCESS_TOKEN_TO_KINGDOM[a]];
+      const rankB = KINGDOM_ACCESS_CHIP_RANK[KINGDOM_ACCESS_TOKEN_TO_KINGDOM[b]];
+      const ka = rankA === undefined ? Infinity : rankA;
+      const kb = rankB === undefined ? Infinity : rankB;
+      if(ka !== kb) return ka - kb;
+    }
+    return labelOf(a).localeCompare(labelOf(b), undefined, { sensitivity: "base" });
+  });
 }
 
 /* =========================================================
@@ -2156,6 +2196,7 @@ const SCENARIO_DATA_HIDDEN_MOONS = new Set([
   "Lighthouse Leaper",
   "What Shines Inside the Glass",
   "A Rumble Under the Arena Floor",
+  "Island in the Poison Swamp",
 ]);
 // Moons whose difficulty/tier should be forced to a specific value,
 // overriding whatever the CSV's difficulty column computed. Value must be
