@@ -3990,6 +3990,25 @@ function hasGlitchedLane(moon){
   return (moon.tierLanes || []).some(lane => lane.tier === "glitched");
 }
 
+// True only when EVERY lane is glitched — i.e. there is no legitimate
+// (non-glitched) way to get this moon at all. Used by the "hide" glitch
+// filter: a moon that has a glitched lane alongside a perfectly normal
+// casual/advanced/expert lane should still show up (just without the
+// glitched lane cluttering it), not disappear outright.
+function isFullyGlitched(moon){
+  return !!(moon.tierLanes && moon.tierLanes.length && moon.tierLanes.every(lane => lane.tier === "glitched"));
+}
+
+// Clones a moon with any glitched-tier lane removed, for "Glitched: Hidden"
+// mode. Only strips the glitched lane(s) — leaves every other lane (and the
+// rest of the moon) untouched, so a moon with a mix of tiers keeps showing
+// its legitimate routes instead of vanishing just because one of its several
+// OR-branches happened to be glitched-tier.
+function withGlitchedLanesStripped(moon){
+  if(!moon.tierLanes || !moon.tierLanes.some(lane => lane.tier === "glitched")) return moon;
+  return Object.assign({}, moon, { tierLanes: moon.tierLanes.filter(lane => lane.tier !== "glitched") });
+}
+
 function buildMoonCard(moon){
   const card = document.createElement("div");
   card.className = "moon-card";
@@ -4606,7 +4625,13 @@ function renderGrid(){
 
   let moons = KINGDOMS[name] || [];
   if(unmarkedMode) moons = moons.filter(isMoonUnmarked);
-  if(glitchMode === "hide") moons = moons.filter(m => !hasGlitchedLane(m));
+  // "Hidden" used to drop a moon entirely the instant ANY one of its
+  // OR-branches was glitched-tier — even when that same moon also had a
+  // perfectly normal casual/advanced/expert route. That silently hid every
+  // moon with a bonus glitch option alongside its legit one. Now it only
+  // drops moons with NO legitimate route at all, and just strips the
+  // glitched lane off everything else so the legit routes still show.
+  if(glitchMode === "hide") moons = moons.filter(m => !isFullyGlitched(m)).map(withGlitchedLanesStripped);
   else if(glitchMode === "only") moons = moons.filter(hasGlitchedLane);
   // "Exempt!" never hides a moon — it only strips selected tokens back out
   // of the requirement chips at render time (see exemptedDisplayGroup) — so
