@@ -865,7 +865,7 @@
         "area_scope": "subarea",
         "from_node_id": "ImomuPoisonExStage::entrance::imomu_01::sub_near",
         "to_node_id": "ImomuPoisonExStage::entrance::imomu_02::sub_far",
-        "requirement_expr": "Imomu | SingleJump | LongJump | Dive",
+        "requirement_expr": "(TimerChallenge & Imomu) | (TimerChallenge & SingleJump) | (TimerChallenge & LongJump) | (TimerChallenge & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;expert;advanced;advanced",
