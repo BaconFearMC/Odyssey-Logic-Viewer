@@ -142,7 +142,6 @@
     border-color:#8a7500;
     color:#1b1c1f;
   }
-  #mergeToggle{ right:24px; top:150px; }
 
   /* ---- Title plate --------------------------------------------------
      A stage-title banner rather than a plain <h1>: chamfered slab with a
@@ -955,80 +954,7 @@
     color:var(--text-dim);
     margin:0;
   }
-  .merge-modal{ max-width:560px; }
-  .merge-form{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-  }
-  .merge-form input{
-    background:var(--bg-chip);
-    border:1px solid var(--border);
-    color:var(--text);
-    font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
-    font-size:13.5px;
-    padding:9px 12px;
-    outline:none;
-  }
-  .merge-form input:focus{ border-color:var(--gold); }
-  .merge-form input::placeholder{ color:var(--text-dim); }
-  .merge-add-btn{
-    align-self:flex-start;
-    background:var(--gold);
-    color:#1b1c1f;
-    border:2px solid #8a7500;
-    font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
-    font-size:12px;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:0.4px;
-    padding:8px 16px;
-    cursor:pointer;
-    clip-path: polygon(var(--cut-sm) 0, 100% 0, 100% calc(100% - var(--cut-sm)), calc(100% - var(--cut-sm)) 100%, 0 100%, 0 var(--cut-sm));
-    transition:filter 0.12s ease, transform 0.08s ease;
-  }
-  .merge-add-btn:hover{ filter:brightness(1.08); }
-  .merge-add-btn:active{ transform:translateY(1px); }
-  .merge-error{
-    font-size:12.5px;
-    color:var(--danger);
-  }
-  .merge-list{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-  }
-  .merge-rule{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    background:var(--bg-chip);
-    border:1px solid var(--border);
-    border-left:3px solid var(--gold);
-    padding:8px 10px;
-    font-size:13px;
-  }
-  .merge-rule-text{ flex:1 1 auto; min-width:0; }
-  .merge-rule-moon{ color:var(--text); font-weight:600; }
-  .merge-rule-arrow{ color:var(--text-dim); margin:0 6px; }
-  .merge-rule-node{ color:var(--gold); }
-  .merge-rule-remove{
-    flex:0 0 auto;
-    background:none;
-    border:none;
-    color:var(--text-dim);
-    cursor:pointer;
-    font-size:19px;
-    line-height:1;
-    transition:color 0.15s ease, transform 0.15s ease;
-  }
-  .merge-rule-remove:hover{ color:var(--red); transform:rotate(90deg); }
-  .merge-list-empty{
-    font-size:13px;
-    color:var(--text-dim);
-    font-style:italic;
-    padding:6px 2px;
-  }
+
   .node-entrance-block{
     display:flex;
     flex-direction:column;
@@ -1588,12 +1514,6 @@
   <span id="viewModeToggleLabel">By Moon</span>
 </button>
 
-<button class="corner-btn" id="mergeToggle" type="button" aria-label="Manage Moon and Node merge overrides">
-  <span class="icon-svg" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12a3 3 0 0 0 3 3h9M6 3 3 6M6 3l3 3M18 21V9a3 3 0 0 0-3-3H6"/></svg>
-  </span>
-  <span>Merge Nodes</span>
-</button>
 
 <h1><img class="icon-svg" src="icon/ui-star.png" alt="" onerror="this.style.display='none'">Power Moon Logic Charts</h1>
 
@@ -1677,23 +1597,6 @@
   <div class="node-modal" id="nodeModal">
     <button type="button" class="node-modal-close" id="nodeModalClose" aria-label="Close">&times;</button>
     <div class="node-modal-body" id="nodeModalBody"></div>
-  </div>
-</div>
-
-<div class="node-overlay" id="mergeOverlay">
-  <div class="node-modal merge-modal" id="mergeModal">
-    <button type="button" class="node-modal-close" id="mergeModalClose" aria-label="Close">&times;</button>
-    <div class="node-modal-body">
-      <h3 class="node-modal-title">Merge Node Into Moon</h3>
-      <p class="node-modal-empty">Fold a Subarea/Checkpoint/Custom Node's own requirement into one named Moon's own displayed requirement, and turn that Node's icon on that Moon's card non-clickable.</p>
-      <div class="merge-form">
-        <input type="text" id="mergeMoonInput" placeholder="Moon name (exact)" autocomplete="off">
-        <input type="text" id="mergeNodeInput" placeholder="Node name (Subarea / Checkpoint / Custom Node)" autocomplete="off">
-        <button type="button" class="merge-add-btn" id="mergeAddBtn">Add</button>
-      </div>
-      <div class="merge-error" id="mergeError" style="display:none;"></div>
-      <div class="merge-list" id="mergeList"></div>
-    </div>
   </div>
 </div>
 
@@ -3967,24 +3870,20 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
    now already folded in and a popup on top of it would just repeat the
    same info a second time.
 
-   Rules are { moon, node } pairs — moon must match a moon's exact name,
-   node must match either its Subarea's display name or its Checkpoint/
-   Custom Node's name (with a trailing "Checkpoint" stripped, same as
-   everywhere else in this file). Persisted in localStorage so they
-   survive a reload. Purely a display-time overlay — nothing here touches
-   the underlying kingdom data, only how a specific named moon renders.
+   Code-only, same pattern as SCENARIO_DATA_HIDDEN_MOONS/
+   LOGIC_LEVEL_OVERRIDES/FORCE_FREE_MOONS above: edit this array directly,
+   one { moon, node } pair per line. `moon` must match a moon's exact
+   moon_name; `node` must match either its Subarea's display name or its
+   Checkpoint/Custom Node's name (with a trailing "Checkpoint" stripped,
+   same as everywhere else in this file). Purely a display-time overlay —
+   nothing here touches the underlying kingdom data, only how that named
+   moon renders. Add an entry like:
+   //   { moon: "Some Moon Name", node: "Some Subarea or Checkpoint Name" },
    ========================================================= */
-const NODE_MERGE_STORAGE_KEY = "moonNodeMergeRules";
-let NODE_MERGE_RULES = [];
-try{
-  const savedRules = JSON.parse(localStorage.getItem(NODE_MERGE_STORAGE_KEY) || "[]");
-  if(Array.isArray(savedRules)) NODE_MERGE_RULES = savedRules.filter(r => r && r.moon && r.node);
-}catch(err){ NODE_MERGE_RULES = []; }
-
-function saveNodeMergeRules(){
-  try{ localStorage.setItem(NODE_MERGE_STORAGE_KEY, JSON.stringify(NODE_MERGE_RULES)); }
-  catch(err){ /* storage unavailable (private mode, quota, etc.) — rules just won't persist across reloads */ }
-}
+const NODE_MERGE_RULES = [
+  { moon: "Dorrie-Back Rider", node: "Underwater Moons" },
+  { moon: "Another Moon", node: "Another Node" },
+];
 
 function normalizeMergeName(s){ return (s || "").trim().toLowerCase(); }
 
@@ -5636,110 +5535,6 @@ nodeModalClose.addEventListener("click", closeNodeInfo);
 nodeOverlay.addEventListener("click", (e) => { if(e.target === nodeOverlay) closeNodeInfo(); });
 document.addEventListener("keydown", (e) => {
   if(e.key === "Escape" && nodeOverlay.classList.contains("open")) closeNodeInfo();
-});
-
-/* =========================================================
-   MERGE NODES MODAL — lets the user add/remove Moon+Node merge rules
-   (see applyNodeMergeRules above) from a simple form, without touching
-   any data file. Adding or removing a rule re-applies every rule across
-   every already-loaded kingdom, then re-renders whatever's currently on
-   screen so the effect (folded-in requirement, non-clickable icon) shows
-   immediately.
-   ========================================================= */
-const mergeOverlay = document.getElementById("mergeOverlay");
-const mergeToggle = document.getElementById("mergeToggle");
-const mergeModalClose = document.getElementById("mergeModalClose");
-const mergeMoonInput = document.getElementById("mergeMoonInput");
-const mergeNodeInput = document.getElementById("mergeNodeInput");
-const mergeAddBtn = document.getElementById("mergeAddBtn");
-const mergeError = document.getElementById("mergeError");
-const mergeList = document.getElementById("mergeList");
-
-function renderMergeList(){
-  mergeList.innerHTML = "";
-  if(NODE_MERGE_RULES.length === 0){
-    const empty = document.createElement("div");
-    empty.className = "merge-list-empty";
-    empty.textContent = "No merge rules yet — add a Moon name and a Node name above.";
-    mergeList.appendChild(empty);
-    return;
-  }
-  NODE_MERGE_RULES.forEach((rule, idx) => {
-    const row = document.createElement("div");
-    row.className = "merge-rule";
-
-    const text = document.createElement("span");
-    text.className = "merge-rule-text";
-    const moonSpan = document.createElement("span");
-    moonSpan.className = "merge-rule-moon";
-    moonSpan.textContent = rule.moon;
-    const arrow = document.createElement("span");
-    arrow.className = "merge-rule-arrow";
-    arrow.textContent = "\u2190"; // moon gets the node's info folded in
-    const nodeSpan = document.createElement("span");
-    nodeSpan.className = "merge-rule-node";
-    nodeSpan.textContent = rule.node;
-    text.append(moonSpan, arrow, nodeSpan);
-    row.appendChild(text);
-
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.className = "merge-rule-remove";
-    removeBtn.setAttribute("aria-label", "Remove this merge rule");
-    removeBtn.innerHTML = "&times;";
-    removeBtn.addEventListener("click", () => {
-      NODE_MERGE_RULES.splice(idx, 1);
-      saveNodeMergeRules();
-      applyNodeMergeRulesToAllLoadedKingdoms();
-      renderMergeList();
-      renderGrid();
-    });
-    row.appendChild(removeBtn);
-
-    mergeList.appendChild(row);
-  });
-}
-
-function addMergeRule(){
-  const moon = mergeMoonInput.value.trim();
-  const node = mergeNodeInput.value.trim();
-  mergeError.style.display = "none";
-  if(!moon || !node){
-    mergeError.textContent = "Enter both a Moon name and a Node name.";
-    mergeError.style.display = "block";
-    return;
-  }
-  const dupe = NODE_MERGE_RULES.some(r => normalizeMergeName(r.moon) === normalizeMergeName(moon) && normalizeMergeName(r.node) === normalizeMergeName(node));
-  if(dupe){
-    mergeError.textContent = "That Moon + Node pair is already in the list.";
-    mergeError.style.display = "block";
-    return;
-  }
-  NODE_MERGE_RULES.push({ moon, node });
-  saveNodeMergeRules();
-  applyNodeMergeRulesToAllLoadedKingdoms();
-  renderMergeList();
-  renderGrid();
-  mergeMoonInput.value = "";
-  mergeNodeInput.value = "";
-  mergeMoonInput.focus();
-}
-
-mergeAddBtn.addEventListener("click", addMergeRule);
-[mergeMoonInput, mergeNodeInput].forEach(inp => inp.addEventListener("keydown", (e) => {
-  if(e.key === "Enter"){ e.preventDefault(); addMergeRule(); }
-}));
-
-mergeToggle.addEventListener("click", () => {
-  renderMergeList();
-  mergeError.style.display = "none";
-  mergeOverlay.classList.add("open");
-  mergeMoonInput.focus();
-});
-mergeModalClose.addEventListener("click", () => mergeOverlay.classList.remove("open"));
-mergeOverlay.addEventListener("click", (e) => { if(e.target === mergeOverlay) mergeOverlay.classList.remove("open"); });
-document.addEventListener("keydown", (e) => {
-  if(e.key === "Escape" && mergeOverlay.classList.contains("open")) mergeOverlay.classList.remove("open");
 });
 
 /* =========================================================
