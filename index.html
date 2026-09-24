@@ -257,11 +257,17 @@
      grouping, with each moon reachable from it as a collapsible panel. */
   .checkpoint-groups{
     display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap:10px;
     width:100%;
     max-width:1400px;
     align-items:start;
+  }
+  @media (max-width: 720px){
+    /* Not enough room for 3 columns on narrow/mobile screens — fall back
+       to a single column rather than squeezing each node panel unreadably
+       thin. */
+    .checkpoint-groups{ grid-template-columns: 1fr; }
   }
   .checkpoint-group{
     background:var(--bg-panel);
@@ -4661,7 +4667,7 @@ function renderGrid(){
   emptyState.style.display = "none";
   if(viewMode === "checkpoint"){
     grid.style.display = "none";
-    checkpointGroups.style.display = "flex";
+    checkpointGroups.style.display = "grid";
     renderCheckpointGroups(moons);
   } else {
     grid.style.display = "";
