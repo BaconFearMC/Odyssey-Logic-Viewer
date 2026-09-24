@@ -142,6 +142,7 @@
     border-color:#8a7500;
     color:#1b1c1f;
   }
+  #mergeToggle{ right:24px; top:150px; }
 
   /* ---- Title plate --------------------------------------------------
      A stage-title banner rather than a plain <h1>: chamfered slab with a
@@ -431,6 +432,14 @@
   }
   .checkpoint-info:hover img,
   .checkpoint-info:focus-visible img{ opacity:1; }
+  /* Non-clickable variant — used when the icon's info is either identical
+     to the moon's own requirement (see subareaInfoIsRedundant) or has
+     already been merged into it (see applyNodeMergeRules). No pointer
+     cursor, no hover brightening, since there's nothing to click into. */
+  .checkpoint-info.info-static{ cursor:default; }
+  .checkpoint-info.info-static img,
+  .checkpoint-info.info-static:hover img,
+  .checkpoint-info.info-static:focus-visible img{ opacity:0.55; }
   .checkpoint-info .icon-tooltip{
     bottom:calc(100% + 6px);
     left:auto;
@@ -945,6 +954,80 @@
     font-size:13.5px;
     color:var(--text-dim);
     margin:0;
+  }
+  .merge-modal{ max-width:560px; }
+  .merge-form{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .merge-form input{
+    background:var(--bg-chip);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:"FontEB", 'Segoe UI', system-ui, sans-serif;
+    font-size:13.5px;
+    padding:9px 12px;
+    outline:none;
+  }
+  .merge-form input:focus{ border-color:var(--gold); }
+  .merge-form input::placeholder{ color:var(--text-dim); }
+  .merge-add-btn{
+    align-self:flex-start;
+    background:var(--gold);
+    color:#1b1c1f;
+    border:2px solid #8a7500;
+    font-family:"FontDB", 'Segoe UI', system-ui, sans-serif;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    padding:8px 16px;
+    cursor:pointer;
+    clip-path: polygon(var(--cut-sm) 0, 100% 0, 100% calc(100% - var(--cut-sm)), calc(100% - var(--cut-sm)) 100%, 0 100%, 0 var(--cut-sm));
+    transition:filter 0.12s ease, transform 0.08s ease;
+  }
+  .merge-add-btn:hover{ filter:brightness(1.08); }
+  .merge-add-btn:active{ transform:translateY(1px); }
+  .merge-error{
+    font-size:12.5px;
+    color:var(--danger);
+  }
+  .merge-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .merge-rule{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--bg-chip);
+    border:1px solid var(--border);
+    border-left:3px solid var(--gold);
+    padding:8px 10px;
+    font-size:13px;
+  }
+  .merge-rule-text{ flex:1 1 auto; min-width:0; }
+  .merge-rule-moon{ color:var(--text); font-weight:600; }
+  .merge-rule-arrow{ color:var(--text-dim); margin:0 6px; }
+  .merge-rule-node{ color:var(--gold); }
+  .merge-rule-remove{
+    flex:0 0 auto;
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    cursor:pointer;
+    font-size:19px;
+    line-height:1;
+    transition:color 0.15s ease, transform 0.15s ease;
+  }
+  .merge-rule-remove:hover{ color:var(--red); transform:rotate(90deg); }
+  .merge-list-empty{
+    font-size:13px;
+    color:var(--text-dim);
+    font-style:italic;
+    padding:6px 2px;
   }
   .node-entrance-block{
     display:flex;
@@ -1505,6 +1588,13 @@
   <span id="viewModeToggleLabel">By Moon</span>
 </button>
 
+<button class="corner-btn" id="mergeToggle" type="button" aria-label="Manage Moon and Node merge overrides">
+  <span class="icon-svg" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12a3 3 0 0 0 3 3h9M6 3 3 6M6 3l3 3M18 21V9a3 3 0 0 0-3-3H6"/></svg>
+  </span>
+  <span>Merge Nodes</span>
+</button>
+
 <h1><img class="icon-svg" src="icon/ui-star.png" alt="" onerror="this.style.display='none'">Power Moon Logic Charts</h1>
 
 <div id="loadStatus" class="load-status"></div>
@@ -1587,6 +1677,23 @@
   <div class="node-modal" id="nodeModal">
     <button type="button" class="node-modal-close" id="nodeModalClose" aria-label="Close">&times;</button>
     <div class="node-modal-body" id="nodeModalBody"></div>
+  </div>
+</div>
+
+<div class="node-overlay" id="mergeOverlay">
+  <div class="node-modal merge-modal" id="mergeModal">
+    <button type="button" class="node-modal-close" id="mergeModalClose" aria-label="Close">&times;</button>
+    <div class="node-modal-body">
+      <h3 class="node-modal-title">Merge Node Into Moon</h3>
+      <p class="node-modal-empty">Fold a Subarea/Checkpoint/Custom Node's own requirement into one named Moon's own displayed requirement, and turn that Node's icon on that Moon's card non-clickable.</p>
+      <div class="merge-form">
+        <input type="text" id="mergeMoonInput" placeholder="Moon name (exact)" autocomplete="off">
+        <input type="text" id="mergeNodeInput" placeholder="Node name (Subarea / Checkpoint / Custom Node)" autocomplete="off">
+        <button type="button" class="merge-add-btn" id="mergeAddBtn">Add</button>
+      </div>
+      <div class="merge-error" id="mergeError" style="display:none;"></div>
+      <div class="merge-list" id="mergeList"></div>
+    </div>
   </div>
 </div>
 
@@ -3644,6 +3751,40 @@ function summarizeBranches(branches, kingdomName){
   return lanes ? { lanes } : { free: true };
 }
 
+/* =========================================================
+   SUBAREA-ICON REDUNDANCY CHECK
+   A Subarea icon's whole point is "click to see what this pipe/entrance
+   costs on top of the moon's own requirement". When every one of a
+   subarea's entrances turns out to cost EXACTLY what the moon already
+   displays on its own card — same tiers, same tokens, same scenario tags
+   — clicking through tells the player nothing they don't already see, so
+   that icon should stop being clickable. These two helpers build an
+   order-independent signature for "a requirement" (either the moon's own
+   tierLanes, or one entrance's summarized reach) so the two can be
+   compared for exact equality.
+   ========================================================= */
+function signatureFromLanes(lanes){
+  if(!lanes || !lanes.length) return "FREE";
+  return lanes.map(lane => lane.tier + ":" + lane.groups.map(g => {
+    const toks = g.slice().sort().join("+");
+    const sc = (g.scenarios && g.scenarios.length) ? g.scenarios.slice().sort().join(",") : "";
+    return toks + "@" + sc;
+  }).sort().join("|")).sort().join(";");
+}
+function entrySignatureFromReqEntry(entry){
+  if(entry.impossible) return "IMPOSSIBLE";
+  if(entry.free) return "FREE";
+  return signatureFromLanes(entry.lanes);
+}
+// True when every entrance into this moon's subarea costs exactly what
+// the moon's own card already shows — i.e. the Subarea icon would open a
+// popup that just repeats the same info a second time.
+function subareaInfoIsRedundant(moon){
+  if(!moon.entranceReqs || !moon.entranceReqs.length) return false;
+  const ownSig = signatureFromLanes(moon.tierLanes);
+  return moon.entranceReqs.every(r => entrySignatureFromReqEntry(r) === ownSig);
+}
+
 const PIPE_PROXIMITY = 2500; // game units: a moon this close to a pipe is physically AT that pipe
 
 function moonPlacement(row){
@@ -3810,6 +3951,145 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   // node that shares its stage. Always overwritten wholesale on reload,
   // same as KINGDOMS above, so it can never point at stale nodes.
   KINGDOM_NODE_DATA[kingdomName] = { nodeMap, nodes: ws.logicNodes || [], edges: ws.routeEdges || [], reachBranches: nodeReachBranches };
+
+  // Re-apply any user-defined Moon+Node merge rules now that this
+  // kingdom's moons AND node data are both in place (checkpoint/custom
+  // node merges need KINGDOM_NODE_DATA's reachBranches).
+  applyNodeMergeRules(kingdomName);
+}
+
+/* =========================================================
+   MOON <-> NODE MERGE OVERRIDES
+   Lets you fold a specific Subarea/Checkpoint/Custom Node's own reach
+   requirement directly into one named Moon's displayed requirement (as
+   if it were now just part of that moon's own logic), and marks that
+   Node's icon on that moon's card as non-clickable, since its cost is
+   now already folded in and a popup on top of it would just repeat the
+   same info a second time.
+
+   Rules are { moon, node } pairs — moon must match a moon's exact name,
+   node must match either its Subarea's display name or its Checkpoint/
+   Custom Node's name (with a trailing "Checkpoint" stripped, same as
+   everywhere else in this file). Persisted in localStorage so they
+   survive a reload. Purely a display-time overlay — nothing here touches
+   the underlying kingdom data, only how a specific named moon renders.
+   ========================================================= */
+const NODE_MERGE_STORAGE_KEY = "moonNodeMergeRules";
+let NODE_MERGE_RULES = [];
+try{
+  const savedRules = JSON.parse(localStorage.getItem(NODE_MERGE_STORAGE_KEY) || "[]");
+  if(Array.isArray(savedRules)) NODE_MERGE_RULES = savedRules.filter(r => r && r.moon && r.node);
+}catch(err){ NODE_MERGE_RULES = []; }
+
+function saveNodeMergeRules(){
+  try{ localStorage.setItem(NODE_MERGE_STORAGE_KEY, JSON.stringify(NODE_MERGE_RULES)); }
+  catch(err){ /* storage unavailable (private mode, quota, etc.) — rules just won't persist across reloads */ }
+}
+
+function normalizeMergeName(s){ return (s || "").trim().toLowerCase(); }
+
+// Flattens a moon's tierLanes into the flat branch shape ({group,
+// scenarios, tier}) that crossBranches/summarizeBranches expect — the
+// same shape computeEntranceReqs builds for "own" moon cost.
+function ownBranchesFromTierLanes(tierLanes){
+  return (tierLanes && tierLanes.length)
+    ? tierLanes.reduce((acc, lane) => acc.concat(lane.groups.map(g => ({ group: g.slice(), scenarios: g.scenarios || null, tier: lane.tier }))), [])
+    : [{ group: [], scenarios: null, tier: "casual" }];
+}
+
+// Flattens a subarea's per-entrance requirement list (each entry already
+// crosses "cost to reach this entrance" with the moon's own cost — see
+// computeEntranceReqs) into one branch list: an OR across entrances —
+// "however you get in, here's every way it can end up costing".
+function branchesFromEntranceReqs(entries){
+  const out = [];
+  (entries || []).forEach(entry => {
+    if(entry.impossible) return;
+    if(entry.free){ out.push({ group: [], scenarios: null, tier: "casual" }); return; }
+    (entry.lanes || []).forEach(lane => lane.groups.forEach(g => {
+      out.push({ group: g.slice(), scenarios: g.scenarios || null, tier: lane.tier });
+    }));
+  });
+  return out;
+}
+
+// Cleans/dedupes `branches` and writes the result back onto moon.tierLanes
+// + moon.orGroups — the two fields every render/search/filter path reads.
+// Returns false (leaving the moon untouched) if the result is Impossible,
+// since that would mean the merge rule describes a route that can't
+// actually be taken — a data problem, not something to silently paper
+// over by hiding the moon's real requirement.
+function applyMergedBranchesToMoon(moon, branches, kingdomName){
+  const clean = summarizeBranches(branches, kingdomName);
+  if(clean.impossible){
+    console.warn(`[merge] "${moon.name}": merging this node produced no viable route — leaving its requirement unchanged.`);
+    return false;
+  }
+  if(clean.free){
+    moon.tierLanes = [];
+    moon.orGroups = [];
+    return true;
+  }
+  moon.tierLanes = clean.lanes;
+  moon.orGroups = clean.lanes.reduce((acc, lane) => acc.concat(lane.groups.map(g => g.slice())), []);
+  return true;
+}
+
+// Re-derives every moon's merge state for one already-loaded kingdom.
+// Safe to call repeatedly (a rule added/removed, a kingdom reloaded) —
+// always starts from a snapshot of the moon's real, computed-from-data
+// requirement (taken once, the first time this runs for that moon) rather
+// than compounding a merge on top of a previous merge.
+function applyNodeMergeRules(kingdomName){
+  const moons = KINGDOMS[kingdomName];
+  if(!moons) return;
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  moons.forEach(moon => {
+    if(!moon._baseTierLanes){
+      moon._baseTierLanes = moon.tierLanes;
+      moon._baseOrGroups = moon.orGroups;
+      moon._baseEntranceReqs = moon.entranceReqs || null;
+    }
+    moon.tierLanes = moon._baseTierLanes;
+    moon.orGroups = moon._baseOrGroups;
+    moon.entranceReqs = moon._baseEntranceReqs;
+    moon._mergedNodeKind = null;
+
+    const rule = NODE_MERGE_RULES.find(r => normalizeMergeName(r.moon) === normalizeMergeName(moon.name)
+      && (
+        (moon.subarea && normalizeMergeName(r.node) === normalizeMergeName(moon.subarea)) ||
+        (moon.checkpoint && normalizeMergeName(r.node) === normalizeMergeName(moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "")))
+      ));
+    if(!rule) return;
+
+    if(moon.subarea && normalizeMergeName(rule.node) === normalizeMergeName(moon.subarea)){
+      if(!moon._baseEntranceReqs){
+        console.warn(`[merge] "${moon.name}": no entrance data available for "${moon.subarea}" — nothing to merge.`);
+        return;
+      }
+      const ok = applyMergedBranchesToMoon(moon, branchesFromEntranceReqs(moon._baseEntranceReqs), kingdomName);
+      if(ok){
+        moon.entranceReqs = null; // now folded into tierLanes — the per-pipe rows would just repeat it
+        moon._mergedNodeKind = "subarea";
+      }
+      return;
+    }
+
+    // Checkpoint / Custom Node: cross the node's OWN reach cost (how you
+    // get TO that node) with the moon's base requirement.
+    const nodeId = moon.checkpointNodeId;
+    const reach = data && nodeId ? (data.reachBranches[nodeId] || []) : [];
+    const reachBranches = reach.length
+      ? reach.map(b => ({ group: b.group, scenarios: b.scenarios || null, tier: b.tier }))
+      : [{ group: [], scenarios: null, tier: "casual" }];
+    const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
+    const ok = applyMergedBranchesToMoon(moon, crossBranches(ownBranches, reachBranches), kingdomName);
+    if(ok) moon._mergedNodeKind = moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint";
+  });
+}
+
+function applyNodeMergeRulesToAllLoadedKingdoms(){
+  Object.keys(KINGDOMS).forEach(applyNodeMergeRules);
 }
 
 function setStatus(text, isError){
@@ -4051,9 +4331,27 @@ function buildMoonCard(moon){
   if(moon.subarea){
     const info = document.createElement("span");
     info.className = "checkpoint-info";
-    info.tabIndex = 0; // keyboard-focusable, same pattern as makeIcon()
-    info.setAttribute("aria-label", moon.subarea + " — click for entrance requirements");
-    info.setAttribute("role", "button");
+
+    // A Subarea icon goes non-interactive in two cases: (1) a Moon+Node
+    // merge rule already folded this subarea's entrance cost directly into
+    // the moon's own displayed requirement (see applyNodeMergeRules), or
+    // (2) every one of the subarea's entrances costs EXACTLY what the moon
+    // already shows on its own card. Either way the icon stays visible — it
+    // still tells you the moon lives in a subarea — but drops its click/
+    // keyboard handlers and button semantics, since opening the popup
+    // wouldn't show anything new.
+    const merged = moon._mergedNodeKind === "subarea";
+    const redundant = !merged && subareaInfoIsRedundant(moon);
+    const inert = merged || redundant;
+
+    if(inert){
+      info.classList.add("info-static");
+      info.setAttribute("aria-label", moon.subarea + (merged ? " — requirements already included above" : " — same requirements as this Moon"));
+    } else {
+      info.tabIndex = 0; // keyboard-focusable, same pattern as makeIcon()
+      info.setAttribute("aria-label", moon.subarea + " — click for entrance requirements");
+      info.setAttribute("role", "button");
+    }
 
     const img = document.createElement("img");
     img.src = "icon/infosubarea.png";
@@ -4063,16 +4361,18 @@ function buildMoonCard(moon){
 
     const tip = document.createElement("span");
     tip.className = "icon-tooltip";
-    tip.textContent = moon.subarea;
+    tip.textContent = moon.subarea + (inert ? (merged ? " (included above)" : " (same as above)") : "");
     info.appendChild(tip);
 
-    // Clicking (or Enter/Space while focused) opens the node-inspect popup
-    // listing EVERY entrance into this subarea and what each one requires —
-    // a subarea can have more than one way in (e.g. Freezing Waterway's
-    // near vs. far pipe), and each one can have its own cost.
-    const openThisSubarea = () => openNodeInfo({ kind:"subarea", kingdom: moon.kingdom, stage: moon.subareaStage, subareaName: moon.subarea, entranceReqs: moon.entranceReqs, moonName: moon.name });
-    info.addEventListener("click", openThisSubarea);
-    info.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openThisSubarea(); } });
+    if(!inert){
+      // Clicking (or Enter/Space while focused) opens the node-inspect popup
+      // listing EVERY entrance into this subarea and what each one requires —
+      // a subarea can have more than one way in (e.g. Freezing Waterway's
+      // near vs. far pipe), and each one can have its own cost.
+      const openThisSubarea = () => openNodeInfo({ kind:"subarea", kingdom: moon.kingdom, stage: moon.subareaStage, subareaName: moon.subarea, entranceReqs: moon.entranceReqs, moonName: moon.name });
+      info.addEventListener("click", openThisSubarea);
+      info.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openThisSubarea(); } });
+    }
 
     card.appendChild(info);
   }
@@ -4092,9 +4392,21 @@ function buildMoonCard(moon){
 
     const info = document.createElement("span");
     info.className = "checkpoint-info";
-    info.tabIndex = 0; // keyboard-focusable, same pattern as makeIcon()
-    info.setAttribute("aria-label", label + " — click for its requirements");
-    info.setAttribute("role", "button");
+
+    // Non-interactive once a Moon+Node merge rule has already folded this
+    // Checkpoint/Custom Node's own reach cost directly into the moon's
+    // displayed requirement (see applyNodeMergeRules) — clicking through
+    // would just repeat what's now already shown on the card.
+    const merged = moon._mergedNodeKind === "checkpoint" || moon._mergedNodeKind === "custom_place";
+
+    if(merged){
+      info.classList.add("info-static");
+      info.setAttribute("aria-label", label + " — requirements already included above");
+    } else {
+      info.tabIndex = 0; // keyboard-focusable, same pattern as makeIcon()
+      info.setAttribute("aria-label", label + " — click for its requirements");
+      info.setAttribute("role", "button");
+    }
 
     const img = document.createElement("img");
     // Custom Nodes (node_type === "custom_place") get their own icon;
@@ -4109,19 +4421,21 @@ function buildMoonCard(moon){
 
     const tip = document.createElement("span");
     tip.className = "icon-tooltip";
-    tip.textContent = label;
+    tip.textContent = label + (merged ? " (included above)" : "");
     info.appendChild(tip);
 
-    // Clicking (or Enter/Space while focused) opens the node-inspect popup
-    // showing what it actually costs to reach this checkpoint/custom node.
-    const openThisCheckpoint = () => openNodeInfo({
-      kind: moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint",
-      kingdom: moon.kingdom,
-      nodeId: moon.checkpointNodeId,
-      fallbackName: shortName,
-    });
-    info.addEventListener("click", openThisCheckpoint);
-    info.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openThisCheckpoint(); } });
+    if(!merged){
+      // Clicking (or Enter/Space while focused) opens the node-inspect popup
+      // showing what it actually costs to reach this checkpoint/custom node.
+      const openThisCheckpoint = () => openNodeInfo({
+        kind: moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint",
+        kingdom: moon.kingdom,
+        nodeId: moon.checkpointNodeId,
+        fallbackName: shortName,
+      });
+      info.addEventListener("click", openThisCheckpoint);
+      info.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openThisCheckpoint(); } });
+    }
 
     card.appendChild(info);
   }
@@ -5322,6 +5636,110 @@ nodeModalClose.addEventListener("click", closeNodeInfo);
 nodeOverlay.addEventListener("click", (e) => { if(e.target === nodeOverlay) closeNodeInfo(); });
 document.addEventListener("keydown", (e) => {
   if(e.key === "Escape" && nodeOverlay.classList.contains("open")) closeNodeInfo();
+});
+
+/* =========================================================
+   MERGE NODES MODAL — lets the user add/remove Moon+Node merge rules
+   (see applyNodeMergeRules above) from a simple form, without touching
+   any data file. Adding or removing a rule re-applies every rule across
+   every already-loaded kingdom, then re-renders whatever's currently on
+   screen so the effect (folded-in requirement, non-clickable icon) shows
+   immediately.
+   ========================================================= */
+const mergeOverlay = document.getElementById("mergeOverlay");
+const mergeToggle = document.getElementById("mergeToggle");
+const mergeModalClose = document.getElementById("mergeModalClose");
+const mergeMoonInput = document.getElementById("mergeMoonInput");
+const mergeNodeInput = document.getElementById("mergeNodeInput");
+const mergeAddBtn = document.getElementById("mergeAddBtn");
+const mergeError = document.getElementById("mergeError");
+const mergeList = document.getElementById("mergeList");
+
+function renderMergeList(){
+  mergeList.innerHTML = "";
+  if(NODE_MERGE_RULES.length === 0){
+    const empty = document.createElement("div");
+    empty.className = "merge-list-empty";
+    empty.textContent = "No merge rules yet — add a Moon name and a Node name above.";
+    mergeList.appendChild(empty);
+    return;
+  }
+  NODE_MERGE_RULES.forEach((rule, idx) => {
+    const row = document.createElement("div");
+    row.className = "merge-rule";
+
+    const text = document.createElement("span");
+    text.className = "merge-rule-text";
+    const moonSpan = document.createElement("span");
+    moonSpan.className = "merge-rule-moon";
+    moonSpan.textContent = rule.moon;
+    const arrow = document.createElement("span");
+    arrow.className = "merge-rule-arrow";
+    arrow.textContent = "\u2190"; // moon gets the node's info folded in
+    const nodeSpan = document.createElement("span");
+    nodeSpan.className = "merge-rule-node";
+    nodeSpan.textContent = rule.node;
+    text.append(moonSpan, arrow, nodeSpan);
+    row.appendChild(text);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "merge-rule-remove";
+    removeBtn.setAttribute("aria-label", "Remove this merge rule");
+    removeBtn.innerHTML = "&times;";
+    removeBtn.addEventListener("click", () => {
+      NODE_MERGE_RULES.splice(idx, 1);
+      saveNodeMergeRules();
+      applyNodeMergeRulesToAllLoadedKingdoms();
+      renderMergeList();
+      renderGrid();
+    });
+    row.appendChild(removeBtn);
+
+    mergeList.appendChild(row);
+  });
+}
+
+function addMergeRule(){
+  const moon = mergeMoonInput.value.trim();
+  const node = mergeNodeInput.value.trim();
+  mergeError.style.display = "none";
+  if(!moon || !node){
+    mergeError.textContent = "Enter both a Moon name and a Node name.";
+    mergeError.style.display = "block";
+    return;
+  }
+  const dupe = NODE_MERGE_RULES.some(r => normalizeMergeName(r.moon) === normalizeMergeName(moon) && normalizeMergeName(r.node) === normalizeMergeName(node));
+  if(dupe){
+    mergeError.textContent = "That Moon + Node pair is already in the list.";
+    mergeError.style.display = "block";
+    return;
+  }
+  NODE_MERGE_RULES.push({ moon, node });
+  saveNodeMergeRules();
+  applyNodeMergeRulesToAllLoadedKingdoms();
+  renderMergeList();
+  renderGrid();
+  mergeMoonInput.value = "";
+  mergeNodeInput.value = "";
+  mergeMoonInput.focus();
+}
+
+mergeAddBtn.addEventListener("click", addMergeRule);
+[mergeMoonInput, mergeNodeInput].forEach(inp => inp.addEventListener("keydown", (e) => {
+  if(e.key === "Enter"){ e.preventDefault(); addMergeRule(); }
+}));
+
+mergeToggle.addEventListener("click", () => {
+  renderMergeList();
+  mergeError.style.display = "none";
+  mergeOverlay.classList.add("open");
+  mergeMoonInput.focus();
+});
+mergeModalClose.addEventListener("click", () => mergeOverlay.classList.remove("open"));
+mergeOverlay.addEventListener("click", (e) => { if(e.target === mergeOverlay) mergeOverlay.classList.remove("open"); });
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Escape" && mergeOverlay.classList.contains("open")) mergeOverlay.classList.remove("open");
 });
 
 /* =========================================================
