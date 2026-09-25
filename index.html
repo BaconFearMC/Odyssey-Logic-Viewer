@@ -3879,13 +3879,43 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
    nothing here touches the underlying kingdom data, only how that named
    moon renders. Add an entry like:
    //   { moon: "Some Moon Name", node: "Some Subarea or Checkpoint Name" },
+
+   OPTIONAL `mode` FIELD — attach ANY node to ANY moon
+   Every rule above (no `mode` field) only works if `node` already matches
+   that exact moon's own Subarea/Checkpoint — it can't attach a node the
+   moon doesn't already have. Adding `mode` lifts that restriction: `node`
+   can then name *any* Checkpoint or Custom Node anywhere in that moon's
+   kingdom, not just one the moon already has.
+
+     mode: "overrideADD"
+       Attaches the named node's route to the moon as an EXTRA alternative
+       way to get it, alongside everything the moon already shows. Nothing
+       preexisting is touched — its own requirement, its Subarea icon, its
+       Checkpoint/Custom Node icon, all keep working exactly as before.
+       You can stack more than one overrideADD rule on the same moon.
+       Example:
+       //   { moon: "Some Moon Name", node: "Some Other Node", mode: "overrideADD" },
+
+     mode: "overrideREPLACE"
+       Same node-lookup as overrideADD, but REPLACES the moon's displayed
+       requirement with this node's route instead of adding to it — same
+       end result as a plain (no-`mode`) rule above, except `node` isn't
+       required to already be this moon's own Subarea/Checkpoint. Its old
+       Subarea/Checkpoint icon (if any) stays visible but goes inert
+       ("included above"), same as the plain rules do today.
+       Example:
+       //   { moon: "Some Moon Name", node: "Some Other Node", mode: "overrideREPLACE" },
+
+   A moon can carry any number of overrideADD rules plus at most one
+   overrideREPLACE (or one plain, mode-less) rule — if both a plain rule
+   and an overrideREPLACE rule match the same moon, overrideREPLACE wins.
    ========================================================= */
 const NODE_MERGE_RULES = [
   { moon: "Dorrie-Back Rider", node: "Underwater Moons" },
   { moon: "Fly to the Edge of the Fog", node: "Fly to the Edge of the Fog Free" },
   { moon: "Hidden in a Sunken Hat", node: "Hidden in a Sunken Hat Free" },
   { moon: "Our First Power Moon", node: "First Moon" },
-  { moon: "Showdown on the Inverted Pyramid", node: "Inverted Pyramid: Upper Interior" },
+  { moon: "Showdown on the Inverted Pyramid", node: "Inverted Pyramid: Upper Interior", mode: "overrideADD" },
   { moon: "Cheep Cheep Crossing", node: "Underwater Moons" },
   { moon: "Treasure in the Spiky Waterway", node: "Underwater Moons" },
   { moon: "From the Broken Pillar", node: "Underwater Moons" },
@@ -3977,6 +4007,85 @@ function applyMergedBranchesToMoon(moon, branches, kingdomName){
   return true;
 }
 
+// Finds ANY Checkpoint or Custom Node in a kingdom by its display name
+// (trailing "(objXXX)" and "Checkpoint" stripped, same cleanup used
+// everywhere else in this file), regardless of whether any moon is
+// currently attached to it. Backs the `mode: "overrideADD"` /
+// `mode: "overrideREPLACE"` rules below, which need to reach a node the
+// target moon doesn't already have. Returns the node's own raw node_id
+// (suitable for KINGDOM_NODE_DATA[kingdom].reachBranches lookups), or
+// null if nothing matches.
+function findNamedNodeId(data, nodeName){
+  if(!data) return null;
+  const target = normalizeMergeName(nodeName);
+  const match = (data.nodes || []).find(n => {
+    if(n.node_type !== "checkpoint" && n.node_type !== "custom_place") return false;
+    const clean = (n.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "");
+    return normalizeMergeName(clean) === target;
+  });
+  return match ? match.node_id : null;
+}
+
+// Branches for "how you get TO this node_id" — same fallback-to-free
+// shape used inline for the plain Checkpoint/Custom Node merge path.
+function branchesForNodeId(data, nodeId){
+  const reach = data && nodeId ? (data.reachBranches[nodeId] || []) : [];
+  return reach.length
+    ? reach.map(b => ({ group: b.group, scenarios: b.scenarios || null, tier: b.tier }))
+    : [{ group: [], scenarios: null, tier: "casual" }];
+}
+
+// Applies one overrideADD/overrideREPLACE rule, whose `node` can be any
+// Checkpoint/Custom Node in the kingdom — not just one the moon already
+// has. `replace` picks which of the two behaviors runs (see the big
+// comment above NODE_MERGE_RULES for what each does).
+function applyOverrideNodeToMoon(moon, nodeName, kingdomName, data, replace){
+  const nodeId = findNamedNodeId(data, nodeName);
+  if(!nodeId){
+    console.warn(`[merge] "${moon.name}": override node "${nodeName}" not found in this kingdom — skipped.`);
+    return;
+  }
+  const reachBranches = branchesForNodeId(data, nodeId);
+  const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
+  const crossed = crossBranches(ownBranches, reachBranches);
+
+  if(replace){
+    const ok = applyMergedBranchesToMoon(moon, crossed, kingdomName);
+    if(ok){
+      // Same end state as the plain (mode-less) merge path: fold the cost
+      // in, drop the now-redundant per-pipe breakdown, and mark whichever
+      // icon the moon already had as inert ("included above").
+      moon.entranceReqs = null;
+      moon._mergedNodeKind = moon.subarea ? "subarea" : (moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint");
+    } else {
+      console.warn(`[merge] "${moon.name}": overrideREPLACE node "${nodeName}" produced no viable route — left unchanged.`);
+    }
+    return;
+  }
+
+  // overrideADD: OR the new route in alongside whatever the moon already
+  // shows. applyMergedBranchesToMoon only ever writes moon.tierLanes/
+  // moon.orGroups, so moon.subarea, moon.checkpoint, moon.entranceReqs and
+  // moon._mergedNodeKind are never touched here — every preexisting node/
+  // icon keeps rendering and behaving exactly as it did before this rule.
+  const currentBranches = ownBranchesFromTierLanes(moon.tierLanes);
+  const ok = applyMergedBranchesToMoon(moon, currentBranches.concat(crossed), kingdomName);
+  if(!ok){
+    console.warn(`[merge] "${moon.name}": overrideADD node "${nodeName}" produced no viable route — left unchanged.`);
+    return;
+  }
+  // A Subarea moon displays its per-pipe entranceReqs table INSTEAD of
+  // tierLanes (see the moon-card renderer), so the extra route just added
+  // to tierLanes above would otherwise never actually show up. Append it
+  // as one more row in that same table instead, labeled with the node's
+  // name, so it's visible right alongside the existing per-pipe rows —
+  // still purely additive, nothing existing is replaced or removed.
+  if(moon.entranceReqs){
+    const summary = summarizeBranches(crossed, kingdomName);
+    moon.entranceReqs = moon.entranceReqs.concat([Object.assign({ label: nodeName }, summary)]);
+  }
+}
+
 // Re-derives every moon's merge state for one already-loaded kingdom.
 // Safe to call repeatedly (a rule added/removed, a kingdom reloaded) —
 // always starts from a snapshot of the moon's real, computed-from-data
@@ -3997,36 +4106,48 @@ function applyNodeMergeRules(kingdomName){
     moon.entranceReqs = moon._baseEntranceReqs;
     moon._mergedNodeKind = null;
 
-    const rule = NODE_MERGE_RULES.find(r => normalizeMergeName(r.moon) === normalizeMergeName(moon.name)
+    const rulesForMoon = NODE_MERGE_RULES.filter(r => normalizeMergeName(r.moon) === normalizeMergeName(moon.name));
+    if(!rulesForMoon.length) return;
+
+    // Plain (mode-less) rules: unchanged from the original behavior —
+    // only match the moon's OWN preexisting Subarea/Checkpoint by name.
+    const legacyRule = rulesForMoon.find(r => !r.mode
       && (
         (moon.subarea && normalizeMergeName(r.node) === normalizeMergeName(moon.subarea)) ||
         (moon.checkpoint && normalizeMergeName(r.node) === normalizeMergeName(moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "")))
       ));
-    if(!rule) return;
+    // Explicit overrideREPLACE wins over a plain rule if both match.
+    const replaceRule = rulesForMoon.find(r => r.mode === "overrideREPLACE");
+    const addRules = rulesForMoon.filter(r => r.mode === "overrideADD");
 
-    if(moon.subarea && normalizeMergeName(rule.node) === normalizeMergeName(moon.subarea)){
-      if(!moon._baseEntranceReqs){
-        console.warn(`[merge] "${moon.name}": no entrance data available for "${moon.subarea}" — nothing to merge.`);
-        return;
+    if(replaceRule){
+      applyOverrideNodeToMoon(moon, replaceRule.node, kingdomName, data, /*replace=*/true);
+    } else if(legacyRule){
+      if(moon.subarea && normalizeMergeName(legacyRule.node) === normalizeMergeName(moon.subarea)){
+        if(!moon._baseEntranceReqs){
+          console.warn(`[merge] "${moon.name}": no entrance data available for "${moon.subarea}" — nothing to merge.`);
+        } else {
+          const ok = applyMergedBranchesToMoon(moon, branchesFromEntranceReqs(moon._baseEntranceReqs), kingdomName);
+          if(ok){
+            moon.entranceReqs = null; // now folded into tierLanes — the per-pipe rows would just repeat it
+            moon._mergedNodeKind = "subarea";
+          }
+        }
+      } else {
+        // Checkpoint / Custom Node: cross the node's OWN reach cost (how
+        // you get TO that node) with the moon's base requirement.
+        const nodeId = moon.checkpointNodeId;
+        const reachBranches = branchesForNodeId(data, nodeId);
+        const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
+        const ok = applyMergedBranchesToMoon(moon, crossBranches(ownBranches, reachBranches), kingdomName);
+        if(ok) moon._mergedNodeKind = moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint";
       }
-      const ok = applyMergedBranchesToMoon(moon, branchesFromEntranceReqs(moon._baseEntranceReqs), kingdomName);
-      if(ok){
-        moon.entranceReqs = null; // now folded into tierLanes — the per-pipe rows would just repeat it
-        moon._mergedNodeKind = "subarea";
-      }
-      return;
     }
 
-    // Checkpoint / Custom Node: cross the node's OWN reach cost (how you
-    // get TO that node) with the moon's base requirement.
-    const nodeId = moon.checkpointNodeId;
-    const reach = data && nodeId ? (data.reachBranches[nodeId] || []) : [];
-    const reachBranches = reach.length
-      ? reach.map(b => ({ group: b.group, scenarios: b.scenarios || null, tier: b.tier }))
-      : [{ group: [], scenarios: null, tier: "casual" }];
-    const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
-    const ok = applyMergedBranchesToMoon(moon, crossBranches(ownBranches, reachBranches), kingdomName);
-    if(ok) moon._mergedNodeKind = moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint";
+    // overrideADD rules are layered on top regardless of the above, and
+    // never touch moon.subarea/moon.checkpoint/_mergedNodeKind — see
+    // applyOverrideNodeToMoon.
+    addRules.forEach(r => applyOverrideNodeToMoon(moon, r.node, kingdomName, data, /*replace=*/false));
   });
 }
 
