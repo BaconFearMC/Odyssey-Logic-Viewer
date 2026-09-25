@@ -4010,11 +4010,9 @@ function applyMergedBranchesToMoon(moon, branches, kingdomName){
 // Finds ANY Checkpoint or Custom Node in a kingdom by its display name
 // (trailing "(objXXX)" and "Checkpoint" stripped, same cleanup used
 // everywhere else in this file), regardless of whether any moon is
-// currently attached to it. Backs the `mode: "overrideADD"` /
-// `mode: "overrideREPLACE"` rules below, which need to reach a node the
-// target moon doesn't already have. Returns the node's own raw node_id
-// (suitable for KINGDOM_NODE_DATA[kingdom].reachBranches lookups), or
-// null if nothing matches.
+// currently attached to it. Returns the node's own raw node_id (suitable
+// for KINGDOM_NODE_DATA[kingdom].reachBranches lookups), or null if
+// nothing matches.
 function findNamedNodeId(data, nodeName){
   if(!data) return null;
   const target = normalizeMergeName(nodeName);
@@ -4026,6 +4024,17 @@ function findNamedNodeId(data, nodeName){
   return match ? match.node_id : null;
 }
 
+// Finds ANY Subarea in a kingdom by its display name (the same name shown
+// as a moon's own `subarea`), regardless of whether the target moon lives
+// in it. Returns its raw stage key (needed to find its entrance pipes via
+// subareaEntrances), or null if nothing matches.
+function findSubareaByName(data, nodeName){
+  if(!data) return null;
+  const target = normalizeMergeName(nodeName);
+  const match = (data.nodes || []).find(n => n.area_scope === "subarea" && normalizeMergeName(n.stage_display_name) === target);
+  return match ? match.stage : null;
+}
+
 // Branches for "how you get TO this node_id" — same fallback-to-free
 // shape used inline for the plain Checkpoint/Custom Node merge path.
 function branchesForNodeId(data, nodeId){
@@ -4035,19 +4044,67 @@ function branchesForNodeId(data, nodeId){
     : [{ group: [], scenarios: null, tier: "casual" }];
 }
 
-// Applies one overrideADD/overrideREPLACE rule, whose `node` can be any
-// Checkpoint/Custom Node in the kingdom — not just one the moon already
-// has. `replace` picks which of the two behaviors runs (see the big
-// comment above NODE_MERGE_RULES for what each does).
-function applyOverrideNodeToMoon(moon, nodeName, kingdomName, data, replace){
+// Branches for "how you get INTO this subarea", for a subarea the target
+// moon doesn't itself live in — so there's no specific in-subarea spot to
+// walk to (the precise per-entrance calc computeEntranceReqs does for a
+// moon inside its own subarea doesn't apply here). Approximated the same
+// generic way a Checkpoint/Custom Node's cost is: the one-hop reach cost
+// into each of the subarea's own entrance-pipe nodes, OR'd together.
+function branchesForSubareaStage(data, stage){
+  const entrances = subareaEntrances(data.nodes, stage);
+  let out = [];
+  entrances.forEach(en => en.aliasNodes.forEach(alias => {
+    const reach = data.reachBranches[alias.node_id];
+    out = out.concat(reach && reach.length
+      ? reach.map(b => ({ group: b.group, scenarios: b.scenarios || null, tier: b.tier }))
+      : [{ group: [], scenarios: null, tier: "casual" }]);
+  }));
+  return out.length ? out : [{ group: [], scenarios: null, tier: "casual" }];
+}
+
+// Resolves a NODE_MERGE_RULES `node` name (used with mode: "overrideADD" /
+// "overrideREPLACE") to branches already crossed with the target moon's
+// own base requirement — i.e. "what it costs to get this moon via that
+// node". Tries, in order:
+//   1. The moon's OWN Subarea — reuses the exact precomputed per-entrance
+//      data (moon._baseEntranceReqs), same precise numbers the plain/
+//      legacy Subarea merge path uses. This is what makes turning an
+//      already-working plain `{ moon, node }` rule for a Subarea into
+//      `mode: "overrideADD"`/`"overrideREPLACE"` keep working.
+//   2. Any Checkpoint or Custom Node in the kingdom.
+//   3. Any OTHER Subarea in the kingdom (one the moon doesn't live in),
+//      approximated the same generic one-hop way Checkpoints are.
+// Returns null if `nodeName` doesn't match anything in this kingdom.
+function resolveOverrideBranches(moon, nodeName, data){
+  const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
+
+  if(moon.subarea && normalizeMergeName(nodeName) === normalizeMergeName(moon.subarea)){
+    if(!moon._baseEntranceReqs){
+      console.warn(`[merge] "${moon.name}": no entrance data available for "${moon.subarea}" — nothing to merge.`);
+      return null;
+    }
+    return branchesFromEntranceReqs(moon._baseEntranceReqs); // already own x entrance-cost
+  }
+
   const nodeId = findNamedNodeId(data, nodeName);
-  if(!nodeId){
+  if(nodeId) return crossBranches(ownBranches, branchesForNodeId(data, nodeId));
+
+  const stage = findSubareaByName(data, nodeName);
+  if(stage) return crossBranches(ownBranches, branchesForSubareaStage(data, stage));
+
+  return null;
+}
+
+// Applies one overrideADD/overrideREPLACE rule, whose `node` can be any
+// Subarea/Checkpoint/Custom Node in the kingdom — not just one the moon
+// already has. `replace` picks which of the two behaviors runs (see the
+// big comment above NODE_MERGE_RULES for what each does).
+function applyOverrideNodeToMoon(moon, nodeName, kingdomName, data, replace){
+  const crossed = resolveOverrideBranches(moon, nodeName, data);
+  if(!crossed){
     console.warn(`[merge] "${moon.name}": override node "${nodeName}" not found in this kingdom — skipped.`);
     return;
   }
-  const reachBranches = branchesForNodeId(data, nodeId);
-  const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
-  const crossed = crossBranches(ownBranches, reachBranches);
 
   if(replace){
     const ok = applyMergedBranchesToMoon(moon, crossed, kingdomName);
@@ -4055,8 +4112,9 @@ function applyOverrideNodeToMoon(moon, nodeName, kingdomName, data, replace){
       // Same end state as the plain (mode-less) merge path: fold the cost
       // in, drop the now-redundant per-pipe breakdown, and mark whichever
       // icon the moon already had as inert ("included above").
+      const isOwnSubarea = moon.subarea && normalizeMergeName(nodeName) === normalizeMergeName(moon.subarea);
+      moon._mergedNodeKind = isOwnSubarea ? "subarea" : (moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint");
       moon.entranceReqs = null;
-      moon._mergedNodeKind = moon.subarea ? "subarea" : (moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint");
     } else {
       console.warn(`[merge] "${moon.name}": overrideREPLACE node "${nodeName}" produced no viable route — left unchanged.`);
     }
