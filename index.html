@@ -3975,8 +3975,8 @@ const NODE_MERGE_RULES = [
   { moon: "The Rooftop Lantern", node: "The Rooftop Lantern Free" },
   { moon: "Under the Meat Plateau", node: "Under the Meat Plateau Free" },
   { moon: "Big Broodal Battle", overrideREPLACEnode: "fromBowsers: Main Courtyard Entrance" },
-  { moon: "Showdown on the Inverted Pyramid", overrideADDEnode: "fromSand: Inverted Pyramid: Upper Interior" },
-  { moon: "Showdown on the Inverted Pyramid", overrideADDEnode: "fromSand: Inverted Pyramid: Lower Interior" },
+  { moon: "Showdown on the Inverted Pyramid", overrideADDnode: "fromSand: Inverted Pyramid: Upper Interior" },
+  { moon: "Showdown on the Inverted Pyramid", overrideADDnode: "fromSand: Inverted Pyramid: Lower Interior" },
   { moon: "Another Moon", node: "Another Node" },
   { moon: "Another Moon", node: "Another Node" },
   { moon: "Another Moon", node: "Another Node" },
@@ -4034,8 +4034,21 @@ function parseOverrideNodeSpec(raw){
 function normalizeMergeRule(r){
   let mode = r.mode || null;
   let rawNode = r.node;
-  if(r.overrideADDnode !== undefined){ mode = "overrideADD"; rawNode = r.overrideADDnode; }
-  else if(r.overrideREPLACEnode !== undefined){ mode = "overrideREPLACE"; rawNode = r.overrideREPLACEnode; }
+  // Matched loosely (extra/missing letters tolerated, e.g. an accidental
+  // "overrideADDEnode") rather than requiring the exact spelling, so a
+  // typo in a rule's field name doesn't just silently turn it into a
+  // no-op — it still needs to start with "overrideadd"/"overridereplace"
+  // and end with "node".
+  const keys = Object.keys(r);
+  const addKey = keys.find(k => /^overrideadd\w*node$/i.test(k));
+  const replaceKey = keys.find(k => /^overridereplace\w*node$/i.test(k));
+  if(addKey){
+    mode = "overrideADD"; rawNode = r[addKey];
+    if(addKey !== "overrideADDnode") console.warn(`[merge] "${r.moon}": treating "${addKey}" as "overrideADDnode" — fix the spelling when convenient.`);
+  } else if(replaceKey){
+    mode = "overrideREPLACE"; rawNode = r[replaceKey];
+    if(replaceKey !== "overrideREPLACEnode") console.warn(`[merge] "${r.moon}": treating "${replaceKey}" as "overrideREPLACEnode" — fix the spelling when convenient.`);
+  }
 
   if(mode === "overrideADD" || mode === "overrideREPLACE"){
     const spec = parseOverrideNodeSpec(rawNode);
