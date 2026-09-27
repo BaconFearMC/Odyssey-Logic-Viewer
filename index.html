@@ -4367,6 +4367,51 @@ function applyNodeMergeRulesToAllLoadedKingdoms(){
   Object.keys(KINGDOMS).forEach(applyNodeMergeRules);
 }
 
+// ---------------------------------------------------------------------
+// CONSOLE DEBUG HELPERS for NODE_MERGE_RULES — not used anywhere in the
+// app itself. Open the browser dev console (F12) once the page has
+// loaded and call these to see exactly what an override rule can see,
+// instead of guessing why a rule silently did nothing:
+//
+//   listOverrideNodes("Sand")
+//     Prints every Checkpoint/Custom Node name and every Subarea name
+//     that kingdom's data actually contains — i.e. every valid value for
+//     overrideADDnode/overrideREPLACEnode's node part in that kingdom.
+//
+//   checkOverrideNode("Sand", "Inverted Pyramid: Upper Interior")
+//     Tells you whether that exact node name currently matches anything
+//     in that kingdom (and if not, that the kingdom itself failed to
+//     resolve, or hasn't loaded, or the name just isn't there).
+window.listOverrideNodes = function(kingdomAlias){
+  const name = resolveKingdomAlias(kingdomAlias) || kingdomAlias;
+  const data = KINGDOM_NODE_DATA[name];
+  if(!data){
+    console.log(`"${kingdomAlias}" -> resolved to "${name}", but no data is loaded for it. Currently loaded kingdoms: ${Object.keys(KINGDOM_NODE_DATA).join(", ") || "(none)"}`);
+    return;
+  }
+  const checkpoints = [...new Set((data.nodes || [])
+    .filter(n => n.node_type === "checkpoint" || n.node_type === "custom_place")
+    .map(n => (n.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "")))];
+  const subareas = [...new Set((data.nodes || [])
+    .filter(n => n.area_scope === "subarea")
+    .map(n => n.stage_display_name))];
+  console.log(`${name} — Checkpoints/Custom Nodes (${checkpoints.length}):`, checkpoints);
+  console.log(`${name} — Subareas (${subareas.length}):`, subareas);
+};
+window.checkOverrideNode = function(kingdomAlias, nodeName){
+  const name = resolveKingdomAlias(kingdomAlias) || kingdomAlias;
+  const data = KINGDOM_NODE_DATA[name];
+  if(!data){
+    console.log(`"${kingdomAlias}" -> resolved to "${name}", but no data is loaded for it. Currently loaded kingdoms: ${Object.keys(KINGDOM_NODE_DATA).join(", ") || "(none)"}`);
+    return;
+  }
+  const id = findNamedNodeId(data, nodeName);
+  if(id){ console.log(`MATCH: "${nodeName}" is a Checkpoint/Custom Node in ${name} (node_id: ${id}).`); return; }
+  const stage = findSubareaByName(data, nodeName);
+  if(stage){ console.log(`MATCH: "${nodeName}" is a Subarea in ${name} (stage: ${stage}).`); return; }
+  console.log(`NO MATCH for "${nodeName}" in ${name}. Run listOverrideNodes("${kingdomAlias}") to see every valid name.`);
+};
+
 function setStatus(text, isError){
   const el = document.getElementById("loadStatus");
   if(!el) return;
