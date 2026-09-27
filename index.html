@@ -3880,35 +3880,60 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
    moon renders. Add an entry like:
    //   { moon: "Some Moon Name", node: "Some Subarea or Checkpoint Name" },
 
-   OPTIONAL `mode` FIELD — attach ANY node to ANY moon
-   Every rule above (no `mode` field) only works if `node` already matches
-   that exact moon's own Subarea/Checkpoint — it can't attach a node the
-   moon doesn't already have. Adding `mode` lifts that restriction: `node`
-   can then name *any* Checkpoint or Custom Node anywhere in that moon's
-   kingdom, not just one the moon already has.
+   EASY SYNTAX — attach ANY node to ANY moon (`overrideADDnode` /
+   `overrideREPLACEnode`)
+   Every rule above (no override field at all) only works if `node`
+   already matches that exact moon's own Subarea/Checkpoint — it can't
+   attach a node the moon doesn't already have. Use one of these two
+   fields instead of `node`/`mode` to lift that restriction:
 
-     mode: "overrideADD"
+     overrideADDnode: "Some Other Node"
        Attaches the named node's route to the moon as an EXTRA alternative
        way to get it, alongside everything the moon already shows. Nothing
        preexisting is touched — its own requirement, its Subarea icon, its
        Checkpoint/Custom Node icon, all keep working exactly as before.
-       You can stack more than one overrideADD rule on the same moon.
+       You can stack more than one overrideADDnode rule on the same moon.
        Example:
-       //   { moon: "Some Moon Name", node: "Some Other Node", mode: "overrideADD" },
+       //   { moon: "Some Moon Name", overrideADDnode: "Some Other Node" },
 
-     mode: "overrideREPLACE"
-       Same node-lookup as overrideADD, but REPLACES the moon's displayed
-       requirement with this node's route instead of adding to it — same
-       end result as a plain (no-`mode`) rule above, except `node` isn't
+     overrideREPLACEnode: "Some Other Node"
+       Same node-lookup as overrideADDnode, but REPLACES the moon's
+       displayed requirement with this node's route instead of adding to
+       it — same end result as a plain rule above, except `node` isn't
        required to already be this moon's own Subarea/Checkpoint. Its old
        Subarea/Checkpoint icon (if any) stays visible but goes inert
        ("included above"), same as the plain rules do today.
        Example:
+       //   { moon: "Some Moon Name", overrideREPLACEnode: "Some Other Node" },
+
+   By default the named node is looked up in the MOON'S OWN kingdom, same
+   as before. To pull in a node from a DIFFERENT kingdom — e.g. giving some
+   other moon credit for Seaside Kingdom's "Underwater Moons" subarea —
+   prefix the node name with "from<Kingdom>: " (spacing/colon are
+   forgiving; the kingdom name just needs to be recognizable):
+       //   { moon: "Some Moon Name", overrideADDnode: "fromSeaside: Underwater Moons" },
+       //   { moon: "Some Moon Name", overrideADDnode: "from Seaside Kingdom: Underwater Moons" },
+   This is the ONLY thing the "from<Kingdom>: " prefix does — it just
+   changes which kingdom's nodes are searched; everything else about
+   overrideADDnode/overrideREPLACEnode works exactly the same.
+   NOTE: the source kingdom must actually be loaded for this to resolve —
+   it's checked once after every kingdom file has loaded, so load order
+   doesn't matter, but a misspelled kingdom name will just warn in the
+   console and be skipped rather than throw.
+
+   (The old `node` + `mode: "overrideADD"` / `mode: "overrideREPLACE"`
+   spelling shown further below still works exactly as before, and also
+   accepts the same "from<Kingdom>: " prefix inside `node` if you prefer
+   that style — overrideADDnode/overrideREPLACEnode above is just the
+   shorter way to write the same thing.)
+   Example (legacy spelling):
+       //   { moon: "Some Moon Name", node: "Some Other Node", mode: "overrideADD" },
        //   { moon: "Some Moon Name", node: "Some Other Node", mode: "overrideREPLACE" },
 
-   A moon can carry any number of overrideADD rules plus at most one
-   overrideREPLACE (or one plain, mode-less) rule — if both a plain rule
-   and an overrideREPLACE rule match the same moon, overrideREPLACE wins.
+   A moon can carry any number of overrideADD/overrideADDnode rules plus at
+   most one overrideREPLACE/overrideREPLACEnode (or one plain, mode-less)
+   rule — if both a plain rule and a REPLACE rule match the same moon, the
+   REPLACE rule wins.
    ========================================================= */
 const NODE_MERGE_RULES = [
   { moon: "Dorrie-Back Rider", node: "Underwater Moons" },
@@ -3938,7 +3963,10 @@ const NODE_MERGE_RULES = [
   { moon: "Underwater Highway West: Explore!", node: "Underwater Moons" },
   { moon: "Underwater Highway East: Explore!", node: "Underwater Moons" },
   { moon: "What the Waves Left Behind", node: "What the Waves Left Behind Free" },
-  { moon: "Another Moon", node: "Another Node" },
+  { moon: "Slip Through the Nesting Spot", overrideREPLACEnode: "fromSeaside: Underwater Moons" },
+  { moon: "Under a Dangerous Ceiling", node: "Underwater Moons" },
+  { moon: "Bubblaine Northern Reaches", node: "Underwater Moons" },
+  { moon: "At the Base of the Lighthouse", node: "Underwater Moons" },
   { moon: "Another Moon", node: "Another Node" },
   { moon: "Another Moon", node: "Another Node" },
   { moon: "Another Moon", node: "Another Node" },
@@ -3959,6 +3987,84 @@ const NODE_MERGE_RULES = [
 ];
 
 function normalizeMergeName(s){ return (s || "").trim().toLowerCase(); }
+
+// Matches a kingdom shorthand like "Seaside", "seaside kingdom", "Bowsers"
+// (apostrophe optional) against KINGDOM_MANIFEST's real display names, so
+// rule authors don't have to type the exact "Seaside Kingdom" string.
+// Returns the real kingdom display name, or null if nothing matches.
+function normalizeKingdomAlias(s){
+  return (s || "").toLowerCase().replace(/kingdom/g, "").replace(/[^a-z0-9]/g, "");
+}
+function resolveKingdomAlias(alias){
+  const target = normalizeKingdomAlias(alias);
+  if(!target) return null;
+  const exact = KINGDOM_MANIFEST.find(k => normalizeKingdomAlias(k.name) === target);
+  if(exact) return exact.name;
+  const loose = KINGDOM_MANIFEST.find(k => {
+    const n = normalizeKingdomAlias(k.name);
+    return n.startsWith(target) || target.startsWith(n);
+  });
+  return loose ? loose.name : null;
+}
+
+// Parses the value of `overrideADDnode` / `overrideREPLACEnode` (or a
+// legacy `node` string used with mode: "overrideADD"/"overrideREPLACE").
+// Plain "Some Node Name" stays scoped to the moon's own kingdom, same as
+// before. Prefixing it with "from<Kingdom>: " (space/colon optional —
+// "fromSeaside: Underwater Moons", "from Seaside Kingdom: Underwater
+// Moons", "fromseaside:Underwater Moons" all work) pulls the node from
+// that OTHER kingdom instead, wherever the moon itself lives.
+function parseOverrideNodeSpec(raw){
+  const s = (raw || "").trim();
+  const m = s.match(/^from\s*:?\s*([^:]+?)\s*:\s*(.+)$/i);
+  if(m) return { kingdomAlias: m[1].trim(), nodeName: m[2].trim() };
+  return { kingdomAlias: null, nodeName: s };
+}
+
+// Normalizes one NODE_MERGE_RULES entry into a flat shape regardless of
+// which style it was written in:
+//   legacy:      { moon, node, mode }
+//   easy/new:    { moon, overrideADDnode } or { moon, overrideREPLACEnode }
+// Both styles' node value may carry a "from<Kingdom>: " prefix to reach
+// into another kingdom's data.
+function normalizeMergeRule(r){
+  let mode = r.mode || null;
+  let rawNode = r.node;
+  if(r.overrideADDnode !== undefined){ mode = "overrideADD"; rawNode = r.overrideADDnode; }
+  else if(r.overrideREPLACEnode !== undefined){ mode = "overrideREPLACE"; rawNode = r.overrideREPLACEnode; }
+
+  if(mode === "overrideADD" || mode === "overrideREPLACE"){
+    const spec = parseOverrideNodeSpec(rawNode);
+    return { moon: r.moon, mode, node: spec.nodeName, kingdomAlias: spec.kingdomAlias };
+  }
+  // Legacy plain (mode-less) rule: unchanged, always same-kingdom, always
+  // matched against the moon's own existing Subarea/Checkpoint.
+  return { moon: r.moon, mode, node: rawNode, kingdomAlias: null };
+}
+
+// Figures out which kingdom's KINGDOM_NODE_DATA an override rule should
+// read from: the moon's own kingdom by default, or another kingdom when
+// the rule's node value had a "from<Kingdom>: " prefix. Returns null (and
+// warns) if the named kingdom doesn't match anything, or hasn't loaded
+// yet — callers should just skip the rule in that case; a full reapply
+// once every kingdom has loaded (see applyNodeMergeRulesToAllLoadedKingdoms)
+// will pick it up as soon as the source kingdom becomes available.
+function resolveOverrideSource(moon, rule, ownKingdomName){
+  if(!rule.kingdomAlias){
+    return { kingdomName: ownKingdomName, data: KINGDOM_NODE_DATA[ownKingdomName], sameKingdom: true };
+  }
+  const resolvedName = resolveKingdomAlias(rule.kingdomAlias);
+  if(!resolvedName){
+    console.warn(`[merge] "${moon.name}": unrecognized kingdom "${rule.kingdomAlias}" (node "${rule.node}") — skipped.`);
+    return null;
+  }
+  const srcData = KINGDOM_NODE_DATA[resolvedName];
+  if(!srcData){
+    console.warn(`[merge] "${moon.name}": "${resolvedName}" hasn't loaded yet — override node "${rule.node}" skipped for now.`);
+    return null;
+  }
+  return { kingdomName: resolvedName, data: srcData, sameKingdom: (resolvedName === ownKingdomName) };
+}
 
 // Flattens a moon's tierLanes into the flat branch shape ({group,
 // scenarios, tier}) that crossBranches/summarizeBranches expect — the
@@ -4075,10 +4181,10 @@ function branchesForSubareaStage(data, stage){
 //   3. Any OTHER Subarea in the kingdom (one the moon doesn't live in),
 //      approximated the same generic one-hop way Checkpoints are.
 // Returns null if `nodeName` doesn't match anything in this kingdom.
-function resolveOverrideBranches(moon, nodeName, data){
+function resolveOverrideBranches(moon, nodeName, data, sameKingdom){
   const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
 
-  if(moon.subarea && normalizeMergeName(nodeName) === normalizeMergeName(moon.subarea)){
+  if(sameKingdom && moon.subarea && normalizeMergeName(nodeName) === normalizeMergeName(moon.subarea)){
     if(!moon._baseEntranceReqs){
       console.warn(`[merge] "${moon.name}": no entrance data available for "${moon.subarea}" — nothing to merge.`);
       return null;
@@ -4097,15 +4203,20 @@ function resolveOverrideBranches(moon, nodeName, data){
 
 // Applies one overrideADD/overrideREPLACE rule, whose `node` can be any
 // Subarea/Checkpoint/Custom Node in the kingdom — not just one the moon
-// already has. `replace` picks which of the two behaviors runs (see the
-// big comment above NODE_MERGE_RULES for what each does).
-function applyOverrideNodeToMoon(moon, nodeName, kingdomName, data, replace){
-  const isOwnNode = (moon.subarea && normalizeMergeName(nodeName) === normalizeMergeName(moon.subarea))
-    || (moon.checkpoint && normalizeMergeName(nodeName) === normalizeMergeName(moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "")));
+// already has — or, when `sameKingdom` is false (the rule named another
+// kingdom via a "from<Kingdom>: " prefix), any Subarea/Checkpoint/Custom
+// Node in THAT kingdom instead, laid onto a moon that lives elsewhere.
+// `replace` picks which of the two behaviors runs (see the big comment
+// above NODE_MERGE_RULES for what each does).
+function applyOverrideNodeToMoon(moon, nodeName, kingdomName, data, replace, sameKingdom){
+  if(sameKingdom === undefined) sameKingdom = true;
+  const isOwnNode = sameKingdom && ((moon.subarea && normalizeMergeName(nodeName) === normalizeMergeName(moon.subarea))
+    || (moon.checkpoint && normalizeMergeName(nodeName) === normalizeMergeName(moon.checkpoint.replace(/\s*Checkpoint\s*$/i, ""))));
 
-  const crossed = resolveOverrideBranches(moon, nodeName, data);
+  const crossed = resolveOverrideBranches(moon, nodeName, data, sameKingdom);
   if(!crossed){
-    console.warn(`[merge] "${moon.name}": override node "${nodeName}" not found in this kingdom — skipped.`);
+    const where = sameKingdom ? "this kingdom" : `"${kingdomName}"`;
+    console.warn(`[merge] "${moon.name}": override node "${nodeName}" not found in ${where} — skipped.`);
     return;
   }
 
@@ -4184,7 +4295,9 @@ function applyNodeMergeRules(kingdomName){
     moon.entranceReqs = moon._baseEntranceReqs;
     moon._mergedNodeKind = null;
 
-    const rulesForMoon = NODE_MERGE_RULES.filter(r => normalizeMergeName(r.moon) === normalizeMergeName(moon.name));
+    const rulesForMoon = NODE_MERGE_RULES
+      .filter(r => normalizeMergeName(r.moon) === normalizeMergeName(moon.name))
+      .map(normalizeMergeRule);
     if(!rulesForMoon.length) return;
 
     // Plain (mode-less) rules: unchanged from the original behavior —
@@ -4199,7 +4312,8 @@ function applyNodeMergeRules(kingdomName){
     const addRules = rulesForMoon.filter(r => r.mode === "overrideADD");
 
     if(replaceRule){
-      applyOverrideNodeToMoon(moon, replaceRule.node, kingdomName, data, /*replace=*/true);
+      const src = resolveOverrideSource(moon, replaceRule, kingdomName);
+      if(src) applyOverrideNodeToMoon(moon, replaceRule.node, src.kingdomName, src.data, /*replace=*/true, src.sameKingdom);
     } else if(legacyRule){
       if(moon.subarea && normalizeMergeName(legacyRule.node) === normalizeMergeName(moon.subarea)){
         if(!moon._baseEntranceReqs){
@@ -4225,7 +4339,10 @@ function applyNodeMergeRules(kingdomName){
     // overrideADD rules are layered on top regardless of the above, and
     // never touch moon.subarea/moon.checkpoint/_mergedNodeKind — see
     // applyOverrideNodeToMoon.
-    addRules.forEach(r => applyOverrideNodeToMoon(moon, r.node, kingdomName, data, /*replace=*/false));
+    addRules.forEach(r => {
+      const src = resolveOverrideSource(moon, r, kingdomName);
+      if(src) applyOverrideNodeToMoon(moon, r.node, src.kingdomName, src.data, /*replace=*/false, src.sameKingdom);
+    });
   });
 }
 
@@ -4266,6 +4383,12 @@ async function tryAutoload(){
       loaded++;
     });
   }
+  // A cross-kingdom overrideADD/overrideREPLACE rule (a "from<Kingdom>: "
+  // node) can name a kingdom that hasn't loaded yet at the point its own
+  // kingdom finishes loading (kingdoms load in KINGDOM_MANIFEST order).
+  // Re-running every kingdom's merge rules once more, now that everything
+  // is loaded, picks those up without needing a particular load order.
+  if(loaded > 0) applyNodeMergeRulesToAllLoadedKingdoms();
   if(loaded > 0){
     setStatus(`Auto-loaded ${loaded} kingdom file${loaded===1?"":"s"} from /logic/`);
     rebuildKingdomTabs();
