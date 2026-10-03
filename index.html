@@ -143,6 +143,25 @@
     color:#1b1c1f;
   }
 
+
+  /* ---- Checkpoint Requirements (bottom of each kingdom) ---------------- */
+  .cp-reqs{ width:100%; max-width:1400px; margin:34px 0 40px; text-align:left; }
+  .cp-reqs-head{ display:flex; align-items:center; gap:10px; margin:0 0 4px; }
+  .cp-reqs-head img{ width:26px; height:26px; object-fit:contain; }
+  .cp-reqs-title{ margin:0; font-family:"FontEB",'Segoe UI',system-ui,sans-serif; font-size:20px; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; }
+  .cp-reqs-sub{ margin:0 0 14px; font-size:12.5px; color:var(--text-dim); }
+  .cp-reqs-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px; align-items:start; }
+  .cp-req{ background:var(--bg-panel); border:2px solid var(--border); border-left:4px solid var(--gold); padding:12px 14px 14px; min-width:0; display:flex; flex-direction:column; gap:8px; }
+  .cp-req-name{ margin:0; font-family:"FontDB",'Segoe UI',system-ui,sans-serif; font-size:15px; color:var(--text); display:flex; align-items:center; gap:8px; }
+  .cp-req-name img{ width:20px; height:20px; object-fit:contain; flex:0 0 auto; }
+  .cp-req-source{ display:flex; flex-direction:column; gap:5px; }
+  .cp-req-source + .cp-req-source{ padding-top:8px; border-top:1px dashed rgba(128,128,128,.35); }
+  .cp-req-source-label{ font-size:12px; font-weight:700; color:var(--text-dim); }
+  body.submit-mode .cp-req .option-chip,
+  body.submit-mode .cp-req .free-tag{ outline:2px dashed var(--gold); outline-offset:2px; cursor:copy; }
+  body.submit-mode .cp-req .has-video,
+  body.submit-mode .cp-req .has-video *{ outline:none !important; cursor:not-allowed !important; }
+
   /* ---- Video Submitter mode ---------------------------------------- */
   #submitToggle{ position:fixed; left:24px; bottom:24px; right:auto; top:auto; margin:0; }
   #submitToggle.active{ background:var(--worldpeace); border-color:#2b8a70; color:#10231d; }
@@ -1698,7 +1717,7 @@
   </div>
 </div>
 
-<div class="submit-bar" id="submitBar"><span><b>Submit mode</b> — click a route chip on a Checkpoint Moon (not in a subarea).</span><button type="button" class="vs-btn" id="seedReqBtn">Seed Generation Requirements for Submission</button><button type="button" class="vs-ownerbtn" id="submitBarExit">Exit</button></div>
+<div class="submit-bar" id="submitBar"><span><b>Submit mode</b> — click a route chip on a Checkpoint Moon (not in a subarea), or on a Checkpoint under <b>Checkpoint Requirements</b> at the bottom of a kingdom.</span><button type="button" class="vs-btn" id="seedReqBtn">Seed Generation Requirements for Submission</button><button type="button" class="vs-ownerbtn" id="submitBarExit">Exit</button></div>
 
 <h1><img class="icon-svg" src="icon/ui-star.png" alt="" onerror="this.style.display='none'">Power Moon Logic Charts</h1>
 
@@ -1757,6 +1776,7 @@
 <div class="grid" id="grid"></div>
 <div class="checkpoint-groups" id="checkpointGroups" style="display:none;"></div>
 <div class="empty-state" id="emptyState" style="display:none;"></div>
+<div class="cp-reqs" id="checkpointReqs" style="display:none;"></div>
 
 <div class="search-overlay" id="searchOverlay">
   <div class="search-modal" id="searchModal">
@@ -5775,6 +5795,7 @@ function renderGrid(){
   const emptyState = document.getElementById("emptyState");
   grid.innerHTML = "";
 
+  renderCheckpointReqs(name);
   let moons = KINGDOMS[name] || [];
   if(unmarkedMode) moons = moons.filter(isMoonUnmarked);
   // "Hidden" used to drop a moon entirely the instant ANY one of its
@@ -5828,6 +5849,129 @@ function renderGrid(){
 // currently selected in either filter, so it's visually obvious *why*
 // a moon matched (mirrors the reference screenshot's blue-ring emphasis
 // on the matching Ability/Capture icons inside each moon's chips).
+
+/* =========================================================
+   CHECKPOINT REQUIREMENTS — bottom of every kingdom page.
+   Lists every real Checkpoint (warp point, node_type === "checkpoint";
+   NOT Custom Nodes, NOT moons) in the kingdom with what it costs to
+   reach it, and lets each route chip take a submitted video in Submit
+   mode (e.g. Wooded Kingdom's red maze skip lives on the
+   "Iron Road: Halfway Point" node).
+
+   Each route is wrapped in a lightweight pseudo-moon ({ isCheckpointNode,
+   label, tierLanes, ... }) so the existing click-to-video / submit /
+   approve machinery works unchanged. Its `name` is built to be unique
+   per kingdom + checkpoint (+ source) and to end in a non-digit, so
+   videoAutoName() gives a stable file name such as
+   "woodedkingdomironroadhalfwaypointcheckpointcasual1".
+   ========================================================= */
+function cleanCheckpointName(n){
+  return (n || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "").trim();
+}
+
+// -> [{ nodeId, name, variants:[{ sourceLabel|null, moon }] }] for one kingdom (no glitch filtering).
+function getCheckpointVariants(kingdomName){
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  if(!data) return [];
+  const usedBase = new Set();
+  const out = [];
+  (data.nodes || []).filter(n => n.node_type === "checkpoint").forEach(n => {
+    const shown = cleanCheckpointName(n.display_name) || n.node_id;
+    let base = kingdomName + " " + shown + " Checkpoint";
+    if(usedBase.has(squash(base))) base += " [" + n.node_id + "]"; // same display name twice -> keep file names unique
+    usedBase.add(squash(base));
+
+    const mk = (suffixName, label, lanes) => ({
+      name: suffixName, label, kingdom: kingdomName, isCheckpointNode: true,
+      checkpoint: shown + " Checkpoint", checkpointType: "checkpoint", subarea: null,
+      tierLanes: lanes || [],
+    });
+
+    const sources = computeNodeSourceReqs(kingdomName, n.node_id);
+    const variants = [];
+    if(sources){
+      sources.forEach(r => {
+        if(r.impossible) return;
+        const from = r.label.replace(/^From\s+/i, "");
+        variants.push({ sourceLabel: r.label, moon: mk(base + " from " + from + " Entry", shown + " (Checkpoint) — " + r.label, r.free ? [] : r.lanes) });
+      });
+    } else {
+      const branches = data.reachBranches[n.node_id];
+      const sum = branches && branches.length ? summarizeBranches(branches, kingdomName) : { free: true };
+      if(sum.impossible) return;
+      variants.push({ sourceLabel: null, moon: mk(base + " Entry", shown + " (Checkpoint)", sum.free ? [] : sum.lanes) });
+    }
+    if(variants.length) out.push({ nodeId: n.node_id, name: shown, variants });
+  });
+  out.sort((a, b) => a.name.localeCompare(b.name));
+  return out;
+}
+
+function renderCheckpointReqs(kingdomName){
+  const root = document.getElementById("checkpointReqs");
+  if(!root) return;
+  root.innerHTML = "";
+  let list = getCheckpointVariants(kingdomName);
+
+  // Same Glitched filter the moon grid uses.
+  if(glitchMode === "hide"){
+    list = list.map(cp => ({ ...cp, variants: cp.variants.filter(v => !isFullyGlitched(v.moon)).map(v => ({ ...v, moon: withGlitchedLanesStripped(v.moon) })) }));
+  } else if(glitchMode === "only"){
+    list = list.map(cp => ({ ...cp, variants: cp.variants.filter(v => hasGlitchedLane(v.moon)) }));
+  }
+  list = list.filter(cp => cp.variants.length);
+
+  if(!list.length){ root.style.display = "none"; return; }
+  root.style.display = "";
+
+  const head = document.createElement("div");
+  head.className = "cp-reqs-head";
+  const ic = document.createElement("img");
+  ic.src = "icon/infocheckpoint.png"; ic.alt = ""; ic.onerror = function(){ this.style.display = "none"; };
+  const h = document.createElement("h2");
+  h.className = "cp-reqs-title"; h.textContent = "Checkpoint Requirements";
+  head.append(ic, h);
+  root.appendChild(head);
+
+  const sub = document.createElement("p");
+  sub.className = "cp-reqs-sub";
+  sub.textContent = "What it takes to reach each Checkpoint (warp point) in this kingdom. Use Submit Video to add a clip for a route.";
+  root.appendChild(sub);
+
+  const grid = document.createElement("div");
+  grid.className = "cp-reqs-grid";
+  list.forEach(cp => {
+    const card = document.createElement("div");
+    card.className = "cp-req";
+    card.dataset.submittable = "1";
+    card.dataset.checkpointNode = cp.nodeId;
+
+    const nm = document.createElement("p");
+    nm.className = "cp-req-name";
+    const i2 = document.createElement("img");
+    i2.src = "icon/infocheckpoint.png"; i2.alt = ""; i2.onerror = function(){ this.style.display = "none"; };
+    const t = document.createElement("span"); t.textContent = cp.name;
+    nm.append(i2, t);
+    card.appendChild(nm);
+
+    cp.variants.forEach(v => {
+      const wrap = document.createElement("div");
+      wrap.className = "cp-req-source";
+      if(v.sourceLabel){
+        const lab = document.createElement("div");
+        lab.className = "cp-req-source-label";
+        lab.textContent = v.sourceLabel + ":";
+        wrap.appendChild(lab);
+      }
+      wrap.appendChild(buildMovementOptions(v.moon, false));
+      card.appendChild(wrap);
+    });
+    grid.appendChild(card);
+  });
+  root.appendChild(grid);
+  measureOptionsCollapsiblesIn(root);
+}
+
 function applyFilterMatchHighlight(){
   if(selectedAbilities.size === 0 && selectedCaptures.size === 0) return;
   document.querySelectorAll(".icon-wrap[data-token]").forEach(el => {
@@ -6612,7 +6756,7 @@ function openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl){
 
   const nameEl = document.createElement("div");
   nameEl.className = "video-info-name";
-  nameEl.textContent = moon.name;
+  nameEl.textContent = moon.label || moon.name;
   videoInfoBox.appendChild(nameEl);
 
   const pill = document.createElement("span");
@@ -6696,7 +6840,7 @@ document.addEventListener("click", e => {
 }, true);
 // Only moons tracked from a real Checkpoint (not a Custom Node / none) are submittable.
 // Per the submission rules: no Custom Nodes, no subareas (clips can't show entering a subarea from outside).
-function isSubmittable(moon){ return !!moon.checkpoint && moon.checkpointType === "checkpoint" && !moon.subarea; }
+function isSubmittable(moon){ if(moon.isCheckpointNode) return true; return !!moon.checkpoint && moon.checkpointType === "checkpoint" && !moon.subarea; }
 
 const VIDEO_SUBMIT = {
   enabled: 1,
@@ -6761,8 +6905,8 @@ const VIDEO_SUBMIT = {
   window.vsSelect = function(moon, tier, label, group, idx){
     ctx = { moon, tier, label, idx, group: group || [] };
     const box = $("vsSel"); box.innerHTML = "";
-    const k = document.createElement("div"); k.className = "vs-sel-sub"; k.textContent = moon.kingdom + " · tracked from Checkpoint: " + cpName(moon); box.appendChild(k);
-    const n = document.createElement("div"); n.className = "vs-sel-moon"; n.textContent = moon.name; box.appendChild(n);
+    const k = document.createElement("div"); k.className = "vs-sel-sub"; k.textContent = moon.isCheckpointNode ? (moon.kingdom + " · Checkpoint (warp point)") : (moon.kingdom + " · tracked from Checkpoint: " + cpName(moon)); box.appendChild(k);
+    const n = document.createElement("div"); n.className = "vs-sel-moon"; n.textContent = moon.label || moon.name; box.appendChild(n);
     const pill = document.createElement("span"); pill.className = "tier-pill" + (TIER_LABEL[tier] ? " " + tier : ""); pill.textContent = label || tier; box.appendChild(pill);
     const chip = document.createElement("div"); chip.className = "option-chip" + (TIER_LABEL[tier] ? " " + tier : "");
     if(ctx.group.length) appendAndGroupIcons(chip, ctx.group); else chip.textContent = "Free";
@@ -6815,7 +6959,7 @@ const VIDEO_SUBMIT = {
         if(up.error) throw up.error;
         const ins = await sb.from("submissions").insert({
           filename: fname, file_path: path,
-          kingdom: ctx.moon.kingdom, moon: ctx.moon.name, tier: ctx.tier, branch: ctx.idx,
+          kingdom: ctx.moon.kingdom, moon: ctx.moon.label || ctx.moon.name, tier: ctx.tier, branch: ctx.idx,
           submitter: ($("vsName").value || "").trim().slice(0, 40) || null,
           size_bytes: f.size,
         });
@@ -6830,7 +6974,7 @@ const VIDEO_SUBMIT = {
       subBtn.disabled = true; setMsg(msg, "Uploading…");
       try{
         const fd = new FormData();
-        fd.append("file", renamed, fname); fd.append("filename", fname); fd.append("kingdom", ctx.moon.kingdom); fd.append("moon", ctx.moon.name);
+        fd.append("file", renamed, fname); fd.append("filename", fname); fd.append("kingdom", ctx.moon.kingdom); fd.append("moon", ctx.moon.label || ctx.moon.name);
         fd.append("tier", ctx.tier); fd.append("branch", ctx.idx); fd.append("submitter", $("vsName").value);
         const r = await fetch(VIDEO_SUBMIT.endpoint, { method:"POST", body:fd });
         if(!r.ok) throw new Error("HTTP "+r.status);
@@ -6884,6 +7028,11 @@ const VIDEO_SUBMIT = {
     Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].forEach(moon => slotsFor(moon).forEach(sl => {
       const n = videoAutoName(moon.name, sl.tier, sl.idx);
       if(!m.has(n)) m.set(n, { kingdom:k, moon, slot:sl, ok:isSubmittable(moon) });
+    })));
+    // Checkpoint (warp point) nodes are submittable too — they aren't moons.
+    Object.keys(KINGDOM_NODE_DATA).forEach(k => getCheckpointVariants(k).forEach(v => slotsFor(v.moon).forEach(sl => {
+      const n = videoAutoName(v.moon.name, sl.tier, sl.idx);
+      if(!m.has(n)) m.set(n, { kingdom:k, moon:v.moon, slot:sl, ok:true });
     })));
     return m;
   }
@@ -7037,7 +7186,7 @@ const VIDEO_SUBMIT = {
     // Everything below comes from the database, i.e. from strangers -> only ever set via textContent.
     const info = el("div", "op-info");
     if(okHit){
-      info.appendChild(el("b", null, hit.moon.name));
+      info.appendChild(el("b", null, hit.moon.label || hit.moon.name));
       info.appendChild(document.createTextNode(" "));
       info.appendChild(el("small", null, hit.kingdom + " · " + hit.slot.label + " #" + hit.slot.idx + (already ? " · ⚠ replaces existing" : "")));
     } else {
@@ -7090,7 +7239,7 @@ const VIDEO_SUBMIT = {
       const okHit = hit && hit.ok, already = okHit ? await logicVideoExists(base) : false;
       const url = URL.createObjectURL(f), row = document.createElement("div"); row.className = "op-row";
       row.innerHTML = (ext(f)===".webp" ? '<img src="'+url+'" alt="">' : '<video src="'+url+'" controls muted loop playsinline></video>')
-        + '<div class="op-info">' + (okHit ? '<b>'+esc(hit.moon.name)+'</b> <small>'+esc(hit.kingdom)+' · '+esc(hit.slot.label)+' #'+hit.slot.idx+(already?' · ⚠ replaces existing':'')+'</small>'
+        + '<div class="op-info">' + (okHit ? '<b>'+esc(hit.moon.label || hit.moon.name)+'</b> <small>'+esc(hit.kingdom)+' · '+esc(hit.slot.label)+' #'+hit.slot.idx+(already?' · ⚠ replaces existing':'')+'</small>'
           : '<span style="color:var(--red)">✗ '+esc(f.name)+(hit?' (not submittable)':' (no match)')+'</span>') + '</div>';
       const ap = document.createElement("button"); ap.className = "vs-btn green"; ap.textContent = "Approve"; ap.disabled = !okHit;
       const rj = document.createElement("button"); rj.className = "vs-btn red"; rj.textContent = "✕"; rj.onclick = () => row.remove();
