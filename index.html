@@ -1631,7 +1631,7 @@
 
 
 
-<a class="corner-btn" id="seeExample" href="https://github.com/BaconFearMC/Odyssey-Logic-Viewer/blob/main/assets/logicvideos/bonneterblockadecasual1.mp4" target="_blank" rel="noopener"><span>See an Example</span></a>
+<button class="corner-btn" id="seeExample" type="button"><span>See an Example</span></button>
 
 <button class="corner-btn" id="approveToggle" type="button" aria-label="Approve videos" style="right:24px; top:150px; display:none;"><span>Approve Videos</span></button>
 
@@ -6649,6 +6649,17 @@ const VIDEO_SUBMIT = {
   }
 
   // ---- submit dialog ---------------------------------------------------
+  // "See an Example" = same as clicking Cap Kingdom > Bonneter Blockade > Casual route 1 (bonneterblockadecasual1.mp4).
+  $("seeExample").addEventListener("click", () => {
+    const moon = (KINGDOMS["Cap Kingdom"] || []).find(m => m.name === "Bonneter Blockade");
+    const lane = moon && (moon.tierLanes || []).find(l => l.tier === "casual");
+    const group = lane && lane.groups[0];
+    if(!moon || !group){ showNothingYetToast("Example moon not found."); return; }
+    findLogicVideo(videoAutoName(moon.name, "casual", 1), mediaEl => {
+      if(mediaEl) openLogicVideo(moon, "casual", lane.label, group, mediaEl);
+      else window.open("https://github.com/BaconFearMC/Odyssey-Logic-Viewer/blob/main/assets/logicvideos/bonneterblockadecasual1.mp4", "_blank", "noopener");
+    });
+  });
   window.vsSelect = function(moon, tier, label, group, idx){
     ctx = { moon, tier, label, idx, group: group || [] };
     const box = $("vsSel"); box.innerHTML = "";
