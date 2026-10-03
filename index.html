@@ -192,7 +192,18 @@
   .vs-result small{ color:var(--text-dim); }
   .vs-ownerbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:11px; color:var(--text-dim); }
   .vs-ownerbtn{ background:none; border:1px solid var(--border); color:var(--text-dim); padding:3px 8px; font:inherit; font-size:11px; cursor:pointer; }
-  .vs-tab[data-tab=review]{ display:none; } .vs-owner .vs-tab[data-tab=review]{ display:block; }
+  .vs-rules{ max-height:none; }
+  .vs-rules h4{ margin:12px 0 4px; font-size:12px; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; }
+  .vs-rules p{ margin:4px 0; } .vs-legend{ color:var(--text-dim); }
+  .vs-rules ul{ margin:0; padding-left:20px; } .vs-rules ul ul{ margin-top:2px; }
+  .vs-sub{ color:var(--text-dim); }
+  .vs-rules{ max-height:34vh; overflow-y:auto; }
+  .vs-ownerbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:11px; color:var(--text-dim); }
+  .vs-ownerbtn{ background:none; border:1px solid var(--border); color:var(--text-dim); padding:3px 8px; font:inherit; font-size:11px; cursor:pointer; }
+  .vs-tabs{ display:none; } .vs-owner .vs-tabs{ display:flex; }
+  .vs-notice{ background:var(--gold-light); border:1px solid var(--gold); padding:9px 12px; margin-bottom:12px; font-size:13px; color:var(--text); }
+  .vs-notice b{ color:var(--gold); }
+  .vs-cp{ font-size:12px; color:var(--text-dim); margin:-4px 0 10px; } .vs-cp b{ color:var(--gold); }
   @media (max-width:640px){ .vs-row{ grid-template-columns:1fr; } .vs-queue-item{ grid-template-columns:1fr; } }
 
   /* ---- Title plate --------------------------------------------------
@@ -1586,45 +1597,102 @@
 <div class="vs-overlay" id="vsOverlay">
   <div class="vs-modal" role="dialog" aria-label="Video submitter">
     <button type="button" class="vs-close" id="vsClose" aria-label="Close">&times;</button>
-    <h2 class="vs-title">Logic Video Submitter</h2>
+    <h2 class="vs-title">Logic Video Submission</h2>
     <div class="vs-ownerbar"><span id="vsOwnerState">Submissions are reviewed by the site owner.</span><button type="button" class="vs-ownerbtn" id="vsOwnerBtn">Owner login</button></div>
     <div class="vs-tabs">
       <button type="button" class="vs-tab active" data-tab="submit">Submit</button>
       <button type="button" class="vs-tab" data-tab="review">Review (Owner)</button>
     </div>
-
     <div class="vs-pane active" id="vsPaneSubmit">
-      <div class="vs-rules"><h3>Submission rules</h3><ol id="vsRulesList"></ol></div>
-      <div class="vs-picker">
-        <h3>Quick fill — click a logic level + abilities</h3>
-        <div class="vs-tierbar" id="vsTierBar"></div>
-        <div class="vs-abgrid" id="vsAbGrid"></div>
-        <div class="vs-results" id="vsResults"></div>
-      </div>
-      <div class="vs-row">
-        <div class="vs-field"><label for="vsKingdom">Kingdom</label><select id="vsKingdom"></select></div>
-        <div class="vs-field"><label for="vsMoon">Moon</label><select id="vsMoon"></select></div>
-      </div>
-      <div class="vs-row one">
-        <div class="vs-field"><label for="vsBranch">Route (tier + branch)</label><select id="vsBranch"></select></div>
-      </div>
-      <div class="vs-row">
-        <div class="vs-field"><label for="vsName">Your name / tag (optional)</label><input type="text" id="vsName" maxlength="40"></div>
-        <div class="vs-field"><label for="vsFile">Video file</label><input type="file" id="vsFile"></div>
-      </div>
-      <div class="vs-row one">
-        <div class="vs-field"><label for="vsNote">Note to reviewer (optional)</label><input type="text" id="vsNote" maxlength="200"></div>
-      </div>
-      <div class="vs-autoname"><small>Auto filename</small><span id="vsAutoName">—</span></div>
-      <ul class="vs-checks" id="vsChecks"></ul>
-      <label class="vs-agree"><input type="checkbox" id="vsAgree"> <span>I've read the rules and this clip follows them.</span></label>
-      <button type="button" class="vs-btn" id="vsSubmitBtn" disabled>Submit for approval</button>
-      <div class="vs-msg" id="vsMsg"></div>
+    <div class="vs-notice"><b>Checkpoint Moons only.</b> Only Moons that are linked to a <b>Checkpoint</b> can be submitted right now. Moons tracked from Custom Nodes (or with no Checkpoint) are not available in the list below. The Checkpoint each Moon is tracked from is shown next to its name — start your clip at or near it.</div>
+
+    <div class="vs-rules">
+      <h3>Requirements</h3>
+      <p class="vs-legend"><b>*</b> = REQUIRED for video submission (I'm a stickler) &nbsp;·&nbsp; <b>!</b> = RECOMMENDED setting</p>
+      <p><b>60 Second Maximum.</b> File names are automatic — pick the Moon and Logic Level below and the name is generated for you. Don't rename it.</p>
+
+      <h4>General</h4>
+      <ul>
+        <li>Please refrain from doing any Moons that are majorly incorrect.
+          <ul><li>Example: <i>Through the Freezing Waterway</i> in Sand Kingdom is marked as Free because it is marked from coming from the Exit Pipe. To the end, avoid Custom Nodes and 1-Way subareas until further notice.</li></ul>
+        </li>
+      </ul>
+
+      <h4>Randomization / Logic</h4>
+      <ul>
+        <li><b>*</b> Randomize Moons: OFF <span class="vs-sub">— the custom models will still show.</span></li>
+        <li><b>!</b> Moon Requirement: 0</li>
+        <li><b>!</b> Requirement at Max <span class="vs-sub">— these will make globing through all kingdoms free.</span></li>
+        <li><b>*</b> Randomized Paintings: OFF <span class="vs-sub">— keep OFF for now. Paintings are Custom Nodes.</span></li>
+        <li><b>!</b> Randomize Kingdom Order: OFF</li>
+        <li><b>*</b> Randomize Start Kingdom State: OFF</li>
+        <li><b>*</b> Loading Zones: OFF <span class="vs-sub">— makes currently allowed subareas available easily.</span></li>
+        <li><b>*</b> Moon Rock Key: OFF</li>
+        <li><b>*</b> Ability Lock: ON <span class="vs-sub">— enable/disable based on the current requirements.</span></li>
+      </ul>
+
+      <h4>Tracker / Presentation</h4>
+      <ul>
+        <li><b>*</b> Tracker: OFF</li>
+        <li><b>*</b> Randomize Skyboxes: OFF</li>
+        <li><b>*</b> Music Rando: OFF</li>
+        <li><b>*</b> Music Source: VANILLA</li>
+        <li><b>*</b> Music Overlay: OFF <span class="vs-sub">— I'd like it to look and sound like a normal game for viewing purposes.</span></li>
+        <li><b>*</b> Fast Moon Demos: OFF</li>
+      </ul>
+
+      <h4>Minigames / Costumes</h4>
+      <ul>
+        <li><b>*</b> Easy Mini Games: OFF</li>
+        <li><b>!</b> Sheep Herding: Either 1 or OFF (basegame), up to you. I don't care either way.</li>
+        <li><b>*</b> Free Costume Moon: OFF (I'm a stickler, I know)</li>
+        <li><b>!</b> Randomize Outfits: OFF <span class="vs-sub">— I would prefer all clips as normal Mario. The only preferred exception is really hard trickjumps and the like.</span></li>
+        <li><b>!</b> Fast Doggo: Up to you :)</li>
+      </ul>
+
+      <h4>Other Randomization</h4>
+      <ul>
+        <li><b>*</b> Uncapped Coins: OFF</li>
+        <li><b>*</b> Randomize Chest Order: OFF</li>
+        <li><b>*</b> Randomize Sphynx Questions: OFF</li>
+      </ul>
+
+      <h4>Recording Requirements</h4>
+      <ul>
+        <li>Please DON'T show the entering of subareas from the outside.
+          <ul><li>At most, just show the fade-in from the inside entrance, if you choose to do those yet for previously established reasons.</li></ul>
+        </li>
+        <li>Videos should be 1 clean recording, starting at or near the established node on the logic site (see reference).</li>
+        <li>Max length 60 seconds · max size 50 MB · .mp4 or .webp.</li>
+      </ul>
+    </div>
+
+    <div class="vs-row">
+      <div class="vs-field"><label for="vsKingdom">Kingdom</label><select id="vsKingdom"></select></div>
+      <div class="vs-field"><label for="vsMoon">Which Moon?</label><select id="vsMoon"></select></div>
+    </div>
+    <div class="vs-cp" id="vsCp"></div>
+    <div class="vs-row">
+      <div class="vs-field"><label for="vsTier">Which Logic Level?</label><select id="vsTier"></select></div>
+      <div class="vs-field"><label for="vsBranch">Which route in that level?</label><select id="vsBranch"></select></div>
+    </div>
+    <div class="vs-row">
+      <div class="vs-field"><label for="vsName">Your name / tag (optional)</label><input type="text" id="vsName" maxlength="40"></div>
+      <div class="vs-field"><label for="vsFile">Video file</label><input type="file" id="vsFile" accept="video/mp4,image/webp,.mp4,.webp"></div>
+    </div>
+    <div class="vs-row one">
+      <div class="vs-field"><label for="vsNote">Note to reviewer (optional)</label><input type="text" id="vsNote" maxlength="200"></div>
+    </div>
+    <div class="vs-autoname"><small>Auto filename (generated — don't rename)</small><span id="vsAutoName">—</span></div>
+    <ul class="vs-checks" id="vsChecks"></ul>
+    <label class="vs-agree"><input type="checkbox" id="vsAgree"> <span>I've read the requirements and this clip follows them.</span></label>
+    <button type="button" class="vs-btn" id="vsSubmitBtn" disabled>Submit for approval</button>
+    <div class="vs-msg" id="vsMsg"></div>
     </div>
 
     <div class="vs-pane" id="vsPaneReview">
       <div class="vs-rules"><h3>Owner approval</h3>
-        <div>Load the submitted files, preview them, then <b>Approve</b> to write them into <code>assets/logicvideos/</code> under their auto filename. Pick your project root folder once when approving.</div>
+        <div>Load the submitted files, preview them, then <b>Approve</b> to write them into <code>assets/logicvideos/</code> under their auto filename. Pick your project root folder once when approving. Only Checkpoint-linked Moons are accepted.</div>
       </div>
       <div class="vs-row one"><div class="vs-field"><label for="vsReviewFiles">Submitted files</label><input type="file" id="vsReviewFiles" multiple accept="video/mp4,image/webp,.mp4,.webp"></div></div>
       <div id="vsQueue"></div>
@@ -6538,134 +6606,79 @@ document.addEventListener("keydown", (e) => {
 
 
 /* =========================================================
-   VIDEO SUBMITTER MODE
-   Edit VIDEO_SUBMIT below: rules, limits, and where submissions go.
+   VIDEO SUBMITTER
+   Visitors pick a Moon + Logic Level (+ route within that level); the
+   filename is generated automatically. The owner Review tab lives here too, but it is only a convenience gate: a clip only goes live when the file is written into assets/logicvideos/ in the owner's repo.
    - endpoint: "" -> submitter downloads the auto-named file to send you.
-     Set a URL (e.g. a Discord webhook / your own server) -> the file is
-     POSTed as multipart/form-data (file, filename, kingdom, moon, tier, branch, submitter, note).
-   - Approval (Review tab) writes to assets/logicvideos/ via the browser's
-     folder picker, so it only ever works on the owner's machine.
+     Set a URL (e.g. a Discord webhook) -> POSTed as multipart/form-data.
    ========================================================= */
 const VIDEO_SUBMIT = {
   enabled: 1, // 1 = show Submit Video button, 0 = hide the whole feature
-  // SHA-256 of the owner passphrase. Default passphrase is "changeme" — CHANGE IT:
-  // run in the browser console:  crypto.subtle.digest("SHA-256",new TextEncoder().encode("yourpass")).then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")))
-  ownerHash: "057ba03d6c44104863dc7361fe4578965d1887360f90a0895882e58a6248fc86",
+  // PBKDF2-SHA256 (250k iterations, salt "pml-vs-v1") of the owner passphrase. Default passphrase: "changeme" — CHANGE IT.
+  // In the browser console:  vsMakeHash("yourpass").then(console.log)   then paste the result here.
+  ownerHash: "b0d1a2567884df20fd565de18c06b6f04a50cbda2a11ce64408d0db84cd7e13b",
   endpoint: "",
   contactNote: "Send the downloaded file to the site owner (Discord/DM) so it can be reviewed.",
   maxMB: 50,
   maxSeconds: 60,
   exts: [".mp4", ".webp"],
-  rules: [
-    "Show the full route for the selected moon branch, start to finish.",
-    "Max length: 60 seconds. Max size: 50 MB. Formats: .mp4 or .webp.",
-    "No watermarks, overlays, commentary, or music — gameplay only.",
-    "Must be Super Mario Odyssey on the randomizer logic being shown.",
-    "Pick the correct moon / tier / branch — the filename is generated for you, don't rename it.",
-    "Every clip is reviewed by the owner and may be rejected or replaced.",
-  ],
 };
 
 (function(){
   if(!VIDEO_SUBMIT.enabled){ ["submitToggle","vsOverlay"].forEach(i => { const e = document.getElementById(i); if(e) e.remove(); }); return; }
   const $ = id => document.getElementById(id);
-  const ov = $("vsOverlay"), kSel = $("vsKingdom"), mSel = $("vsMoon"), bSel = $("vsBranch");
+  const ov = $("vsOverlay"), kSel = $("vsKingdom"), mSel = $("vsMoon"), tSel = $("vsTier"), bSel = $("vsBranch");
   const fileIn = $("vsFile"), agree = $("vsAgree"), subBtn = $("vsSubmitBtn");
-  let fileState = { ok:false, durationOk:true };
+  let fileState = { ok:false, durationOk:true, dur:null };
 
-  $("vsRulesList").innerHTML = VIDEO_SUBMIT.rules.map(r => "<li>" + r.replace(/</g,"&lt;") + "</li>").join("");
-
-  // ---- slot model: every (moon, tier, branch) -> autoname -----------
   function tokenText(group){
     if(!group || !group.length) return "Free";
     let toks = group;
     try { toks = sortedTokensForDisplay(group); } catch(e){}
     return toks.map(t => (ICON_MANIFEST[t] && ICON_MANIFEST[t].label) || t).join(" + ");
   }
+  // Every (tier, branch index within tier) for a moon -> autoname slot.
   function slotsFor(moon){
     if(!moon.tierLanes || !moon.tierLanes.length)
-      return [{ tier:"free", label:"Free", idx:1, desc:"Free", tokens:[] }];
+      return [{ tier:"free", label:"Free", idx:1, desc:"Free" }];
     const out = [];
     moon.tierLanes.forEach(l => l.groups.forEach((g, i) =>
-      out.push({ tier:l.tier, label:l.label, idx:i+1, desc:tokenText(g), tokens:Array.from(g) })));
+      out.push({ tier:l.tier, label:l.label, idx:i+1, desc:tokenText(g) })));
     return out;
   }
-  function allSlotNames(){
-    const m = new Map();
-    Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].forEach(moon => slotsFor(moon).forEach(sl => {
-      const n = videoAutoName(moon.name, sl.tier, sl.idx);
-      if(!m.has(n)) m.set(n, { kingdom:k, moon:moon.name, slot:sl });
-    })));
-    return m;
-  }
+  // Only moons tracked from a real Checkpoint (not a Custom Node, not "no checkpoint") can be submitted.
+  const eligible = moon => !!moon.checkpoint && moon.checkpointType === "checkpoint";
+  const cpName = moon => moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "");
   const curMoon = () => (KINGDOMS[kSel.value] || [])[+mSel.value];
-  const curSlot = () => { const m = curMoon(); return m ? slotsFor(m)[+bSel.value] : null; };
+  const curSlots = () => { const m = curMoon(); return m ? slotsFor(m).filter(s => s.tier === tSel.value) : []; };
+  const curSlot = () => curSlots()[+bSel.value] || null;
   const ext = f => { const m = /\.[^.]+$/.exec(f.name || ""); return m ? m[0].toLowerCase() : ""; };
   const autoNameNow = () => { const m = curMoon(), sl = curSlot(); return m && sl ? videoAutoName(m.name, sl.tier, sl.idx) : ""; };
+  const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
 
   function fillKingdoms(){
-    const names = (typeof KINGDOM_ORDER !== "undefined" && KINGDOM_ORDER.length) ? KINGDOM_ORDER : Object.keys(KINGDOMS);
-    kSel.innerHTML = names.map(n => '<option value="'+n.replace(/"/g,"&quot;")+'">'+n+'</option>').join("");
+    const all = KINGDOM_ORDER.length ? KINGDOM_ORDER : Object.keys(KINGDOMS);
+    const names = all.filter(k => (KINGDOMS[k] || []).some(eligible));
+    kSel.innerHTML = names.map(n => '<option value="'+esc(n)+'">'+esc(n)+'</option>').join("");
     fillMoons();
   }
   function fillMoons(){
-    mSel.innerHTML = (KINGDOMS[kSel.value] || []).map((m,i) => '<option value="'+i+'">'+m.name+'</option>').join("");
+    mSel.innerHTML = (KINGDOMS[kSel.value] || []).map((m,i) => eligible(m) ? '<option value="'+i+'">'+esc(m.name)+' — ✓ '+esc(cpName(m))+'</option>' : "").join("");
+    fillTiers();
+  }
+  function fillTiers(){
+    const m = curMoon();
+    $("vsCp").innerHTML = m ? 'Tracked from Checkpoint: <b>'+esc(cpName(m))+'</b> — start your clip at or near it.' : "";
+    const counts = {}, labels = {}, order = [];
+    (m ? slotsFor(m) : []).forEach(s => { if(!(s.tier in counts)){ counts[s.tier] = 0; labels[s.tier] = s.label; order.push(s.tier); } counts[s.tier]++; });
+    tSel.innerHTML = order.map(t => '<option value="'+t+'">'+labels[t]+' ('+counts[t]+' route'+(counts[t]===1?'':'s')+')</option>').join("");
     fillBranches();
   }
   function fillBranches(){
-    const m = curMoon();
-    bSel.innerHTML = m ? slotsFor(m).map((sl,i) => '<option value="'+i+'">'+sl.label+' #'+sl.idx+' — '+sl.desc+'</option>').join("") : "";
+    bSel.innerHTML = curSlots().map((s,i) => '<option value="'+i+'">#'+s.idx+' — '+esc(s.desc)+'</option>').join("");
     refresh();
   }
 
-  // ---- quick-fill picker: tier + abilities -> matching routes -------------
-  let pickTier = null; const pickAbs = new Set(); let pickBuilt = false;
-  function buildPicker(){
-    if(pickBuilt) return; pickBuilt = true;
-    const tb = $("vsTierBar");
-    ["free"].concat(TIER_ORDER).forEach(t => {
-      const b = document.createElement("button"); b.type = "button"; b.className = "vs-tierbtn"; b.dataset.tier = t;
-      b.textContent = t === "free" ? "Free" : TIER_LABEL[t];
-      b.onclick = () => { pickTier = pickTier === t ? null : t; tb.querySelectorAll(".vs-tierbtn").forEach(x => x.classList.toggle("active", x.dataset.tier === pickTier)); runPicker(); };
-      tb.appendChild(b);
-    });
-    const toks = new Set();
-    Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].forEach(m => slotsFor(m).forEach(sl => sl.tokens.forEach(t => toks.add(t)))));
-    const grid = $("vsAbGrid");
-    Array.from(toks).sort((a,b) => (((ICON_MANIFEST[a]||{}).label)||a).localeCompare(((ICON_MANIFEST[b]||{}).label)||b)).forEach(t => {
-      const b = document.createElement("button"); b.type = "button"; b.className = "vs-ab"; b.dataset.token = t;
-      b.title = ((ICON_MANIFEST[t]||{}).label) || t; b.appendChild(makeIcon(t));
-      b.onclick = () => { pickAbs.has(t) ? pickAbs.delete(t) : pickAbs.add(t); b.classList.toggle("on", pickAbs.has(t)); runPicker(); };
-      grid.appendChild(b);
-    });
-  }
-  function runPicker(){
-    const box = $("vsResults"); box.innerHTML = "";
-    if(!pickTier && !pickAbs.size){ box.innerHTML = '<small style="color:var(--text-dim)">Pick a level and/or abilities to find the route.</small>'; return; }
-    const res = [];
-    Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].forEach((m, mi) => slotsFor(m).forEach((sl, si) => {
-      if(pickTier && sl.tier !== pickTier) return;
-      if(![...pickAbs].every(a => sl.tokens.includes(a))) return;
-      res.push({ k, mi, si, m, sl, exact: sl.tokens.length === pickAbs.size });
-    })));
-    res.sort((a,b) => (b.exact - a.exact) || (a.sl.tokens.length - b.sl.tokens.length));
-    if(!res.length){ box.innerHTML = '<small style="color:var(--red)">No route matches that combination.</small>'; return; }
-    res.slice(0, 60).forEach(r => {
-      const btn = document.createElement("button"); btn.type = "button"; btn.className = "vs-result";
-      btn.innerHTML = '<b>'+r.m.name+'</b> <small>· '+r.k+' · '+r.sl.label+' #'+r.sl.idx+' — '+r.sl.desc+(r.exact?' ✓ exact':'')+'</small>';
-      btn.onclick = () => { applyPick(r); box.querySelectorAll(".vs-result").forEach(x => x.classList.toggle("picked", x === btn)); };
-      box.appendChild(btn);
-    });
-    if(res.length > 60){ const n = document.createElement("small"); n.style.color = "var(--text-dim)"; n.textContent = "…"+(res.length-60)+" more — add more abilities to narrow."; box.appendChild(n); }
-    const exact = res.filter(r => r.exact);
-    if(res.length === 1) { applyPick(res[0]); box.firstChild.classList.add("picked"); }
-    else if(exact.length === 1 && pickAbs.size) { applyPick(exact[0]); box.firstChild.classList.add("picked"); }
-  }
-  function applyPick(r){
-    kSel.value = r.k; fillMoons(); mSel.value = String(r.mi); fillBranches(); bSel.value = String(r.si); refresh();
-  }
-
-  // ---- rule checks ---------------------------------------------------
   function refresh(){
     const name = autoNameNow(), f = fileIn.files[0];
     $("vsAutoName").textContent = name ? name + (f ? ext(f) : ".mp4") : "—";
@@ -6677,9 +6690,11 @@ const VIDEO_SUBMIT = {
       const sizeOk = f.size <= VIDEO_SUBMIT.maxMB*1024*1024;
       add(extOk?"ok":"bad", "Format "+ext(f)+" (allowed: "+VIDEO_SUBMIT.exts.join(", ")+")");
       add(sizeOk?"ok":"bad", "Size "+(f.size/1048576).toFixed(1)+" MB (max "+VIDEO_SUBMIT.maxMB+" MB)");
-      if(fileState.dur == null && ext(f)===".mp4") add("wait","Checking length…");
-      else if(ext(f)===".mp4"){ const dOk = fileState.dur <= VIDEO_SUBMIT.maxSeconds; fileState.durationOk = dOk;
-        add(dOk?"ok":"bad","Length "+fileState.dur.toFixed(1)+"s (max "+VIDEO_SUBMIT.maxSeconds+"s)"); }
+      if(ext(f)===".mp4"){
+        if(fileState.dur == null) add("wait","Checking length…");
+        else { fileState.durationOk = fileState.dur <= VIDEO_SUBMIT.maxSeconds;
+          add(fileState.durationOk?"ok":"bad","Length "+fileState.dur.toFixed(1)+"s (60 second maximum)"); }
+      }
       fileState.ok = extOk && sizeOk && (ext(f)!==".mp4" || (fileState.dur != null && fileState.durationOk));
     }
     $("vsChecks").innerHTML = rows.join("");
@@ -6698,11 +6713,11 @@ const VIDEO_SUBMIT = {
     refresh();
   });
   kSel.addEventListener("change", fillMoons);
-  mSel.addEventListener("change", fillBranches);
+  mSel.addEventListener("change", fillTiers);
+  tSel.addEventListener("change", fillBranches);
   bSel.addEventListener("change", refresh);
   agree.addEventListener("change", refresh);
 
-  // ---- submit --------------------------------------------------------
   function setMsg(el, t, err){ el.textContent = t; el.classList.toggle("err", !!err); }
   subBtn.addEventListener("click", async () => {
     const f = fileIn.files[0], m = curMoon(), sl = curSlot(); if(!f || !m || !sl) return;
@@ -6728,15 +6743,13 @@ const VIDEO_SUBMIT = {
     }
   });
 
-  // ---- owner gate ----------------------------------------------------
-  // UI gate only: this is a static site, so a determined visitor can edit
-  // their own copy of the page. It can't change YOUR site's files though —
-  // approving only writes to the folder picked on the approver's own computer.
+  // ---- owner gate (UI convenience only; see header comment) -----------
   const isOwner = () => sessionStorage.getItem("vsOwner") === "1";
-  async function sha256(t){
-    const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
-    return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,"0")).join("");
-  }
+  window.vsMakeHash = async pw => {
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveBits"]);
+    const bits = await crypto.subtle.deriveBits({ name:"PBKDF2", salt:new TextEncoder().encode("pml-vs-v1"), iterations:250000, hash:"SHA-256" }, key, 256);
+    return Array.from(new Uint8Array(bits)).map(x => x.toString(16).padStart(2,"0")).join("");
+  };
   function paintOwner(){
     const on = isOwner();
     ov.classList.toggle("vs-owner", on);
@@ -6751,12 +6764,25 @@ const VIDEO_SUBMIT = {
     if(isOwner()){ sessionStorage.removeItem("vsOwner"); paintOwner(); return; }
     const pw = prompt("Owner passphrase:"); if(pw == null) return;
     try{
-      if((await sha256(pw)) === VIDEO_SUBMIT.ownerHash){ sessionStorage.setItem("vsOwner","1"); paintOwner(); }
+      if((await window.vsMakeHash(pw)) === VIDEO_SUBMIT.ownerHash){ sessionStorage.setItem("vsOwner","1"); paintOwner(); }
       else alert("Wrong passphrase.");
     }catch(e){ alert("Owner login needs https or localhost."); }
   });
+  document.querySelectorAll(".vs-tab").forEach(t => t.addEventListener("click", () => {
+    if(t.dataset.tab === "review" && !isOwner()) return;
+    document.querySelectorAll(".vs-tab").forEach(x => x.classList.toggle("active", x === t));
+    $("vsPaneSubmit").classList.toggle("active", t.dataset.tab === "submit");
+    $("vsPaneReview").classList.toggle("active", t.dataset.tab === "review");
+  }));
 
-  // ---- review / approve ---------------------------------------------
+  function allSlotNames(){
+    const m = new Map();
+    Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].filter(eligible).forEach(moon => slotsFor(moon).forEach(sl => {
+      const n = videoAutoName(moon.name, sl.tier, sl.idx);
+      if(!m.has(n)) m.set(n, { kingdom:k, moon:moon.name, slot:sl });
+    })));
+    return m;
+  }
   let dirHandle = null;
   async function getLogicDir(){
     if(!window.showDirectoryPicker) return null;
@@ -6775,8 +6801,8 @@ const VIDEO_SUBMIT = {
       const url = URL.createObjectURL(f);
       const media = ext(f)===".webp" ? '<img src="'+url+'" alt="">' : '<video src="'+url+'" controls muted loop playsinline></video>';
       const info = hit
-        ? '<b>'+hit.moon+'</b> · '+hit.kingdom+'<br>'+hit.slot.label+' #'+hit.slot.idx+' — '+hit.slot.desc+'<br><code>assets/logicvideos/'+base+ext(f)+'</code>'+(already?'<br><span style="color:var(--red)">⚠ A clip already exists here — approving replaces it.</span>':'')
-        : '<span style="color:var(--red)">✗ "'+f.name+'" doesn\'t match any moon/branch filename.</span>';
+        ? '<b>'+esc(hit.moon)+'</b> · '+esc(hit.kingdom)+'<br>'+esc(hit.slot.label)+' #'+hit.slot.idx+' — '+esc(hit.slot.desc)+'<br><code>assets/logicvideos/'+esc(base+ext(f))+'</code>'+(already?'<br><span style="color:var(--red)">⚠ A clip already exists here — approving replaces it.</span>':'')
+        : '<span style="color:var(--red)">✗ "'+esc(f.name)+'" doesn\'t match any Checkpoint-linked moon/branch filename.</span>';
       item.innerHTML = media + '<div class="vs-queue-info">'+info+'<div class="vs-queue-actions"></div></div>';
       const acts = item.querySelector(".vs-queue-actions");
       const ap = document.createElement("button"); ap.className = "vs-btn green"; ap.textContent = "Approve"; ap.disabled = !hit;
@@ -6802,18 +6828,12 @@ const VIDEO_SUBMIT = {
     }
   });
 
-  // ---- open/close/tabs ----------------------------------------------
-  function open(){ paintOwner(); fillKingdoms(); buildPicker(); runPicker(); ov.classList.add("open"); $("submitToggle").classList.add("active"); }
+  function open(){ paintOwner(); fillKingdoms(); ov.classList.add("open"); $("submitToggle").classList.add("active"); }
   function close(){ ov.classList.remove("open"); $("submitToggle").classList.remove("active"); }
   $("submitToggle").addEventListener("click", () => ov.classList.contains("open") ? close() : open());
   $("vsClose").addEventListener("click", close);
   ov.addEventListener("click", e => { if(e.target === ov) close(); });
   document.addEventListener("keydown", e => { if(e.key === "Escape" && ov.classList.contains("open")) close(); });
-  document.querySelectorAll(".vs-tab").forEach(t => t.addEventListener("click", () => {
-    document.querySelectorAll(".vs-tab").forEach(x => x.classList.toggle("active", x === t));
-    $("vsPaneSubmit").classList.toggle("active", t.dataset.tab === "submit");
-    $("vsPaneReview").classList.toggle("active", t.dataset.tab === "review");
-  }));
 })();
 
 async function init(){
