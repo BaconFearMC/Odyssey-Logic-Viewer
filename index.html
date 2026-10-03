@@ -143,6 +143,58 @@
     color:#1b1c1f;
   }
 
+  /* ---- Video Submitter mode ---------------------------------------- */
+  #submitToggle{ right:24px; top:150px; }
+  #submitToggle.active{ background:var(--worldpeace); border-color:#2b8a70; color:#10231d; }
+  .vs-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.72); display:none; align-items:center; justify-content:center; z-index:1100; padding:24px; }
+  .vs-overlay.open{ display:flex; }
+  .vs-modal{ position:relative; width:100%; max-width:860px; max-height:88vh; overflow-y:auto; background:var(--bg-panel); border:2px solid var(--gold); padding:20px 24px 24px; color:var(--text); box-shadow:var(--shadow-hover); clip-path:polygon(var(--cut-md) 0,100% 0,100% calc(100% - var(--cut-md)),calc(100% - var(--cut-md)) 100%,0 100%,0 var(--cut-md)); }
+  .vs-close{ position:absolute; top:8px; right:14px; background:none; border:none; cursor:pointer; color:var(--text-dim); font-size:28px; line-height:1; }
+  .vs-close:hover{ color:var(--red); }
+  .vs-title{ margin:0 0 12px; font-size:18px; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; }
+  .vs-tabs{ display:flex; gap:6px; margin-bottom:14px; }
+  .vs-tab{ flex:1; background:var(--bg-chip); border:1px solid var(--border); color:var(--text-dim); padding:8px; cursor:pointer; font:inherit; font-weight:700; text-transform:uppercase; font-size:12px; letter-spacing:.5px; }
+  .vs-tab.active{ background:var(--gold-light); border-color:var(--gold); color:var(--gold); }
+  .vs-pane{ display:none; } .vs-pane.active{ display:block; }
+  .vs-rules{ background:var(--bg-chip); border:1px solid var(--border); border-left:3px solid var(--gold); padding:10px 14px; margin-bottom:14px; font-size:13px; }
+  .vs-rules h3{ margin:0 0 6px; font-size:12px; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; }
+  .vs-rules ol{ margin:0; padding-left:20px; } .vs-rules li{ margin:3px 0; }
+  .vs-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+  .vs-row.one{ grid-template-columns:1fr; }
+  .vs-field label{ display:block; font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-dim); margin-bottom:3px; }
+  .vs-field select,.vs-field input[type=text],.vs-field textarea{ width:100%; box-sizing:border-box; background:var(--bg); color:var(--text); border:1px solid var(--border); padding:7px 8px; font:inherit; font-size:13px; }
+  .vs-field input[type=file]{ color:var(--text-dim); font-size:12px; width:100%; }
+  .vs-autoname{ background:var(--bg); border:1px dashed var(--gold); padding:8px 10px; font-family:ui-monospace,Consolas,monospace; font-size:13px; color:var(--gold); word-break:break-all; margin-bottom:10px; }
+  .vs-autoname small{ display:block; color:var(--text-dim); font-family:inherit; font-size:10px; text-transform:uppercase; letter-spacing:.5px; margin-bottom:2px; }
+  .vs-checks{ list-style:none; margin:0 0 10px; padding:0; font-size:12px; }
+  .vs-checks li{ padding:2px 0; } .vs-checks .ok{ color:var(--worldpeace); } .vs-checks .bad{ color:var(--red); } .vs-checks .wait{ color:var(--text-dim); }
+  .vs-agree{ display:flex; gap:8px; align-items:flex-start; font-size:12px; margin-bottom:12px; }
+  .vs-btn{ background:var(--gold); color:#1b1c1f; border:none; padding:9px 18px; font:inherit; font-weight:800; text-transform:uppercase; letter-spacing:.5px; font-size:12px; cursor:pointer; }
+  .vs-btn:disabled{ background:var(--bg-chip); color:var(--text-dim); cursor:not-allowed; }
+  .vs-btn.green{ background:var(--worldpeace); } .vs-btn.red{ background:var(--red); color:#fff; } .vs-btn.ghost{ background:var(--bg-chip); color:var(--text); border:1px solid var(--border); }
+  .vs-msg{ margin-top:10px; font-size:12px; color:var(--worldpeace); } .vs-msg.err{ color:var(--red); }
+  .vs-queue-item{ display:grid; grid-template-columns:200px 1fr; gap:14px; background:var(--bg-chip); border:1px solid var(--border); padding:10px; margin-bottom:10px; }
+  .vs-queue-item video,.vs-queue-item img{ width:200px; max-height:130px; background:#000; object-fit:contain; }
+  .vs-queue-info{ font-size:12px; } .vs-queue-info b{ color:var(--gold); }
+  .vs-queue-actions{ display:flex; gap:8px; margin-top:8px; }
+  .vs-picker{ background:var(--bg-chip); border:1px solid var(--border); padding:10px 12px; margin-bottom:12px; }
+  .vs-picker h3{ margin:0 0 6px; font-size:12px; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; }
+  .vs-tierbar{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .vs-tierbtn{ background:var(--bg); border:1px solid var(--border); color:var(--text-dim); padding:5px 12px; cursor:pointer; font:inherit; font-size:12px; font-weight:700; text-transform:uppercase; }
+  .vs-tierbtn.active{ background:var(--gold-light); border-color:var(--gold); color:var(--gold); }
+  .vs-abgrid{ display:flex; flex-wrap:wrap; gap:4px; max-height:120px; overflow-y:auto; margin-bottom:8px; padding:4px; background:var(--bg); border:1px solid var(--border); }
+  .vs-ab{ background:none; border:2px solid transparent; padding:1px; cursor:pointer; opacity:.55; }
+  .vs-ab:hover{ opacity:1; } .vs-ab.on{ opacity:1; border-color:var(--gold); background:var(--gold-light); }
+  .vs-ab .icon-wrap,.vs-ab .icon,.vs-ab .icon-fallback{ width:34px; height:34px; font-size:12px; pointer-events:none; }
+  .vs-results{ max-height:150px; overflow-y:auto; font-size:12px; }
+  .vs-result{ display:block; width:100%; text-align:left; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:5px 8px; margin-bottom:3px; cursor:pointer; font:inherit; font-size:12px; }
+  .vs-result:hover,.vs-result.picked{ border-color:var(--gold); } .vs-result.picked{ background:var(--gold-light); }
+  .vs-result small{ color:var(--text-dim); }
+  .vs-ownerbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:11px; color:var(--text-dim); }
+  .vs-ownerbtn{ background:none; border:1px solid var(--border); color:var(--text-dim); padding:3px 8px; font:inherit; font-size:11px; cursor:pointer; }
+  .vs-tab[data-tab=review]{ display:none; } .vs-owner .vs-tab[data-tab=review]{ display:block; }
+  @media (max-width:640px){ .vs-row{ grid-template-columns:1fr; } .vs-queue-item{ grid-template-columns:1fr; } }
+
   /* ---- Title plate --------------------------------------------------
      A stage-title banner rather than a plain <h1>: chamfered slab with a
      double-line gold border and a short accent tick underneath, echoing
@@ -1522,6 +1574,64 @@
   <span id="viewModeToggleLabel">By Moon</span>
 </button>
 
+
+
+<button class="corner-btn" id="submitToggle" type="button" aria-label="Open video submitter">
+  <span class="icon-svg" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+  </span>
+  <span>Submit Video</span>
+</button>
+
+<div class="vs-overlay" id="vsOverlay">
+  <div class="vs-modal" role="dialog" aria-label="Video submitter">
+    <button type="button" class="vs-close" id="vsClose" aria-label="Close">&times;</button>
+    <h2 class="vs-title">Logic Video Submitter</h2>
+    <div class="vs-ownerbar"><span id="vsOwnerState">Submissions are reviewed by the site owner.</span><button type="button" class="vs-ownerbtn" id="vsOwnerBtn">Owner login</button></div>
+    <div class="vs-tabs">
+      <button type="button" class="vs-tab active" data-tab="submit">Submit</button>
+      <button type="button" class="vs-tab" data-tab="review">Review (Owner)</button>
+    </div>
+
+    <div class="vs-pane active" id="vsPaneSubmit">
+      <div class="vs-rules"><h3>Submission rules</h3><ol id="vsRulesList"></ol></div>
+      <div class="vs-picker">
+        <h3>Quick fill — click a logic level + abilities</h3>
+        <div class="vs-tierbar" id="vsTierBar"></div>
+        <div class="vs-abgrid" id="vsAbGrid"></div>
+        <div class="vs-results" id="vsResults"></div>
+      </div>
+      <div class="vs-row">
+        <div class="vs-field"><label for="vsKingdom">Kingdom</label><select id="vsKingdom"></select></div>
+        <div class="vs-field"><label for="vsMoon">Moon</label><select id="vsMoon"></select></div>
+      </div>
+      <div class="vs-row one">
+        <div class="vs-field"><label for="vsBranch">Route (tier + branch)</label><select id="vsBranch"></select></div>
+      </div>
+      <div class="vs-row">
+        <div class="vs-field"><label for="vsName">Your name / tag (optional)</label><input type="text" id="vsName" maxlength="40"></div>
+        <div class="vs-field"><label for="vsFile">Video file</label><input type="file" id="vsFile"></div>
+      </div>
+      <div class="vs-row one">
+        <div class="vs-field"><label for="vsNote">Note to reviewer (optional)</label><input type="text" id="vsNote" maxlength="200"></div>
+      </div>
+      <div class="vs-autoname"><small>Auto filename</small><span id="vsAutoName">—</span></div>
+      <ul class="vs-checks" id="vsChecks"></ul>
+      <label class="vs-agree"><input type="checkbox" id="vsAgree"> <span>I've read the rules and this clip follows them.</span></label>
+      <button type="button" class="vs-btn" id="vsSubmitBtn" disabled>Submit for approval</button>
+      <div class="vs-msg" id="vsMsg"></div>
+    </div>
+
+    <div class="vs-pane" id="vsPaneReview">
+      <div class="vs-rules"><h3>Owner approval</h3>
+        <div>Load the submitted files, preview them, then <b>Approve</b> to write them into <code>assets/logicvideos/</code> under their auto filename. Pick your project root folder once when approving.</div>
+      </div>
+      <div class="vs-row one"><div class="vs-field"><label for="vsReviewFiles">Submitted files</label><input type="file" id="vsReviewFiles" multiple accept="video/mp4,image/webp,.mp4,.webp"></div></div>
+      <div id="vsQueue"></div>
+      <div class="vs-msg" id="vsReviewMsg"></div>
+    </div>
+  </div>
+</div>
 
 <h1><img class="icon-svg" src="icon/ui-star.png" alt="" onerror="this.style.display='none'">Power Moon Logic Charts</h1>
 
@@ -6425,6 +6535,284 @@ videoOverlay.addEventListener("click", (e) => { if(e.target === videoOverlay) cl
 document.addEventListener("keydown", (e) => {
   if(e.key === "Escape" && videoOverlay.classList.contains("open")) closeLogicVideo();
 });
+
+
+/* =========================================================
+   VIDEO SUBMITTER MODE
+   Edit VIDEO_SUBMIT below: rules, limits, and where submissions go.
+   - endpoint: "" -> submitter downloads the auto-named file to send you.
+     Set a URL (e.g. a Discord webhook / your own server) -> the file is
+     POSTed as multipart/form-data (file, filename, kingdom, moon, tier, branch, submitter, note).
+   - Approval (Review tab) writes to assets/logicvideos/ via the browser's
+     folder picker, so it only ever works on the owner's machine.
+   ========================================================= */
+const VIDEO_SUBMIT = {
+  // SHA-256 of the owner passphrase. Default passphrase is "changeme" — CHANGE IT:
+  // run in the browser console:  crypto.subtle.digest("SHA-256",new TextEncoder().encode("yourpass")).then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")))
+  ownerHash: "057ba03d6c44104863dc7361fe4578965d1887360f90a0895882e58a6248fc86",
+  endpoint: "",
+  contactNote: "Send the downloaded file to the site owner (Discord/DM) so it can be reviewed.",
+  maxMB: 50,
+  maxSeconds: 60,
+  exts: [".mp4", ".webp"],
+  rules: [
+    "Show the full route for the selected moon branch, start to finish.",
+    "Max length: 60 seconds. Max size: 50 MB. Formats: .mp4 or .webp.",
+    "No watermarks, overlays, commentary, or music — gameplay only.",
+    "Must be Super Mario Odyssey on the randomizer logic being shown.",
+    "Pick the correct moon / tier / branch — the filename is generated for you, don't rename it.",
+    "Every clip is reviewed by the owner and may be rejected or replaced.",
+  ],
+};
+
+(function(){
+  const $ = id => document.getElementById(id);
+  const ov = $("vsOverlay"), kSel = $("vsKingdom"), mSel = $("vsMoon"), bSel = $("vsBranch");
+  const fileIn = $("vsFile"), agree = $("vsAgree"), subBtn = $("vsSubmitBtn");
+  let fileState = { ok:false, durationOk:true };
+
+  $("vsRulesList").innerHTML = VIDEO_SUBMIT.rules.map(r => "<li>" + r.replace(/</g,"&lt;") + "</li>").join("");
+
+  // ---- slot model: every (moon, tier, branch) -> autoname -----------
+  function tokenText(group){
+    if(!group || !group.length) return "Free";
+    let toks = group;
+    try { toks = sortedTokensForDisplay(group); } catch(e){}
+    return toks.map(t => (ICON_MANIFEST[t] && ICON_MANIFEST[t].label) || t).join(" + ");
+  }
+  function slotsFor(moon){
+    if(!moon.tierLanes || !moon.tierLanes.length)
+      return [{ tier:"free", label:"Free", idx:1, desc:"Free", tokens:[] }];
+    const out = [];
+    moon.tierLanes.forEach(l => l.groups.forEach((g, i) =>
+      out.push({ tier:l.tier, label:l.label, idx:i+1, desc:tokenText(g), tokens:Array.from(g) })));
+    return out;
+  }
+  function allSlotNames(){
+    const m = new Map();
+    Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].forEach(moon => slotsFor(moon).forEach(sl => {
+      const n = videoAutoName(moon.name, sl.tier, sl.idx);
+      if(!m.has(n)) m.set(n, { kingdom:k, moon:moon.name, slot:sl });
+    })));
+    return m;
+  }
+  const curMoon = () => (KINGDOMS[kSel.value] || [])[+mSel.value];
+  const curSlot = () => { const m = curMoon(); return m ? slotsFor(m)[+bSel.value] : null; };
+  const ext = f => { const m = /\.[^.]+$/.exec(f.name || ""); return m ? m[0].toLowerCase() : ""; };
+  const autoNameNow = () => { const m = curMoon(), sl = curSlot(); return m && sl ? videoAutoName(m.name, sl.tier, sl.idx) : ""; };
+
+  function fillKingdoms(){
+    const names = (typeof KINGDOM_ORDER !== "undefined" && KINGDOM_ORDER.length) ? KINGDOM_ORDER : Object.keys(KINGDOMS);
+    kSel.innerHTML = names.map(n => '<option value="'+n.replace(/"/g,"&quot;")+'">'+n+'</option>').join("");
+    fillMoons();
+  }
+  function fillMoons(){
+    mSel.innerHTML = (KINGDOMS[kSel.value] || []).map((m,i) => '<option value="'+i+'">'+m.name+'</option>').join("");
+    fillBranches();
+  }
+  function fillBranches(){
+    const m = curMoon();
+    bSel.innerHTML = m ? slotsFor(m).map((sl,i) => '<option value="'+i+'">'+sl.label+' #'+sl.idx+' — '+sl.desc+'</option>').join("") : "";
+    refresh();
+  }
+
+  // ---- quick-fill picker: tier + abilities -> matching routes -------------
+  let pickTier = null; const pickAbs = new Set(); let pickBuilt = false;
+  function buildPicker(){
+    if(pickBuilt) return; pickBuilt = true;
+    const tb = $("vsTierBar");
+    ["free"].concat(TIER_ORDER).forEach(t => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "vs-tierbtn"; b.dataset.tier = t;
+      b.textContent = t === "free" ? "Free" : TIER_LABEL[t];
+      b.onclick = () => { pickTier = pickTier === t ? null : t; tb.querySelectorAll(".vs-tierbtn").forEach(x => x.classList.toggle("active", x.dataset.tier === pickTier)); runPicker(); };
+      tb.appendChild(b);
+    });
+    const toks = new Set();
+    Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].forEach(m => slotsFor(m).forEach(sl => sl.tokens.forEach(t => toks.add(t)))));
+    const grid = $("vsAbGrid");
+    Array.from(toks).sort((a,b) => (((ICON_MANIFEST[a]||{}).label)||a).localeCompare(((ICON_MANIFEST[b]||{}).label)||b)).forEach(t => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "vs-ab"; b.dataset.token = t;
+      b.title = ((ICON_MANIFEST[t]||{}).label) || t; b.appendChild(makeIcon(t));
+      b.onclick = () => { pickAbs.has(t) ? pickAbs.delete(t) : pickAbs.add(t); b.classList.toggle("on", pickAbs.has(t)); runPicker(); };
+      grid.appendChild(b);
+    });
+  }
+  function runPicker(){
+    const box = $("vsResults"); box.innerHTML = "";
+    if(!pickTier && !pickAbs.size){ box.innerHTML = '<small style="color:var(--text-dim)">Pick a level and/or abilities to find the route.</small>'; return; }
+    const res = [];
+    Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].forEach((m, mi) => slotsFor(m).forEach((sl, si) => {
+      if(pickTier && sl.tier !== pickTier) return;
+      if(![...pickAbs].every(a => sl.tokens.includes(a))) return;
+      res.push({ k, mi, si, m, sl, exact: sl.tokens.length === pickAbs.size });
+    })));
+    res.sort((a,b) => (b.exact - a.exact) || (a.sl.tokens.length - b.sl.tokens.length));
+    if(!res.length){ box.innerHTML = '<small style="color:var(--red)">No route matches that combination.</small>'; return; }
+    res.slice(0, 60).forEach(r => {
+      const btn = document.createElement("button"); btn.type = "button"; btn.className = "vs-result";
+      btn.innerHTML = '<b>'+r.m.name+'</b> <small>· '+r.k+' · '+r.sl.label+' #'+r.sl.idx+' — '+r.sl.desc+(r.exact?' ✓ exact':'')+'</small>';
+      btn.onclick = () => { applyPick(r); box.querySelectorAll(".vs-result").forEach(x => x.classList.toggle("picked", x === btn)); };
+      box.appendChild(btn);
+    });
+    if(res.length > 60){ const n = document.createElement("small"); n.style.color = "var(--text-dim)"; n.textContent = "…"+(res.length-60)+" more — add more abilities to narrow."; box.appendChild(n); }
+    const exact = res.filter(r => r.exact);
+    if(res.length === 1) { applyPick(res[0]); box.firstChild.classList.add("picked"); }
+    else if(exact.length === 1 && pickAbs.size) { applyPick(exact[0]); box.firstChild.classList.add("picked"); }
+  }
+  function applyPick(r){
+    kSel.value = r.k; fillMoons(); mSel.value = String(r.mi); fillBranches(); bSel.value = String(r.si); refresh();
+  }
+
+  // ---- rule checks ---------------------------------------------------
+  function refresh(){
+    const name = autoNameNow(), f = fileIn.files[0];
+    $("vsAutoName").textContent = name ? name + (f ? ext(f) : ".mp4") : "—";
+    const rows = [];
+    const add = (cls, t) => rows.push('<li class="'+cls+'">'+(cls==="ok"?"✓ ":cls==="bad"?"✗ ":"… ")+t+'</li>');
+    if(!f){ add("wait","Choose a video file"); fileState.ok = false; }
+    else {
+      const extOk = VIDEO_SUBMIT.exts.includes(ext(f));
+      const sizeOk = f.size <= VIDEO_SUBMIT.maxMB*1024*1024;
+      add(extOk?"ok":"bad", "Format "+ext(f)+" (allowed: "+VIDEO_SUBMIT.exts.join(", ")+")");
+      add(sizeOk?"ok":"bad", "Size "+(f.size/1048576).toFixed(1)+" MB (max "+VIDEO_SUBMIT.maxMB+" MB)");
+      if(fileState.dur == null && ext(f)===".mp4") add("wait","Checking length…");
+      else if(ext(f)===".mp4"){ const dOk = fileState.dur <= VIDEO_SUBMIT.maxSeconds; fileState.durationOk = dOk;
+        add(dOk?"ok":"bad","Length "+fileState.dur.toFixed(1)+"s (max "+VIDEO_SUBMIT.maxSeconds+"s)"); }
+      fileState.ok = extOk && sizeOk && (ext(f)!==".mp4" || (fileState.dur != null && fileState.durationOk));
+    }
+    $("vsChecks").innerHTML = rows.join("");
+    subBtn.disabled = !(fileState.ok && agree.checked && name);
+  }
+  fileIn.addEventListener("change", () => {
+    fileState = { ok:false, durationOk:true, dur:null };
+    const f = fileIn.files[0];
+    if(f && ext(f)===".mp4"){
+      const v = document.createElement("video"), u = URL.createObjectURL(f);
+      v.preload = "metadata";
+      v.onloadedmetadata = () => { fileState.dur = v.duration || 0; URL.revokeObjectURL(u); refresh(); };
+      v.onerror = () => { fileState.dur = Infinity; URL.revokeObjectURL(u); refresh(); };
+      v.src = u;
+    }
+    refresh();
+  });
+  kSel.addEventListener("change", fillMoons);
+  mSel.addEventListener("change", fillBranches);
+  bSel.addEventListener("change", refresh);
+  agree.addEventListener("change", refresh);
+
+  // ---- submit --------------------------------------------------------
+  function setMsg(el, t, err){ el.textContent = t; el.classList.toggle("err", !!err); }
+  subBtn.addEventListener("click", async () => {
+    const f = fileIn.files[0], m = curMoon(), sl = curSlot(); if(!f || !m || !sl) return;
+    const fname = autoNameNow() + ext(f);
+    const renamed = new File([f], fname, { type:f.type });
+    const msg = $("vsMsg");
+    if(VIDEO_SUBMIT.endpoint){
+      subBtn.disabled = true; setMsg(msg, "Uploading…");
+      try{
+        const fd = new FormData();
+        fd.append("file", renamed, fname);
+        fd.append("filename", fname); fd.append("kingdom", kSel.value); fd.append("moon", m.name);
+        fd.append("tier", sl.tier); fd.append("branch", sl.idx);
+        fd.append("submitter", $("vsName").value); fd.append("note", $("vsNote").value);
+        const r = await fetch(VIDEO_SUBMIT.endpoint, { method:"POST", body:fd });
+        if(!r.ok) throw new Error("HTTP "+r.status);
+        setMsg(msg, "Submitted! Your clip is waiting for approval as "+fname);
+      }catch(e){ setMsg(msg, "Upload failed: "+e.message, true); subBtn.disabled = false; }
+    } else {
+      const a = document.createElement("a"); a.href = URL.createObjectURL(renamed); a.download = fname;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      setMsg(msg, "Saved as "+fname+". "+VIDEO_SUBMIT.contactNote);
+    }
+  });
+
+  // ---- owner gate ----------------------------------------------------
+  // UI gate only: this is a static site, so a determined visitor can edit
+  // their own copy of the page. It can't change YOUR site's files though —
+  // approving only writes to the folder picked on the approver's own computer.
+  const isOwner = () => sessionStorage.getItem("vsOwner") === "1";
+  async function sha256(t){
+    const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
+    return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,"0")).join("");
+  }
+  function paintOwner(){
+    const on = isOwner();
+    ov.classList.toggle("vs-owner", on);
+    $("vsOwnerBtn").textContent = on ? "Owner: log out" : "Owner login";
+    $("vsOwnerState").textContent = on ? "Owner mode — you can approve videos." : "Submissions are reviewed by the site owner.";
+    if(!on){
+      document.querySelectorAll(".vs-tab").forEach(x => x.classList.toggle("active", x.dataset.tab === "submit"));
+      $("vsPaneSubmit").classList.add("active"); $("vsPaneReview").classList.remove("active"); $("vsQueue").innerHTML = "";
+    }
+  }
+  $("vsOwnerBtn").addEventListener("click", async () => {
+    if(isOwner()){ sessionStorage.removeItem("vsOwner"); paintOwner(); return; }
+    const pw = prompt("Owner passphrase:"); if(pw == null) return;
+    try{
+      if((await sha256(pw)) === VIDEO_SUBMIT.ownerHash){ sessionStorage.setItem("vsOwner","1"); paintOwner(); }
+      else alert("Wrong passphrase.");
+    }catch(e){ alert("Owner login needs https or localhost."); }
+  });
+
+  // ---- review / approve ---------------------------------------------
+  let dirHandle = null;
+  async function getLogicDir(){
+    if(!window.showDirectoryPicker) return null;
+    if(!dirHandle) dirHandle = await window.showDirectoryPicker({ mode:"readwrite" });
+    const assets = await dirHandle.getDirectoryHandle("assets", { create:true });
+    return assets.getDirectoryHandle("logicvideos", { create:true });
+  }
+  $("vsReviewFiles").addEventListener("change", async e => {
+    if(!isOwner()) return;
+    const q = $("vsQueue"); q.innerHTML = ""; setMsg($("vsReviewMsg"), "");
+    const known = allSlotNames();
+    for(const f of e.target.files){
+      const base = f.name.replace(/\.[^.]+$/, "").toLowerCase();
+      const hit = known.get(base), already = hit ? await logicVideoExists(base) : false;
+      const item = document.createElement("div"); item.className = "vs-queue-item";
+      const url = URL.createObjectURL(f);
+      const media = ext(f)===".webp" ? '<img src="'+url+'" alt="">' : '<video src="'+url+'" controls muted loop playsinline></video>';
+      const info = hit
+        ? '<b>'+hit.moon+'</b> · '+hit.kingdom+'<br>'+hit.slot.label+' #'+hit.slot.idx+' — '+hit.slot.desc+'<br><code>assets/logicvideos/'+base+ext(f)+'</code>'+(already?'<br><span style="color:var(--red)">⚠ A clip already exists here — approving replaces it.</span>':'')
+        : '<span style="color:var(--red)">✗ "'+f.name+'" doesn\'t match any moon/branch filename.</span>';
+      item.innerHTML = media + '<div class="vs-queue-info">'+info+'<div class="vs-queue-actions"></div></div>';
+      const acts = item.querySelector(".vs-queue-actions");
+      const ap = document.createElement("button"); ap.className = "vs-btn green"; ap.textContent = "Approve"; ap.disabled = !hit;
+      const rj = document.createElement("button"); rj.className = "vs-btn red"; rj.textContent = "Reject";
+      rj.onclick = () => item.remove();
+      ap.onclick = async () => {
+        if(!isOwner()){ setMsg($("vsReviewMsg"), "Owner login required.", true); return; }
+        try{
+          const out = base + ext(f), dir = await getLogicDir();
+          if(dir){
+            const fh = await dir.getFileHandle(out, { create:true }), w = await fh.createWritable();
+            await w.write(f); await w.close();
+            videoExistsCache.delete(base);
+            setMsg($("vsReviewMsg"), "Approved → assets/logicvideos/"+out);
+          } else {
+            const a = document.createElement("a"); a.href = url; a.download = out; a.click();
+            setMsg($("vsReviewMsg"), "Browser can't write folders — downloaded "+out+"; drop it in assets/logicvideos/ yourself.");
+          }
+          item.remove();
+        }catch(err){ setMsg($("vsReviewMsg"), "Approve failed: "+err.message, true); }
+      };
+      acts.append(ap, rj); q.appendChild(item);
+    }
+  });
+
+  // ---- open/close/tabs ----------------------------------------------
+  function open(){ paintOwner(); fillKingdoms(); buildPicker(); runPicker(); ov.classList.add("open"); $("submitToggle").classList.add("active"); }
+  function close(){ ov.classList.remove("open"); $("submitToggle").classList.remove("active"); }
+  $("submitToggle").addEventListener("click", () => ov.classList.contains("open") ? close() : open());
+  $("vsClose").addEventListener("click", close);
+  ov.addEventListener("click", e => { if(e.target === ov) close(); });
+  document.addEventListener("keydown", e => { if(e.key === "Escape" && ov.classList.contains("open")) close(); });
+  document.querySelectorAll(".vs-tab").forEach(t => t.addEventListener("click", () => {
+    document.querySelectorAll(".vs-tab").forEach(x => x.classList.toggle("active", x === t));
+    $("vsPaneSubmit").classList.toggle("active", t.dataset.tab === "submit");
+    $("vsPaneReview").classList.toggle("active", t.dataset.tab === "review");
+  }));
+})();
 
 async function init(){
   const autoloaded = await tryAutoload();
