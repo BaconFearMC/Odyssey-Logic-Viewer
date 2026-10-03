@@ -971,6 +971,8 @@
   .impossible-tag{ font-size:12px; font-weight:700; color:#e5484d; }
   .pyramid-block{ margin-top:10px; padding:8px 10px 10px; border:1px solid rgba(214,168,60,.55); border-left:4px solid #d6a83c; border-radius:6px; background:rgba(214,168,60,.07); }
   .pyramid-block-title{ font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#d6a83c; margin-bottom:4px; }
+  .route-block:not(.pyramid-block){ margin-top:10px; padding:8px 10px 10px; border:1px dashed rgba(128,128,128,.45); border-radius:6px; }
+  .route-block:not(.pyramid-block) .route-block-title{ font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; opacity:.7; margin-bottom:4px; }
   .group-subarea-summary{ padding:8px 14px 10px; border-top:1px solid rgba(128,128,128,.25); }
   .group-subarea-title{ font-size:13px; font-weight:700; margin-bottom:2px; }
   .group-subarea-summary .entrance-reqs{ margin-top:4px; padding-top:0; border-top:none; }
@@ -4382,19 +4384,21 @@ const PYRAMID_WIRE = {
   scenarios: [3, 4, 5],
   label: "Spark Pylon Wire",
 };
-// Each entry: stages = rooms walked through in order (shown as one combined
-// row); wire = also show the wire route as its own scenario-tagged row.
-// The moon's OWN requirement is never altered — the pyramid cost renders in
-// its own "Inverted Pyramid" block under it.
+// ROUTE OVERRIDES — authoritative route data. Whatever is listed here wins
+// over anything derived from the route graph or the old node popups, on the
+// moon card, in the node popup, and in the checkpoint-group header.
+//   stages = rooms walked through in order (shown as one combined row)
+//   wire   = also show the wire route as its own scenario-tagged row
+//   title  = heading of the block
+// Node-level: applies to EVERY moon tracked from that custom node.
+const NODE_ROUTE_OVERRIDES = {
+  "Top of the Pyramid": { title: "Inverted Pyramid", stages: PYRAMID_BOTH, wire: true },
+};
+// Moon-level: for moons that live elsewhere but still depend on the pyramid.
 const FULL_LOGIC_CHAINS = {
-  "Secret of the Inverted Mural":        { stages: PYRAMID_LOWER },
-  "Hidden Room in the Inverted Pyramid": { stages: PYRAMID_LOWER, wire: true },
-  "On the Statue's Tail":                { stages: PYRAMID_BOTH,  wire: true },
-  "Showdown on the Inverted Pyramid":    { stages: PYRAMID_BOTH },   // scenario 1 only, so no wire row
-  "The Lurker Under the Stone":          { stages: PYRAMID_BOTH,  wire: true },
-  "Welcome Back, Jaxi!":                 { stages: PYRAMID_BOTH,  wire: true },
-  "Peach in the Sand Kingdom":           { stages: PYRAMID_BOTH,  wire: true },
-  // "On the Lone Pillar":               { stages: PYRAMID_BOTH,  wire: true },   // eventually — uncomment to enable
+  "Secret of the Inverted Mural":        { title: "Inverted Pyramid", stages: PYRAMID_LOWER },
+  "Hidden Room in the Inverted Pyramid": { title: "Inverted Pyramid", stages: PYRAMID_LOWER, wire: true },
+  // "On the Lone Pillar":               { title: "Inverted Pyramid", stages: PYRAMID_BOTH, wire: true },   // eventually — uncomment to enable
 };
 
 // Drops any branch that another branch already covers (same-or-subset
@@ -4432,51 +4436,121 @@ function stageThroughBranches(data, stage){
   return out;
 }
 
+const cleanNodeName = n => (n || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "");
+
+// Rows for an explicit override spec. Also returns the interior-route
+// branches (used only to keep the ability/capture filters honest).
+function overrideRowsFor(data, spec, kingdomName){
+  let pre = [{ group: [], scenarios: null, tier: "casual" }];
+  for(const st of spec.stages){
+    const t = stageThroughBranches(data, st);
+    if(!t){ console.warn(`[route] no route through ${st} — override skipped.`); return null; }
+    pre = crossBranches(pre, t);
+  }
+  pre = minimizeBranches(pre);
+  const rows = [Object.assign({ label: spec.stages.length > 1 ? "Lower + Upper Interior" : "Lower Interior" },
+    summarizeBranches(pre, kingdomName))];
+  if(spec.wire){
+    const e = (data.edges || []).find(x => x.from_node_id === PYRAMID_WIRE.from && x.to_node_id === PYRAMID_WIRE.to
+      && (x.requirement_expr || "").trim().toLowerCase() !== "impossible");
+    if(e){
+      const wb = edgeBranches(e).map(b => ({ group: b.group, tier: b.tier,
+        scenarios: b.scenarios ? b.scenarios.filter(n => PYRAMID_WIRE.scenarios.includes(n)) : PYRAMID_WIRE.scenarios.slice() }))
+        .filter(b => b.scenarios.length);
+      if(wb.length) rows.push(Object.assign({ label: PYRAMID_WIRE.label }, summarizeBranches(wb, kingdomName)));
+    } else console.warn("[route] wire edge not found in route data.");
+  }
+  return { title: spec.title || "Route", rows, pre };
+}
+
+// Override attached to a custom node (matched by its cleaned display name).
+function nodeOverrideInfo(kingdomName, nodeId){
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  const node = data && nodeId ? data.nodeMap[nodeId] : null;
+  if(!node || node.node_type !== "custom_place") return null;
+  const spec = NODE_ROUTE_OVERRIDES[cleanNodeName(node.display_name)];
+  return spec ? overrideRowsFor(data, spec, kingdomName) : null;
+}
+
+// Friendlier source names than the raw editor display names.
+function prettyRouteSource(node, fallbackId){
+  const raw = cleanNodeName((node && node.display_name) || fallbackId);
+  return raw
+    .replace(/^Substage near side:\s*/i, "Entrance pipe: ")
+    .replace(/^Substage far side:\s*/i, "Exit pipe: ")
+    .replace(/^Home entrance:\s*/i, "Door: ")
+    .replace(/^Home return:\s*/i, "Door return: ");
+}
+
+// Graph-derived rows for a custom node: every viable inbound route (an edge
+// into it, or a bidirectional edge out of it), each on its own labeled row
+// with its own scenario tags. Plain checkpoints are warp points, so their
+// "reach" isn't a real cost and gets no block. All-free nodes get none either.
+function genericRouteRows(kingdomName, nodeId){
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  const node = data && nodeId ? data.nodeMap[nodeId] : null;
+  if(!node || node.node_type !== "custom_place") return null;
+  const isTrue = v => /^(true|1|yes|y)$/i.test(String(v).trim());
+  const routes = [];
+  (data.edges || []).forEach(e => {
+    if((e.requirement_expr || "").trim().toLowerCase() === "impossible") return;
+    let other = null;
+    if(e.to_node_id === nodeId) other = e.from_node_id;
+    else if(e.from_node_id === nodeId && isTrue(e.bidirectional)) other = e.to_node_id;
+    if(!other || other === nodeId) return;
+    const src = data.nodeMap[other];
+    routes.push({ label: "From " + prettyRouteSource(src, other), branches: edgeBranches(e) });
+  });
+  const costed = routes.filter(r => !(r.branches.length === 1 && r.branches[0].group.length === 0 && !r.branches[0].scenarios));
+  if(!costed.length) return null;
+  const free = routes.filter(r => !costed.includes(r));
+  const rows = costed.map(r => Object.assign({ label: r.label }, summarizeBranches(r.branches, kingdomName)));
+  if(free.length){
+    const names = free.map(r => r.label.replace(/^From /, ""));
+    rows.push({ label: "Free from " + names.slice(0, 2).join(", ") + (names.length > 2 ? " +" + (names.length - 2) + " more" : ""), free: true });
+  }
+  return rows;
+}
+
 function applyFullLogicChains(kingdomName){
   const moons = KINGDOMS[kingdomName], data = KINGDOM_NODE_DATA[kingdomName];
   if(!moons || !data) return;
   moons.forEach(moon => {
-    moon.pyramidReqs = null;
-    const spec = FULL_LOGIC_CHAINS[moon.name];
-    if(!spec) return;
-    let pre = [{ group: [], scenarios: null, tier: "casual" }];
-    for(const st of spec.stages){
-      const t = stageThroughBranches(data, st);
-      if(!t){ console.warn(`[chain] "${moon.name}": no route through ${st} — skipped.`); return; }
-      pre = crossBranches(pre, t);
+    moon.routeBlock = null;
+    moon._routeOverridden = false;
+    let info = null;
+    const moonSpec = FULL_LOGIC_CHAINS[moon.name];
+    if(moonSpec) info = overrideRowsFor(data, moonSpec, kingdomName);
+    else if(moon.checkpointType === "custom_place") info = nodeOverrideInfo(kingdomName, moon.checkpointNodeId);
+    if(info){
+      moon.routeBlock = { title: info.title, rows: info.rows, override: true };
+      moon._routeOverridden = true;
+      // The old per-pipe subarea rows were derived data; the override is
+      // the actual data, so the card falls back to the moon's own requirement.
+      moon.entranceReqs = null;
+      // Filters see the interior route crossed with the moon's own requirement.
+      const own = ownBranchesFromTierLanes(moon.tierLanes);
+      moon.orGroups = minimizeBranches(crossBranches(info.pre, own)).map(b => b.group.slice());
+      return;
     }
-    pre = minimizeBranches(pre);
-    const rows = [];
-    rows.push(Object.assign({ label: spec.stages.length > 1 ? "Lower + Upper Interior" : "Lower Interior" },
-      summarizeBranches(pre, kingdomName)));
-    if(spec.wire){
-      const e = (data.edges || []).find(x => x.from_node_id === PYRAMID_WIRE.from && x.to_node_id === PYRAMID_WIRE.to
-        && (x.requirement_expr || "").trim().toLowerCase() !== "impossible");
-      if(e){
-        const wb = edgeBranches(e).map(b => ({ group: b.group, tier: b.tier,
-          scenarios: b.scenarios ? b.scenarios.filter(n => PYRAMID_WIRE.scenarios.includes(n)) : PYRAMID_WIRE.scenarios.slice() }))
-          .filter(b => b.scenarios.length);
-        if(wb.length) rows.push(Object.assign({ label: PYRAMID_WIRE.label }, summarizeBranches(wb, kingdomName)));
-      } else console.warn(`[chain] "${moon.name}": wire edge not found in route data.`);
+    if(moon.checkpointType === "custom_place" && !moon.entranceReqs){
+      const rows = genericRouteRows(kingdomName, moon.checkpointNodeId);
+      if(rows) moon.routeBlock = { title: "Route to " + cleanNodeName(moon.checkpoint), rows, override: false };
     }
-    moon.pyramidReqs = rows;
-    // Keep the ability/capture filters honest: they see the interior route
-    // crossed with the moon's own requirement (display above is unchanged).
-    const own = ownBranchesFromTierLanes(moon.tierLanes);
-    moon.orGroups = minimizeBranches(crossBranches(pre, own)).map(b => b.group.slice());
   });
 }
 
 // Separate, clearly labeled block rendered under a moon's own requirement.
-function buildPyramidBlock(moon){
-  if(!moon.pyramidReqs || !moon.pyramidReqs.length) return null;
+function buildRouteBlock(moon){
+  const rb = moon.routeBlock;
+  if(!rb || !rb.rows || !rb.rows.length) return null;
   const box = document.createElement("div");
-  box.className = "pyramid-block";
+  box.className = "route-block" + (rb.override ? " pyramid-block" : "");
   const t = document.createElement("div");
-  t.className = "pyramid-block-title";
-  t.textContent = "Inverted Pyramid";
+  t.className = "route-block-title pyramid-block-title";
+  t.textContent = rb.title;
   box.appendChild(t);
-  box.appendChild(renderEntranceReqs(moon.pyramidReqs, "entrance-reqs in-modal", true));
+  box.appendChild(renderEntranceReqs(rb.rows, "entrance-reqs in-modal", true));
   return box;
 }
 
@@ -4783,7 +4857,7 @@ function buildMoonCard(moon){
     // still tells you the moon lives in a subarea — but drops its click/
     // keyboard handlers and button semantics, since opening the popup
     // wouldn't show anything new.
-    const merged = moon._mergedNodeKind === "subarea";
+    const merged = moon._mergedNodeKind === "subarea" || !!moon._routeOverridden;
     const redundant = !merged && subareaInfoIsRedundant(moon);
     const inert = merged || redundant;
 
@@ -4840,7 +4914,7 @@ function buildMoonCard(moon){
     // Checkpoint/Custom Node's own reach cost directly into the moon's
     // displayed requirement (see applyNodeMergeRules) — clicking through
     // would just repeat what's now already shown on the card.
-    const merged = moon._mergedNodeKind === "checkpoint" || moon._mergedNodeKind === "custom_place";
+    const merged = moon._mergedNodeKind === "checkpoint" || moon._mergedNodeKind === "custom_place" || (!!moon._routeOverridden && moon.subarea);
 
     if(merged){
       info.classList.add("info-static");
@@ -4892,7 +4966,7 @@ function buildMoonCard(moon){
   } else {
     card.appendChild(buildMovementOptions(moon));
   }
-  const pyrBlock = buildPyramidBlock(moon);
+  const pyrBlock = buildRouteBlock(moon);
   if(pyrBlock) card.appendChild(pyrBlock);
   return card;
 }
@@ -5153,7 +5227,7 @@ function buildMoonPanel(moon){
   } else {
     body.appendChild(buildMovementOptions(moon, true));
   }
-  const pyrBlockP = buildPyramidBlock(moon);
+  const pyrBlockP = buildRouteBlock(moon);
   if(pyrBlockP) body.appendChild(pyrBlockP);
   panel.appendChild(body);
 
@@ -5215,7 +5289,19 @@ function buildCheckpointGroup(checkpointName, entry){
 
   group.appendChild(header);
 
-  const subStages = GROUP_SUBAREA_SUMMARIES[checkpointName.replace(/\s*Checkpoint\s*$/i, "")];
+  const hdrKingdom = (entry.moons && entry.moons[0]) ? entry.moons[0].kingdom : KINGDOM_ORDER[currentKingdomIndex];
+  const hdrOvr = (entry.moons && entry.moons[0]) ? nodeOverrideInfo(hdrKingdom, entry.moons[0].checkpointNodeId) : null;
+  if(hdrOvr){
+    const box = document.createElement("div");
+    box.className = "group-subarea-summary";
+    const t = document.createElement("div");
+    t.className = "group-subarea-title";
+    t.textContent = hdrOvr.title;
+    box.appendChild(t);
+    box.appendChild(renderEntranceReqs(hdrOvr.rows));
+    group.appendChild(box);
+  }
+  const subStages = hdrOvr ? null : GROUP_SUBAREA_SUMMARIES[checkpointName.replace(/\s*Checkpoint\s*$/i, "")];
   if(subStages){
     const kName = (entry.moons && entry.moons[0]) ? entry.moons[0].kingdom : KINGDOM_ORDER[currentKingdomIndex];
     const data = KINGDOM_NODE_DATA[kName];
@@ -6066,8 +6152,14 @@ function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName,
     // return: Goal: Free" / "From Home return: PushBlockExStageEntDokan:
     // Free") instead of collapsing every free-to-reach source into one
     // bare "Free" tag that hides that there was a choice at all.
-    const sourceReqs = kingdom ? computeNodeSourceReqs(kingdom, nodeId) : null;
-    if(sourceReqs){
+    const ovr = kingdom ? nodeOverrideInfo(kingdom, nodeId) : null;
+    const sourceReqs = (kingdom && !ovr) ? computeNodeSourceReqs(kingdom, nodeId) : null;
+    if(ovr){
+      const tt = document.createElement("div");
+      tt.className = "pyramid-block-title"; tt.textContent = ovr.title;
+      block.appendChild(tt);
+      block.appendChild(renderEntranceReqs(ovr.rows, "entrance-reqs in-modal", true));
+    } else if(sourceReqs){
       block.appendChild(renderEntranceReqs(sourceReqs, "entrance-reqs in-modal", true));
     } else {
       appendReachRequirement(block, data && nodeId ? data.reachBranches[nodeId] : null, true);
