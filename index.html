@@ -3975,8 +3975,6 @@ const NODE_MERGE_RULES = [
   { moon: "The Rooftop Lantern", node: "The Rooftop Lantern Free" },
   { moon: "Under the Meat Plateau", node: "Under the Meat Plateau Free" },
   { moon: "Big Broodal Battle", overrideREPLACEnode: "fromBowsers: Main Courtyard Entrance" },
-  { moon: "Showdown on the Inverted Pyramid", overrideADDnode: "fromSand: Inverted Pyramid: Upper Interior" },
-  { moon: "Showdown on the Inverted Pyramid", overrideADDnode: "fromSand: Inverted Pyramid: Lower Interior" },
   { moon: "Another Moon", node: "Another Node" },
   { moon: "Another Moon", node: "Another Node" },
   { moon: "Another Moon", node: "Another Node" },
@@ -4360,6 +4358,90 @@ function applyNodeMergeRules(kingdomName){
       const src = resolveOverrideSource(moon, r, kingdomName);
       if(src) applyOverrideNodeToMoon(moon, r.node, src.kingdomName, src.data, /*replace=*/false, src.sameKingdom);
     });
+  });
+  applyFullLogicChains(kingdomName);
+}
+
+/* =========================================================
+   FULL-LOGIC CHAINS (Inverted Pyramid)
+   The pyramid interiors are one-door rooms (near/far share one entrance
+   id), so the generic two-pipe room traversal skips them. A chain lists
+   the rooms you must walk THROUGH, in order, before the moon itself;
+   each room's cost is its near-door -> far-door route, crossed together
+   (AND) with the moon's own requirement. Edit stage keys here.
+   ========================================================= */
+const PYRAMID_BOTH = ["SandWorldPyramid000Stage", "SandWorldPyramid001Stage"];
+const PYRAMID_LOWER = ["SandWorldPyramid000Stage"];
+// Value is either an array of stage keys, or { stages:[...], replaceOwn:true }
+// when the moon's own requirement is just one slice of the room's logic and
+// the room's full logic should be shown instead of being crossed with it.
+const FULL_LOGIC_CHAINS = {
+  "Secret of the Inverted Mural":        { stages: PYRAMID_LOWER, replaceOwn: true },
+  "Hidden Room in the Inverted Pyramid": PYRAMID_LOWER,
+  "On the Statue's Tail":                PYRAMID_BOTH,
+  "Showdown on the Inverted Pyramid":    PYRAMID_BOTH,
+  "The Lurker Under the Stone":          PYRAMID_BOTH,
+  "Welcome Back, Jaxi!":                 PYRAMID_BOTH,
+  "Peach in the Sand Kingdom":           PYRAMID_BOTH,
+  // "On the Lone Pillar":               PYRAMID_BOTH,   // eventually — uncomment to enable
+};
+
+// Drops any branch that another branch already covers (same-or-subset
+// tokens, same-or-easier tier, scenarios no narrower) so crossed chains
+// stay readable instead of exploding into supersets.
+function minimizeBranches(branches){
+  const covers = (a, b) => {
+    if(a === b) return false;
+    if(!a.group.every(t => b.group.includes(t))) return false;
+    if((TIER_RANK[a.tier] || 0) > (TIER_RANK[b.tier] || 0)) return false;
+    if(a.scenarios && !(b.scenarios && b.scenarios.every(n => a.scenarios.includes(n)))) return false;
+    return true;
+  };
+  return branches.filter((b, i) => !branches.some((a, j) => {
+    if(!covers(a, b)) return false;
+    // identical duplicates: keep only the first
+    const same = a.group.length === b.group.length && a.tier === b.tier
+      && JSON.stringify(a.scenarios || null) === JSON.stringify(b.scenarios || null);
+    return same ? j < i : true;
+  }));
+}
+
+// Cost of walking through one stage, door in -> door out.
+function stageThroughBranches(data, stage){
+  const ent = (data.nodes || []).filter(n => n.stage === stage && n.node_type === "substage_entrance" && n.source === "EntranceDB");
+  const near = ent.filter(n => n.side === "sub_near"), far = ent.filter(n => n.side === "sub_far");
+  let pairs = [];
+  near.forEach(a => far.forEach(b => { if(a.entrance_id === b.entrance_id) pairs.push([a, b]); }));
+  if(!pairs.length) near.forEach(a => far.forEach(b => pairs.push([a, b])));
+  let out = null;
+  pairs.forEach(([a, b]) => {
+    const r = reachWithinStage(data.nodeMap, data.edges, stage, a.node_id, b.node_id);
+    if(r) out = (out || []).concat(r);
+  });
+  return out;
+}
+
+function applyFullLogicChains(kingdomName){
+  const moons = KINGDOMS[kingdomName], data = KINGDOM_NODE_DATA[kingdomName];
+  if(!moons || !data) return;
+  moons.forEach(moon => {
+    const spec = FULL_LOGIC_CHAINS[moon.name];
+    if(!spec) return;
+    const stages = Array.isArray(spec) ? spec : spec.stages;
+    const replaceOwn = !Array.isArray(spec) && spec.replaceOwn;
+    let pre = [{ group: [], scenarios: null, tier: "casual" }];
+    for(const st of stages){
+      const t = stageThroughBranches(data, st);
+      if(!t){ console.warn(`[chain] "${moon.name}": no route through ${st} — left unchanged.`); return; }
+      pre = crossBranches(pre, t);
+    }
+    pre = minimizeBranches(pre);
+    const own = replaceOwn ? [{ group: [], scenarios: null, tier: "casual" }] : minimizeBranches(ownBranchesFromTierLanes(moon.tierLanes));
+    applyMergedBranchesToMoon(moon, minimizeBranches(crossBranches(pre, own)), kingdomName);
+    if(moon.entranceReqs){
+      moon.entranceReqs = moon.entranceReqs.map(e => e.impossible ? e
+        : Object.assign({ label: e.label }, summarizeBranches(minimizeBranches(crossBranches(pre, branchesFromEntranceReqs([e]))), kingdomName)));
+    }
   });
 }
 
@@ -5099,8 +5181,12 @@ function buildCheckpointGroup(checkpointName, entry){
     const kName = (entry.moons && entry.moons[0]) ? entry.moons[0].kingdom : KINGDOM_ORDER[currentKingdomIndex];
     const data = KINGDOM_NODE_DATA[kName];
     subStages.forEach(st => {
-      const trav = computeRoomTraversal(kName, st);
       const node = data && data.nodes.find(n => n.stage === st);
+      let trav = computeRoomTraversal(kName, st);
+      if(!trav && data){
+        const through = stageThroughBranches(data, st);
+        trav = [Object.assign({ label: "Entrance to Exit" }, summarizeBranches(through && minimizeBranches(through), kName))];
+      }
       if(!trav || !node) return;
       const box = document.createElement("div");
       box.className = "group-subarea-summary";
