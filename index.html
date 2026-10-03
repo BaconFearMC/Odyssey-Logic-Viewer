@@ -204,6 +204,31 @@
   .vs-notice{ background:var(--gold-light); border:1px solid var(--gold); padding:9px 12px; margin-bottom:12px; font-size:13px; color:var(--text); }
   .vs-notice b{ color:var(--gold); }
   .vs-cp{ font-size:12px; color:var(--text-dim); margin:-4px 0 10px; } .vs-cp b{ color:var(--gold); }
+  .vs-sel{ background:var(--bg-chip); border:1px solid var(--border); border-left:3px solid var(--gold); padding:10px 14px; margin-bottom:12px; font-size:13px; display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+  .vs-sel .vs-sel-moon{ font-family:"FontDB",sans-serif; font-size:16px; color:var(--gold); }
+  .vs-sel .vs-sel-sub{ font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px; }
+  .vs-step{ font-size:13px; margin:8px 0 6px; display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; } .vs-step b{ background:var(--gold); color:#1b1c1f; width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; flex:0 0 auto; }
+  .vs-link{ background:none; border:none; padding:0; color:var(--gold); text-decoration:underline; cursor:pointer; font:inherit; }
+  .submit-bar{ display:none; position:fixed; left:50%; bottom:16px; transform:translateX(-50%); z-index:90; max-width:92vw; background:var(--bg-panel); border:2px solid var(--gold); padding:9px 14px; font-size:12.5px; gap:12px; align-items:center; filter:drop-shadow(2px 3px 0 var(--ink)); }
+  body.submit-mode .submit-bar{ display:flex; }
+  body.submit-mode .moon-card[data-submittable="1"] .option-chip,
+  body.submit-mode .moon-card[data-submittable="1"] .free-tag,
+  body.submit-mode .moon-panel[data-submittable="1"] .option-chip,
+  body.submit-mode .moon-panel[data-submittable="1"] .free-tag{ outline:2px dashed var(--gold); outline-offset:2px; cursor:copy; }
+  body.submit-mode .moon-card:not([data-submittable="1"]),
+  body.submit-mode .moon-panel:not([data-submittable="1"]){ opacity:.35; }
+  #seedReqToggle{ right:24px; }
+  .owner-panel{ width:100%; max-width:1400px; background:var(--bg-panel); border:2px solid var(--gold); padding:10px 14px; margin:0 0 18px; text-align:left; font-size:12.5px; }
+  .owner-panel .op-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px; color:var(--gold); font-family:"FontDB",sans-serif; text-transform:uppercase; letter-spacing:.5px; }
+  .op-row{ display:flex; align-items:center; gap:10px; background:var(--bg-chip); border:1px solid var(--border); padding:5px 8px; margin-bottom:4px; }
+  .op-row video,.op-row img{ width:84px; height:52px; object-fit:contain; background:#000; flex:0 0 auto; }
+  .op-row .op-info{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .op-row .op-info small{ color:var(--text-dim); }
+  .op-all{ margin-top:8px; } .op-all summary{ cursor:pointer; color:var(--text-dim); }
+  .op-list{ max-height:320px; overflow-y:auto; margin-top:6px; font-size:12px; }
+  .op-list div{ padding:2px 4px; border-bottom:1px solid var(--border); display:flex; gap:8px; }
+  .op-list .k{ color:var(--gold); flex:0 0 120px; } .op-list .has{ color:var(--worldpeace); } .op-list .none{ color:var(--text-dim); }
+  .op-list .dim{ opacity:.45; }
   @media (max-width:640px){ .vs-row{ grid-template-columns:1fr; } .vs-queue-item{ grid-template-columns:1fr; } }
 
   /* ---- Title plate --------------------------------------------------
@@ -1594,22 +1619,14 @@
   <span>Submit Video</span>
 </button>
 
-<div class="vs-overlay" id="vsOverlay">
-  <div class="vs-modal" role="dialog" aria-label="Video submitter">
-    <button type="button" class="vs-close" id="vsClose" aria-label="Close">&times;</button>
-    <h2 class="vs-title">Logic Video Submission</h2>
-    <div class="vs-ownerbar"><span id="vsOwnerState">Submissions are reviewed by the site owner.</span><button type="button" class="vs-ownerbtn" id="vsOwnerBtn">Owner login</button></div>
-    <div class="vs-tabs">
-      <button type="button" class="vs-tab active" data-tab="submit">Submit</button>
-      <button type="button" class="vs-tab" data-tab="review">Review (Owner)</button>
-    </div>
-    <div class="vs-pane active" id="vsPaneSubmit">
-    <div class="vs-notice"><b>Checkpoint Moons only.</b> Only Moons that are linked to a <b>Checkpoint</b> can be submitted right now. Moons tracked from Custom Nodes (or with no Checkpoint) are not available in the list below. The Checkpoint each Moon is tracked from is shown next to its name — start your clip at or near it.</div>
-
-    <div class="vs-rules">
+<div class="vs-overlay" id="reqOverlay">
+  <div class="vs-modal" role="dialog" aria-label="Seed Generation Requirements for Submission">
+    <button type="button" class="vs-close" id="reqClose" aria-label="Close">&times;</button>
+    <h2 class="vs-title">Seed Generation Requirements for Submission</h2>
+    <div class="vs-rules" style="max-height:none;overflow:visible">
       <h3>Requirements</h3>
       <p class="vs-legend"><b>*</b> = REQUIRED for video submission (I'm a stickler) &nbsp;·&nbsp; <b>!</b> = RECOMMENDED setting</p>
-      <p><b>60 Second Maximum.</b> File names are automatic — pick the Moon and Logic Level below and the name is generated for you. Don't rename it.</p>
+      <p><b>60 Second Maximum.</b> File names are automatic — click a route on a Moon and the name is generated for you. Don't rename it.</p>
 
       <h4>General</h4>
       <ul>
@@ -1666,40 +1683,30 @@
         <li>Max length 60 seconds · max size 50 MB · .mp4 or .webp.</li>
       </ul>
     </div>
-
-    <div class="vs-row">
-      <div class="vs-field"><label for="vsKingdom">Kingdom</label><select id="vsKingdom"></select></div>
-      <div class="vs-field"><label for="vsMoon">Which Moon?</label><select id="vsMoon"></select></div>
-    </div>
-    <div class="vs-cp" id="vsCp"></div>
-    <div class="vs-row">
-      <div class="vs-field"><label for="vsTier">Which Logic Level?</label><select id="vsTier"></select></div>
-      <div class="vs-field"><label for="vsBranch">Which route in that level?</label><select id="vsBranch"></select></div>
-    </div>
-    <div class="vs-row">
-      <div class="vs-field"><label for="vsName">Your name / tag (optional)</label><input type="text" id="vsName" maxlength="40"></div>
-      <div class="vs-field"><label for="vsFile">Video file</label><input type="file" id="vsFile" accept="video/mp4,image/webp,.mp4,.webp"></div>
-    </div>
-    <div class="vs-row one">
-      <div class="vs-field"><label for="vsNote">Note to reviewer (optional)</label><input type="text" id="vsNote" maxlength="200"></div>
-    </div>
-    <div class="vs-autoname"><small>Auto filename (generated — don't rename)</small><span id="vsAutoName">—</span></div>
-    <ul class="vs-checks" id="vsChecks"></ul>
-    <label class="vs-agree"><input type="checkbox" id="vsAgree"> <span>I've read the requirements and this clip follows them.</span></label>
-    <button type="button" class="vs-btn" id="vsSubmitBtn" disabled>Submit for approval</button>
-    <div class="vs-msg" id="vsMsg"></div>
-    </div>
-
-    <div class="vs-pane" id="vsPaneReview">
-      <div class="vs-rules"><h3>Owner approval</h3>
-        <div>Load the submitted files, preview them, then <b>Approve</b> to write them into <code>assets/logicvideos/</code> under their auto filename. Pick your project root folder once when approving. Only Checkpoint-linked Moons are accepted.</div>
-      </div>
-      <div class="vs-row one"><div class="vs-field"><label for="vsReviewFiles">Submitted files</label><input type="file" id="vsReviewFiles" multiple accept="video/mp4,image/webp,.mp4,.webp"></div></div>
-      <div id="vsQueue"></div>
-      <div class="vs-msg" id="vsReviewMsg"></div>
-    </div>
   </div>
 </div>
+
+<div class="vs-overlay" id="vsOverlay">
+  <div class="vs-modal" role="dialog" aria-label="Submit logic video" style="max-width:520px">
+    <button type="button" class="vs-close" id="vsClose" aria-label="Close">&times;</button>
+    <h2 class="vs-title">Submit Logic Video</h2>
+    <div class="vs-step"><b>1</b> Route selected</div>
+    <div class="vs-sel" id="vsSel"></div>
+    <div class="vs-step"><b>2</b> Record it following the <button type="button" class="vs-link" id="vsOpenReq">Seed Generation Requirements</button> <span class="vs-sub">(60 sec max · .mp4 / .webp · 50 MB)</span></div>
+    <div class="vs-step"><b>3</b> Add your clip</div>
+    <div class="vs-row">
+      <div class="vs-field"><label for="vsFile">Video file</label><input type="file" id="vsFile" accept="video/mp4,image/webp,.mp4,.webp"></div>
+      <div class="vs-field"><label for="vsName">Your name (optional)</label><input type="text" id="vsName" maxlength="40"></div>
+    </div>
+    <ul class="vs-checks" id="vsChecks"></ul>
+    <div class="vs-autoname"><small>File name (automatic)</small><span id="vsAutoName">—</span></div>
+    <label class="vs-agree"><input type="checkbox" id="vsAgree"> <span>My clip follows the requirements.</span></label>
+    <button type="button" class="vs-btn" id="vsSubmitBtn" disabled>Submit for approval</button>
+    <div class="vs-msg" id="vsMsg"></div>
+  </div>
+</div>
+
+<div class="submit-bar" id="submitBar"><span><b>Submit mode</b> — click a route chip on a Moon with a Checkpoint.</span><button type="button" class="vs-btn" id="seedReqBtn">Seed Generation Requirements for Submission</button><button type="button" class="vs-ownerbtn" id="submitBarExit">Exit</button></div>
 
 <h1><img class="icon-svg" src="icon/ui-star.png" alt="" onerror="this.style.display='none'">Power Moon Logic Charts</h1>
 
@@ -1754,6 +1761,7 @@
   </div>
   <button class="pager-arrow" id="pagerNext" aria-label="Next kingdom"><img class="icon-svg" src="icon/ui-chevron-right.png" alt="" onerror="this.outerHTML='&lt;span&gt;&amp;rarr;&lt;/span&gt;'"></button>
 </div>
+<div class="owner-panel" id="ownerPanel" style="display:none;"></div>
 <div class="grid" id="grid"></div>
 <div class="checkpoint-groups" id="checkpointGroups" style="display:none;"></div>
 <div class="empty-state" id="emptyState" style="display:none;"></div>
@@ -5079,6 +5087,7 @@ function buildMoonCard(moon){
   const card = document.createElement("div");
   card.className = "moon-card";
   card.dataset.moonName = moon.name;
+  if(isSubmittable(moon)) card.dataset.submittable = "1";
 
   const name = document.createElement("p");
   name.className = "moon-name";
@@ -5457,6 +5466,7 @@ function buildMoonPanel(moon, opts){
   const panel = document.createElement("div");
   panel.className = "moon-panel";
   panel.dataset.moonName = moon.name;
+  if(isSubmittable(moon)) panel.dataset.submittable = "1";
 
   const header = document.createElement("button");
   header.type = "button";
@@ -5816,6 +5826,7 @@ function renderKingdom(name){
   document.querySelectorAll(".pager-dot").forEach(dot=>{
     dot.classList.toggle("active", dot.dataset.kingdom === name);
   });
+  if(window.vsOnKingdom) window.vsOnKingdom(name);
 }
 
 function rebuildKingdomTabs(){
@@ -6478,6 +6489,11 @@ function attachVideoBadge(nodeEl, moon, tierKey, indexInTier){
 // clip first; opens the overlay only if one is found, otherwise pops the
 // toast and leaves the overlay untouched.
 function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier){
+  if(submitMode){
+    if(!isSubmittable(moon)){ showNothingYetToast("Only Moons linked to a Checkpoint can be submitted."); return; }
+    if(window.vsSelect) window.vsSelect(moon, tierKey, tierLabel, andGroup, indexInTier);
+    return;
+  }
   const baseName = videoAutoName(moon.name, tierKey, indexInTier);
   const myToken = ++videoCheckToken;
   findLogicVideo(baseName, (mediaEl) => {
@@ -6523,8 +6539,9 @@ function findLogicVideo(baseName, onSettled){
   video.src = "assets/logicvideos/" + baseName + ".mp4";
 }
 
-function showNothingYetToast(){
+function showNothingYetToast(text){
   if(nothingYetTimer) clearTimeout(nothingYetTimer);
+  nothingYetToast.textContent = text || "Nothing yet…";
   nothingYetToast.classList.add("show");
   nothingYetTimer = setTimeout(() => {
     nothingYetToast.classList.remove("show");
@@ -6607,78 +6624,64 @@ document.addEventListener("keydown", (e) => {
 
 /* =========================================================
    VIDEO SUBMITTER
-   Visitors pick a Moon + Logic Level (+ route within that level); the
-   filename is generated automatically. The owner Review tab lives here too, but it is only a convenience gate: a clip only goes live when the file is written into assets/logicvideos/ in the owner's repo.
-   - endpoint: "" -> submitter downloads the auto-named file to send you.
-     Set a URL (e.g. a Discord webhook) -> POSTed as multipart/form-data.
+   Submit Video turns on "submit mode": click a route chip (that IS the
+   logic level + abilities) on any Checkpoint-linked Moon and a small
+   dialog opens with the filename generated automatically.
+   The approve tool is hidden: it only exists on the Darker Side page and
+   is unlocked by clicking the Kingdom icon there + the owner passphrase.
+   It is only a convenience gate: a clip only goes live when the file is
+   written into assets/logicvideos/ in the owner's repo.
    ========================================================= */
+let submitMode = false;
+// Only moons tracked from a real Checkpoint (not a Custom Node / none) are submittable.
+function isSubmittable(moon){ return !!moon.checkpoint && moon.checkpointType === "checkpoint"; }
+
 const VIDEO_SUBMIT = {
-  enabled: 1, // 1 = show Submit Video button, 0 = hide the whole feature
-  // PBKDF2-SHA256 (250k iterations, salt "pml-vs-v1") of the owner passphrase. Default passphrase: "changeme" — CHANGE IT.
-  // In the browser console:  vsMakeHash("yourpass").then(console.log)   then paste the result here.
+  enabled: 1,
+  // PBKDF2-SHA256 (250k iterations, salt "pml-vs-v1"). Default passphrase "changeme" — CHANGE IT:
+  // console:  vsMakeHash("yourpass").then(console.log)  -> paste below.
   ownerHash: "b0d1a2567884df20fd565de18c06b6f04a50cbda2a11ce64408d0db84cd7e13b",
   endpoint: "",
   contactNote: "Send the downloaded file to the site owner (Discord/DM) so it can be reviewed.",
-  maxMB: 50,
-  maxSeconds: 60,
-  exts: [".mp4", ".webp"],
+  maxMB: 50, maxSeconds: 60, exts: [".mp4", ".webp"],
 };
 
 (function(){
-  if(!VIDEO_SUBMIT.enabled){ ["submitToggle","vsOverlay"].forEach(i => { const e = document.getElementById(i); if(e) e.remove(); }); return; }
   const $ = id => document.getElementById(id);
-  const ov = $("vsOverlay"), kSel = $("vsKingdom"), mSel = $("vsMoon"), tSel = $("vsTier"), bSel = $("vsBranch");
-  const fileIn = $("vsFile"), agree = $("vsAgree"), subBtn = $("vsSubmitBtn");
-  let fileState = { ok:false, durationOk:true, dur:null };
+  if(!VIDEO_SUBMIT.enabled){ ["submitToggle","vsOverlay","reqOverlay","submitBar","ownerPanel","seedReqBtn"].forEach(i => { const e = $(i); if(e) e.remove(); }); return; }
+  const ov = $("vsOverlay"), req = $("reqOverlay"), fileIn = $("vsFile"), agree = $("vsAgree"), subBtn = $("vsSubmitBtn");
+  let ctx = null, fileState = { ok:false, durationOk:true, dur:null };
+  const esc = x => String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  const ext = f => { const m = /\.[^.]+$/.exec(f.name || ""); return m ? m[0].toLowerCase() : ""; };
+  const cpName = moon => moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "");
+  const autoNameNow = () => ctx ? videoAutoName(ctx.moon.name, ctx.tier, ctx.idx) : "";
+  const setMsg = (el, t, err) => { el.textContent = t; el.classList.toggle("err", !!err); };
 
   function tokenText(group){
     if(!group || !group.length) return "Free";
-    let toks = group;
-    try { toks = sortedTokensForDisplay(group); } catch(e){}
+    let toks = group; try { toks = sortedTokensForDisplay(group); } catch(e){}
     return toks.map(t => (ICON_MANIFEST[t] && ICON_MANIFEST[t].label) || t).join(" + ");
   }
-  // Every (tier, branch index within tier) for a moon -> autoname slot.
   function slotsFor(moon){
-    if(!moon.tierLanes || !moon.tierLanes.length)
-      return [{ tier:"free", label:"Free", idx:1, desc:"Free" }];
+    if(!moon.tierLanes || !moon.tierLanes.length) return [{ tier:"free", label:"Free", idx:1, desc:"Free" }];
     const out = [];
-    moon.tierLanes.forEach(l => l.groups.forEach((g, i) =>
-      out.push({ tier:l.tier, label:l.label, idx:i+1, desc:tokenText(g) })));
+    moon.tierLanes.forEach(l => l.groups.forEach((g, i) => out.push({ tier:l.tier, label:l.label, idx:i+1, desc:tokenText(g) })));
     return out;
   }
-  // Only moons tracked from a real Checkpoint (not a Custom Node, not "no checkpoint") can be submitted.
-  const eligible = moon => !!moon.checkpoint && moon.checkpointType === "checkpoint";
-  const cpName = moon => moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "");
-  const curMoon = () => (KINGDOMS[kSel.value] || [])[+mSel.value];
-  const curSlots = () => { const m = curMoon(); return m ? slotsFor(m).filter(s => s.tier === tSel.value) : []; };
-  const curSlot = () => curSlots()[+bSel.value] || null;
-  const ext = f => { const m = /\.[^.]+$/.exec(f.name || ""); return m ? m[0].toLowerCase() : ""; };
-  const autoNameNow = () => { const m = curMoon(), sl = curSlot(); return m && sl ? videoAutoName(m.name, sl.tier, sl.idx) : ""; };
-  const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
 
-  function fillKingdoms(){
-    const all = KINGDOM_ORDER.length ? KINGDOM_ORDER : Object.keys(KINGDOMS);
-    const names = all.filter(k => (KINGDOMS[k] || []).some(eligible));
-    kSel.innerHTML = names.map(n => '<option value="'+esc(n)+'">'+esc(n)+'</option>').join("");
-    fillMoons();
-  }
-  function fillMoons(){
-    mSel.innerHTML = (KINGDOMS[kSel.value] || []).map((m,i) => eligible(m) ? '<option value="'+i+'">'+esc(m.name)+' — ✓ '+esc(cpName(m))+'</option>' : "").join("");
-    fillTiers();
-  }
-  function fillTiers(){
-    const m = curMoon();
-    $("vsCp").innerHTML = m ? 'Tracked from Checkpoint: <b>'+esc(cpName(m))+'</b> — start your clip at or near it.' : "";
-    const counts = {}, labels = {}, order = [];
-    (m ? slotsFor(m) : []).forEach(s => { if(!(s.tier in counts)){ counts[s.tier] = 0; labels[s.tier] = s.label; order.push(s.tier); } counts[s.tier]++; });
-    tSel.innerHTML = order.map(t => '<option value="'+t+'">'+labels[t]+' ('+counts[t]+' route'+(counts[t]===1?'':'s')+')</option>').join("");
-    fillBranches();
-  }
-  function fillBranches(){
-    bSel.innerHTML = curSlots().map((s,i) => '<option value="'+i+'">#'+s.idx+' — '+esc(s.desc)+'</option>').join("");
-    refresh();
-  }
-
+  // ---- submit dialog ---------------------------------------------------
+  window.vsSelect = function(moon, tier, label, group, idx){
+    ctx = { moon, tier, label, idx, group: group || [] };
+    const box = $("vsSel"); box.innerHTML = "";
+    const k = document.createElement("div"); k.className = "vs-sel-sub"; k.textContent = moon.kingdom + " · tracked from Checkpoint: " + cpName(moon); box.appendChild(k);
+    const n = document.createElement("div"); n.className = "vs-sel-moon"; n.textContent = moon.name; box.appendChild(n);
+    const pill = document.createElement("span"); pill.className = "tier-pill" + (TIER_LABEL[tier] ? " " + tier : ""); pill.textContent = label || tier; box.appendChild(pill);
+    const chip = document.createElement("div"); chip.className = "option-chip" + (TIER_LABEL[tier] ? " " + tier : "");
+    if(ctx.group.length) appendAndGroupIcons(chip, ctx.group); else chip.textContent = "Free";
+    box.appendChild(chip);
+    $("vsMsg").textContent = "";
+    refresh(); ov.classList.add("open");
+  };
   function refresh(){
     const name = autoNameNow(), f = fileIn.files[0];
     $("vsAutoName").textContent = name ? name + (f ? ext(f) : ".mp4") : "—";
@@ -6686,14 +6689,12 @@ const VIDEO_SUBMIT = {
     const add = (cls, t) => rows.push('<li class="'+cls+'">'+(cls==="ok"?"✓ ":cls==="bad"?"✗ ":"… ")+t+'</li>');
     if(!f){ add("wait","Choose a video file"); fileState.ok = false; }
     else {
-      const extOk = VIDEO_SUBMIT.exts.includes(ext(f));
-      const sizeOk = f.size <= VIDEO_SUBMIT.maxMB*1024*1024;
+      const extOk = VIDEO_SUBMIT.exts.includes(ext(f)), sizeOk = f.size <= VIDEO_SUBMIT.maxMB*1048576;
       add(extOk?"ok":"bad", "Format "+ext(f)+" (allowed: "+VIDEO_SUBMIT.exts.join(", ")+")");
       add(sizeOk?"ok":"bad", "Size "+(f.size/1048576).toFixed(1)+" MB (max "+VIDEO_SUBMIT.maxMB+" MB)");
       if(ext(f)===".mp4"){
         if(fileState.dur == null) add("wait","Checking length…");
-        else { fileState.durationOk = fileState.dur <= VIDEO_SUBMIT.maxSeconds;
-          add(fileState.durationOk?"ok":"bad","Length "+fileState.dur.toFixed(1)+"s (60 second maximum)"); }
+        else { fileState.durationOk = fileState.dur <= VIDEO_SUBMIT.maxSeconds; add(fileState.durationOk?"ok":"bad","Length "+fileState.dur.toFixed(1)+"s (60 second maximum)"); }
       }
       fileState.ok = extOk && sizeOk && (ext(f)!==".mp4" || (fileState.dur != null && fileState.durationOk));
     }
@@ -6712,29 +6713,19 @@ const VIDEO_SUBMIT = {
     }
     refresh();
   });
-  kSel.addEventListener("change", fillMoons);
-  mSel.addEventListener("change", fillTiers);
-  tSel.addEventListener("change", fillBranches);
-  bSel.addEventListener("change", refresh);
   agree.addEventListener("change", refresh);
-
-  function setMsg(el, t, err){ el.textContent = t; el.classList.toggle("err", !!err); }
   subBtn.addEventListener("click", async () => {
-    const f = fileIn.files[0], m = curMoon(), sl = curSlot(); if(!f || !m || !sl) return;
-    const fname = autoNameNow() + ext(f);
-    const renamed = new File([f], fname, { type:f.type });
-    const msg = $("vsMsg");
+    const f = fileIn.files[0]; if(!f || !ctx) return;
+    const fname = autoNameNow() + ext(f), renamed = new File([f], fname, { type:f.type }), msg = $("vsMsg");
     if(VIDEO_SUBMIT.endpoint){
       subBtn.disabled = true; setMsg(msg, "Uploading…");
       try{
         const fd = new FormData();
-        fd.append("file", renamed, fname);
-        fd.append("filename", fname); fd.append("kingdom", kSel.value); fd.append("moon", m.name);
-        fd.append("tier", sl.tier); fd.append("branch", sl.idx);
-        fd.append("submitter", $("vsName").value); fd.append("note", $("vsNote").value);
+        fd.append("file", renamed, fname); fd.append("filename", fname); fd.append("kingdom", ctx.moon.kingdom); fd.append("moon", ctx.moon.name);
+        fd.append("tier", ctx.tier); fd.append("branch", ctx.idx); fd.append("submitter", $("vsName").value);
         const r = await fetch(VIDEO_SUBMIT.endpoint, { method:"POST", body:fd });
         if(!r.ok) throw new Error("HTTP "+r.status);
-        setMsg(msg, "Submitted! Your clip is waiting for approval as "+fname);
+        setMsg(msg, "Submitted! Waiting for approval as "+fname);
       }catch(e){ setMsg(msg, "Upload failed: "+e.message, true); subBtn.disabled = false; }
     } else {
       const a = document.createElement("a"); a.href = URL.createObjectURL(renamed); a.download = fname;
@@ -6743,43 +6734,60 @@ const VIDEO_SUBMIT = {
     }
   });
 
-  // ---- owner gate (UI convenience only; see header comment) -----------
+  // ---- open/close, submit mode, requirements popup -----------------------
+  const closeSubmit = () => ov.classList.remove("open");
+  const openReq = () => req.classList.add("open"), closeReq = () => req.classList.remove("open");
+  function setSubmitMode(on){
+    submitMode = on; document.body.classList.toggle("submit-mode", on);
+    $("submitToggle").classList.toggle("active", on); if(!on) closeSubmit();
+  }
+  $("submitToggle").addEventListener("click", () => setSubmitMode(!submitMode));
+  $("submitBarExit").addEventListener("click", () => setSubmitMode(false));
+  $("vsClose").addEventListener("click", closeSubmit);
+  ov.addEventListener("click", e => { if(e.target === ov) closeSubmit(); });
+  $("seedReqBtn").addEventListener("click", openReq);
+  $("vsOpenReq").addEventListener("click", openReq);
+  $("reqClose").addEventListener("click", closeReq);
+  req.addEventListener("click", e => { if(e.target === req) closeReq(); });
+  document.addEventListener("keydown", e => { if(e.key === "Escape"){ if(req.classList.contains("open")) closeReq(); else if(ov.classList.contains("open")) closeSubmit(); } });
+
+  // ---- hidden owner approve tool (Darker Side page only) -----------------
   const isOwner = () => sessionStorage.getItem("vsOwner") === "1";
   window.vsMakeHash = async pw => {
     const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveBits"]);
     const bits = await crypto.subtle.deriveBits({ name:"PBKDF2", salt:new TextEncoder().encode("pml-vs-v1"), iterations:250000, hash:"SHA-256" }, key, 256);
     return Array.from(new Uint8Array(bits)).map(x => x.toString(16).padStart(2,"0")).join("");
   };
-  function paintOwner(){
-    const on = isOwner();
-    ov.classList.toggle("vs-owner", on);
-    $("vsOwnerBtn").textContent = on ? "Owner: log out" : "Owner login";
-    $("vsOwnerState").textContent = on ? "Owner mode — you can approve videos." : "Submissions are reviewed by the site owner.";
-    if(!on){
-      document.querySelectorAll(".vs-tab").forEach(x => x.classList.toggle("active", x.dataset.tab === "submit"));
-      $("vsPaneSubmit").classList.add("active"); $("vsPaneReview").classList.remove("active"); $("vsQueue").innerHTML = "";
-    }
+  const panel = $("ownerPanel");
+  const onDarker = () => KINGDOM_ORDER[currentKingdomIndex] === "Darker Side";
+  // The Approve button only exists on the Darker Side page; clicking it still needs the passphrase.
+  const approveBtn = $("approveToggle");
+  let panelOpen = false;
+  function syncApprove(){
+    approveBtn.style.display = onDarker() ? "" : "none";
+    approveBtn.classList.toggle("active", panelOpen && onDarker());
+    if(onDarker() && isOwner() && panelOpen){ if(!panel.dataset.built) buildPanel(); panel.style.display = "block"; }
+    else panel.style.display = "none";
   }
-  $("vsOwnerBtn").addEventListener("click", async () => {
-    if(isOwner()){ sessionStorage.removeItem("vsOwner"); paintOwner(); return; }
-    const pw = prompt("Owner passphrase:"); if(pw == null) return;
-    try{
-      if((await window.vsMakeHash(pw)) === VIDEO_SUBMIT.ownerHash){ sessionStorage.setItem("vsOwner","1"); paintOwner(); }
-      else alert("Wrong passphrase.");
-    }catch(e){ alert("Owner login needs https or localhost."); }
+  window.vsOnKingdom = syncApprove;
+  approveBtn.addEventListener("click", async () => {
+    if(!onDarker()) return;
+    if(!isOwner()){
+      const pw = prompt("Passphrase:"); if(pw == null) return;
+      try{
+        if((await window.vsMakeHash(pw)) !== VIDEO_SUBMIT.ownerHash){ alert("Wrong passphrase."); return; }
+        sessionStorage.setItem("vsOwner","1");
+      }catch(e){ alert("Needs https or localhost."); return; }
+      panelOpen = true;
+    } else panelOpen = !panelOpen;
+    syncApprove();
   });
-  document.querySelectorAll(".vs-tab").forEach(t => t.addEventListener("click", () => {
-    if(t.dataset.tab === "review" && !isOwner()) return;
-    document.querySelectorAll(".vs-tab").forEach(x => x.classList.toggle("active", x === t));
-    $("vsPaneSubmit").classList.toggle("active", t.dataset.tab === "submit");
-    $("vsPaneReview").classList.toggle("active", t.dataset.tab === "review");
-  }));
 
-  function allSlotNames(){
+  function allSlots(){
     const m = new Map();
-    Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].filter(eligible).forEach(moon => slotsFor(moon).forEach(sl => {
+    Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].forEach(moon => slotsFor(moon).forEach(sl => {
       const n = videoAutoName(moon.name, sl.tier, sl.idx);
-      if(!m.has(n)) m.set(n, { kingdom:k, moon:moon.name, slot:sl });
+      if(!m.has(n)) m.set(n, { kingdom:k, moon, slot:sl, ok:isSubmittable(moon) });
     })));
     return m;
   }
@@ -6790,50 +6798,37 @@ const VIDEO_SUBMIT = {
     const assets = await dirHandle.getDirectoryHandle("assets", { create:true });
     return assets.getDirectoryHandle("logicvideos", { create:true });
   }
-  $("vsReviewFiles").addEventListener("change", async e => {
-    if(!isOwner()) return;
-    const q = $("vsQueue"); q.innerHTML = ""; setMsg($("vsReviewMsg"), "");
-    const known = allSlotNames();
-    for(const f of e.target.files){
-      const base = f.name.replace(/\.[^.]+$/, "").toLowerCase();
-      const hit = known.get(base), already = hit ? await logicVideoExists(base) : false;
-      const item = document.createElement("div"); item.className = "vs-queue-item";
-      const url = URL.createObjectURL(f);
-      const media = ext(f)===".webp" ? '<img src="'+url+'" alt="">' : '<video src="'+url+'" controls muted loop playsinline></video>';
-      const info = hit
-        ? '<b>'+esc(hit.moon)+'</b> · '+esc(hit.kingdom)+'<br>'+esc(hit.slot.label)+' #'+hit.slot.idx+' — '+esc(hit.slot.desc)+'<br><code>assets/logicvideos/'+esc(base+ext(f))+'</code>'+(already?'<br><span style="color:var(--red)">⚠ A clip already exists here — approving replaces it.</span>':'')
-        : '<span style="color:var(--red)">✗ "'+esc(f.name)+'" doesn\'t match any Checkpoint-linked moon/branch filename.</span>';
-      item.innerHTML = media + '<div class="vs-queue-info">'+info+'<div class="vs-queue-actions"></div></div>';
-      const acts = item.querySelector(".vs-queue-actions");
-      const ap = document.createElement("button"); ap.className = "vs-btn green"; ap.textContent = "Approve"; ap.disabled = !hit;
-      const rj = document.createElement("button"); rj.className = "vs-btn red"; rj.textContent = "Reject";
-      rj.onclick = () => item.remove();
-      ap.onclick = async () => {
-        if(!isOwner()){ setMsg($("vsReviewMsg"), "Owner login required.", true); return; }
-        try{
-          const out = base + ext(f), dir = await getLogicDir();
-          if(dir){
-            const fh = await dir.getFileHandle(out, { create:true }), w = await fh.createWritable();
-            await w.write(f); await w.close();
-            videoExistsCache.delete(base);
-            setMsg($("vsReviewMsg"), "Approved → assets/logicvideos/"+out);
-          } else {
-            const a = document.createElement("a"); a.href = url; a.download = out; a.click();
-            setMsg($("vsReviewMsg"), "Browser can't write folders — downloaded "+out+"; drop it in assets/logicvideos/ yourself.");
-          }
-          item.remove();
-        }catch(err){ setMsg($("vsReviewMsg"), "Approve failed: "+err.message, true); }
-      };
-      acts.append(ap, rj); q.appendChild(item);
-    }
-  });
-
-  function open(){ paintOwner(); fillKingdoms(); ov.classList.add("open"); $("submitToggle").classList.add("active"); }
-  function close(){ ov.classList.remove("open"); $("submitToggle").classList.remove("active"); }
-  $("submitToggle").addEventListener("click", () => ov.classList.contains("open") ? close() : open());
-  $("vsClose").addEventListener("click", close);
-  ov.addEventListener("click", e => { if(e.target === ov) close(); });
-  document.addEventListener("keydown", e => { if(e.key === "Escape" && ov.classList.contains("open")) close(); });
+  function buildPanel(){
+    panel.dataset.built = "1";
+    panel.innerHTML = '<div class="op-head"><span>Approve videos</span><button type="button" class="vs-ownerbtn" id="opOut">Lock</button></div>'
+      + '<input type="file" id="opFiles" multiple accept="video/mp4,image/webp,.mp4,.webp"><div id="opQueue" style="margin-top:8px"></div><div class="vs-msg" id="opMsg"></div>'
+      ;
+    $("opOut").onclick = () => { sessionStorage.removeItem("vsOwner"); panel.dataset.built = ""; panelOpen = false; syncApprove(); };
+    $("opFiles").onchange = async e => {
+      const q = $("opQueue"); q.innerHTML = ""; setMsg($("opMsg"), "");
+      const known = allSlots();
+      for(const f of e.target.files){
+        const base = f.name.replace(/\.[^.]+$/, "").toLowerCase(), hit = known.get(base);
+        const okHit = hit && hit.ok, already = okHit ? await logicVideoExists(base) : false;
+        const url = URL.createObjectURL(f), row = document.createElement("div"); row.className = "op-row";
+        row.innerHTML = (ext(f)===".webp" ? '<img src="'+url+'" alt="">' : '<video src="'+url+'" controls muted loop playsinline></video>')
+          + '<div class="op-info">' + (okHit ? '<b>'+esc(hit.moon.name)+'</b> <small>'+esc(hit.kingdom)+' · '+esc(hit.slot.label)+' #'+hit.slot.idx+(already?' · ⚠ replaces existing':'')+'</small>'
+            : '<span style="color:var(--red)">✗ '+esc(f.name)+(hit?' (no Checkpoint link)':' (no match)')+'</span>') + '</div>';
+        const ap = document.createElement("button"); ap.className = "vs-btn green"; ap.textContent = "Approve"; ap.disabled = !okHit;
+        const rj = document.createElement("button"); rj.className = "vs-btn red"; rj.textContent = "✕"; rj.onclick = () => row.remove();
+        ap.onclick = async () => {
+          if(!isOwner()) return;
+          try{
+            const out = base + ext(f), dir = await getLogicDir();
+            if(dir){ const fh = await dir.getFileHandle(out, { create:true }), w = await fh.createWritable(); await w.write(f); await w.close(); videoExistsCache.delete(base); setMsg($("opMsg"), "Approved → assets/logicvideos/"+out); }
+            else { const a = document.createElement("a"); a.href = url; a.download = out; a.click(); setMsg($("opMsg"), "Downloaded "+out+" — put it in assets/logicvideos/."); }
+            row.remove();
+          }catch(err){ setMsg($("opMsg"), "Failed: "+err.message, true); }
+        };
+        row.append(ap, rj); q.appendChild(row);
+      }
+    };
+  }
 })();
 
 async function init(){
