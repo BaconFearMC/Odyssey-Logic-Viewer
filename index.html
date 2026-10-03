@@ -6709,6 +6709,10 @@ const VIDEO_SUBMIT = {
   endpoint: "",          // legacy: custom POST endpoint, only used if Supabase isn't configured
   contactNote: "Send the downloaded file to the site owner (Discord/DM) so it can be reviewed.",
   maxMB: 50, maxSeconds: 60, exts: [".mp4", ".webp"],
+  // ---- Auto-publish: Approve commits the clip straight into this GitHub folder ----
+  // The access token is NOT stored here (this file is public). You paste it once in the Approve panel
+  // and it is kept only in your own browser.
+  github: { repo: "BaconFearMC/Odyssey-Logic-Viewer", branch: "main", path: "assets/logicvideos" },
 };
 
 (function(){
@@ -6883,35 +6887,73 @@ const VIDEO_SUBMIT = {
     })));
     return m;
   }
+  // ---- GitHub auto-publish -------------------------------------------------
+  const GH_KEY = "odysseyGhToken";
+  const ghToken = () => { try{ return (localStorage.getItem(GH_KEY) || "").trim(); }catch(e){ return ""; } };
+  const setGhToken = t => { try{ if(t) localStorage.setItem(GH_KEY, t); else localStorage.removeItem(GH_KEY); }catch(e){} };
+  const toB64 = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(",")[1]); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
+  let lastSaveVia = "";   // "github" | "folder" | "download"
+
+  async function pushToGitHub(blob, out){
+    const cfg = VIDEO_SUBMIT.github, path = cfg.path + "/" + out;
+    const api = "https://api.github.com/repos/" + cfg.repo + "/contents/" + path.split("/").map(encodeURIComponent).join("/");
+    const headers = { "Authorization": "Bearer " + ghToken(), "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
+    const fail = async (r, what) => {
+      const j = await r.json().catch(() => ({}));
+      if(r.status === 401 || r.status === 403) throw new Error("GitHub rejected the token (" + (j.message || r.status) + "). Re-enter it under 'GitHub auto-publish'; it needs Contents: Read and write on " + cfg.repo + ".");
+      throw new Error(what + ": " + (j.message || r.status));
+    };
+    // If the file already exists we must send its sha to overwrite it.
+    let sha;
+    const g = await fetch(api + "?ref=" + encodeURIComponent(cfg.branch), { headers, cache: "no-store" });
+    if(g.ok) sha = (await g.json()).sha; else if(g.status !== 404) await fail(g, "GitHub lookup failed");
+    const body = { message: (sha ? "Update " : "Add ") + out + " (approved submission)", content: await toB64(blob), branch: cfg.branch };
+    if(sha) body.sha = sha;
+    const put = await fetch(api, { method: "PUT", headers: Object.assign({ "Content-Type": "application/json" }, headers), body: JSON.stringify(body) });
+    if(!put.ok) await fail(put, "GitHub upload failed");
+    return path;
+  }
+
+  // Manual fallbacks, only used when no GitHub token has been saved.
   let dirHandle = null;
   async function getLogicDir(){
-    if(!window.showDirectoryPicker) return null;
+    if(ghToken() || !window.showDirectoryPicker) return null;
     if(!dirHandle) dirHandle = await window.showDirectoryPicker({ mode:"readwrite" });
     const assets = await dirHandle.getDirectoryHandle("assets", { create:true });
     return assets.getDirectoryHandle("logicvideos", { create:true });
   }
-  // Writes into assets/logicvideos/ when the browser allows it (Chrome/Edge: pick your repo root once),
-  // otherwise downloads the file so it can be dropped in by hand. Returns the saved path, or null if downloaded.
+  // Order of preference: 1) commit to GitHub  2) write into a picked local repo folder  3) download.
+  // Returns the saved path, or null if it was downloaded.
   async function saveToRepo(blob, out, dir){
+    if(ghToken()){ const p = await pushToGitHub(blob, out); lastSaveVia = "github"; return p; }
     if(dir){
       const fh = await dir.getFileHandle(out, { create:true }), w = await fh.createWritable();
       await w.write(blob); await w.close();
+      lastSaveVia = "folder";
       return "assets/logicvideos/" + out;
     }
+    lastSaveVia = "download";
     const url = URL.createObjectURL(blob), a = document.createElement("a");
     a.href = url; a.download = out; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 4000);
     return null;
   }
+  const savedNote = saved => lastSaveVia === "github" ? " (committed to GitHub; live once the site redeploys, usually about a minute)" : (lastSaveVia === "folder" ? " (commit + push it to publish)" : "");
 
   function buildPanel(){
     panel.dataset.built = "1";
     panel.innerHTML = '<div class="op-head"><span>Approve videos <span class="op-who" id="opWho"></span></span><button type="button" class="vs-ownerbtn" id="opOut" style="display:none">Sign out</button></div>'
-      + '<div id="opAuth"></div><div id="opPending"></div>'
+      + '<div id="opAuth"></div>'
+      + '<details class="op-all" id="opGh"><summary id="opGhSum"></summary><div style="margin-top:6px"><div class="vs-sub">Paste a GitHub fine-grained token (only for ' + VIDEO_SUBMIT.github.repo + ', permission <b>Contents: Read and write</b>). It stays in this browser only. With it saved, Approve commits the clip straight to <b>' + VIDEO_SUBMIT.github.path + '/</b>.</div><input type="password" id="opGhTok" placeholder="github_pat_…" autocomplete="off" style="width:100%;margin-top:6px"><div style="margin-top:6px;display:flex;gap:6px"><button type="button" class="vs-btn" id="opGhSave">Save token</button><button type="button" class="vs-btn red" id="opGhClear">Remove</button></div></div></details>'
+      + '<div id="opPending"></div>'
       + '<details class="op-all"><summary>Approve a file manually (no database)</summary><input type="file" id="opFiles" multiple accept="video/mp4,image/webp,.mp4,.webp" style="margin-top:6px"><div id="opQueue" style="margin-top:8px"></div></details>'
       + '<div class="vs-msg" id="opMsg"></div>';
     $("opOut").onclick = async () => { try{ await sb.auth.signOut(); }catch(e){} panel.dataset.built = ""; panelOpen = false; syncApprove(); };
     $("opFiles").onchange = onManualFiles;
+    const ghSync = () => { $("opGhSum").textContent = ghToken() ? "GitHub auto-publish: ON ✓" : "GitHub auto-publish: OFF (click to set up)"; $("opGh").open = !ghToken(); };
+    $("opGhSave").onclick = () => { const v = $("opGhTok").value.trim(); if(!v) return; setGhToken(v); $("opGhTok").value = ""; ghSync(); setMsg($("opMsg"), "Token saved in this browser. Approve now commits to GitHub."); };
+    $("opGhClear").onclick = () => { setGhToken(""); ghSync(); setMsg($("opMsg"), "Token removed."); };
+    ghSync();
     startAuth();
   }
 
@@ -7019,7 +7061,7 @@ const VIDEO_SUBMIT = {
         if(!up.data || !up.data.length) throw new Error("File saved, but the database refused to mark it approved. Are you signed in as the owner?");
         await bucket().remove([row.file_path]);             // it now lives in the repo folder; free up bucket space
         videoExistsCache.delete(base);
-        setMsg($("opMsg"), saved ? "Approved → " + saved + " (commit + push it to publish)" : "Downloaded " + out + " — put it in assets/logicvideos/, then commit + push.");
+        setMsg($("opMsg"), saved ? "Approved → " + saved + savedNote() : "Downloaded " + out + " — put it in assets/logicvideos/, then commit + push.");
         wrap.remove(); onDone();
       }catch(err){ setMsg($("opMsg"), "Failed: " + ((err && err.message) || err), true); ap.disabled = !okHit; rj.disabled = false; }
     };
@@ -7056,7 +7098,7 @@ const VIDEO_SUBMIT = {
         try{
           const out = base + ext(f), dir = await getLogicDir(), saved = await saveToRepo(f, out, dir);
           videoExistsCache.delete(base);
-          setMsg($("opMsg"), saved ? "Approved → " + saved : "Downloaded " + out + " — put it in assets/logicvideos/.");
+          setMsg($("opMsg"), saved ? "Approved → " + saved + savedNote() : "Downloaded " + out + " — put it in assets/logicvideos/.");
           row.remove();
         }catch(err){ setMsg($("opMsg"), "Failed: " + err.message, true); }
       };
