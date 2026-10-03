@@ -4590,6 +4590,8 @@ function applyNodeMergeRules(kingdomName){
    own requirement; mode "or" = routes are an alternative to the moon's own
    requirement (own one is hidden when the routes already cover it).
    ========================================================= */
+// >>> QUICK TOGGLE: 1 = Pyramid-specific moon logic ON, 0 = OFF (moons use their normal requirements)
+const PYRAMID_LOGIC_ENABLED = 0;
 const PYRAMID_LOGIC = {
   kingdom: "Sand Kingdom",
   title: "Inverted Pyramid Logic",
@@ -4716,6 +4718,7 @@ function applyPyramidLogic(kingdomName){
   const moons = KINGDOMS[kingdomName];
   if(!moons) return;
   moons.forEach(m => { m._pyramid = null; });
+  if(!PYRAMID_LOGIC_ENABLED) return;
   if(kingdomName !== cfg.kingdom) return;
   const data = KINGDOM_NODE_DATA[kingdomName];
   if(!data) return;
