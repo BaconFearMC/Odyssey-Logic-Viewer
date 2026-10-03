@@ -969,6 +969,8 @@
   .entrance-req-row{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
   .entrance-req-label{ font-size:12px; font-weight:600; opacity:.85; white-space:nowrap; }
   .impossible-tag{ font-size:12px; font-weight:700; color:#e5484d; }
+  .pyramid-block{ margin-top:10px; padding:8px 10px 10px; border:1px solid rgba(214,168,60,.55); border-left:4px solid #d6a83c; border-radius:6px; background:rgba(214,168,60,.07); }
+  .pyramid-block-title{ font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#d6a83c; margin-bottom:4px; }
   .group-subarea-summary{ padding:8px 14px 10px; border-top:1px solid rgba(128,128,128,.25); }
   .group-subarea-title{ font-size:13px; font-weight:700; margin-bottom:2px; }
   .group-subarea-summary .entrance-reqs{ margin-top:4px; padding-top:0; border-top:none; }
@@ -4370,20 +4372,29 @@ function applyNodeMergeRules(kingdomName){
    each room's cost is its near-door -> far-door route, crossed together
    (AND) with the moon's own requirement. Edit stage keys here.
    ========================================================= */
-const PYRAMID_BOTH = ["SandWorldPyramid000Stage", "SandWorldPyramid001Stage"];
+const PYRAMID_BOTH  = ["SandWorldPyramid000Stage", "SandWorldPyramid001Stage"];
 const PYRAMID_LOWER = ["SandWorldPyramid000Stage"];
-// Value is either an array of stage keys, or { stages:[...], replaceOwn:true }
-// when the moon's own requirement is just one slice of the room's logic and
-// the room's full logic should be shown instead of being crossed with it.
+// Spark Pylon wire up to Top of the Pyramid. The cost is read from the real
+// route edge below (so it follows the CSV) and tagged to these scenarios.
+const PYRAMID_WIRE = {
+  from: "SandWorldHomeStage::checkpoint::obj525",
+  to:   "SandWorldHomeStage::place::new_place_2",
+  scenarios: [3, 4, 5],
+  label: "Spark Pylon Wire",
+};
+// Each entry: stages = rooms walked through in order (shown as one combined
+// row); wire = also show the wire route as its own scenario-tagged row.
+// The moon's OWN requirement is never altered — the pyramid cost renders in
+// its own "Inverted Pyramid" block under it.
 const FULL_LOGIC_CHAINS = {
-  "Secret of the Inverted Mural":        { stages: PYRAMID_LOWER, replaceOwn: true },
-  "Hidden Room in the Inverted Pyramid": PYRAMID_LOWER,
-  "On the Statue's Tail":                PYRAMID_BOTH,
-  "Showdown on the Inverted Pyramid":    PYRAMID_BOTH,
-  "The Lurker Under the Stone":          PYRAMID_BOTH,
-  "Welcome Back, Jaxi!":                 PYRAMID_BOTH,
-  "Peach in the Sand Kingdom":           PYRAMID_BOTH,
-  // "On the Lone Pillar":               PYRAMID_BOTH,   // eventually — uncomment to enable
+  "Secret of the Inverted Mural":        { stages: PYRAMID_LOWER },
+  "Hidden Room in the Inverted Pyramid": { stages: PYRAMID_LOWER, wire: true },
+  "On the Statue's Tail":                { stages: PYRAMID_BOTH,  wire: true },
+  "Showdown on the Inverted Pyramid":    { stages: PYRAMID_BOTH },   // scenario 1 only, so no wire row
+  "The Lurker Under the Stone":          { stages: PYRAMID_BOTH,  wire: true },
+  "Welcome Back, Jaxi!":                 { stages: PYRAMID_BOTH,  wire: true },
+  "Peach in the Sand Kingdom":           { stages: PYRAMID_BOTH,  wire: true },
+  // "On the Lone Pillar":               { stages: PYRAMID_BOTH,  wire: true },   // eventually — uncomment to enable
 };
 
 // Drops any branch that another branch already covers (same-or-subset
@@ -4425,24 +4436,48 @@ function applyFullLogicChains(kingdomName){
   const moons = KINGDOMS[kingdomName], data = KINGDOM_NODE_DATA[kingdomName];
   if(!moons || !data) return;
   moons.forEach(moon => {
+    moon.pyramidReqs = null;
     const spec = FULL_LOGIC_CHAINS[moon.name];
     if(!spec) return;
-    const stages = Array.isArray(spec) ? spec : spec.stages;
-    const replaceOwn = !Array.isArray(spec) && spec.replaceOwn;
     let pre = [{ group: [], scenarios: null, tier: "casual" }];
-    for(const st of stages){
+    for(const st of spec.stages){
       const t = stageThroughBranches(data, st);
-      if(!t){ console.warn(`[chain] "${moon.name}": no route through ${st} — left unchanged.`); return; }
+      if(!t){ console.warn(`[chain] "${moon.name}": no route through ${st} — skipped.`); return; }
       pre = crossBranches(pre, t);
     }
     pre = minimizeBranches(pre);
-    const own = replaceOwn ? [{ group: [], scenarios: null, tier: "casual" }] : minimizeBranches(ownBranchesFromTierLanes(moon.tierLanes));
-    applyMergedBranchesToMoon(moon, minimizeBranches(crossBranches(pre, own)), kingdomName);
-    if(moon.entranceReqs){
-      moon.entranceReqs = moon.entranceReqs.map(e => e.impossible ? e
-        : Object.assign({ label: e.label }, summarizeBranches(minimizeBranches(crossBranches(pre, branchesFromEntranceReqs([e]))), kingdomName)));
+    const rows = [];
+    rows.push(Object.assign({ label: spec.stages.length > 1 ? "Lower + Upper Interior" : "Lower Interior" },
+      summarizeBranches(pre, kingdomName)));
+    if(spec.wire){
+      const e = (data.edges || []).find(x => x.from_node_id === PYRAMID_WIRE.from && x.to_node_id === PYRAMID_WIRE.to
+        && (x.requirement_expr || "").trim().toLowerCase() !== "impossible");
+      if(e){
+        const wb = edgeBranches(e).map(b => ({ group: b.group, tier: b.tier,
+          scenarios: b.scenarios ? b.scenarios.filter(n => PYRAMID_WIRE.scenarios.includes(n)) : PYRAMID_WIRE.scenarios.slice() }))
+          .filter(b => b.scenarios.length);
+        if(wb.length) rows.push(Object.assign({ label: PYRAMID_WIRE.label }, summarizeBranches(wb, kingdomName)));
+      } else console.warn(`[chain] "${moon.name}": wire edge not found in route data.`);
     }
+    moon.pyramidReqs = rows;
+    // Keep the ability/capture filters honest: they see the interior route
+    // crossed with the moon's own requirement (display above is unchanged).
+    const own = ownBranchesFromTierLanes(moon.tierLanes);
+    moon.orGroups = minimizeBranches(crossBranches(pre, own)).map(b => b.group.slice());
   });
+}
+
+// Separate, clearly labeled block rendered under a moon's own requirement.
+function buildPyramidBlock(moon){
+  if(!moon.pyramidReqs || !moon.pyramidReqs.length) return null;
+  const box = document.createElement("div");
+  box.className = "pyramid-block";
+  const t = document.createElement("div");
+  t.className = "pyramid-block-title";
+  t.textContent = "Inverted Pyramid";
+  box.appendChild(t);
+  box.appendChild(renderEntranceReqs(moon.pyramidReqs, "entrance-reqs in-modal", true));
+  return box;
 }
 
 function applyNodeMergeRulesToAllLoadedKingdoms(){
@@ -4857,6 +4892,8 @@ function buildMoonCard(moon){
   } else {
     card.appendChild(buildMovementOptions(moon));
   }
+  const pyrBlock = buildPyramidBlock(moon);
+  if(pyrBlock) card.appendChild(pyrBlock);
   return card;
 }
 
@@ -5116,6 +5153,8 @@ function buildMoonPanel(moon){
   } else {
     body.appendChild(buildMovementOptions(moon, true));
   }
+  const pyrBlockP = buildPyramidBlock(moon);
+  if(pyrBlockP) body.appendChild(pyrBlockP);
   panel.appendChild(body);
 
   header.addEventListener("click", () => {
