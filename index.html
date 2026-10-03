@@ -4591,7 +4591,7 @@ function applyNodeMergeRules(kingdomName){
    requirement (own one is hidden when the routes already cover it).
    ========================================================= */
 // >>> QUICK TOGGLE: 1 = Pyramid-specific moon logic ON, 0 = OFF (moons use their normal requirements)
-const PYRAMID_LOGIC_ENABLED = 0;
+const PYRAMID_LOGIC_ENABLED = 1;
 const PYRAMID_LOGIC = {
   kingdom: "Sand Kingdom",
   title: "Inverted Pyramid Logic",
@@ -4629,6 +4629,8 @@ const PYRAMID_LOGIC = {
     { moon: "On the Lone Pillar",                  target: "pillar",     mode: "and" }, // eventually: fills out as more Pillar edges are authored
   ],
 };
+// Kakku (Glydon) routes are only shown for these moons; hidden everywhere else in the Pyramid logic.
+const PYRAMID_KAKKU_MOONS = ["On the Lone Pillar"];
 const PYRAMID_ROW_ORDER = ["Climb through the Inverted Pyramid", "Wire from the Round Tower", "Kakku from the Round Tower"];
 
 function pyramidBranchCovers(a, b){ // does a's scenario coverage include all of b's?
@@ -4713,6 +4715,44 @@ function pyramidRouteLabel(via){
   return "Other route";
 }
 
+// >>> QUICK TOGGLE: 1 = clicking/opening the "Top of the Pyramid" node also lists the Lower + Upper Interior
+//     requirements (separate from PYRAMID_LOGIC_ENABLED), 0 = off.
+const TOP_PYRAMID_INTERIORS_ENABLED = 1;
+function buildTopPyramidInteriors(kingdomName){
+  const cfg = PYRAMID_LOGIC;
+  if(!TOP_PYRAMID_INTERIORS_ENABLED || kingdomName !== cfg.kingdom) return null;
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  if(!data || !data.nodeMap[cfg.startNode]) return null;
+  const found = computePyramidRoutes(data, cfg);
+  const wrap = document.createElement("div");
+  wrap.className = "pyramid-wrap";
+  wrap.style.margin = "8px 10px 4px";
+  [["Lower Interior", "lowerOut"], ["Upper Interior", "upperExit"]].forEach(([title, key]) => {
+    const raw = (found[cfg.nodes[key]] || []).filter(b => !(b.via && b.via.has("kakku")));
+    if(!raw.length) return;
+    const routes = pyramidPrune(raw.map(b => Object.assign({}, b)), kingdomName);
+    const rowMap = {};
+    routes.forEach(b => { (rowMap[pyramidRouteLabel(b.via)] = rowMap[pyramidRouteLabel(b.via)] || []).push(b); });
+    const labels = PYRAMID_ROW_ORDER.filter(l => rowMap[l]).concat(Object.keys(rowMap).filter(l => !PYRAMID_ROW_ORDER.includes(l)));
+    const rows = labels.map(label => Object.assign({ label }, summarizeBranches(rowMap[label], kingdomName)));
+    const box = document.createElement("div");
+    box.className = "pyramid-logic";
+    const t = document.createElement("div");
+    t.className = "pyramid-logic-title";
+    t.textContent = title;
+    const hint = document.createElement("span");
+    hint.className = "pyramid-logic-hint";
+    hint.textContent = rows.length > 1 ? "any one route" : "route";
+    t.appendChild(hint);
+    box.appendChild(t);
+    const r = renderEntranceReqs(rows, "entrance-reqs pyramid-reqs");
+    r.style.borderTop = "none"; r.style.marginTop = "0"; r.style.paddingTop = "0";
+    box.appendChild(r);
+    wrap.appendChild(box);
+  });
+  return wrap.children.length ? wrap : null;
+}
+
 function applyPyramidLogic(kingdomName){
   const cfg = PYRAMID_LOGIC;
   const moons = KINGDOMS[kingdomName];
@@ -4729,7 +4769,7 @@ function applyPyramidLogic(kingdomName){
     const moon = moons.find(m => m.name === entry.moon);
     if(!moon){ console.warn(`[pyramid] moon "${entry.moon}" not found — skipped.`); return; }
     const targetId = cfg.nodes[entry.target];
-    const raw = found[targetId] || [];
+    const raw = (found[targetId] || []).filter(b => PYRAMID_KAKKU_MOONS.includes(moon.name) || !(b.via && b.via.has("kakku")));
     if(!raw.length){ console.warn(`[pyramid] "${moon.name}": no route to ${targetId} — left unchanged.`); return; }
 
     const routes = pyramidPrune(raw.map(b => Object.assign({}, b)), kingdomName);
@@ -5562,6 +5602,12 @@ function buildCheckpointGroup(checkpointName, entry){
       box.appendChild(renderEntranceReqs(trav));
       group.appendChild(box);
     });
+  }
+
+  if(/^top of the pyramid$/i.test(checkpointName.replace(/\s*Checkpoint\s*$/i, "").trim())){
+    const kN = (entry.moons && entry.moons[0]) ? entry.moons[0].kingdom : KINGDOM_ORDER[currentKingdomIndex];
+    const interiors = buildTopPyramidInteriors(kN);
+    if(interiors) group.appendChild(interiors);
   }
 
   const body = document.createElement("div");
