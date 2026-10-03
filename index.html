@@ -208,6 +208,25 @@
   .vs-sel .vs-sel-moon{ font-family:"FontDB",sans-serif; font-size:16px; color:var(--gold); }
   .vs-sel .vs-sel-sub{ font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px; }
   .vs-step{ font-size:13px; margin:8px 0 6px; display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; } .vs-step b{ background:var(--gold); color:#1b1c1f; width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; flex:0 0 auto; }
+  #seeExample{ display:none; position:fixed; right:24px; bottom:24px; top:auto; left:auto; margin:0; text-decoration:none; }
+  body.submit-mode #seeExample{ display:flex; }
+  body.submit-mode .has-video{ opacity:.35; cursor:not-allowed !important; outline:none !important; }
+  .rq-modal{ max-width:900px; }
+  .rq-top{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+  .rq-top span{ background:var(--gold-light); border:1px solid var(--gold); color:var(--gold); padding:4px 10px; font-size:12px; text-transform:uppercase; letter-spacing:.4px; }
+  .rq-legend{ font-size:12px; color:var(--text-dim); margin-bottom:12px; }
+  .rq-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0; }
+  .rq-sec{ background:var(--bg-chip); border:1px solid var(--border); border-left:3px solid var(--gold); padding:8px 12px 10px; text-align:left; }
+  .rq-sec h4{ margin:0 0 6px; font-size:12px; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; }
+  .rq-sec p,.rq-sec ul{ margin:0; font-size:13px; } .rq-sec ul{ padding-left:18px; } .rq-sec li{ margin:3px 0; }
+  .rq-wide{ margin:10px 0; }
+  .rq-row{ display:grid; grid-template-columns:auto 1fr auto; gap:2px 8px; align-items:center; padding:4px 0; border-bottom:1px solid var(--border); font-size:13px; text-align:left; }
+  .rq-row:last-child{ border-bottom:none; }
+  .rq-name{ color:var(--text); } .rq-val{ color:var(--gold); font-weight:700; text-align:right; }
+  .rq-note{ grid-column:2 / 4; font-size:11px; color:var(--text-dim); }
+  .rq-badge{ font-size:8.5px; font-weight:800; letter-spacing:.4px; padding:2px 5px; border:1px solid; }
+  .rq-badge.req{ color:var(--red); border-color:var(--red); } .rq-badge.rec{ color:var(--worldpeace); border-color:var(--worldpeace); }
+  @media (max-width:700px){ .rq-grid{ grid-template-columns:1fr; } }
   .vs-link{ background:none; border:none; padding:0; color:var(--gold); text-decoration:underline; cursor:pointer; font:inherit; }
   .submit-bar{ display:none; position:fixed; left:50%; bottom:16px; margin-left:60px; transform:translateX(-50%); z-index:90; max-width:92vw; background:var(--bg-panel); border:2px solid var(--gold); padding:9px 14px; font-size:12.5px; gap:12px; align-items:center; filter:drop-shadow(2px 3px 0 var(--ink)); }
   body.submit-mode .submit-bar{ display:flex; }
@@ -1612,6 +1631,8 @@
 
 
 
+<a class="corner-btn" id="seeExample" href="https://github.com/BaconFearMC/Odyssey-Logic-Viewer/blob/main/assets/logicvideos/bonneterblockadecasual1.mp4" target="_blank" rel="noopener"><span>See an Example</span></a>
+
 <button class="corner-btn" id="approveToggle" type="button" aria-label="Approve videos" style="right:24px; top:150px; display:none;"><span>Approve Videos</span></button>
 
 <button class="corner-btn" id="submitToggle" type="button" aria-label="Open video submitter">
@@ -1622,69 +1643,21 @@
 </button>
 
 <div class="vs-overlay" id="reqOverlay">
-  <div class="vs-modal" role="dialog" aria-label="Seed Generation Requirements for Submission">
+  <div class="vs-modal rq-modal" role="dialog" aria-label="Seed Generation Requirements for Submission">
     <button type="button" class="vs-close" id="reqClose" aria-label="Close">&times;</button>
     <h2 class="vs-title">Seed Generation Requirements for Submission</h2>
-    <div class="vs-rules" style="max-height:none;overflow:visible">
-      <h3>Requirements</h3>
-      <p class="vs-legend"><b>*</b> = REQUIRED for video submission (I'm a stickler) &nbsp;·&nbsp; <b>!</b> = RECOMMENDED setting</p>
-      <p><b>60 Second Maximum.</b> File names are automatic — click a route on a Moon and the name is generated for you. Don't rename it.</p>
-
-      <h4>General</h4>
-      <ul>
-        <li>Please refrain from doing any Moons that are majorly incorrect.
-          <ul><li>Example: <i>Through the Freezing Waterway</i> in Sand Kingdom is marked as Free because it is marked from coming from the Exit Pipe. To the end, avoid Custom Nodes and 1-Way subareas until further notice.</li></ul>
-        </li>
-      </ul>
-
-      <h4>Randomization / Logic</h4>
-      <ul>
-        <li><b>*</b> Randomize Moons: OFF <span class="vs-sub">— the custom models will still show.</span></li>
-        <li><b>!</b> Moon Requirement: 0</li>
-        <li><b>!</b> Requirement at Max <span class="vs-sub">— these will make globing through all kingdoms free.</span></li>
-        <li><b>*</b> Randomized Paintings: OFF <span class="vs-sub">— keep OFF for now. Paintings are Custom Nodes.</span></li>
-        <li><b>!</b> Randomize Kingdom Order: OFF</li>
-        <li><b>*</b> Randomize Start Kingdom State: OFF</li>
-        <li><b>*</b> Loading Zones: OFF <span class="vs-sub">— makes currently allowed subareas available easily.</span></li>
-        <li><b>*</b> Moon Rock Key: OFF</li>
-        <li><b>*</b> Ability Lock: ON <span class="vs-sub">— enable/disable based on the current requirements.</span></li>
-      </ul>
-
-      <h4>Tracker / Presentation</h4>
-      <ul>
-        <li><b>*</b> Tracker: OFF</li>
-        <li><b>*</b> Randomize Skyboxes: OFF</li>
-        <li><b>*</b> Music Rando: OFF</li>
-        <li><b>*</b> Music Source: VANILLA</li>
-        <li><b>*</b> Music Overlay: OFF <span class="vs-sub">— I'd like it to look and sound like a normal game for viewing purposes.</span></li>
-        <li><b>*</b> Fast Moon Demos: OFF</li>
-      </ul>
-
-      <h4>Minigames / Costumes</h4>
-      <ul>
-        <li><b>*</b> Easy Mini Games: OFF</li>
-        <li><b>!</b> Sheep Herding: Either 1 or OFF (basegame), up to you. I don't care either way.</li>
-        <li><b>*</b> Free Costume Moon: OFF (I'm a stickler, I know)</li>
-        <li><b>!</b> Randomize Outfits: OFF <span class="vs-sub">— I would prefer all clips as normal Mario. The only preferred exception is really hard trickjumps and the like.</span></li>
-        <li><b>!</b> Fast Doggo: Up to you :)</li>
-      </ul>
-
-      <h4>Other Randomization</h4>
-      <ul>
-        <li><b>*</b> Uncapped Coins: OFF</li>
-        <li><b>*</b> Randomize Chest Order: OFF</li>
-        <li><b>*</b> Randomize Sphynx Questions: OFF</li>
-      </ul>
-
-      <h4>Recording Requirements</h4>
-      <ul>
-        <li>Please DON'T show the entering of subareas from the outside.
-          <ul><li>At most, just show the fade-in from the inside entrance, if you choose to do those yet for previously established reasons.</li></ul>
-        </li>
-        <li>Videos should be 1 clean recording, starting at or near the established node on the logic site (see reference).</li>
-        <li>Max length 60 seconds · max size 50 MB · .mp4 or .webp.</li>
-      </ul>
+    <div class="rq-top">
+      <span><b>60 Second Maximum</b></span><span>File names are automatic</span><span>.mp4 / .webp · 50 MB</span>
     </div>
+    <div class="rq-legend"><span class="rq-badge req">REQUIRED</span> must be set this way &nbsp; <span class="rq-badge rec">RECOMMENDED</span> preferred, not mandatory</div>
+    <section class="rq-sec rq-wide"><h4>Before you record</h4>
+      <p>Skip Moons that are majorly incorrect. Example: <i>Through the Freezing Waterway</i> (Sand Kingdom) is marked Free because it's marked as coming from the Exit Pipe. For now, avoid Custom Nodes and 1-way subareas.</p>
+    </section>
+    <div class="rq-grid"><section class="rq-sec"><h4>Randomization / Logic</h4><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Randomize Moons</span><span class="rq-val">OFF</span><span class="rq-note">Custom models will still show.</span></div><div class="rq-row"><span class="rq-badge rec">RECOMMENDED</span><span class="rq-name">Moon Requirement</span><span class="rq-val">0</span></div><div class="rq-row"><span class="rq-badge rec">RECOMMENDED</span><span class="rq-name">Requirement at Max</span><span class="rq-val"></span><span class="rq-note">Makes globing through all kingdoms free.</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Randomized Paintings</span><span class="rq-val">OFF</span><span class="rq-note">Keep OFF for now — Paintings are Custom Nodes.</span></div><div class="rq-row"><span class="rq-badge rec">RECOMMENDED</span><span class="rq-name">Randomize Kingdom Order</span><span class="rq-val">OFF</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Randomize Start Kingdom State</span><span class="rq-val">OFF</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Loading Zones</span><span class="rq-val">OFF</span><span class="rq-note">Makes currently allowed subareas available easily.</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Moon Rock Key</span><span class="rq-val">OFF</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Ability Lock</span><span class="rq-val">ON</span><span class="rq-note">Enable/disable based on the current requirements.</span></div></section><section class="rq-sec"><h4>Tracker / Presentation</h4><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Tracker</span><span class="rq-val">OFF</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Randomize Skyboxes</span><span class="rq-val">OFF</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Music Rando</span><span class="rq-val">OFF</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Music Source</span><span class="rq-val">VANILLA</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Music Overlay</span><span class="rq-val">OFF</span><span class="rq-note">It should look and sound like a normal game.</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Fast Moon Demos</span><span class="rq-val">OFF</span></div></section><section class="rq-sec"><h4>Minigames / Costumes</h4><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Easy Mini Games</span><span class="rq-val">OFF</span></div><div class="rq-row"><span class="rq-badge rec">RECOMMENDED</span><span class="rq-name">Sheep Herding</span><span class="rq-val">1 or OFF</span><span class="rq-note">Either is fine.</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Free Costume Moon</span><span class="rq-val">OFF</span></div><div class="rq-row"><span class="rq-badge rec">RECOMMENDED</span><span class="rq-name">Randomize Outfits</span><span class="rq-val">OFF</span><span class="rq-note">Normal Mario preferred; exception for really hard trickjumps.</span></div><div class="rq-row"><span class="rq-badge rec">RECOMMENDED</span><span class="rq-name">Fast Doggo</span><span class="rq-val">Your choice</span></div></section><section class="rq-sec"><h4>Other Randomization</h4><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Uncapped Coins</span><span class="rq-val">OFF</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Randomize Chest Order</span><span class="rq-val">OFF</span></div><div class="rq-row"><span class="rq-badge req">REQUIRED</span><span class="rq-name">Randomize Sphynx Questions</span><span class="rq-val">OFF</span></div></section></div>
+    <section class="rq-sec rq-wide"><h4>Recording</h4>
+      <ul><li>Don't show entering a subarea from the outside — at most, show the fade-in from the inside entrance.</li>
+      <li>One clean recording, starting at or near the Checkpoint shown for that Moon.</li></ul>
+    </section>
   </div>
 </div>
 
@@ -6479,6 +6452,7 @@ function logicVideoExists(baseName){
 function attachVideoBadge(nodeEl, moon, tierKey, indexInTier){
   logicVideoExists(videoAutoName(moon.name, tierKey, indexInTier)).then(found => {
     if(!found || nodeEl.querySelector(":scope > .has-video-badge")) return;
+    nodeEl.classList.add("has-video");
     const badge = document.createElement("span");
     badge.className = "has-video-badge";
     badge.title = "Has video";
@@ -6493,7 +6467,10 @@ function attachVideoBadge(nodeEl, moon, tierKey, indexInTier){
 function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier){
   if(submitMode){
     if(!isSubmittable(moon)){ showNothingYetToast("Only Moons linked to a Checkpoint can be submitted."); return; }
-    if(window.vsSelect) window.vsSelect(moon, tierKey, tierLabel, andGroup, indexInTier);
+    Promise.race([logicVideoExists(videoAutoName(moon.name, tierKey, indexInTier)), new Promise(r => setTimeout(() => r(false), 1500))]).then(has => {
+      if(has){ showNothingYetToast("This route already has a video."); return; }
+      if(window.vsSelect) window.vsSelect(moon, tierKey, tierLabel, andGroup, indexInTier);
+    });
     return;
   }
   const baseName = videoAutoName(moon.name, tierKey, indexInTier);
@@ -6650,7 +6627,7 @@ const VIDEO_SUBMIT = {
 
 (function(){
   const $ = id => document.getElementById(id);
-  if(!VIDEO_SUBMIT.enabled){ ["submitToggle","vsOverlay","reqOverlay","submitBar","ownerPanel","seedReqBtn"].forEach(i => { const e = $(i); if(e) e.remove(); }); return; }
+  if(!VIDEO_SUBMIT.enabled){ ["submitToggle","vsOverlay","reqOverlay","submitBar","ownerPanel","seedReqBtn","seeExample"].forEach(i => { const e = $(i); if(e) e.remove(); }); return; }
   const ov = $("vsOverlay"), req = $("reqOverlay"), fileIn = $("vsFile"), agree = $("vsAgree"), subBtn = $("vsSubmitBtn");
   let ctx = null, fileState = { ok:false, durationOk:true, dur:null };
   const esc = x => String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
