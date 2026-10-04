@@ -157,6 +157,10 @@
   .cp-req-source{ display:flex; flex-direction:column; gap:5px; }
   .cp-req-source + .cp-req-source{ padding-top:8px; border-top:1px dashed rgba(128,128,128,.35); }
   .cp-req-source-label{ font-size:12px; font-weight:700; color:var(--text-dim); }
+  /* Custom Node Requirements: separate section, only visible while in Submit Video mode. */
+  #customNodeReqs{ display:none; }
+  body.submit-mode #customNodeReqs:not(.empty){ display:block; }
+  #customNodeReqs .cp-req{ border-left-color:var(--moonrock); }
   body.submit-mode .cp-req .option-chip,
   body.submit-mode .cp-req .free-tag{ outline:2px dashed var(--gold); outline-offset:2px; cursor:copy; }
   body.submit-mode .cp-req .has-video,
@@ -1717,7 +1721,7 @@
   </div>
 </div>
 
-<div class="submit-bar" id="submitBar"><span><b>Submit mode</b> — click a route chip on a Checkpoint Moon (not in a subarea), or on a Checkpoint under <b>Checkpoint Requirements</b> at the bottom of a kingdom.</span><button type="button" class="vs-btn" id="seedReqBtn">Seed Generation Requirements for Submission</button><button type="button" class="vs-ownerbtn" id="submitBarExit">Exit</button></div>
+<div class="submit-bar" id="submitBar"><span><b>Submit mode</b> — click a route chip on a Checkpoint Moon (not in a subarea) or an approved Custom Node Moon, or on a Checkpoint under <b>Checkpoint Requirements</b> / a Custom Node under <b>Custom Node Requirements</b> at the bottom of a kingdom.</span><button type="button" class="vs-btn" id="seedReqBtn">Seed Generation Requirements for Submission</button><button type="button" class="vs-ownerbtn" id="submitBarExit">Exit</button></div>
 
 <h1><img class="icon-svg" src="icon/ui-star.png" alt="" onerror="this.style.display='none'">Power Moon Logic Charts</h1>
 
@@ -1777,6 +1781,7 @@
 <div class="checkpoint-groups" id="checkpointGroups" style="display:none;"></div>
 <div class="empty-state" id="emptyState" style="display:none;"></div>
 <div class="cp-reqs" id="checkpointReqs" style="display:none;"></div>
+<div class="cp-reqs" id="customNodeReqs"></div>
 
 <div class="search-overlay" id="searchOverlay">
   <div class="search-modal" id="searchModal">
@@ -5796,6 +5801,7 @@ function renderGrid(){
   grid.innerHTML = "";
 
   renderCheckpointReqs(name);
+  renderCheckpointReqs(name, "custom_place");
   let moons = KINGDOMS[name] || [];
   if(unmarkedMode) moons = moons.filter(isMoonUnmarked);
   // "Hidden" used to drop a moon entirely the instant ANY one of its
@@ -5870,20 +5876,25 @@ function cleanCheckpointName(n){
 }
 
 // -> [{ nodeId, name, variants:[{ sourceLabel|null, moon }] }] for one kingdom (no glitch filtering).
-function getCheckpointVariants(kingdomName){
+// nodeType: "checkpoint" (default, warp points) or "custom_place" (Custom Nodes).
+function getCheckpointVariants(kingdomName, nodeType){
+  nodeType = nodeType || "checkpoint";
+  const isCustom = nodeType === "custom_place";
+  const kindWord = isCustom ? "Custom Node" : "Checkpoint";
   const data = KINGDOM_NODE_DATA[kingdomName];
   if(!data) return [];
   const usedBase = new Set();
   const out = [];
-  (data.nodes || []).filter(n => n.node_type === "checkpoint").forEach(n => {
+  (data.nodes || []).filter(n => n.node_type === nodeType).forEach(n => {
     const shown = cleanCheckpointName(n.display_name) || n.node_id;
-    let base = kingdomName + " " + shown + " Checkpoint";
+    let base = kingdomName + " " + shown + " " + kindWord;
     if(usedBase.has(squash(base))) base += " [" + n.node_id + "]"; // same display name twice -> keep file names unique
     usedBase.add(squash(base));
 
     const mk = (suffixName, label, lanes) => ({
       name: suffixName, label, kingdom: kingdomName, isCheckpointNode: true,
-      checkpoint: shown + " Checkpoint", checkpointType: "checkpoint", subarea: null,
+      checkpoint: shown + " " + kindWord, checkpointType: nodeType, subarea: null,
+      isCustomNode: isCustom,
       tierLanes: lanes || [],
     });
 
@@ -5893,13 +5904,13 @@ function getCheckpointVariants(kingdomName){
       sources.forEach(r => {
         if(r.impossible) return;
         const from = r.label.replace(/^From\s+/i, "");
-        variants.push({ sourceLabel: r.label, moon: mk(base + " from " + from + " Entry", shown + " (Checkpoint) — " + r.label, r.free ? [] : r.lanes) });
+        variants.push({ sourceLabel: r.label, moon: mk(base + " from " + from + " Entry", shown + " (" + kindWord + ") — " + r.label, r.free ? [] : r.lanes) });
       });
     } else {
       const branches = data.reachBranches[n.node_id];
       const sum = branches && branches.length ? summarizeBranches(branches, kingdomName) : { free: true };
       if(sum.impossible) return;
-      variants.push({ sourceLabel: null, moon: mk(base + " Entry", shown + " (Checkpoint)", sum.free ? [] : sum.lanes) });
+      variants.push({ sourceLabel: null, moon: mk(base + " Entry", shown + " (" + kindWord + ")", sum.free ? [] : sum.lanes) });
     }
     if(variants.length) out.push({ nodeId: n.node_id, name: shown, variants });
   });
@@ -5907,11 +5918,14 @@ function getCheckpointVariants(kingdomName){
   return out;
 }
 
-function renderCheckpointReqs(kingdomName){
-  const root = document.getElementById("checkpointReqs");
+function renderCheckpointReqs(kingdomName, nodeType){
+  nodeType = nodeType || "checkpoint";
+  const isCustom = nodeType === "custom_place";
+  const root = document.getElementById(isCustom ? "customNodeReqs" : "checkpointReqs");
   if(!root) return;
+  const nodeIcon = isCustom ? "icon/customnode.png" : "icon/infocheckpoint.png";
   root.innerHTML = "";
-  let list = getCheckpointVariants(kingdomName);
+  let list = getCheckpointVariants(kingdomName, nodeType);
 
   // Same Glitched filter the moon grid uses.
   if(glitchMode === "hide"){
@@ -5921,21 +5935,25 @@ function renderCheckpointReqs(kingdomName){
   }
   list = list.filter(cp => cp.variants.length);
 
-  if(!list.length){ root.style.display = "none"; return; }
-  root.style.display = "";
+  // Custom Node section visibility is CSS-driven (shown only in Submit Video mode); just flag emptiness.
+  if(isCustom) root.classList.toggle("empty", !list.length);
+  if(!list.length){ if(!isCustom) root.style.display = "none"; return; }
+  if(!isCustom) root.style.display = "";
 
   const head = document.createElement("div");
   head.className = "cp-reqs-head";
   const ic = document.createElement("img");
-  ic.src = "icon/infocheckpoint.png"; ic.alt = ""; ic.onerror = function(){ this.style.display = "none"; };
+  ic.src = nodeIcon; ic.alt = ""; ic.onerror = function(){ this.style.display = "none"; };
   const h = document.createElement("h2");
-  h.className = "cp-reqs-title"; h.textContent = "Checkpoint Requirements";
+  h.className = "cp-reqs-title"; h.textContent = isCustom ? "Custom Node Requirements" : "Checkpoint Requirements";
   head.append(ic, h);
   root.appendChild(head);
 
   const sub = document.createElement("p");
   sub.className = "cp-reqs-sub";
-  sub.textContent = "What it takes to reach each Checkpoint (warp point) in this kingdom. Use Submit Video to add a clip for a route.";
+  sub.textContent = isCustom
+    ? "What it takes to reach each Custom Node in this kingdom. Click a route chip to submit a clip for it."
+    : "What it takes to reach each Checkpoint (warp point) in this kingdom. Use Submit Video to add a clip for a route.";
   root.appendChild(sub);
 
   const grid = document.createElement("div");
@@ -5949,7 +5967,7 @@ function renderCheckpointReqs(kingdomName){
     const nm = document.createElement("p");
     nm.className = "cp-req-name";
     const i2 = document.createElement("img");
-    i2.src = "icon/infocheckpoint.png"; i2.alt = ""; i2.onerror = function(){ this.style.display = "none"; };
+    i2.src = nodeIcon; i2.alt = ""; i2.onerror = function(){ this.style.display = "none"; };
     const t = document.createElement("span"); t.textContent = cp.name;
     nm.append(i2, t);
     card.appendChild(nm);
@@ -6838,9 +6856,47 @@ document.addEventListener("click", e => {
     e.stopPropagation(); e.preventDefault();
   }
 }, true);
-// Only moons tracked from a real Checkpoint (not a Custom Node / none) are submittable.
-// Per the submission rules: no Custom Nodes, no subareas (clips can't show entering a subarea from outside).
-function isSubmittable(moon){ if(moon.isCheckpointNode) return true; return !!moon.checkpoint && moon.checkpointType === "checkpoint" && !moon.subarea; }
+// ---- Custom Node submission allow-list ---------------------------------
+// Moons tracked from a Custom Node are locked for video submissions UNLESS they are listed here.
+// Add one entry per moon, exactly as its name appears on the card (case-insensitive):
+//     "Moon Name"                  -> allowed in any kingdom
+//     "Kingdom Name | Moon Name"   -> allowed only in that kingdom (use if a moon name repeats)
+// Example:
+//     "Cap Kingdom | Some Moon Name",
+//     "Another Moon Name",
+const CUSTOM_NODE_SUBMIT_ALLOWLIST = [
+  // add your moons here
+];
+// Also auto-allow Custom Node moons whose node shows "(included above)" (its cost is already merged
+// into the moon's requirement). Set to false to use ONLY the list above.
+const CUSTOM_NODE_AUTO_ALLOW_INCLUDED_ABOVE = true;
+
+const _customNodeAllow = (() => {
+  const any = new Set(), scoped = new Set();
+  CUSTOM_NODE_SUBMIT_ALLOWLIST.forEach(e => {
+    const parts = String(e).split("|").map(x => normalizeMergeName(x));
+    if(parts.length > 1) scoped.add(parts[0] + "|" + parts.slice(1).join("|")); else if(parts[0]) any.add(parts[0]);
+  });
+  return { any, scoped };
+})();
+function isCustomNodeAllowListed(moon){
+  const n = normalizeMergeName(moon.name);
+  return _customNodeAllow.any.has(n) || _customNodeAllow.scoped.has(normalizeMergeName(moon.kingdom) + "|" + n);
+}
+function isCustomNodeIncludedAbove(moon){
+  return !!moon.checkpoint && moon.checkpointType === "custom_place" && (moon._mergedNodeKind === "custom_place" || !!moon._pyramid);
+}
+// Submittable moons:
+//  - tracked from a real Checkpoint, not in a subarea (clips can't show entering a subarea from outside)
+//  - tracked from a Custom Node when the moon is on CUSTOM_NODE_SUBMIT_ALLOWLIST (or, if enabled,
+//    when the node is "included above")
+function isSubmittable(moon){
+  if(moon.isCheckpointNode) return true;
+  if(moon.checkpoint && moon.checkpointType === "custom_place"){
+    return isCustomNodeAllowListed(moon) || (CUSTOM_NODE_AUTO_ALLOW_INCLUDED_ABOVE && isCustomNodeIncludedAbove(moon));
+  }
+  return !!moon.checkpoint && moon.checkpointType === "checkpoint" && !moon.subarea;
+}
 
 const VIDEO_SUBMIT = {
   enabled: 1,
@@ -6905,7 +6961,7 @@ const VIDEO_SUBMIT = {
   window.vsSelect = function(moon, tier, label, group, idx){
     ctx = { moon, tier, label, idx, group: group || [] };
     const box = $("vsSel"); box.innerHTML = "";
-    const k = document.createElement("div"); k.className = "vs-sel-sub"; k.textContent = moon.isCheckpointNode ? (moon.kingdom + " · Checkpoint (warp point)") : (moon.kingdom + " · tracked from Checkpoint: " + cpName(moon)); box.appendChild(k);
+    const k = document.createElement("div"); k.className = "vs-sel-sub"; k.textContent = moon.isCheckpointNode ? (moon.kingdom + (moon.isCustomNode ? " · Custom Node" : " · Checkpoint (warp point)")) : (moon.kingdom + " · tracked from " + (moon.checkpointType === "custom_place" ? "Custom Node: " : "Checkpoint: ") + cpName(moon)); box.appendChild(k);
     const n = document.createElement("div"); n.className = "vs-sel-moon"; n.textContent = moon.label || moon.name; box.appendChild(n);
     const pill = document.createElement("span"); pill.className = "tier-pill" + (TIER_LABEL[tier] ? " " + tier : ""); pill.textContent = label || tier; box.appendChild(pill);
     const chip = document.createElement("div"); chip.className = "option-chip" + (TIER_LABEL[tier] ? " " + tier : "");
@@ -7034,6 +7090,11 @@ const VIDEO_SUBMIT = {
       const n = videoAutoName(v.moon.name, sl.tier, sl.idx);
       if(!m.has(n)) m.set(n, { kingdom:k, moon:v.moon, slot:sl, ok:true });
     })));
+    // Custom Nodes (their own section at the bottom in Submit mode) are submittable too.
+    Object.keys(KINGDOM_NODE_DATA).forEach(k => getCheckpointVariants(k, "custom_place").forEach(v => slotsFor(v.moon).forEach(sl => {
+      const n = videoAutoName(v.moon.name, sl.tier, sl.idx);
+      if(!m.has(n)) m.set(n, { kingdom:k, moon:v.moon, slot:sl, ok:true });
+    })));
     return m;
   }
   // ---- GitHub auto-publish -------------------------------------------------
@@ -7155,46 +7216,100 @@ const VIDEO_SUBMIT = {
     loadPending();
   }
 
+  // Which submissions the owner panel lists: "pending" | "approved" | "rejected" | "all".
+  // Only the signed-in owner can read the table at all (row-level security in Supabase), so
+  // nobody else ever sees any of these rows or clips.
+  let opFilter = "all";
+
   async function loadPending(){
     const box = $("opPending"), msg = $("opMsg");
     box.innerHTML = ""; box.appendChild(el("div", "vs-sub", "Loading submissions…"));
-    const res = await sb.from("submissions").select("*").eq("status", "pending").order("created_at", { ascending:true });
-    if(res.error){ box.innerHTML = ""; setMsg(msg, "Couldn't load submissions: " + res.error.message, true); return; }
-    const rows = res.data || [];
+    // Fetch EVERY row (Supabase returns at most 1000 per request, so page through them).
+    let rows = [];
+    for(let from = 0; ; from += 1000){
+      let q = sb.from("submissions").select("*").order("created_at", { ascending:false }).range(from, from + 999);
+      if(opFilter !== "all") q = q.eq("status", opFilter);
+      const res = await q;
+      if(res.error){ box.innerHTML = ""; setMsg(msg, "Couldn't load submissions: " + res.error.message, true); return; }
+      rows = rows.concat(res.data || []);
+      if(!res.data || res.data.length < 1000) break;
+    }
     box.innerHTML = "";
-    let remaining = rows.length;
-    const head = el("div", "op-subhead"), countEl = el("span", null, "Pending submissions (" + remaining + ")");
-    const rf = el("button", "vs-ownerbtn", "Refresh"); rf.type = "button"; rf.onclick = loadPending;
-    head.append(countEl, rf); box.appendChild(head);
-    if(!rows.length){ box.appendChild(el("div", "vs-sub", "Nothing waiting for approval.")); return; }
+    setMsg(msg, "");
+
+    // Header: count + filter + refresh
+    const head = el("div", "op-subhead"), countEl = el("span");
+    const tools = el("span"); tools.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;align-items:center";
+    [["all","All"],["pending","Pending"],["approved","Approved"],["rejected","Rejected"]].forEach(([k, label]) => {
+      const b = el("button", "vs-ownerbtn", label); b.type = "button";
+      if(k === opFilter){ b.style.borderColor = "var(--gold)"; b.style.color = "var(--gold)"; }
+      b.onclick = () => { opFilter = k; loadPending(); };
+      tools.appendChild(b);
+    });
+    const rf = el("button", "vs-ownerbtn", "Refresh"); rf.type = "button"; rf.onclick = loadPending; tools.appendChild(rf);
+    head.append(countEl, tools); box.appendChild(head);
+    let pendingLeft = rows.filter(r => (r.status || "pending") === "pending").length;
+    const updateCount = () => { countEl.textContent = "Submissions (" + rows.length + ")" + (opFilter === "all" || opFilter === "pending" ? " · " + pendingLeft + " pending" : ""); };
+    updateCount();
+    if(!rows.length){ box.appendChild(el("div", "vs-sub", "No submissions" + (opFilter === "all" ? "" : " with status “" + opFilter + "”") + ".")); return; }
+
+    // Signed preview links for clips still sitting in the private bucket. A failure here must never
+    // stop the list from rendering — those rows just show without a preview.
     const urls = {};
-    const su = await bucket().createSignedUrls(rows.map(r => r.file_path), 3600);
-    (su.data || []).forEach(u => { if(u && u.signedUrl) urls[u.path] = u.signedUrl; });
+    try{
+      const paths = rows.filter(r => r.file_path && (r.status || "pending") === "pending").map(r => r.file_path);
+      for(let i = 0; i < paths.length; i += 100){
+        const su = await bucket().createSignedUrls(paths.slice(i, i + 100), 3600);
+        (su.data || []).forEach(u => { if(u && u.signedUrl) urls[u.path] = u.signedUrl; });
+      }
+    }catch(e){ console.warn("[approve] signed URLs failed:", e); }
     const known = allSlots();
-    const onDone = () => { remaining--; countEl.textContent = "Pending submissions (" + remaining + ")"; if(remaining <= 0) box.appendChild(el("div", "vs-sub", "Nothing waiting for approval.")); };
-    for(const row of rows) box.appendChild(await buildPendingRow(row, urls[row.file_path], known, onDone));
+    const onDone = () => { pendingLeft--; updateCount(); };
+    // Render every row; one broken row can never hide the rest.
+    for(const row of rows){
+      try{ box.appendChild(buildPendingRow(row, urls[row.file_path], known, onDone)); }
+      catch(err){
+        console.warn("[approve] couldn't render submission", row, err);
+        const bad = el("div", "op-row"); bad.appendChild(el("div", "op-info", "⚠ Couldn't display submission " + (row && (row.filename || row.id)) + ": " + ((err && err.message) || err)));
+        box.appendChild(bad);
+      }
+    }
   }
 
-  async function buildPendingRow(row, url, known, onDone){
-    const fext = ext({ name: row.filename }), base = row.filename.replace(/\.[^.]+$/, "").toLowerCase();
-    const hit = known.get(base), okHit = !!(hit && hit.ok), already = okHit ? await Promise.race([logicVideoExists(base), new Promise(r => setTimeout(() => r(false), 1500))]) : false;
+  function buildPendingRow(row, url, known, onDone){
+    const status = row.status || "pending", isPending = status === "pending";
+    const fname = String(row.filename || row.file_path || ""), fext = ext({ name: fname }), base = fname.replace(/\.[^.]+$/, "").toLowerCase();
+    const hit = known.get(base), okHit = !!(hit && hit.ok);
     const wrap = el("div", "op-row big");
-    if(url && fext === ".webp"){ const im = document.createElement("img"); im.src = url; im.alt = ""; wrap.appendChild(im); }
-    else if(url){ const v = document.createElement("video"); v.src = url; v.controls = true; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "metadata"; wrap.appendChild(v); }
-    else wrap.appendChild(el("div", "vs-sub", "no preview"));
+    if(!url && status === "approved") url = "assets/logicvideos/" + base + fext;   // approved clips live in the repo folder now
+    const noPrev = () => { const d = el("div", "vs-sub", "no preview"); d.style.cssText = "width:220px;flex:0 0 auto"; return d; };
+    if(url && fext === ".webp"){ const im = document.createElement("img"); im.src = url; im.alt = ""; im.onerror = () => im.replaceWith(noPrev()); wrap.appendChild(im); }
+    else if(url){ const v = document.createElement("video"); v.src = url; v.controls = true; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "metadata"; v.onerror = () => v.replaceWith(noPrev()); wrap.appendChild(v); }
+    else wrap.appendChild(noPrev());
 
     // Everything below comes from the database, i.e. from strangers -> only ever set via textContent.
     const info = el("div", "op-info");
+    const warn = el("small", null, "");
     if(okHit){
       info.appendChild(el("b", null, hit.moon.label || hit.moon.name));
       info.appendChild(document.createTextNode(" "));
-      info.appendChild(el("small", null, hit.kingdom + " · " + hit.slot.label + " #" + hit.slot.idx + (already ? " · ⚠ replaces existing" : "")));
+      info.appendChild(el("small", null, hit.kingdom + " · " + hit.slot.label + " #" + hit.slot.idx));
+      info.appendChild(warn);
     } else {
-      const bad = el("span", null, "✗ " + row.filename + (hit ? " (not submittable)" : " (no match)")); bad.style.color = "var(--red)"; info.appendChild(bad);
+      const bad = el("span", null, "✗ " + (fname || "(no filename)") + (hit ? " (not submittable)" : " (no match)")); bad.style.color = "var(--red)"; info.appendChild(bad);
     }
+    const tag = el("span", null, " " + status.toUpperCase());
+    tag.style.cssText = "font-size:11px;margin-left:6px;color:" + (status === "approved" ? "var(--worldpeace)" : status === "rejected" ? "var(--red)" : "var(--gold)");
+    info.appendChild(tag);
     info.appendChild(el("br"));
-    info.appendChild(el("small", null, "by " + (row.submitter || "anonymous") + " · " + new Date(row.created_at).toLocaleString() + (row.size_bytes ? " · " + (row.size_bytes / 1048576).toFixed(1) + " MB" : "")));
+    info.appendChild(el("small", null, "by " + (row.submitter || "anonymous") + " · " + (row.created_at ? new Date(row.created_at).toLocaleString() : "") + (row.size_bytes ? " · " + (row.size_bytes / 1048576).toFixed(1) + " MB" : "") + (fname && okHit ? "" : "")));
+    info.appendChild(el("br"));
+    info.appendChild(el("small", null, fname));
     wrap.appendChild(info);
+    // "replaces existing" check runs in the background so it never delays the list.
+    if(isPending && okHit) Promise.race([logicVideoExists(base), new Promise(r => setTimeout(() => r(false), 1500))]).then(already => { if(already) warn.textContent = " · ⚠ replaces existing"; });
+
+    if(!isPending) return wrap;   // approved / rejected rows are view-only
 
     const ap = el("button", "vs-btn green", "Approve"); ap.disabled = !okHit;
     const rj = el("button", "vs-btn red", "✕"); rj.title = "Reject and delete this clip";
