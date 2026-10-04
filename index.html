@@ -284,6 +284,31 @@
   .op-login{ display:grid; grid-template-columns:1fr 1fr auto; gap:8px; align-items:end; margin-bottom:8px; }
   .op-login .vs-field input{ width:100%; box-sizing:border-box; background:var(--bg); color:var(--text); border:1px solid var(--border); padding:7px 8px; font:inherit; font-size:13px; }
   .op-subhead{ display:flex; justify-content:space-between; align-items:center; margin:4px 0 8px; color:var(--text); }
+
+  /* ---- Submission viewer cards (Approve panel): drawn like the real Moon cards ---- */
+  .sub-row{ align-items:flex-start; gap:14px; padding:12px; margin-bottom:12px; }
+  .sub-media-box{ flex:0 0 300px; width:300px; }
+  .sub-media{ width:100%; aspect-ratio:16/9; background:#000; border:2px solid var(--gold); border-left-width:4px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .sub-media video, .sub-media img{ width:100%; height:100%; object-fit:contain; background:#000; display:block; }
+  .sub-nopreview{ width:100%; padding:30px 8px; text-align:center; color:var(--text-dim); font-size:12px; background:var(--bg); border:2px dashed var(--border); }
+  .sub-info{ flex:1; min-width:0; overflow:visible !important; white-space:normal !important; display:flex; flex-direction:column; gap:8px; }
+  .sub-cardbox .moon-card{ max-width:460px; }
+  .sub-moon-card, .sub-moon-card:hover{ transform:none; }
+  .sub-moon-card:not(:has(.checkpoint-info)){ padding-bottom:14px; }
+  .sub-media .sub-nopreview{ border:none; background:transparent; }
+  .sub-moon-card .tier-lane.has-target ~ .tier-lane{ }
+  .sub-moon-card.has-target .tier-lane:not(.has-target){ opacity:.4; }
+  .sub-moon-card.has-target .option-chip:not(.sub-target), .sub-moon-card.has-target .free-tag:not(.sub-target){ opacity:.5; }
+  .sub-moon-card .sub-target{ outline:3px solid var(--gold); outline-offset:3px; box-shadow:0 0 0 6px rgba(230,194,0,.18); position:relative; z-index:1; }
+  .sub-moon-card .has-video-badge{ display:none; }
+  .sub-notes{ display:flex; flex-direction:column; gap:4px; }
+  .sub-banner{ display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-dim); }
+  .sub-meta{ display:flex; flex-wrap:wrap; gap:4px 12px; align-items:center; font-size:11px; color:var(--text-dim); border-top:1px dashed var(--border); padding-top:6px; }
+  .sub-status{ font-weight:700; letter-spacing:.4px; color:var(--gold); }
+  .sub-status.approved{ color:var(--worldpeace); } .sub-status.rejected{ color:var(--red); }
+  .sub-fname{ font-family:monospace; word-break:break-all; }
+  .sub-row > .vs-btn{ flex:0 0 auto; align-self:center; }
+  @media (max-width:760px){ .sub-row{ flex-wrap:wrap; } .sub-media-box{ flex:1 1 100%; width:100%; } }
   .op-row.big{ align-items:flex-start; gap:12px; padding:10px; margin-bottom:10px; }
   .op-row.big .vs-sel{ white-space:normal; }
   .op-row.big > .vs-btn{ flex:0 0 auto; align-self:center; }
@@ -7346,34 +7371,90 @@ const VIDEO_SUBMIT = {
     }
   }
 
-  // Draws one submission from its database row alone; _enrich(url, known) later adds the preview and
-  // the matched moon/route and enables Approve. Nothing here depends on that lookup succeeding.
+  // Draws one submission from its database row alone; _enrich(url, known, moonIndex) later adds the clip
+  // preview and the matched Moon (drawn with the SAME builders the main grid uses, so it looks like the
+  // real Moon card) and enables Approve. Nothing here depends on that lookup succeeding.
+  function nodeMiniCard(moon){
+    // Checkpoint / Custom Node routes aren't moons, so give them a moon-card shell of their own.
+    const card = document.createElement("div"); card.className = "moon-card";
+    const nm = document.createElement("p"); nm.className = "moon-name"; nm.textContent = moon.label || moon.name; card.appendChild(nm);
+    const info = document.createElement("span"); info.className = "checkpoint-info info-static";
+    const img = document.createElement("img"); img.alt = "";
+    img.src = (moon.isCustomNode || moon.checkpointType === "custom_place") ? "icon/customnode.png" : "icon/infocheckpoint.png";
+    img.onerror = function(){ this.style.display = "none"; };
+    info.appendChild(img); card.appendChild(info);
+    card.appendChild(buildMovementOptions(moon, false));
+    return card;
+  }
+  function buildSubmissionMoonCard(hit){
+    const moon = hit.moon, slot = hit.slot;
+    const card = (moon.isCheckpointNode) ? nodeMiniCard(moon) : buildMoonCard(moon);
+    card.classList.add("sub-moon-card");
+    // Show every route in full (no peek/expand arrows) and make the card read-only.
+    card.querySelectorAll(".options-collapsible").forEach(c => { c.classList.remove("collapsed"); c.classList.add("expanded"); c.dataset.measured = "1"; });
+    card.querySelectorAll(".options-expand-btn, .options-fade").forEach(x => x.remove());
+    card.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); }, true);
+    // Ring the exact route this clip is for; dim the rest.
+    let target = null;
+    if(slot.tier === "free"){ target = card.querySelector(".free-tag"); }
+    else{
+      const lane = card.querySelector(".tier-lane." + slot.tier);
+      if(lane){ const chips = lane.querySelectorAll(".option-chip, .free-tag"); target = chips[slot.idx - 1] || null; if(target) lane.classList.add("has-target"); }
+    }
+    if(target){ card.classList.add("has-target"); target.classList.add("sub-target"); }
+    return { card, found: !!target };
+  }
+  function mountClip(mediaBox, url, fext, row, isPending, noPrev){
+    mediaBox.innerHTML = "";
+    const frame = el("div", "sub-media");
+    mediaBox.appendChild(frame);
+    const fail = async () => {
+      // Signed link didn't play: pull the file down directly and show it from memory instead.
+      if(isPending && row.file_path && !frame.dataset.retried){
+        frame.dataset.retried = "1";
+        try{
+          const dl = await bucket().download(row.file_path);
+          if(!dl.error && dl.data){ show(URL.createObjectURL(dl.data)); return; }
+        }catch(e){ /* fall through */ }
+      }
+      frame.innerHTML = ""; frame.appendChild(noPrev("preview unavailable"));
+    };
+    const show = u => {
+      frame.innerHTML = "";
+      if(fext === ".webp"){ const im = document.createElement("img"); im.alt = ""; im.onerror = fail; im.src = u; frame.appendChild(im); }
+      else{
+        const v = document.createElement("video"); v.controls = true; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "auto";
+        v.addEventListener("error", fail); v.src = u; frame.appendChild(v);
+        v.addEventListener("loadedmetadata", () => { try{ if(v.currentTime === 0) v.currentTime = 0.05; }catch(e){} });
+      }
+    };
+    if(url) show(url); else fail();
+  }
+
   function buildPendingRow(row, onDone){
     const status = row.status || "pending", isPending = status === "pending";
     const fname = String(row.filename || row.file_path || ""), fext = ext({ name: fname }), base = fname.replace(/\.[^.]+$/, "").toLowerCase();
     let okHit = false;
-    const wrap = el("div", "op-row big");
-    const mediaBox = el("div"); mediaBox.style.cssText = "width:260px;flex:0 0 auto";
-    const noPrev = txt => { const d = el("div", "vs-sub", txt || "no preview"); d.style.cssText = "width:260px;min-height:60px"; return d; };
+    const wrap = el("div", "op-row big sub-row");
+    const mediaBox = el("div", "sub-media-box");
+    const noPrev = txt => el("div", "sub-nopreview", txt || "no preview");
     mediaBox.appendChild(noPrev(isPending ? "loading preview…" : "no preview"));
     wrap.appendChild(mediaBox);
 
-    // Same look as the "Route selected" box in the Submit dialog (.vs-sel): kingdom · tracked-from,
-    // moon name, difficulty pill and the requirement chip. Everything shown comes from the database
-    // (i.e. strangers) or our own route data -> only ever set via textContent / DOM nodes.
-    const info = el("div", "vs-sel op-info");
-    info.style.cssText = "flex:1;min-width:0;margin:0;white-space:normal";
-    const matchBox = el("div"); matchBox.style.cssText = "display:flex;flex-direction:column;gap:6px;align-items:flex-start;width:100%";
-    info.appendChild(matchBox);
-    const metaLine = el("div"); metaLine.style.cssText = "display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:11px;color:var(--text-dim);border-top:1px dashed var(--border);padding-top:6px;width:100%";
-    const tag = el("span", null, status.toUpperCase());
-    tag.style.cssText = "font-size:11px;font-weight:700;color:" + (status === "approved" ? "var(--worldpeace)" : status === "rejected" ? "var(--red)" : "var(--gold)");
+    // Everything shown comes from the database (i.e. strangers) or our own route data ->
+    // only ever set via textContent / DOM nodes, never innerHTML.
+    const info = el("div", "op-info sub-info");
+    const whereEl = el("div", "vs-sel-sub");        // "KINGDOM · tracked from Checkpoint: X"
+    const cardBox = el("div", "sub-cardbox");       // the Moon card goes here
+    const noteBox = el("div", "sub-notes");         // route banner / warnings
+    info.append(whereEl, cardBox, noteBox);
+    const metaLine = el("div", "sub-meta");
+    const tag = el("span", "sub-status " + status, status.toUpperCase());
     metaLine.appendChild(tag);
     metaLine.appendChild(el("span", null, "by " + (row.submitter || "anonymous")));
     if(row.created_at) metaLine.appendChild(el("span", null, new Date(row.created_at).toLocaleString()));
     if(row.size_bytes) metaLine.appendChild(el("span", null, (row.size_bytes / 1048576).toFixed(1) + " MB"));
-    const fnEl = el("span", null, fname || "(no filename)"); fnEl.style.cssText = "font-family:monospace;word-break:break-all";
-    metaLine.appendChild(fnEl);
+    metaLine.appendChild(el("span", "sub-fname", fname || "(no filename)"));
     info.appendChild(metaLine);
     wrap.appendChild(info);
 
@@ -7384,43 +7465,45 @@ const VIDEO_SUBMIT = {
     wrap._enrich = (url, known, moonIndex) => {
       let hit = known && known.get(base);
       if(!hit && moonIndex){ try{ hit = resolveFromFilename(base, moonIndex); }catch(e){ console.warn("[approve] filename fallback failed:", e); } }
-      if(hit && hit.guessOnly){ var guess = hit; hit = null; }
+      let guess = null;
+      if(hit && hit.guessOnly){ guess = hit; hit = null; }
       okHit = !!(hit && hit.ok);
       if(!url && status === "approved") url = "assets/logicvideos/" + base + fext;   // approved clips live in the repo folder now
-      mediaBox.innerHTML = "";
-      if(url && fext === ".webp"){ const im = document.createElement("img"); im.src = url; im.alt = ""; im.style.cssText = "width:260px;height:150px;object-fit:contain;background:#000"; im.onerror = () => { mediaBox.innerHTML = ""; mediaBox.appendChild(noPrev()); }; mediaBox.appendChild(im); }
-      else if(url){ const v = document.createElement("video"); v.src = url; v.controls = true; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "metadata"; v.style.cssText = "width:260px;height:150px;object-fit:contain;background:#000"; v.onerror = () => { mediaBox.innerHTML = ""; mediaBox.appendChild(noPrev()); }; mediaBox.appendChild(v); }
-      else mediaBox.appendChild(noPrev());
+      mountClip(mediaBox, url, fext, row, isPending, noPrev);
 
-      matchBox.innerHTML = "";
+      whereEl.textContent = ""; cardBox.innerHTML = ""; noteBox.innerHTML = "";
+      const tierPill = slot => el("span", "tier-pill" + (TIER_LABEL[slot.tier] ? " " + slot.tier : ""), (slot.label || slot.tier) + " · route " + slot.idx);
+      const note = (txt, color) => { const d = el("div", null, txt); d.style.cssText = "font-size:12px;color:" + (color || "var(--text-dim)"); noteBox.appendChild(d); return d; };
       if(hit){
         const moon = hit.moon, slot = hit.slot;
-        const cpShort = moon.checkpoint ? moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "") : "";
+        const cpShort = moon.checkpoint ? moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "").replace(/\s*Custom Node\s*$/i, "") : "";
         const isCustom = moon.isCustomNode || moon.checkpointType === "custom_place";
         let where = hit.kingdom;
         if(moon.isCheckpointNode) where += isCustom ? " · Custom Node" : " · Checkpoint (warp point)";
         else if(cpShort) where += " · tracked from " + (isCustom ? "Custom Node: " : "Checkpoint: ") + cpShort;
         if(moon.subarea) where += " · Subarea: " + moon.subarea;
-        matchBox.appendChild(el("div", "vs-sel-sub", where));
-        matchBox.appendChild(el("div", "vs-sel-moon", moon.label || moon.name));
-        const pill = el("span", "tier-pill" + (TIER_LABEL[slot.tier] ? " " + slot.tier : ""), (slot.label || slot.tier) + " · route " + slot.idx);
-        matchBox.appendChild(pill);
-        const chip = el("div", "option-chip" + (TIER_LABEL[slot.tier] ? " " + slot.tier : ""));
-        try{ if(slot.group && slot.group.length) appendAndGroupIcons(chip, slot.group); else if(hit.stale && slot.tier !== "free") chip.textContent = "(route no longer in current logic)"; else chip.textContent = "Free"; }catch(e){ chip.textContent = slot.desc || "—"; }
-        matchBox.appendChild(chip);
-        if(hit.stale){ const st = el("div", null, "ℹ Identified from the file name — this exact route isn't in the current logic (it may have been renumbered or changed)."); st.style.cssText = "color:var(--text-dim);font-size:12px"; matchBox.appendChild(st); }
-        if(!okHit){ const bad = el("div", null, "✗ not submittable (can't be approved)"); bad.style.color = "var(--red)"; matchBox.appendChild(bad); }
-        const warn = el("div", null, ""); warn.style.cssText = "color:var(--tier-advanced);font-size:12px"; matchBox.appendChild(warn);
+        whereEl.textContent = where;
+        let built = null;
+        try{ built = buildSubmissionMoonCard(hit); }catch(e){ console.warn("[approve] couldn't draw moon card", e); }
+        if(built){
+          cardBox.appendChild(built.card);
+          const banner = el("div", "sub-banner"); banner.append(el("span", null, "This clip is for:"), tierPill(slot));
+          noteBox.appendChild(banner);
+          if(!built.found) note("ℹ That exact route isn't on the card any more (logic changed or it was renumbered) — identified from the file name.");
+        } else {
+          const nm = el("div", "vs-sel-moon", moon.label || moon.name); cardBox.appendChild(nm); noteBox.appendChild(tierPill(slot));
+        }
+        if(!okHit) note("✗ not submittable (can't be approved)", "var(--red)");
+        const warn = note("", "var(--tier-advanced)");
         if(isPending && okHit) Promise.race([logicVideoExists(base), new Promise(r => setTimeout(() => r(false), 1500))]).then(already => { if(already) warn.textContent = "⚠ A clip already exists for this route — approving replaces it."; });
       } else {
         // Last resort: read as much as possible straight from the file name.
-        matchBox.appendChild(el("div", "vs-sel-sub", "Read from file name · no matching moon found"));
-        const pretty = guess ? guess.namePart : base;
-        const nm = el("div", "vs-sel-moon", pretty || fname || "(unknown)"); nm.style.wordBreak = "break-all"; matchBox.appendChild(nm);
-        if(guess){
-          matchBox.appendChild(el("span", "tier-pill" + (TIER_LABEL[guess.slot.tier] ? " " + guess.slot.tier : ""), guess.slot.label + " · route " + guess.slot.idx));
-        }
-        const bad = el("div", null, "✗ couldn't match this to a current moon, checkpoint or custom node — can't be approved here"); bad.style.cssText = "color:var(--red);font-size:12px"; matchBox.appendChild(bad);
+        whereEl.textContent = "Read from file name · no matching moon found";
+        const card = el("div", "moon-card sub-moon-card");
+        const nm = el("p", "moon-name", (guess ? guess.namePart : base) || fname || "(unknown)"); nm.style.wordBreak = "break-all"; card.appendChild(nm);
+        if(guess) card.appendChild(tierPill(guess.slot));
+        cardBox.appendChild(card);
+        note("✗ couldn't match this to a current moon, checkpoint or custom node — can't be approved here", "var(--red)");
       }
       ap.disabled = !okHit;
     };
