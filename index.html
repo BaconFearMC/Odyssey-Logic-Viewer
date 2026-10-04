@@ -5927,6 +5927,18 @@ function renderCheckpointReqs(kingdomName, nodeType){
   root.innerHTML = "";
   let list = getCheckpointVariants(kingdomName, nodeType);
 
+  // Custom Nodes that are "included above" (already merged into a moon's own requirement) AND whose
+  // own cost is Free have nothing to show a clip for, so they're left out of this submit section.
+  if(isCustom){
+    const includedAbove = new Set();
+    (KINGDOMS[kingdomName] || []).forEach(m => {
+      if(m.checkpointType === "custom_place" && m.checkpointNodeId && (m._mergedNodeKind === "custom_place" || m._pyramid)) includedAbove.add(m.checkpointNodeId);
+    });
+    list = list.map(cp => includedAbove.has(cp.nodeId)
+      ? { ...cp, variants: cp.variants.filter(v => v.moon.tierLanes && v.moon.tierLanes.length) }
+      : cp);
+  }
+
   // Same Glitched filter the moon grid uses.
   if(glitchMode === "hide"){
     list = list.map(cp => ({ ...cp, variants: cp.variants.filter(v => !isFullyGlitched(v.moon)).map(v => ({ ...v, moon: withGlitchedLanesStripped(v.moon) })) }));
