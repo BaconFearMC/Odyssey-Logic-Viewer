@@ -284,7 +284,9 @@
   .op-login{ display:grid; grid-template-columns:1fr 1fr auto; gap:8px; align-items:end; margin-bottom:8px; }
   .op-login .vs-field input{ width:100%; box-sizing:border-box; background:var(--bg); color:var(--text); border:1px solid var(--border); padding:7px 8px; font:inherit; font-size:13px; }
   .op-subhead{ display:flex; justify-content:space-between; align-items:center; margin:4px 0 8px; color:var(--text); }
-  .op-row.big{ align-items:flex-start; }
+  .op-row.big{ align-items:flex-start; gap:12px; padding:10px; margin-bottom:10px; }
+  .op-row.big .vs-sel{ white-space:normal; }
+  .op-row.big > .vs-btn{ flex:0 0 auto; align-self:center; }
   .op-row.big video,.op-row.big img{ width:220px; height:130px; }
   .op-row.big .op-info{ white-space:normal; line-height:1.5; }
   @media (max-width:640px){ .op-login{ grid-template-columns:1fr; } .op-row.big{ flex-wrap:wrap; } }
@@ -6961,7 +6963,7 @@ const VIDEO_SUBMIT = {
   function slotsFor(moon){
     if(!moon.tierLanes || !moon.tierLanes.length) return [{ tier:"free", label:"Free", idx:1, desc:"Free" }];
     const out = [];
-    moon.tierLanes.forEach(l => l.groups.forEach((g, i) => out.push({ tier:l.tier, label:l.label, idx:i+1, desc:tokenText(g) })));
+    moon.tierLanes.forEach(l => l.groups.forEach((g, i) => out.push({ tier:l.tier, label:l.label, idx:i+1, desc:tokenText(g), group:g })));
     return out;
   }
 
@@ -7311,22 +7313,28 @@ const VIDEO_SUBMIT = {
     const fname = String(row.filename || row.file_path || ""), fext = ext({ name: fname }), base = fname.replace(/\.[^.]+$/, "").toLowerCase();
     let okHit = false;
     const wrap = el("div", "op-row big");
-    const mediaBox = el("div"); mediaBox.style.cssText = "width:220px;flex:0 0 auto";
-    const noPrev = txt => { const d = el("div", "vs-sub", txt || "no preview"); d.style.cssText = "width:220px;min-height:60px"; return d; };
+    const mediaBox = el("div"); mediaBox.style.cssText = "width:260px;flex:0 0 auto";
+    const noPrev = txt => { const d = el("div", "vs-sub", txt || "no preview"); d.style.cssText = "width:260px;min-height:60px"; return d; };
     mediaBox.appendChild(noPrev(isPending ? "loading preview…" : "no preview"));
     wrap.appendChild(mediaBox);
 
-    // Everything below comes from the database, i.e. from strangers -> only ever set via textContent.
-    const info = el("div", "op-info");
-    const matchBox = el("span");
+    // Same look as the "Route selected" box in the Submit dialog (.vs-sel): kingdom · tracked-from,
+    // moon name, difficulty pill and the requirement chip. Everything shown comes from the database
+    // (i.e. strangers) or our own route data -> only ever set via textContent / DOM nodes.
+    const info = el("div", "vs-sel op-info");
+    info.style.cssText = "flex:1;min-width:0;margin:0;white-space:normal";
+    const matchBox = el("div"); matchBox.style.cssText = "display:flex;flex-direction:column;gap:6px;align-items:flex-start;width:100%";
     info.appendChild(matchBox);
-    const tag = el("span", null, " " + status.toUpperCase());
-    tag.style.cssText = "font-size:11px;margin-left:6px;color:" + (status === "approved" ? "var(--worldpeace)" : status === "rejected" ? "var(--red)" : "var(--gold)");
-    info.appendChild(tag);
-    info.appendChild(el("br"));
-    info.appendChild(el("small", null, "by " + (row.submitter || "anonymous") + " · " + (row.created_at ? new Date(row.created_at).toLocaleString() : "") + (row.size_bytes ? " · " + (row.size_bytes / 1048576).toFixed(1) + " MB" : "")));
-    info.appendChild(el("br"));
-    info.appendChild(el("small", null, fname || "(no filename)"));
+    const metaLine = el("div"); metaLine.style.cssText = "display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:11px;color:var(--text-dim);border-top:1px dashed var(--border);padding-top:6px;width:100%";
+    const tag = el("span", null, status.toUpperCase());
+    tag.style.cssText = "font-size:11px;font-weight:700;color:" + (status === "approved" ? "var(--worldpeace)" : status === "rejected" ? "var(--red)" : "var(--gold)");
+    metaLine.appendChild(tag);
+    metaLine.appendChild(el("span", null, "by " + (row.submitter || "anonymous")));
+    if(row.created_at) metaLine.appendChild(el("span", null, new Date(row.created_at).toLocaleString()));
+    if(row.size_bytes) metaLine.appendChild(el("span", null, (row.size_bytes / 1048576).toFixed(1) + " MB"));
+    const fnEl = el("span", null, fname || "(no filename)"); fnEl.style.cssText = "font-family:monospace;word-break:break-all";
+    metaLine.appendChild(fnEl);
+    info.appendChild(metaLine);
     wrap.appendChild(info);
 
     const ap = el("button", "vs-btn green", "Approve"); ap.disabled = true;
@@ -7337,19 +7345,33 @@ const VIDEO_SUBMIT = {
       const hit = known && known.get(base); okHit = !!(hit && hit.ok);
       if(!url && status === "approved") url = "assets/logicvideos/" + base + fext;   // approved clips live in the repo folder now
       mediaBox.innerHTML = "";
-      if(url && fext === ".webp"){ const im = document.createElement("img"); im.src = url; im.alt = ""; im.style.cssText = "width:220px;height:130px;object-fit:contain;background:#000"; im.onerror = () => { mediaBox.innerHTML = ""; mediaBox.appendChild(noPrev()); }; mediaBox.appendChild(im); }
-      else if(url){ const v = document.createElement("video"); v.src = url; v.controls = true; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "metadata"; v.style.cssText = "width:220px;height:130px;object-fit:contain;background:#000"; v.onerror = () => { mediaBox.innerHTML = ""; mediaBox.appendChild(noPrev()); }; mediaBox.appendChild(v); }
+      if(url && fext === ".webp"){ const im = document.createElement("img"); im.src = url; im.alt = ""; im.style.cssText = "width:260px;height:150px;object-fit:contain;background:#000"; im.onerror = () => { mediaBox.innerHTML = ""; mediaBox.appendChild(noPrev()); }; mediaBox.appendChild(im); }
+      else if(url){ const v = document.createElement("video"); v.src = url; v.controls = true; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "metadata"; v.style.cssText = "width:260px;height:150px;object-fit:contain;background:#000"; v.onerror = () => { mediaBox.innerHTML = ""; mediaBox.appendChild(noPrev()); }; mediaBox.appendChild(v); }
       else mediaBox.appendChild(noPrev());
 
       matchBox.innerHTML = "";
-      if(okHit){
-        matchBox.appendChild(el("b", null, hit.moon.label || hit.moon.name));
-        matchBox.appendChild(document.createTextNode(" "));
-        matchBox.appendChild(el("small", null, hit.kingdom + " · " + hit.slot.label + " #" + hit.slot.idx));
-        const warn = el("small", null, ""); matchBox.appendChild(warn);
-        if(isPending) Promise.race([logicVideoExists(base), new Promise(r => setTimeout(() => r(false), 1500))]).then(already => { if(already) warn.textContent = " · ⚠ replaces existing"; });
+      if(hit){
+        const moon = hit.moon, slot = hit.slot;
+        const cpShort = moon.checkpoint ? moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "") : "";
+        const isCustom = moon.isCustomNode || moon.checkpointType === "custom_place";
+        let where = hit.kingdom;
+        if(moon.isCheckpointNode) where += isCustom ? " · Custom Node" : " · Checkpoint (warp point)";
+        else if(cpShort) where += " · tracked from " + (isCustom ? "Custom Node: " : "Checkpoint: ") + cpShort;
+        if(moon.subarea) where += " · Subarea: " + moon.subarea;
+        matchBox.appendChild(el("div", "vs-sel-sub", where));
+        matchBox.appendChild(el("div", "vs-sel-moon", moon.label || moon.name));
+        const pill = el("span", "tier-pill" + (TIER_LABEL[slot.tier] ? " " + slot.tier : ""), (slot.label || slot.tier) + " · route " + slot.idx);
+        matchBox.appendChild(pill);
+        const chip = el("div", "option-chip" + (TIER_LABEL[slot.tier] ? " " + slot.tier : ""));
+        try{ if(slot.group && slot.group.length) appendAndGroupIcons(chip, slot.group); else chip.textContent = "Free"; }catch(e){ chip.textContent = slot.desc || "—"; }
+        matchBox.appendChild(chip);
+        if(!okHit){ const bad = el("div", null, "✗ not submittable (can't be approved)"); bad.style.color = "var(--red)"; matchBox.appendChild(bad); }
+        const warn = el("div", null, ""); warn.style.cssText = "color:var(--tier-advanced);font-size:12px"; matchBox.appendChild(warn);
+        if(isPending && okHit) Promise.race([logicVideoExists(base), new Promise(r => setTimeout(() => r(false), 1500))]).then(already => { if(already) warn.textContent = "⚠ A clip already exists for this route — approving replaces it."; });
       } else {
-        const bad = el("span", null, "✗ " + (hit ? "not submittable" : "no matching route")); bad.style.color = "var(--red)"; matchBox.appendChild(bad);
+        matchBox.appendChild(el("div", "vs-sel-sub", "Unknown route"));
+        const bad = el("div", "vs-sel-moon", "✗ no matching route"); bad.style.color = "var(--red)"; matchBox.appendChild(bad);
+        matchBox.appendChild(el("div", "vs-sub", "The file name doesn't match any current moon, checkpoint or custom node route."));
       }
       ap.disabled = !okHit;
     };
