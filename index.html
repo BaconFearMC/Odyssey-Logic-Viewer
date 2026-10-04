@@ -272,7 +272,7 @@
   .owner-panel{ width:100%; max-width:1400px; background:var(--bg-panel); border:2px solid var(--gold); padding:10px 14px; margin:0 0 18px; text-align:left; font-size:12.5px; }
   .owner-panel .op-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px; color:var(--gold); font-family:"FontDB",sans-serif; text-transform:uppercase; letter-spacing:.5px; }
   .op-row{ display:flex; align-items:center; gap:10px; background:var(--bg-chip); border:1px solid var(--border); padding:5px 8px; margin-bottom:4px; }
-  .op-row video,.op-row img{ width:84px; height:52px; object-fit:contain; background:#000; flex:0 0 auto; }
+  .op-row > video,.op-row > img{ width:84px; height:52px; object-fit:contain; background:#000; flex:0 0 auto; }
   .op-row .op-info{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .op-row .op-info small{ color:var(--text-dim); }
   .op-all{ margin-top:8px; } .op-all summary{ cursor:pointer; color:var(--text-dim); }
@@ -301,6 +301,8 @@
   .sub-moon-card.has-target .option-chip:not(.sub-target), .sub-moon-card.has-target .free-tag:not(.sub-target){ opacity:.5; }
   .sub-moon-card .sub-target{ outline:3px solid var(--gold); outline-offset:3px; box-shadow:0 0 0 6px rgba(230,194,0,.18); position:relative; z-index:1; }
   .sub-moon-card .has-video-badge{ display:none; }
+  .sub-moon-card .icon, .sub-moon-card .icon-fallback{ width:48.6px; height:48.6px; max-width:none; background:none; }
+  .sub-moon-card .icon-wrap{ width:48.6px; height:48.6px; }
   .sub-notes{ display:flex; flex-direction:column; gap:4px; }
   .sub-banner{ display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-dim); }
   .sub-meta{ display:flex; flex-wrap:wrap; gap:4px 12px; align-items:center; font-size:11px; color:var(--text-dim); border-top:1px dashed var(--border); padding-top:6px; }
@@ -312,7 +314,7 @@
   .op-row.big{ align-items:flex-start; gap:12px; padding:10px; margin-bottom:10px; }
   .op-row.big .vs-sel{ white-space:normal; }
   .op-row.big > .vs-btn{ flex:0 0 auto; align-self:center; }
-  .op-row.big video,.op-row.big img{ width:220px; height:130px; }
+  .op-row.big > video,.op-row.big > img{ width:220px; height:130px; }
   .op-row.big .op-info{ white-space:normal; line-height:1.5; }
   @media (max-width:640px){ .op-login{ grid-template-columns:1fr; } .op-row.big{ flex-wrap:wrap; } }
   @media (max-width:640px){ .vs-row{ grid-template-columns:1fr; } .vs-queue-item{ grid-template-columns:1fr; } }
