@@ -5927,16 +5927,23 @@ function renderCheckpointReqs(kingdomName, nodeType){
   root.innerHTML = "";
   let list = getCheckpointVariants(kingdomName, nodeType);
 
-  // Custom Nodes that are "included above" (already merged into a moon's own requirement) AND whose
-  // own cost is Free have nothing to show a clip for, so they're left out of this submit section.
+  // Custom Nodes that are "included above" (merged into a moon's own requirement, e.g. via
+  // NODE_MERGE_RULES) AND whose name ends in the word "Free" (e.g. "Hidden in a Sunken Hat Free")
+  // are left out of this submit section entirely.
   if(isCustom){
-    const includedAbove = new Set();
+    const includedIds = new Set(), includedNames = new Set();
     (KINGDOMS[kingdomName] || []).forEach(m => {
-      if(m.checkpointType === "custom_place" && m.checkpointNodeId && (m._mergedNodeKind === "custom_place" || m._pyramid)) includedAbove.add(m.checkpointNodeId);
+      if(m.checkpointType === "custom_place" && (m._mergedNodeKind === "custom_place" || m._pyramid)){
+        if(m.checkpointNodeId) includedIds.add(m.checkpointNodeId);
+        if(m.checkpoint) includedNames.add(normalizeMergeName(cleanCheckpointName(m.checkpoint)));
+      }
     });
-    list = list.map(cp => includedAbove.has(cp.nodeId)
-      ? { ...cp, variants: cp.variants.filter(v => v.moon.tierLanes && v.moon.tierLanes.length) }
-      : cp);
+    // Also treat any node named by a plain moon<->node merge rule as included above.
+    (typeof NODE_MERGE_RULES !== "undefined" ? NODE_MERGE_RULES : []).forEach(r => {
+      if(r && typeof r === "object" && r.node && !r.mode) includedNames.add(normalizeMergeName(cleanCheckpointName(r.node)));
+    });
+    const endsInFree = nm => /(^|\s)free\s*$/i.test(nm || "");
+    list = list.filter(cp => !(endsInFree(cp.name) && (includedIds.has(cp.nodeId) || includedNames.has(normalizeMergeName(cp.name)))));
   }
 
   // Same Glitched filter the moon grid uses.
