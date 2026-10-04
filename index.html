@@ -7242,6 +7242,45 @@ const VIDEO_SUBMIT = {
   // nobody else ever sees any of these rows or clips.
   let opFilter = "all";
 
+  // ---- fallback: work out what a clip is for from its FILE NAME alone -------------------------------
+  // File names are  squash(moon name) + tier + route#  (see videoAutoName), e.g. "loveintheheartofthedesertcasual1".
+  // When the exact route no longer exists (logic changed, route renumbered, ...) we still find the moon by
+  // its name part and read the tier / route number off the end, so the card always says what it is.
+  const TIER_SUFFIX_RE = /^(.*?)(casual|advanced|expert|glitched|unrated|free)(\d+)$/;
+  function buildMoonIndex(){
+    const idx = new Map();
+    const add = (kingdom, moon) => {
+      const key = squash((moon.name || "").replace(/\s+\d+\s*$/, ""));
+      if(!key) return;
+      if(!idx.has(key)) idx.set(key, []);
+      idx.get(key).push({ kingdom, moon });
+    };
+    try{ Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].forEach(m => add(k, m))); }catch(e){ console.warn("[approve] moon index (moons) failed:", e); }
+    try{
+      Object.keys(KINGDOM_NODE_DATA).forEach(k => ["checkpoint", "custom_place"].forEach(t => getCheckpointVariants(k, t).forEach(v => v.variants.forEach(x => add(k, x.moon)))));
+    }catch(e){ console.warn("[approve] moon index (nodes) failed:", e); }
+    return idx;
+  }
+  function resolveFromFilename(base, moonIndex){
+    const m = TIER_SUFFIX_RE.exec(base);
+    if(!m) return null;
+    const namePart = m[1], tier = m[2], idxNum = parseInt(m[3], 10);
+    // try the name as-is, then with a leading kingdom name removed (e.g. "sandkingdomlovein...")
+    const tries = [namePart];
+    try{ Object.keys(KINGDOMS).forEach(k => { const ks = squash(k); if(ks && namePart.startsWith(ks)) tries.push(namePart.slice(ks.length)); }); }catch(e){}
+    for(const t of tries){
+      const found = moonIndex.get(t);
+      if(found && found.length){
+        const f = found[0], moon = f.moon;
+        const lane = (moon.tierLanes || []).find(l => l.tier === tier);
+        const group = lane && lane.groups && lane.groups[idxNum - 1];
+        let ok = false; try{ ok = isSubmittable(moon) || !!moon.isCheckpointNode; }catch(e){}
+        return { kingdom: f.kingdom, moon, ok, stale: true, slot: { tier, label: TIER_LABEL[tier] || (tier === "free" ? "Free" : tier), idx: idxNum, group: group || null, desc: "" } };
+      }
+    }
+    return { guessOnly: true, namePart, slot: { tier, label: TIER_LABEL[tier] || (tier === "free" ? "Free" : tier), idx: idxNum } };
+  }
+
   async function loadPending(){
     const box = $("opPending"), msg = $("opMsg");
     box.innerHTML = ""; box.appendChild(el("div", "vs-sub", "Loading submissions…"));
@@ -7289,7 +7328,8 @@ const VIDEO_SUBMIT = {
       }
 
       // 2) Then fill in previews + moon/route matching. Each lookup is isolated and time-limited.
-      let known = new Map();
+      let known = new Map(), moonIndex = new Map();
+      try{ moonIndex = buildMoonIndex(); }catch(e){ console.warn("[approve] moon index failed:", e); }
       try{ known = allSlots(); }catch(e){ console.warn("[approve] route lookup failed:", e); setMsg(msg, "Showing all submissions, but couldn't match them to routes (" + ((e && e.message) || e) + "), so Approve is unavailable. Reject and the manual approver still work.", true); }
       const urls = {};
       try{
@@ -7299,7 +7339,7 @@ const VIDEO_SUBMIT = {
           (su.data || []).forEach(u => { if(u && u.signedUrl) urls[u.path] = u.signedUrl; });
         }
       }catch(e){ console.warn("[approve] signed URLs failed:", e); }
-      built.forEach(([row, w]) => { try{ w._enrich(urls[row.file_path], known); }catch(e){ console.warn("[approve] enrich failed", row, e); } });
+      built.forEach(([row, w]) => { try{ w._enrich(urls[row.file_path], known, moonIndex); }catch(e){ console.warn("[approve] enrich failed", row, e); } });
     }catch(err){
       console.warn("[approve] loading submissions failed:", err);
       box.innerHTML = ""; setMsg(msg, "Couldn't load submissions: " + ((err && err.message) || err), true);
@@ -7341,8 +7381,11 @@ const VIDEO_SUBMIT = {
     const rj = el("button", "vs-btn red", "✕"); rj.title = "Reject and delete this clip";
     if(isPending) wrap.append(ap, rj);
 
-    wrap._enrich = (url, known) => {
-      const hit = known && known.get(base); okHit = !!(hit && hit.ok);
+    wrap._enrich = (url, known, moonIndex) => {
+      let hit = known && known.get(base);
+      if(!hit && moonIndex){ try{ hit = resolveFromFilename(base, moonIndex); }catch(e){ console.warn("[approve] filename fallback failed:", e); } }
+      if(hit && hit.guessOnly){ var guess = hit; hit = null; }
+      okHit = !!(hit && hit.ok);
       if(!url && status === "approved") url = "assets/logicvideos/" + base + fext;   // approved clips live in the repo folder now
       mediaBox.innerHTML = "";
       if(url && fext === ".webp"){ const im = document.createElement("img"); im.src = url; im.alt = ""; im.style.cssText = "width:260px;height:150px;object-fit:contain;background:#000"; im.onerror = () => { mediaBox.innerHTML = ""; mediaBox.appendChild(noPrev()); }; mediaBox.appendChild(im); }
@@ -7363,15 +7406,21 @@ const VIDEO_SUBMIT = {
         const pill = el("span", "tier-pill" + (TIER_LABEL[slot.tier] ? " " + slot.tier : ""), (slot.label || slot.tier) + " · route " + slot.idx);
         matchBox.appendChild(pill);
         const chip = el("div", "option-chip" + (TIER_LABEL[slot.tier] ? " " + slot.tier : ""));
-        try{ if(slot.group && slot.group.length) appendAndGroupIcons(chip, slot.group); else chip.textContent = "Free"; }catch(e){ chip.textContent = slot.desc || "—"; }
+        try{ if(slot.group && slot.group.length) appendAndGroupIcons(chip, slot.group); else if(hit.stale && slot.tier !== "free") chip.textContent = "(route no longer in current logic)"; else chip.textContent = "Free"; }catch(e){ chip.textContent = slot.desc || "—"; }
         matchBox.appendChild(chip);
+        if(hit.stale){ const st = el("div", null, "ℹ Identified from the file name — this exact route isn't in the current logic (it may have been renumbered or changed)."); st.style.cssText = "color:var(--text-dim);font-size:12px"; matchBox.appendChild(st); }
         if(!okHit){ const bad = el("div", null, "✗ not submittable (can't be approved)"); bad.style.color = "var(--red)"; matchBox.appendChild(bad); }
         const warn = el("div", null, ""); warn.style.cssText = "color:var(--tier-advanced);font-size:12px"; matchBox.appendChild(warn);
         if(isPending && okHit) Promise.race([logicVideoExists(base), new Promise(r => setTimeout(() => r(false), 1500))]).then(already => { if(already) warn.textContent = "⚠ A clip already exists for this route — approving replaces it."; });
       } else {
-        matchBox.appendChild(el("div", "vs-sel-sub", "Unknown route"));
-        const bad = el("div", "vs-sel-moon", "✗ no matching route"); bad.style.color = "var(--red)"; matchBox.appendChild(bad);
-        matchBox.appendChild(el("div", "vs-sub", "The file name doesn't match any current moon, checkpoint or custom node route."));
+        // Last resort: read as much as possible straight from the file name.
+        matchBox.appendChild(el("div", "vs-sel-sub", "Read from file name · no matching moon found"));
+        const pretty = guess ? guess.namePart : base;
+        const nm = el("div", "vs-sel-moon", pretty || fname || "(unknown)"); nm.style.wordBreak = "break-all"; matchBox.appendChild(nm);
+        if(guess){
+          matchBox.appendChild(el("span", "tier-pill" + (TIER_LABEL[guess.slot.tier] ? " " + guess.slot.tier : ""), guess.slot.label + " · route " + guess.slot.idx));
+        }
+        const bad = el("div", null, "✗ couldn't match this to a current moon, checkpoint or custom node — can't be approved here"); bad.style.cssText = "color:var(--red);font-size:12px"; matchBox.appendChild(bad);
       }
       ap.disabled = !okHit;
     };
