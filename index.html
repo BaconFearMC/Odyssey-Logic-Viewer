@@ -311,6 +311,19 @@
   .sub-fname{ font-family:monospace; word-break:break-all; }
   .sub-row > .vs-btn{ flex:0 0 auto; align-self:center; }
   @media (max-width:760px){ .sub-row{ flex-wrap:wrap; } .sub-media-box{ flex:1 1 100%; width:100%; } }
+  #opMsg{ position:sticky; top:0; z-index:6; background:var(--bg-panel); padding:6px 8px; margin:0 0 8px; border-left:4px solid var(--worldpeace); white-space:pre-wrap; word-break:break-word; }
+  #opMsg.err{ border-left-color:var(--red); }
+  #opMsg:empty{ display:none; }
+  .op-batch{ display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; background:var(--bg-chip); border:1px solid var(--border); border-left:4px solid var(--worldpeace); padding:8px 10px; margin:0 0 10px; font-size:12px; color:var(--text); position:sticky; top:0; z-index:5; }
+  .op-batch .vs-btn{ padding:6px 12px; }
+  .op-batch .ob-info{ color:var(--text-dim); flex:1 1 220px; min-width:0; word-break:break-word; }
+  .op-batch .ob-prog{ flex:1 1 100%; height:6px; background:var(--bg); border:1px solid var(--border); display:none; }
+  .op-batch .ob-prog > i{ display:block; height:100%; width:0; background:var(--worldpeace); transition:width .15s; }
+  .sub-pick{ flex:0 0 auto; align-self:center; width:22px; height:22px; accent-color:var(--worldpeace); cursor:pointer; margin:0; }
+  .sub-pick:disabled{ cursor:not-allowed; opacity:.35; }
+  .op-row.picked{ border-color:var(--worldpeace); }
+  .op-row.batch-fail{ border-color:var(--red); }
+  .op-row.batch-fail .sub-meta::after{ content:attr(data-err); color:var(--red); flex:1 1 100%; }
   .op-row.big{ align-items:flex-start; gap:12px; padding:10px; margin-bottom:10px; }
   .op-row.big .vs-sel{ white-space:normal; }
   .op-row.big > .vs-btn{ flex:0 0 auto; align-self:center; }
@@ -1843,7 +1856,7 @@
 <div class="nothing-yet-toast" id="nothingYetToast">Nothing yet…</div>
 
 <!-- Supabase client (submissions database). If this fails to load, Submit falls back to downloading the file. -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 
 
 <script>
@@ -7196,16 +7209,58 @@ const VIDEO_SUBMIT = {
     setTimeout(() => URL.revokeObjectURL(url), 4000);
     return null;
   }
+  // ---- Backup folder on this computer (File System Access API; Chrome / Edge) ----------------------------
+  // Picked once per session. Every approved clip is ALSO written here, before it is removed from the bucket.
+  let backupDir = null;
+  async function pickBackupDir(){
+    if(!window.showDirectoryPicker) throw new Error("This browser can't write to a folder (use Chrome or Edge). Clips will be downloaded instead.");
+    backupDir = await window.showDirectoryPicker({ id:"odysseyBackup", mode:"readwrite" });
+    return backupDir;
+  }
+  async function writeBackup(blob, out){
+    if(!backupDir) return false;
+    const fh = await backupDir.getFileHandle(out, { create:true }), w = await fh.createWritable();
+    await w.write(blob); await w.close();
+    return true;
+  }
   const savedNote = saved => lastSaveVia === "github" ? " (committed to GitHub; live once the site redeploys, usually about a minute)" : (lastSaveVia === "folder" ? " (commit + push it to publish)" : "");
+
+  const niceErr = e => (e && e.name === "AbortError") ? "Folder picker was cancelled." : ((e && (e.message || e.error_description)) || String(e));
+  async function runDiagnostics(){
+    const out = $("opDiagOut"), lines = [];
+    const say = (ok, t) => { lines.push((ok ? "✓ " : "✗ ") + t); out.textContent = lines.join("\n"); };
+    out.textContent = "Running…";
+    say(!!(window.supabase && window.supabase.createClient), "Supabase library loaded" + ((window.supabase && window.supabase.createClient) ? "" : " (blocked or offline — check your connection / ad blocker)"));
+    say(!!sb, "Supabase client created");
+    if(sb){
+      try{ const { data } = await sb.auth.getSession(); say(!!(data && data.session), data && data.session ? "Signed in as " + data.session.user.email : "Not signed in (sign in first)"); }catch(e){ say(false, "Session check: " + niceErr(e)); }
+      try{ const r = await sb.rpc("is_owner"); say(!r.error && r.data === true, r.error ? "is_owner() failed: " + r.error.message + " (has supabase-setup.sql been run?)" : (r.data === true ? "Account is the owner" : "Signed in account is NOT the owner")); }catch(e){ say(false, "is_owner: " + niceErr(e)); }
+      try{ const r = await sb.from("submissions").select("id", { count:"exact", head:true }); say(!r.error, r.error ? "Read submissions table failed: " + r.error.message : "Can read submissions table (" + (r.count == null ? "?" : r.count) + " rows)"); }catch(e){ say(false, "Table read: " + niceErr(e)); }
+      try{ const r = await bucket().list("", { limit:1 }); say(!r.error, r.error ? "Bucket '" + VIDEO_SUBMIT.bucket + "' list failed: " + r.error.message : "Can read storage bucket '" + VIDEO_SUBMIT.bucket + "'"); }catch(e){ say(false, "Bucket: " + niceErr(e)); }
+    }
+    if(ghToken()){
+      try{
+        const cfg = VIDEO_SUBMIT.github;
+        const r = await fetch("https://api.github.com/repos/" + cfg.repo, { headers:{ "Authorization":"Bearer " + ghToken(), "Accept":"application/vnd.github+json" }, cache:"no-store" });
+        const j = await r.json().catch(() => ({}));
+        if(!r.ok) say(false, "GitHub: " + (j.message || r.status) + " (token expired, wrong repo, or no access)");
+        else say(!!(j.permissions && j.permissions.push), "GitHub repo reachable" + ((j.permissions && j.permissions.push) ? ", token can write" : ", but token has NO write permission (needs Contents: Read and write)"));
+      }catch(e){ say(false, "GitHub: " + niceErr(e)); }
+    } else say(true, "No GitHub token saved (clips go to a folder you pick / downloads)");
+    say(!!window.showDirectoryPicker, window.showDirectoryPicker ? "Browser can save to a folder" : "Browser can't save to a folder (use Chrome/Edge)");
+    say(location.protocol !== "file:", location.protocol === "file:" ? "Page opened from file:// — some browsers block folder access/storage here; serve it over http(s) or the live site" : "Served over " + location.protocol);
+  }
 
   function buildPanel(){
     panel.dataset.built = "1";
     panel.innerHTML = '<div class="op-head"><span>Approve videos <span class="op-who" id="opWho"></span></span><button type="button" class="vs-ownerbtn" id="opOut" style="display:none">Sign out</button></div>'
+      + '<div class="vs-msg" id="opMsg"></div>'
       + '<div id="opAuth"></div>'
       + '<div id="opPending"></div>'
       + '<details class="op-all" id="opGh"><summary id="opGhSum"></summary><div style="margin-top:6px"><div class="vs-sub">Paste a GitHub fine-grained token (only for ' + VIDEO_SUBMIT.github.repo + ', permission <b>Contents: Read and write</b>). It stays in this browser only. With it saved, Approve commits the clip straight to <b>' + VIDEO_SUBMIT.github.path + '/</b>.</div><input type="password" id="opGhTok" placeholder="github_pat_…" autocomplete="off" style="width:100%;margin-top:6px"><div style="margin-top:6px;display:flex;gap:6px"><button type="button" class="vs-btn" id="opGhSave">Save token</button><button type="button" class="vs-btn red" id="opGhClear">Remove</button></div></div></details>'
       + '<details class="op-all"><summary>Approve a file manually (no database)</summary><input type="file" id="opFiles" multiple accept="video/mp4,image/webp,.mp4,.webp" style="margin-top:6px"><div id="opQueue" style="margin-top:8px"></div></details>'
-      + '<div class="vs-msg" id="opMsg"></div>';
+      + '<details class="op-all"><summary>Troubleshooting</summary><div style="margin-top:6px"><button type="button" class="vs-btn ghost" id="opDiag">Run diagnostics</button><pre id="opDiagOut" style="white-space:pre-wrap;font-size:11px;color:var(--text-dim);margin:8px 0 0"></pre></div></details>';
+    $("opDiag").onclick = runDiagnostics;
     $("opOut").onclick = async () => { try{ await sb.auth.signOut(); }catch(e){} panel.dataset.built = ""; panelOpen = false; syncApprove(); };
     $("opFiles").onchange = onManualFiles;
     const ghSync = () => { $("opGhSum").textContent = ghToken() ? "GitHub auto-publish: ON ✓" : "GitHub auto-publish: OFF (click to set up)"; $("opGh").open = !ghToken(); };
@@ -7342,11 +7397,55 @@ const VIDEO_SUBMIT = {
       if(!rows.length){ box.appendChild(el("div", "vs-sub", "No submissions" + (opFilter === "all" ? "" : " with status “" + opFilter + "”") + ".")); return; }
       const onDone = () => { pendingLeft--; updateCount(); };
 
+      // ---- Batch approve toolbar (only when pending clips are listed) ----
+      const batch = el("div", "op-batch");
+      const bSelAll = el("button", "vs-btn ghost", "Select all ready"); bSelAll.type = "button";
+      const bSelNone = el("button", "vs-btn ghost", "Select none"); bSelNone.type = "button";
+      const bFolder = el("button", "vs-btn ghost", backupDir ? "📁 Backup: " + backupDir.name : "📁 Choose backup folder"); bFolder.type = "button";
+      const bGo = el("button", "vs-btn green", "Approve selected (0)"); bGo.type = "button"; bGo.disabled = true;
+      const bInfo = el("span", "ob-info", backupDir ? "Each approved clip is saved to your backup folder first." : "Pick a folder on your computer for the backup copies (recommended).");
+      const bProg = el("div", "ob-prog"), bBar = document.createElement("i"); bProg.appendChild(bBar);
+      batch.append(bSelAll, bSelNone, bFolder, bGo, bInfo, bProg);
+      if(rows.some(r => (r.status || "pending") === "pending")) box.appendChild(batch);
+      let batchBusy = false;
+      const pickedRows = () => built.filter(([r, w]) => w._pick && w._pick.checked && w.isConnected);
+      const refreshBatch = () => { const n = pickedRows().length; bGo.textContent = "Approve selected (" + n + ")"; bGo.disabled = batchBusy || n === 0; };
+      bSelAll.onclick = () => { built.forEach(([r, w]) => w._setPicked && w._setPicked(true)); refreshBatch(); };
+      bSelNone.onclick = () => { built.forEach(([r, w]) => w._setPicked && w._setPicked(false)); refreshBatch(); };
+      bFolder.onclick = async () => {
+        try{ await pickBackupDir(); bFolder.textContent = "📁 Backup: " + backupDir.name; bInfo.textContent = "Each approved clip is saved to your backup folder first."; }
+        catch(e){ if(e && e.name !== "AbortError") setMsg(msg, niceErr(e), true); }
+      };
+      bGo.onclick = async () => {
+        const list = pickedRows(); if(!list.length) return;
+        // Must happen inside this click (user gesture): ask for the backup folder if none yet.
+        if(!backupDir && window.showDirectoryPicker){
+          try{ await pickBackupDir(); bFolder.textContent = "📁 Backup: " + backupDir.name; }
+          catch(e){ if(e && e.name === "AbortError"){ if(!confirm("No backup folder chosen. Approve WITHOUT saving a backup copy to your computer?")) return; } else { setMsg(msg, (e && e.message) || String(e), true); return; } }
+        }
+        const gh = !!ghToken();
+        if(!backupDir && !gh && !confirm("No backup folder and no GitHub token: each clip will be downloaded one by one. Continue?")) return;
+        batchBusy = true; bSelAll.disabled = bSelNone.disabled = bFolder.disabled = true; refreshBatch();
+        bProg.style.display = "block"; bBar.style.width = "0";
+        let ok = 0, bad = 0;
+        for(let i = 0; i < list.length; i++){
+          const [r, w] = list[i];
+          bInfo.textContent = "Approving " + (i + 1) + " of " + list.length + "… " + (r.filename || "");
+          w.classList.remove("batch-fail");
+          try{ await w._batchApprove(gh); ok++; onDone(); }
+          catch(err){ bad++; console.warn("[approve] batch item failed", r, err); w._markFail(err); if(w._pick) w._pick.checked = false; w.classList.remove("picked"); }
+          bBar.style.width = Math.round((i + 1) / list.length * 100) + "%";
+        }
+        batchBusy = false; bSelAll.disabled = bSelNone.disabled = bFolder.disabled = false; refreshBatch();
+        bInfo.textContent = "Done: " + ok + " approved" + (backupDir ? " + backed up to “" + backupDir.name + "”" : "") + (bad ? ", " + bad + " failed (marked red, still pending)" : "") + "." + (gh && ok ? " Live once the site redeploys." : (!gh && ok && backupDir ? " NOTE: no GitHub token, so the clips are only in your backup folder — copy them into assets/logicvideos/ and push to publish." : ""));
+        setMsg(msg, bad ? bad + " clip(s) failed — see the red rows." : "", !!bad);
+      };
+
       // 1) Draw EVERY row right away from the database data alone, so the list can never come up empty
       //    because of a slow or failing lookup below. One broken row can't hide the others either.
       const built = [];
       for(const row of rows){
-        try{ const w = buildPendingRow(row, onDone); box.appendChild(w); built.push([row, w]); }
+        try{ const w = buildPendingRow(row, onDone); w._onPick = refreshBatch; box.appendChild(w); built.push([row, w]); }
         catch(err){
           console.warn("[approve] couldn't render submission", row, err);
           const bad = el("div", "op-row"); bad.appendChild(el("div", "op-info", "⚠ Couldn't display submission " + ((row && (row.filename || row.id)) || "?") + ": " + ((err && err.message) || err)));
@@ -7511,13 +7610,40 @@ const VIDEO_SUBMIT = {
     };
 
     if(!isPending) return wrap;   // approved / rejected rows are view-only
+
+    // ---- batch selection ----
+    const pick = document.createElement("input"); pick.type = "checkbox"; pick.className = "sub-pick"; pick.disabled = true; pick.title = "Select for batch approve";
+    pick.addEventListener("change", () => { wrap.classList.toggle("picked", pick.checked); if(wrap._onPick) wrap._onPick(); });
+    wrap.insertBefore(pick, wrap.firstChild);
+    const enrichOrig = wrap._enrich;
+    wrap._enrich = (...a) => { enrichOrig(...a); pick.disabled = !okHit; if(!okHit){ pick.checked = false; wrap.classList.remove("picked"); } };
+    wrap._pick = pick;
+    wrap._setPicked = v => { if(!pick.disabled){ pick.checked = v; wrap.classList.toggle("picked", v); } };
+    // Approves this one clip as part of a batch. Throws on failure (row stays pending).
+    wrap._batchApprove = async (gh) => {
+      const dl = await bucket().download(row.file_path);
+      if(dl.error) throw dl.error;
+      const out = base + fext;
+      await writeBackup(dl.data, out);                       // 1) backup to this computer
+      if(gh) await pushToGitHub(dl.data, out);               // 2) publish to GitHub if a token is saved
+      else if(!backupDir){ lastSaveVia = "download"; const u = URL.createObjectURL(dl.data), a = document.createElement("a"); a.href = u; a.download = out; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); }
+      const up = await sb.from("submissions").update({ status:"approved" }).eq("id", row.id).select("id");
+      if(up.error) throw up.error;
+      if(!up.data || !up.data.length) throw new Error("File saved, but the database refused to mark it approved. Are you signed in as the owner?");
+      await bucket().remove([row.file_path]);
+      videoExistsCache.delete(base);
+      wrap.remove();
+    };
+    wrap._markFail = err => { wrap.classList.add("batch-fail"); metaLine.dataset.err = "✗ " + ((err && err.message) || err); };
     ap.onclick = async () => {
       ap.disabled = rj.disabled = true;
       try{
         const dir = await getLogicDir();                    // first, while the click still counts as a user gesture
         const dl = await bucket().download(row.file_path);
         if(dl.error) throw dl.error;
-        const out = base + fext, saved = await saveToRepo(dl.data, out, dir);
+        const out = base + fext;
+        await writeBackup(dl.data, out);                    // backup copy first (no-op if no backup folder picked)
+        const saved = await saveToRepo(dl.data, out, dir);
         const up = await sb.from("submissions").update({ status:"approved" }).eq("id", row.id).select("id");
         if(up.error) throw up.error;
         if(!up.data || !up.data.length) throw new Error("File saved, but the database refused to mark it approved. Are you signed in as the owner?");
@@ -7525,7 +7651,7 @@ const VIDEO_SUBMIT = {
         videoExistsCache.delete(base);
         setMsg($("opMsg"), saved ? "Approved → " + saved + savedNote() : "Downloaded " + out + " — put it in assets/logicvideos/, then commit + push.");
         wrap.remove(); onDone();
-      }catch(err){ setMsg($("opMsg"), "Failed: " + ((err && err.message) || err), true); ap.disabled = !okHit; rj.disabled = false; }
+      }catch(err){ setMsg($("opMsg"), "Failed: " + niceErr(err), true); ap.disabled = !okHit; rj.disabled = false; }
     };
     rj.onclick = async () => {
       if(!confirm("Reject and permanently delete this clip?")) return;
@@ -7537,7 +7663,7 @@ const VIDEO_SUBMIT = {
         await bucket().remove([row.file_path]);
         setMsg($("opMsg"), "Rejected.");
         wrap.remove(); onDone();
-      }catch(err){ setMsg($("opMsg"), "Failed: " + ((err && err.message) || err), true); ap.disabled = !okHit; rj.disabled = false; }
+      }catch(err){ setMsg($("opMsg"), "Failed: " + niceErr(err), true); ap.disabled = !okHit; rj.disabled = false; }
     };
     return wrap;
   }
