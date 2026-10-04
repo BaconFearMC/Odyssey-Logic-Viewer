@@ -7089,7 +7089,7 @@ const VIDEO_SUBMIT = {
   function syncApprove(){
     approveBtn.style.display = onDarker() ? "" : "none";
     approveBtn.classList.toggle("active", panelOpen && onDarker());
-    if(onDarker() && panelOpen){ if(!panel.dataset.built) buildPanel(); panel.style.display = "block"; }
+    if(onDarker() && panelOpen){ const first = !panel.dataset.built; if(first) buildPanel(); panel.style.display = "block"; if(first) setTimeout(() => { try{ panel.scrollIntoView({ behavior:"smooth", block:"start" }); }catch(e){} }, 50); }
     else panel.style.display = "none";
   }
   window.vsOnKingdom = syncApprove;
@@ -7173,8 +7173,8 @@ const VIDEO_SUBMIT = {
     panel.dataset.built = "1";
     panel.innerHTML = '<div class="op-head"><span>Approve videos <span class="op-who" id="opWho"></span></span><button type="button" class="vs-ownerbtn" id="opOut" style="display:none">Sign out</button></div>'
       + '<div id="opAuth"></div>'
-      + '<details class="op-all" id="opGh"><summary id="opGhSum"></summary><div style="margin-top:6px"><div class="vs-sub">Paste a GitHub fine-grained token (only for ' + VIDEO_SUBMIT.github.repo + ', permission <b>Contents: Read and write</b>). It stays in this browser only. With it saved, Approve commits the clip straight to <b>' + VIDEO_SUBMIT.github.path + '/</b>.</div><input type="password" id="opGhTok" placeholder="github_pat_…" autocomplete="off" style="width:100%;margin-top:6px"><div style="margin-top:6px;display:flex;gap:6px"><button type="button" class="vs-btn" id="opGhSave">Save token</button><button type="button" class="vs-btn red" id="opGhClear">Remove</button></div></div></details>'
       + '<div id="opPending"></div>'
+      + '<details class="op-all" id="opGh"><summary id="opGhSum"></summary><div style="margin-top:6px"><div class="vs-sub">Paste a GitHub fine-grained token (only for ' + VIDEO_SUBMIT.github.repo + ', permission <b>Contents: Read and write</b>). It stays in this browser only. With it saved, Approve commits the clip straight to <b>' + VIDEO_SUBMIT.github.path + '/</b>.</div><input type="password" id="opGhTok" placeholder="github_pat_…" autocomplete="off" style="width:100%;margin-top:6px"><div style="margin-top:6px;display:flex;gap:6px"><button type="button" class="vs-btn" id="opGhSave">Save token</button><button type="button" class="vs-btn red" id="opGhClear">Remove</button></div></div></details>'
       + '<details class="op-all"><summary>Approve a file manually (no database)</summary><input type="file" id="opFiles" multiple accept="video/mp4,image/webp,.mp4,.webp" style="margin-top:6px"><div id="opQueue" style="margin-top:8px"></div></details>'
       + '<div class="vs-msg" id="opMsg"></div>';
     $("opOut").onclick = async () => { try{ await sb.auth.signOut(); }catch(e){} panel.dataset.built = ""; panelOpen = false; syncApprove(); };
@@ -7243,95 +7243,118 @@ const VIDEO_SUBMIT = {
   async function loadPending(){
     const box = $("opPending"), msg = $("opMsg");
     box.innerHTML = ""; box.appendChild(el("div", "vs-sub", "Loading submissions…"));
-    // Fetch EVERY row (Supabase returns at most 1000 per request, so page through them).
-    let rows = [];
-    for(let from = 0; ; from += 1000){
-      let q = sb.from("submissions").select("*").order("created_at", { ascending:false }).range(from, from + 999);
-      if(opFilter !== "all") q = q.eq("status", opFilter);
-      const res = await q;
-      if(res.error){ box.innerHTML = ""; setMsg(msg, "Couldn't load submissions: " + res.error.message, true); return; }
-      rows = rows.concat(res.data || []);
-      if(!res.data || res.data.length < 1000) break;
-    }
-    box.innerHTML = "";
-    setMsg(msg, "");
-
-    // Header: count + filter + refresh
-    const head = el("div", "op-subhead"), countEl = el("span");
-    const tools = el("span"); tools.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;align-items:center";
-    [["all","All"],["pending","Pending"],["approved","Approved"],["rejected","Rejected"]].forEach(([k, label]) => {
-      const b = el("button", "vs-ownerbtn", label); b.type = "button";
-      if(k === opFilter){ b.style.borderColor = "var(--gold)"; b.style.color = "var(--gold)"; }
-      b.onclick = () => { opFilter = k; loadPending(); };
-      tools.appendChild(b);
-    });
-    const rf = el("button", "vs-ownerbtn", "Refresh"); rf.type = "button"; rf.onclick = loadPending; tools.appendChild(rf);
-    head.append(countEl, tools); box.appendChild(head);
-    let pendingLeft = rows.filter(r => (r.status || "pending") === "pending").length;
-    const updateCount = () => { countEl.textContent = "Submissions (" + rows.length + ")" + (opFilter === "all" || opFilter === "pending" ? " · " + pendingLeft + " pending" : ""); };
-    updateCount();
-    if(!rows.length){ box.appendChild(el("div", "vs-sub", "No submissions" + (opFilter === "all" ? "" : " with status “" + opFilter + "”") + ".")); return; }
-
-    // Signed preview links for clips still sitting in the private bucket. A failure here must never
-    // stop the list from rendering — those rows just show without a preview.
-    const urls = {};
     try{
-      const paths = rows.filter(r => r.file_path && (r.status || "pending") === "pending").map(r => r.file_path);
-      for(let i = 0; i < paths.length; i += 100){
-        const su = await bucket().createSignedUrls(paths.slice(i, i + 100), 3600);
-        (su.data || []).forEach(u => { if(u && u.signedUrl) urls[u.path] = u.signedUrl; });
+      // Fetch EVERY row (Supabase returns at most 1000 per request, so page through them).
+      let rows = [];
+      for(let from = 0; ; from += 1000){
+        let q = sb.from("submissions").select("*").order("created_at", { ascending:false }).range(from, from + 999);
+        if(opFilter !== "all") q = q.eq("status", opFilter);
+        const res = await q;
+        if(res.error){ box.innerHTML = ""; setMsg(msg, "Couldn't load submissions: " + res.error.message, true); return; }
+        rows = rows.concat(res.data || []);
+        if(!res.data || res.data.length < 1000) break;
       }
-    }catch(e){ console.warn("[approve] signed URLs failed:", e); }
-    const known = allSlots();
-    const onDone = () => { pendingLeft--; updateCount(); };
-    // Render every row; one broken row can never hide the rest.
-    for(const row of rows){
-      try{ box.appendChild(buildPendingRow(row, urls[row.file_path], known, onDone)); }
-      catch(err){
-        console.warn("[approve] couldn't render submission", row, err);
-        const bad = el("div", "op-row"); bad.appendChild(el("div", "op-info", "⚠ Couldn't display submission " + (row && (row.filename || row.id)) + ": " + ((err && err.message) || err)));
-        box.appendChild(bad);
+      box.innerHTML = "";
+      setMsg(msg, "");
+
+      // Header: count + filter + refresh
+      const head = el("div", "op-subhead"), countEl = el("span");
+      const tools = el("span"); tools.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;align-items:center";
+      [["all","All"],["pending","Pending"],["approved","Approved"],["rejected","Rejected"]].forEach(([k, label]) => {
+        const b = el("button", "vs-ownerbtn", label); b.type = "button";
+        if(k === opFilter){ b.style.borderColor = "var(--gold)"; b.style.color = "var(--gold)"; }
+        b.onclick = () => { opFilter = k; loadPending(); };
+        tools.appendChild(b);
+      });
+      const rf = el("button", "vs-ownerbtn", "Refresh"); rf.type = "button"; rf.onclick = loadPending; tools.appendChild(rf);
+      head.append(countEl, tools); box.appendChild(head);
+      let pendingLeft = rows.filter(r => (r.status || "pending") === "pending").length;
+      const updateCount = () => { countEl.textContent = "Submissions (" + rows.length + ")" + (opFilter === "all" || opFilter === "pending" ? " · " + pendingLeft + " pending" : ""); };
+      updateCount();
+      if(!rows.length){ box.appendChild(el("div", "vs-sub", "No submissions" + (opFilter === "all" ? "" : " with status “" + opFilter + "”") + ".")); return; }
+      const onDone = () => { pendingLeft--; updateCount(); };
+
+      // 1) Draw EVERY row right away from the database data alone, so the list can never come up empty
+      //    because of a slow or failing lookup below. One broken row can't hide the others either.
+      const built = [];
+      for(const row of rows){
+        try{ const w = buildPendingRow(row, onDone); box.appendChild(w); built.push([row, w]); }
+        catch(err){
+          console.warn("[approve] couldn't render submission", row, err);
+          const bad = el("div", "op-row"); bad.appendChild(el("div", "op-info", "⚠ Couldn't display submission " + ((row && (row.filename || row.id)) || "?") + ": " + ((err && err.message) || err)));
+          box.appendChild(bad);
+        }
       }
+
+      // 2) Then fill in previews + moon/route matching. Each lookup is isolated and time-limited.
+      let known = new Map();
+      try{ known = allSlots(); }catch(e){ console.warn("[approve] route lookup failed:", e); setMsg(msg, "Showing all submissions, but couldn't match them to routes (" + ((e && e.message) || e) + "), so Approve is unavailable. Reject and the manual approver still work.", true); }
+      const urls = {};
+      try{
+        const paths = rows.filter(r => r.file_path && (r.status || "pending") === "pending").map(r => r.file_path);
+        for(let i = 0; i < paths.length; i += 100){
+          const su = await Promise.race([bucket().createSignedUrls(paths.slice(i, i + 100), 3600), new Promise((_, rej) => setTimeout(() => rej(new Error("timed out")), 10000))]);
+          (su.data || []).forEach(u => { if(u && u.signedUrl) urls[u.path] = u.signedUrl; });
+        }
+      }catch(e){ console.warn("[approve] signed URLs failed:", e); }
+      built.forEach(([row, w]) => { try{ w._enrich(urls[row.file_path], known); }catch(e){ console.warn("[approve] enrich failed", row, e); } });
+    }catch(err){
+      console.warn("[approve] loading submissions failed:", err);
+      box.innerHTML = ""; setMsg(msg, "Couldn't load submissions: " + ((err && err.message) || err), true);
     }
   }
 
-  function buildPendingRow(row, url, known, onDone){
+  // Draws one submission from its database row alone; _enrich(url, known) later adds the preview and
+  // the matched moon/route and enables Approve. Nothing here depends on that lookup succeeding.
+  function buildPendingRow(row, onDone){
     const status = row.status || "pending", isPending = status === "pending";
     const fname = String(row.filename || row.file_path || ""), fext = ext({ name: fname }), base = fname.replace(/\.[^.]+$/, "").toLowerCase();
-    const hit = known.get(base), okHit = !!(hit && hit.ok);
+    let okHit = false;
     const wrap = el("div", "op-row big");
-    if(!url && status === "approved") url = "assets/logicvideos/" + base + fext;   // approved clips live in the repo folder now
-    const noPrev = () => { const d = el("div", "vs-sub", "no preview"); d.style.cssText = "width:220px;flex:0 0 auto"; return d; };
-    if(url && fext === ".webp"){ const im = document.createElement("img"); im.src = url; im.alt = ""; im.onerror = () => im.replaceWith(noPrev()); wrap.appendChild(im); }
-    else if(url){ const v = document.createElement("video"); v.src = url; v.controls = true; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "metadata"; v.onerror = () => v.replaceWith(noPrev()); wrap.appendChild(v); }
-    else wrap.appendChild(noPrev());
+    const mediaBox = el("div"); mediaBox.style.cssText = "width:220px;flex:0 0 auto";
+    const noPrev = txt => { const d = el("div", "vs-sub", txt || "no preview"); d.style.cssText = "width:220px;min-height:60px"; return d; };
+    mediaBox.appendChild(noPrev(isPending ? "loading preview…" : "no preview"));
+    wrap.appendChild(mediaBox);
 
     // Everything below comes from the database, i.e. from strangers -> only ever set via textContent.
     const info = el("div", "op-info");
-    const warn = el("small", null, "");
-    if(okHit){
-      info.appendChild(el("b", null, hit.moon.label || hit.moon.name));
-      info.appendChild(document.createTextNode(" "));
-      info.appendChild(el("small", null, hit.kingdom + " · " + hit.slot.label + " #" + hit.slot.idx));
-      info.appendChild(warn);
-    } else {
-      const bad = el("span", null, "✗ " + (fname || "(no filename)") + (hit ? " (not submittable)" : " (no match)")); bad.style.color = "var(--red)"; info.appendChild(bad);
-    }
+    const matchBox = el("span");
+    info.appendChild(matchBox);
     const tag = el("span", null, " " + status.toUpperCase());
     tag.style.cssText = "font-size:11px;margin-left:6px;color:" + (status === "approved" ? "var(--worldpeace)" : status === "rejected" ? "var(--red)" : "var(--gold)");
     info.appendChild(tag);
     info.appendChild(el("br"));
-    info.appendChild(el("small", null, "by " + (row.submitter || "anonymous") + " · " + (row.created_at ? new Date(row.created_at).toLocaleString() : "") + (row.size_bytes ? " · " + (row.size_bytes / 1048576).toFixed(1) + " MB" : "") + (fname && okHit ? "" : "")));
+    info.appendChild(el("small", null, "by " + (row.submitter || "anonymous") + " · " + (row.created_at ? new Date(row.created_at).toLocaleString() : "") + (row.size_bytes ? " · " + (row.size_bytes / 1048576).toFixed(1) + " MB" : "")));
     info.appendChild(el("br"));
-    info.appendChild(el("small", null, fname));
+    info.appendChild(el("small", null, fname || "(no filename)"));
     wrap.appendChild(info);
-    // "replaces existing" check runs in the background so it never delays the list.
-    if(isPending && okHit) Promise.race([logicVideoExists(base), new Promise(r => setTimeout(() => r(false), 1500))]).then(already => { if(already) warn.textContent = " · ⚠ replaces existing"; });
+
+    const ap = el("button", "vs-btn green", "Approve"); ap.disabled = true;
+    const rj = el("button", "vs-btn red", "✕"); rj.title = "Reject and delete this clip";
+    if(isPending) wrap.append(ap, rj);
+
+    wrap._enrich = (url, known) => {
+      const hit = known && known.get(base); okHit = !!(hit && hit.ok);
+      if(!url && status === "approved") url = "assets/logicvideos/" + base + fext;   // approved clips live in the repo folder now
+      mediaBox.innerHTML = "";
+      if(url && fext === ".webp"){ const im = document.createElement("img"); im.src = url; im.alt = ""; im.style.cssText = "width:220px;height:130px;object-fit:contain;background:#000"; im.onerror = () => { mediaBox.innerHTML = ""; mediaBox.appendChild(noPrev()); }; mediaBox.appendChild(im); }
+      else if(url){ const v = document.createElement("video"); v.src = url; v.controls = true; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "metadata"; v.style.cssText = "width:220px;height:130px;object-fit:contain;background:#000"; v.onerror = () => { mediaBox.innerHTML = ""; mediaBox.appendChild(noPrev()); }; mediaBox.appendChild(v); }
+      else mediaBox.appendChild(noPrev());
+
+      matchBox.innerHTML = "";
+      if(okHit){
+        matchBox.appendChild(el("b", null, hit.moon.label || hit.moon.name));
+        matchBox.appendChild(document.createTextNode(" "));
+        matchBox.appendChild(el("small", null, hit.kingdom + " · " + hit.slot.label + " #" + hit.slot.idx));
+        const warn = el("small", null, ""); matchBox.appendChild(warn);
+        if(isPending) Promise.race([logicVideoExists(base), new Promise(r => setTimeout(() => r(false), 1500))]).then(already => { if(already) warn.textContent = " · ⚠ replaces existing"; });
+      } else {
+        const bad = el("span", null, "✗ " + (hit ? "not submittable" : "no matching route")); bad.style.color = "var(--red)"; matchBox.appendChild(bad);
+      }
+      ap.disabled = !okHit;
+    };
 
     if(!isPending) return wrap;   // approved / rejected rows are view-only
-
-    const ap = el("button", "vs-btn green", "Approve"); ap.disabled = !okHit;
-    const rj = el("button", "vs-btn red", "✕"); rj.title = "Reject and delete this clip";
     ap.onclick = async () => {
       ap.disabled = rj.disabled = true;
       try{
@@ -7360,7 +7383,6 @@ const VIDEO_SUBMIT = {
         wrap.remove(); onDone();
       }catch(err){ setMsg($("opMsg"), "Failed: " + ((err && err.message) || err), true); ap.disabled = !okHit; rj.disabled = false; }
     };
-    wrap.append(ap, rj);
     return wrap;
   }
 
