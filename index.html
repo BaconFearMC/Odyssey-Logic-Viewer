@@ -1737,7 +1737,7 @@
     <button type="button" class="vs-close" id="reqClose" aria-label="Close">&times;</button>
     <h2 class="vs-title">Seed Generation Requirements for Submission</h2>
     <div class="rq-top">
-      <span><b>60 Second Maximum</b></span><span>File names are automatic</span><span>.mp4 / .webp · 50 MB</span>
+      <span><b>60 Second Maximum</b></span><span>File names are automatic</span><span>.mp4 / .webp · 25 MB</span>
     </div>
     <div class="rq-legend"><span class="rq-badge req">REQUIRED</span> must be set this way &nbsp; <span class="rq-badge rec">RECOMMENDED</span> preferred, not mandatory</div>
     <section class="rq-sec rq-wide"><h4>Before you record</h4>
@@ -1757,7 +1757,7 @@
     <h2 class="vs-title">Submit Logic Video</h2>
     <div class="vs-step"><b>1</b> Route selected</div>
     <div class="vs-sel" id="vsSel"></div>
-    <div class="vs-step"><b>2</b> (Optional) Record it following the <button type="button" class="vs-link" id="vsOpenReq">Seed Generation Requirements</button> <span class="vs-sub">(60 sec max · .mp4 / .webp · 50 MB)</span></div>
+    <div class="vs-step"><b>2</b> (Optional) Record it following the <button type="button" class="vs-link" id="vsOpenReq">Seed Generation Requirements</button> <span class="vs-sub">(60 sec max · .mp4 / .webp · 25 MB)</span></div>
     <div class="vs-step"><b>3</b> Add your clip</div>
     <div class="vs-row">
       <div class="vs-field"><label for="vsFile">Video file</label><input type="file" id="vsFile" accept="video/mp4,image/webp,.mp4,.webp"></div>
@@ -7132,7 +7132,7 @@ const VIDEO_SUBMIT = {
   bucket: "submissions", // storage bucket created by supabase-setup.sql
   endpoint: "",          // legacy: custom POST endpoint, only used if Supabase isn't configured
   contactNote: "Send the downloaded file to the site owner (Discord/DM) so it can be reviewed.",
-  maxMB: 50, maxSeconds: 60, exts: [".mp4", ".webp"],
+  maxMB: 24, displayMB: 25, maxSeconds: 60, exts: [".mp4", ".webp"],
   // ---- Auto-publish: Approve commits the clip straight into this GitHub folder ----
   // The access token is NOT stored here (this file is public). You paste it once in the Approve panel
   // and it is kept only in your own browser.
@@ -7203,7 +7203,7 @@ const VIDEO_SUBMIT = {
     else {
       const extOk = VIDEO_SUBMIT.exts.includes(ext(f)), sizeOk = f.size <= VIDEO_SUBMIT.maxMB*1048576;
       add(extOk?"ok":"bad", "Format "+ext(f)+" (allowed: "+VIDEO_SUBMIT.exts.join(", ")+")");
-      add(sizeOk?"ok":"bad", "Size "+(f.size/1048576).toFixed(1)+" MB (max "+VIDEO_SUBMIT.maxMB+" MB)");
+      add(sizeOk?"ok":"bad", "Size "+(f.size/1048576).toFixed(1)+" MB (max "+VIDEO_SUBMIT.displayMB+" MB)");
       if(ext(f)===".mp4"){
         if(fileState.dur == null) add("wait","Checking length…");
         else { fileState.durationOk = fileState.dur <= VIDEO_SUBMIT.maxSeconds; add(fileState.durationOk?"ok":"bad","Length "+fileState.dur.toFixed(1)+"s (60 second maximum)"); }
