@@ -44,12 +44,17 @@ create table if not exists public.submissions (
   tier        text   not null check (char_length(tier) <= 20),
   branch      int    not null check (branch between 1 and 100),
   submitter   text   check (submitter is null or char_length(submitter) <= 40),
-  size_bytes  bigint check (size_bytes is null or size_bytes <= 52428800),
+  size_bytes  bigint check (size_bytes is null or size_bytes <= 25165824),
   status      text   not null default 'pending' check (status in ('pending','approved','rejected'))
 );
 
 create index if not exists submissions_status_created_idx
   on public.submissions (status, created_at);
+
+-- If the table already existed, tighten its size check to 24 MB (re-runnable).
+alter table public.submissions drop constraint if exists submissions_size_bytes_check;
+alter table public.submissions add constraint submissions_size_bytes_check
+  check (size_bytes is null or size_bytes <= 25165824) not valid;
 
 alter table public.submissions enable row level security;
 
@@ -76,9 +81,10 @@ create policy "owner can delete" on public.submissions
 
 
 -- ---------- 3. Private storage bucket for the clips --------------------
--- 52428800 bytes = 50 MB (the Free plan's per-file ceiling), mp4/webp only.
+-- Advertised as 25 MB, but actually enforced at 24 MB (25165824 bytes) for headroom
+-- under GitHub's 25 MB upload cap. mp4/webp only.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('submissions', 'submissions', false, 52428800, array['video/mp4', 'image/webp'])
+values ('submissions', 'submissions', false, 25165824, array['video/mp4', 'image/webp'])
 on conflict (id) do update
   set public = false,
       file_size_limit = excluded.file_size_limit,
