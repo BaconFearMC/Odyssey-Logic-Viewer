@@ -150,13 +150,21 @@
   .cp-reqs-head img{ width:26px; height:26px; object-fit:contain; }
   .cp-reqs-title{ margin:0; font-family:"FontEB",'Segoe UI',system-ui,sans-serif; font-size:20px; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; }
   .cp-reqs-sub{ margin:0 0 14px; font-size:12.5px; color:var(--text-dim); }
-  .cp-reqs-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px; align-items:start; }
+  .cp-reqs-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(380px, 1fr)); gap:16px; align-items:start; }
   .cp-req{ background:var(--bg-panel); border:2px solid var(--border); border-left:4px solid var(--gold); padding:12px 14px 14px; min-width:0; display:flex; flex-direction:column; gap:8px; }
-  .cp-req-name{ margin:0; font-family:"FontDB",'Segoe UI',system-ui,sans-serif; font-size:15px; color:var(--text); display:flex; align-items:center; gap:8px; }
+  .cp-req-name{ padding-bottom:8px; border-bottom:1px solid rgba(128,128,128,.35); margin:0; font-family:"FontDB",'Segoe UI',system-ui,sans-serif; font-size:15px; color:var(--text); display:flex; align-items:center; gap:8px; }
   .cp-req-name img{ width:20px; height:20px; object-fit:contain; flex:0 0 auto; }
   .cp-req-source{ display:flex; flex-direction:column; gap:5px; }
   .cp-req-source + .cp-req-source{ padding-top:8px; border-top:1px dashed rgba(128,128,128,.35); }
-  .cp-req-source-label{ font-size:12px; font-weight:700; color:var(--text-dim); }
+  .cp-req-source{ background:rgba(128,128,128,.07); padding:8px 10px; }
+  .cp-req-source + .cp-req-source{ border-top:none; padding-top:8px; }
+  .cp-req-source-label{ font-size:11px; font-weight:800; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; }
+  /* Painting Access Requirements: Come (left) + Go (right), sits above Checkpoint Requirements. */
+  #paintingReqs{ margin-bottom:0; }
+  #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr 1fr; }
+  #paintingReqs .cp-req{ border-left-color:#8a4f78; }
+  .cp-req-empty{ font-size:12.5px; color:var(--text-dim); font-style:italic; }
+  @media (max-width:720px){ #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr; } }
   /* Custom Node Requirements: separate section, only visible while in Submit Video mode. */
   #customNodeReqs{ display:none; }
   body.submit-mode #customNodeReqs:not(.empty){ display:block; }
@@ -1822,6 +1830,7 @@
 <div class="grid" id="grid"></div>
 <div class="checkpoint-groups" id="checkpointGroups" style="display:none;"></div>
 <div class="empty-state" id="emptyState" style="display:none;"></div>
+<div class="cp-reqs" id="paintingReqs" style="display:none;"></div>
 <div class="cp-reqs" id="checkpointReqs" style="display:none;"></div>
 <div class="cp-reqs" id="customNodeReqs"></div>
 
@@ -5842,6 +5851,7 @@ function renderGrid(){
   const emptyState = document.getElementById("emptyState");
   grid.innerHTML = "";
 
+  renderPaintingReqs(name);
   renderCheckpointReqs(name);
   renderCheckpointReqs(name, "custom_place");
   let moons = KINGDOMS[name] || [];
@@ -5958,6 +5968,159 @@ function getCheckpointVariants(kingdomName, nodeType){
   });
   out.sort((a, b) => a.name.localeCompare(b.name));
   return out;
+}
+
+/* =========================================================
+   FORMULAIC SOURCES — one fixed recipe for every Checkpoint / Painting
+   card in every kingdom, so they all read the same way:
+     1. Take every inbound routeEdge that isn't "impossible" (and isn't a self-loop).
+     2. Keep only edges coming from a MAIN-ROUTE source: the kingdom start,
+        a Come/Go painting, or another Checkpoint. Edges from subarea
+        entrances, home entrances, Custom Nodes etc. are return trips
+        (leaving a side area and landing back), not ways of reaching it.
+        (If that leaves nothing, fall back to every viable inbound edge.)
+     3. Sources that cost exactly the same are merged into one row
+        ("From Kingdom Start / Top of the Big Stump: Free").
+     4. Rows are always ordered Start -> Painting -> Checkpoints (A-Z).
+   Returns [{ label, labels, free|lanes }] (empty if no inbound edges).
+   ========================================================= */
+function nodeSourceKind(n){
+  if(!n) return "other";
+  if(n.node_type === "stage_start") return "start";
+  if(n.node_type === "stage_change" && /^(come|go)$/i.test(n.entrance_id || "")) return "painting";
+  if(n.node_type === "checkpoint") return "checkpoint";
+  return "other";
+}
+function nodeSourceLabel(n, fallback){
+  if(!n) return fallback;
+  if(n.node_type === "stage_start") return "Kingdom Start";
+  if(nodeSourceKind(n) === "painting") return (/^come$/i.test(n.entrance_id) ? "Come" : "Go") + " Painting";
+  return cleanCheckpointName(n.display_name) || fallback;
+}
+function computeFormulaicSources(kingdomName, nodeId){
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  if(!data || !nodeId) return [];
+  const viable = (data.edges || []).filter(e => e.to_node_id === nodeId && e.from_node_id !== nodeId
+    && (e.requirement_expr || "").trim().toLowerCase() !== "impossible");
+  const main = viable.filter(e => nodeSourceKind(data.nodeMap[e.from_node_id]) !== "other");
+  const use = main.length ? main : viable;
+  const RANK = { start: 0, painting: 1, checkpoint: 2, other: 3 };
+  const bySig = new Map();
+  use.forEach(e => {
+    const src = data.nodeMap[e.from_node_id];
+    const summary = summarizeBranches(edgeBranches(e), kingdomName);
+    if(summary.impossible) return;
+    const sig = entrySignatureFromReqEntry(summary);
+    let row = bySig.get(sig);
+    if(!row){ row = Object.assign({ labels: [], rank: 9 }, summary); bySig.set(sig, row); }
+    const lab = nodeSourceLabel(src, e.from_node_id);
+    if(!row.labels.includes(lab)) row.labels.push(lab);
+    row.rank = Math.min(row.rank, RANK[nodeSourceKind(src)]);
+  });
+  const rows = Array.from(bySig.values());
+  rows.forEach(r => {
+    const rk = l => l === "Kingdom Start" ? 0 : /Painting$/.test(l) ? 1 : 2;
+    r.labels.sort((a, b) => rk(a) - rk(b) || a.localeCompare(b));
+    r.label = "From " + r.labels.join(" / ");
+  });
+  rows.sort((a, b) => a.rank - b.rank || a.label.localeCompare(b.label));
+  return rows;
+}
+
+// Come / Go painting nodes (WorldWarpHole stage changes) -> [{ side, nodeId, name, variants }]
+function getPaintingVariants(kingdomName){
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  if(!data) return [];
+  const out = [];
+  ["Come", "Go"].forEach(side => {
+    const n = (data.nodes || []).find(x => x.node_type === "stage_change" && (x.entrance_id || "").toLowerCase() === side.toLowerCase()
+      && /WorldWarpHole/i.test(x.notes || ""));
+    if(!n){ out.push({ side, nodeId: null, name: side + " Painting", variants: [] }); return; }
+    const base = kingdomName + " " + side + " Painting";
+    const mk = (nm, label, lanes) => ({
+      name: nm, label, kingdom: kingdomName, isCheckpointNode: true, isPaintingNode: true,
+      checkpoint: side + " Painting", checkpointType: "painting", subarea: null,
+      isCustomNode: false, tierLanes: lanes || [],
+    });
+    const rows = computeFormulaicSources(kingdomName, n.node_id);
+    const variants = [];
+    if(!rows.length){
+      // Nothing routes INTO this painting: the Come painting is simply where you arrive (free);
+      // a Go painting nobody can reach is impossible.
+      if(side === "Come") variants.push({ sourceLabel: null, moon: mk(base + " Entry", side + " Painting", []) });
+      else variants.push({ sourceLabel: null, impossible: true, moon: mk(base + " Entry", side + " Painting", []) });
+    } else {
+      rows.forEach(r => variants.push({ sourceLabel: r.label, moon: mk(
+        rows.length === 1 ? base + " Entry" : base + " from " + r.labels.join(" and ") + " Entry",
+        side + " Painting — " + r.label, r.free ? [] : r.lanes) }));
+    }
+    out.push({ side, nodeId: n.node_id, name: side + " Painting", variants });
+  });
+  return out;
+}
+
+function renderPaintingReqs(kingdomName){
+  const root = document.getElementById("paintingReqs");
+  if(!root) return;
+  root.innerHTML = "";
+  let list = getPaintingVariants(kingdomName);
+  if(!list.some(p => p.nodeId)){ root.style.display = "none"; return; }
+  if(glitchMode === "hide"){
+    list = list.map(p => ({ ...p, variants: p.variants.map(v => ({ ...v, moon: withGlitchedLanesStripped(v.moon) })) }));
+  }
+  root.style.display = "";
+
+  const head = document.createElement("div");
+  head.className = "cp-reqs-head";
+  const ic = document.createElement("img");
+  ic.src = "icon/painting-access.png"; ic.alt = ""; ic.onerror = function(){ this.style.display = "none"; };
+  const h = document.createElement("h2");
+  h.className = "cp-reqs-title"; h.textContent = "Painting Access Requirements";
+  head.append(ic, h);
+  root.appendChild(head);
+
+  const sub = document.createElement("p");
+  sub.className = "cp-reqs-sub";
+  sub.textContent = "What it takes to reach this kingdom's Come painting (arrival) and Go painting (exit).";
+  root.appendChild(sub);
+
+  const grid = document.createElement("div");
+  grid.className = "cp-reqs-grid";
+  list.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "cp-req";
+    const nm = document.createElement("p");
+    nm.className = "cp-req-name";
+    const i2 = document.createElement("img");
+    i2.src = "icon/painting-access.png"; i2.alt = ""; i2.onerror = function(){ this.style.display = "none"; };
+    const t = document.createElement("span"); t.textContent = p.name;
+    nm.append(i2, t);
+    card.appendChild(nm);
+    if(!p.nodeId){
+      const e = document.createElement("div"); e.className = "cp-req-empty"; e.textContent = "No " + p.side + " painting in this kingdom.";
+      card.appendChild(e);
+    } else {
+      card.dataset.submittable = "1";
+      card.dataset.checkpointNode = p.nodeId;
+      p.variants.forEach(v => {
+        const wrap = document.createElement("div");
+        wrap.className = "cp-req-source";
+        if(v.sourceLabel){
+          const lab = document.createElement("div");
+          lab.className = "cp-req-source-label";
+          lab.textContent = v.sourceLabel + ":";
+          wrap.appendChild(lab);
+        }
+        if(v.impossible){
+          const tg = document.createElement("span"); tg.className = "impossible-tag"; tg.textContent = "Impossible"; wrap.appendChild(tg);
+        } else wrap.appendChild(buildMovementOptions(v.moon, false));
+        card.appendChild(wrap);
+      });
+    }
+    grid.appendChild(card);
+  });
+  root.appendChild(grid);
+  measureOptionsCollapsiblesIn(root);
 }
 
 function renderCheckpointReqs(kingdomName, nodeType){
@@ -7022,7 +7185,7 @@ const VIDEO_SUBMIT = {
   window.vsSelect = function(moon, tier, label, group, idx){
     ctx = { moon, tier, label, idx, group: group || [] };
     const box = $("vsSel"); box.innerHTML = "";
-    const k = document.createElement("div"); k.className = "vs-sel-sub"; k.textContent = moon.isCheckpointNode ? (moon.kingdom + (moon.isCustomNode ? " · Custom Node" : " · Checkpoint (warp point)")) : (moon.kingdom + " · tracked from " + (moon.checkpointType === "custom_place" ? "Custom Node: " : "Checkpoint: ") + cpName(moon)); box.appendChild(k);
+    const k = document.createElement("div"); k.className = "vs-sel-sub"; k.textContent = moon.isCheckpointNode ? (moon.kingdom + (moon.isPaintingNode ? " · " + moon.checkpoint : moon.isCustomNode ? " · Custom Node" : " · Checkpoint (warp point)")) : (moon.kingdom + " · tracked from " + (moon.checkpointType === "custom_place" ? "Custom Node: " : "Checkpoint: ") + cpName(moon)); box.appendChild(k);
     const n = document.createElement("div"); n.className = "vs-sel-moon"; n.textContent = moon.label || moon.name; box.appendChild(n);
     const pill = document.createElement("span"); pill.className = "tier-pill" + (TIER_LABEL[tier] ? " " + tier : ""); pill.textContent = label || tier; box.appendChild(pill);
     const chip = document.createElement("div"); chip.className = "option-chip" + (TIER_LABEL[tier] ? " " + tier : "");
@@ -7580,7 +7743,7 @@ const VIDEO_SUBMIT = {
         const cpShort = moon.checkpoint ? moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "").replace(/\s*Custom Node\s*$/i, "") : "";
         const isCustom = moon.isCustomNode || moon.checkpointType === "custom_place";
         let where = hit.kingdom;
-        if(moon.isCheckpointNode) where += isCustom ? " · Custom Node" : " · Checkpoint (warp point)";
+        if(moon.isCheckpointNode) where += moon.isPaintingNode ? " · " + moon.checkpoint : isCustom ? " · Custom Node" : " · Checkpoint (warp point)";
         else if(cpShort) where += " · tracked from " + (isCustom ? "Custom Node: " : "Checkpoint: ") + cpShort;
         if(moon.subarea) where += " · Subarea: " + moon.subarea;
         whereEl.textContent = where;
