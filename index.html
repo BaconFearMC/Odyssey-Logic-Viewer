@@ -149,6 +149,7 @@
     border-color:#a52530;
     color:#fff;
   }
+  #videoToggle.active{ background:var(--red); border-color:#a52530; color:#fff; }
   #glitchToggle{ right:24px; top:66px; }
   #glitchToggle.active{
     background:var(--tier-glitched);
@@ -1737,6 +1738,13 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v4M15 3v4M4 11h16M6 11v6a2 2 0 0 0 2 2h1M18 11v6a2 2 0 0 1-2 2h-1M10 19h4"/></svg>
   </span>
   <span id="glitchToggleLabel">Glitched: Hidden</span>
+</button>
+
+<button class="corner-btn" id="videoToggle" type="button" aria-label="Cycle video filter: All, Has Video, Has No Video">
+  <span class="icon-svg" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8Z"/></svg>
+  </span>
+  <span id="videoToggleLabel">Video: All</span>
 </button>
 
 
@@ -5864,6 +5872,59 @@ const GLITCH_MODES = ["all", "hide", "only"];
 const GLITCH_LABELS = { all: "Glitched: All", hide: "Glitched: Hidden", only: "Glitched: Only" };
 let glitchMode = "hide";
 
+// Video filter (debug menu): "all" -> "has" (only routes that have a clip) -> "none"
+// (only routes still missing a clip). Works per requirement branch, using the same
+// clip-existence probe as the play badges. Resets on kingdom navigation.
+const VIDEO_MODES = ["all", "has", "none"];
+const VIDEO_LABELS = { all: "Video: All", has: "Video: Has Video", none: "Video: Has No Video" };
+let videoMode = "all";
+let videoFilterToken = 0;
+const videoKnown = new Map(); // baseName -> boolean, filled once a probe resolves
+
+// Every (tier, slot) route of a moon that can carry a clip.
+function videoRoutesOf(moon){
+  if(moon._pyramid || moon.entranceReqs) return [];
+  if(!moon.tierLanes || moon.tierLanes.length === 0) return [{ tier:"free", slot:1 }];
+  const out = [];
+  moon.tierLanes.forEach(lane => lane.groups.forEach((g, i) => out.push({ tier:lane.tier, slot:slotOf(g, i) })));
+  return out;
+}
+// Resolves once every route of these moons has been probed.
+function probeVideosFor(moons){
+  const jobs = [];
+  moons.forEach(m => videoRoutesOf(m).forEach(r => {
+    const base = videoAutoName(m.name, r.tier, r.slot);
+    if(videoKnown.has(base)) return;
+    jobs.push(logicVideoExists(base).then(f => videoKnown.set(base, !!f), () => videoKnown.set(base, false)));
+  }));
+  return Promise.all(jobs);
+}
+function videoProbeDone(moons){
+  return moons.every(m => videoRoutesOf(m).every(r => videoKnown.has(videoAutoName(m.name, r.tier, r.slot))));
+}
+// Keeps only routes matching the current videoMode; drops moons left with none.
+function applyVideoFilter(moons){
+  if(videoMode === "all") return moons;
+  const wantVideo = videoMode === "has";
+  const keep = (m, r) => videoKnown.get(videoAutoName(m.name, r.tier, r.slot)) === wantVideo;
+  const out = [];
+  moons.forEach(m => {
+    const routes = videoRoutesOf(m);
+    if(routes.length === 0) return;
+    if(!m.tierLanes || m.tierLanes.length === 0){
+      if(keep(m, routes[0])) out.push(m);
+      return;
+    }
+    const lanes = [];
+    m.tierLanes.forEach(lane => {
+      const groups = lane.groups.filter((g, i) => keep(m, { tier:lane.tier, slot:slotOf(g, i) }));
+      if(groups.length) lanes.push(Object.assign({}, lane, { groups }));
+    });
+    if(lanes.length) out.push(Object.assign({}, m, { tierLanes: lanes }));
+  });
+  return out;
+}
+
 // Renders the grid for whatever kingdom/unmarkedMode is currently active,
 // without touching the pager name/icon/dots. Used by both kingdom
 // navigation and the UNMARKED toggle.
@@ -5991,7 +6052,21 @@ function renderGrid(){
   const tokenGridFiltering = tokenFiltering && filterMode === "unlocks";
   if(tokenGridFiltering) moons = moons.filter(moonMatchesUnlocks);
 
-  const filtering = unmarkedMode || glitchMode !== "all" || tokenGridFiltering;
+  if(videoMode !== "all"){
+    if(!videoProbeDone(moons)){
+      // Clip checks are async: probe first, then redraw (unless something newer happened).
+      const myToken = ++videoFilterToken;
+      probeVideosFor(moons).then(() => { if(myToken === videoFilterToken) renderGrid(); });
+      emptyState.style.display = "block";
+      emptyState.textContent = "Checking for videos…";
+      grid.style.display = "none";
+      checkpointGroups.style.display = "none";
+      return;
+    }
+    moons = applyVideoFilter(moons);
+  }
+
+  const filtering = unmarkedMode || glitchMode !== "all" || tokenGridFiltering || videoMode !== "all";
 
   if(filtering && moons.length === 0){
     grid.style.display = "none";
@@ -6001,6 +6076,8 @@ function renderGrid(){
       emptyState.textContent = "No Marked Moons! This kingdom has fully completed levels of Logic for All Moons!";
     } else if(glitchMode === "only"){
       emptyState.textContent = "No Glitched-logic moons in this kingdom!";
+    } else if(videoMode !== "all"){
+      emptyState.textContent = videoMode === "has" ? "No routes in this kingdom have a video yet." : "Every route in this kingdom already has a video!";
     } else if(tokenGridFiltering){
       emptyState.textContent = "No moons in this kingdom match the selected Ability/Capture filters.";
     } else {
@@ -6362,6 +6439,13 @@ function renderKingdom(name){
     document.getElementById("glitchToggleLabel").textContent = GLITCH_LABELS[glitchMode];
   }
 
+  videoMode = "all";
+  const videoBtn = document.getElementById("videoToggle");
+  if(videoBtn){
+    videoBtn.classList.remove("active");
+    document.getElementById("videoToggleLabel").textContent = VIDEO_LABELS.all;
+  }
+
   currentKingdomIndex = KINGDOM_ORDER.indexOf(name);
   renderGrid();
 
@@ -6415,7 +6499,8 @@ document.getElementById("pagerNext").onclick = () => goToRelativeKingdom(1);
   // Light the "!" up whenever any debug option is on, so a hidden filter is never a surprise.
   const sync = () => {
     const un = document.getElementById("unmarkedToggle"), ap = document.getElementById("approveToggle"), gl = document.getElementById("glitchToggleLabel");
-    const on = (un && un.classList.contains("active")) || (ap && ap.classList.contains("active")) || (gl && gl.textContent !== GLITCH_LABELS.hide);
+    const vd = document.getElementById("videoToggle");
+    const on = (un && un.classList.contains("active")) || (ap && ap.classList.contains("active")) || (gl && gl.textContent !== GLITCH_LABELS.hide) || (vd && vd.classList.contains("active"));
     toggle.classList.toggle("active", !!on);
   };
   new MutationObserver(sync).observe(panel, { attributes:true, subtree:true, childList:true, characterData:true });
@@ -6434,6 +6519,14 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   const btn = document.getElementById("glitchToggle");
   btn.classList.toggle("active", glitchMode !== "all");
   document.getElementById("glitchToggleLabel").textContent = GLITCH_LABELS[glitchMode];
+  renderGrid();
+});
+
+document.getElementById("videoToggle").addEventListener("click", () => {
+  const idx = VIDEO_MODES.indexOf(videoMode);
+  videoMode = VIDEO_MODES[(idx + 1) % VIDEO_MODES.length];
+  document.getElementById("videoToggle").classList.toggle("active", videoMode !== "all");
+  document.getElementById("videoToggleLabel").textContent = VIDEO_LABELS[videoMode];
   renderGrid();
 });
 
