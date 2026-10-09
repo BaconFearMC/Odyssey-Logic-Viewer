@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "kingdom": "Sand Kingdom",
-  "savedAt": "2026-09-20T02:25:29.891Z",
+  "savedAt": "2026-10-09T00:52:25.781Z",
   "workspace": {
-    "schemaVersion": 2,
-    "loadedAt": "2026-09-19T17:01:46.592Z",
+    "schemaVersion": 3,
+    "loadedAt": "2026-10-08T23:26:22.240Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -136,22 +136,32 @@
         "source_file",
         "notes"
       ],
-      "captureGates": [
-        "gate_id",
+      "captureRequirements": [
+        "requirement_id",
+        "kind",
         "kingdom",
         "logic_stage",
-        "edge_id",
-        "source_capture_token",
-        "replacement_capture_token",
+        "target_id",
+        "capture_token",
+        "extra_requirement_expr",
         "difficulty",
+        "option_scenarios",
         "match_mode",
         "minimum_count",
         "notes"
       ],
-      "captureGateObjects": [
-        "gate_id",
+      "captureRequirementObjects": [
+        "requirement_id",
         "placement_stage",
         "object_id"
+      ],
+      "captureLocks": [
+        "kingdom",
+        "logic_stage",
+        "target_id",
+        "placement_stage",
+        "object_id",
+        "notes"
       ]
     },
     "logicNodes": [
@@ -159,7 +169,7 @@
         "node_id": "MeganeLiftExStage::stage_change::meganelift01::raw",
         "kingdom": "Sand Kingdom",
         "stage": "MeganeLiftExStage",
-        "stage_display_name": "The Invisible Maze",
+        "stage_display_name": "Transparent Lifts",
         "area_scope": "subarea",
         "node_type": "stage_change",
         "source": "StageData",
@@ -177,7 +187,7 @@
         "node_id": "MeganeLiftExStage::stage_change::meganelift02::raw",
         "kingdom": "Sand Kingdom",
         "stage": "MeganeLiftExStage",
-        "stage_display_name": "The Invisible Maze",
+        "stage_display_name": "Transparent Lifts",
         "area_scope": "subarea",
         "node_type": "stage_change",
         "source": "StageData",
@@ -195,7 +205,7 @@
         "node_id": "MeganeLiftExStage::start",
         "kingdom": "Sand Kingdom",
         "stage": "MeganeLiftExStage",
-        "stage_display_name": "The Invisible Maze",
+        "stage_display_name": "Transparent Lifts",
         "area_scope": "subarea",
         "node_type": "stage_start",
         "source": "generated",
@@ -213,7 +223,7 @@
         "node_id": "MeganeLiftExStage::entrance::meganelift01::sub_near",
         "kingdom": "Sand Kingdom",
         "stage": "MeganeLiftExStage",
-        "stage_display_name": "The Invisible Maze",
+        "stage_display_name": "Transparent Lifts",
         "area_scope": "subarea",
         "node_type": "substage_entrance",
         "source": "EntranceDB",
@@ -231,7 +241,7 @@
         "node_id": "MeganeLiftExStage::entrance::meganelift02::sub_far",
         "kingdom": "Sand Kingdom",
         "stage": "MeganeLiftExStage",
-        "stage_display_name": "The Invisible Maze",
+        "stage_display_name": "Transparent Lifts",
         "area_scope": "subarea",
         "node_type": "substage_entrance",
         "source": "EntranceDB",
@@ -1833,7 +1843,7 @@
         "node_id": "SandWorldMeganeExStage::stage_change::anki2::raw",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldMeganeExStage",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "node_type": "stage_change",
         "source": "StageData",
@@ -1851,7 +1861,7 @@
         "node_id": "SandWorldMeganeExStage::stage_change::megane::raw",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldMeganeExStage",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "node_type": "stage_change",
         "source": "StageData",
@@ -1869,7 +1879,7 @@
         "node_id": "SandWorldMeganeExStage::stage_change::wall::raw",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldMeganeExStage",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "node_type": "stage_change",
         "source": "StageData",
@@ -1887,7 +1897,7 @@
         "node_id": "SandWorldMeganeExStage::start",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldMeganeExStage",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "node_type": "stage_start",
         "source": "generated",
@@ -1905,7 +1915,7 @@
         "node_id": "SandWorldMeganeExStage::entrance::anki2::sub_far",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldMeganeExStage",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "node_type": "substage_entrance",
         "source": "EntranceDB",
@@ -1923,7 +1933,7 @@
         "node_id": "SandWorldMeganeExStage::entrance::anki2::sub_near",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldMeganeExStage",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "node_type": "substage_entrance",
         "source": "EntranceDB",
@@ -1941,7 +1951,7 @@
         "node_id": "SandWorldMeganeExStage::entrance::wall::sub_far",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldMeganeExStage",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "node_type": "substage_entrance",
         "source": "EntranceDB",
@@ -1959,7 +1969,7 @@
         "node_id": "SandWorldMeganeExStage::entrance::wall::sub_near",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldMeganeExStage",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "node_type": "substage_entrance",
         "source": "EntranceDB",
@@ -4065,14 +4075,14 @@
         "node_id": "MeganeLiftExStage::place::new_place",
         "kingdom": "Sand Kingdom",
         "stage": "MeganeLiftExStage",
-        "stage_display_name": "The Invisible Maze",
+        "stage_display_name": "Transparent Lifts",
         "area_scope": "subarea",
         "node_type": "custom_place",
         "source": "editor",
         "entrance_id": "",
         "side": "",
         "obj_id": "",
-        "display_name": "Invisible Maze Purples 1-4",
+        "display_name": "Transparent Lifts Purples 1-4",
         "x": "",
         "y": "",
         "z": "",
@@ -7819,7 +7829,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SandWorldHomeStage::checkpoint::obj655",
         "state_requirement_expr": "",
-        "requirement_expr": "Jaxi | RollBoost",
+        "requirement_expr": "(Jaxi & Notes) | (RollBoost & Notes)",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -8299,7 +8309,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SandWorldHomeStage::checkpoint::obj1597",
         "state_requirement_expr": "",
-        "requirement_expr": "Climb | Dive | Vault | KingdomAccess_Sand",
+        "requirement_expr": "(Climb & Notes) | (Dive & Notes) | (Vault & Notes) | (KingdomAccess_Sand & Notes)",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -8443,7 +8453,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SandWorldHomeStage::place::new_place_5",
         "state_requirement_expr": "",
-        "requirement_expr": "(Crouch & WallJump & TimerChallenge) | (WallJump & TimerChallenge)",
+        "requirement_expr": "(Crouch & WallJump & Scarecrow) | (WallJump & Scarecrow)",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -8683,7 +8693,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SandWorldHomeStage::checkpoint::obj1511",
         "state_requirement_expr": "",
-        "requirement_expr": "TimerChallenge",
+        "requirement_expr": "PSwitch",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -8779,7 +8789,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SandWorldHomeStage::checkpoint::obj98",
         "state_requirement_expr": "",
-        "requirement_expr": "(TimerChallenge & Jaxi) | (TimerChallenge & LongJump) | (TimerChallenge & Dive) | (TimerChallenge & RollBoost) | (TimerChallenge & TripleJump & NeutralThrow) | (DownThrow & TimerChallenge & TripleJump) | (TimerChallenge & TripleJump & Roll) | (TimerChallenge & Roll)",
+        "requirement_expr": "(Scarecrow & Jaxi) | (Scarecrow & LongJump) | (Scarecrow & Dive) | (Scarecrow & RollBoost) | (Scarecrow & TripleJump & NeutralThrow) | (DownThrow & Scarecrow & TripleJump) | (Scarecrow & TripleJump & Roll) | (Scarecrow & Roll)",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -9538,7 +9548,7 @@
         "moon_id": "SandWorldMeganeExStage:253:561",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldMeganeExStage",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "moon_name": "Skull Sign in the Transparent Maze",
         "runtime_shine_key": "SandWorldMeganeExStage:253:561",
@@ -9586,7 +9596,7 @@
         "moon_id": "SandWorldMeganeExStage:119:562",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldMeganeExStage",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "moon_name": "The Invisible Maze",
         "runtime_shine_key": "SandWorldMeganeExStage:119:562",
@@ -10018,7 +10028,7 @@
         "moon_id": "MeganeLiftExStage:217:572",
         "kingdom": "Sand Kingdom",
         "stage": "MeganeLiftExStage",
-        "stage_display_name": "The Invisible Maze",
+        "stage_display_name": "Transparent Lifts",
         "area_scope": "subarea",
         "moon_name": "Where the Transparent Platforms End",
         "runtime_shine_key": "MeganeLiftExStage:217:572",
@@ -10066,7 +10076,7 @@
         "moon_id": "MeganeLiftExStage:315:573",
         "kingdom": "Sand Kingdom",
         "stage": "MeganeLiftExStage",
-        "stage_display_name": "The Invisible Maze",
+        "stage_display_name": "Transparent Lifts",
         "area_scope": "subarea",
         "moon_name": "Jump Onto the Transparent Lift",
         "runtime_shine_key": "MeganeLiftExStage:315:573",
@@ -10315,7 +10325,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SandWorldKillerTowerZone::start",
         "state_requirement_expr": "",
-        "requirement_expr": "Pipe2D",
+        "requirement_expr": "Pipe2D & Notes",
         "world_peace_token": "WorldPeace_Sand",
         "moon_rock_token": "MoonRockActive_Sand",
         "access_type": "primary",
@@ -11211,7 +11221,7 @@
         "category": "Movement",
         "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cap Return Jump",
         "notes": ""
@@ -11385,18 +11395,6 @@
         "notes": ""
       },
       {
-        "token": "Swing",
-        "token_type": "ability",
-        "display_name": "Swing",
-        "category": "Movement",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Swing",
-        "notes": ""
-      },
-      {
         "token": "NeutralThrow",
         "token_type": "ability",
         "display_name": "Neutral Throw",
@@ -11451,7 +11449,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Frog",
         "notes": ""
@@ -11463,7 +11461,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Spark Pylon; ElectricWireMover",
         "notes": ""
@@ -11475,7 +11473,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Paragoomba",
         "notes": ""
@@ -11487,7 +11485,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Chain Chomp",
         "notes": ""
@@ -11499,7 +11497,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Big Chain Chomp",
         "notes": ""
@@ -11511,7 +11509,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Broode's Chain Chomp",
         "notes": ""
@@ -11523,7 +11521,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "T-Rex",
         "notes": ""
@@ -11535,7 +11533,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Binoculars",
         "notes": ""
@@ -11547,7 +11545,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Bullet Bill",
         "notes": ""
@@ -11559,7 +11557,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Moe-Eye",
         "notes": ""
@@ -11571,7 +11569,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cactus",
         "notes": ""
@@ -11583,7 +11581,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Goomba",
         "notes": ""
@@ -11595,7 +11593,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Knucklotec's Fist",
         "notes": ""
@@ -11607,7 +11605,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Mini Rocket",
         "notes": ""
@@ -11619,7 +11617,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Glydon",
         "notes": ""
@@ -11631,7 +11629,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Lakitu; Jugem",
         "notes": ""
@@ -11643,7 +11641,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Zipper",
         "notes": ""
@@ -11655,7 +11653,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cheep Cheep",
         "notes": ""
@@ -11667,7 +11665,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Puzzle Part (Lake Kingdom)",
         "notes": ""
@@ -11679,7 +11677,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Poison Piranha Plant",
         "notes": ""
@@ -11691,7 +11689,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Uproot",
         "notes": ""
@@ -11703,7 +11701,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Fire Bro",
         "notes": ""
@@ -11715,7 +11713,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Sherm",
         "notes": ""
@@ -11727,7 +11725,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Coin Coffer",
         "notes": ""
@@ -11739,7 +11737,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Tree",
         "notes": ""
@@ -11751,7 +11749,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Boulder",
         "notes": ""
@@ -11763,7 +11761,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Picture Match Part (Goomba)",
         "notes": ""
@@ -11775,7 +11773,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Tropical Wiggler",
         "notes": ""
@@ -11787,7 +11785,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Pole",
         "notes": ""
@@ -11799,7 +11797,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Manhole",
         "notes": ""
@@ -11811,7 +11809,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Taxi",
         "notes": ""
@@ -11823,7 +11821,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "RC Car; RadiconNpc",
         "notes": ""
@@ -11835,7 +11833,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Ty-foo",
         "notes": ""
@@ -11847,7 +11845,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Shiverian Racer",
         "notes": ""
@@ -11859,7 +11857,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cheep Cheep (Snow Kingdom)",
         "notes": ""
@@ -11871,7 +11869,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Gushen",
         "notes": ""
@@ -11883,7 +11881,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Lava Bubble; LavaBubble",
         "notes": ""
@@ -11895,7 +11893,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Volbonan",
         "notes": ""
@@ -11907,7 +11905,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Hammer Bro",
         "notes": ""
@@ -11919,7 +11917,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Meat",
         "notes": ""
@@ -11931,7 +11929,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Fire Piranha Plant",
         "notes": ""
@@ -11943,7 +11941,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Pokio",
         "notes": ""
@@ -11955,7 +11953,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Jizo; StatueJizo",
         "notes": ""
@@ -11963,13 +11961,13 @@
       {
         "token": "StatueKoopa",
         "token_type": "capture",
-        "display_name": "Jizo",
+        "display_name": "Bowser Statue",
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
-        "aliases": "Jizo; Bowser Statue",
+        "aliases": "Bowser Statue",
         "notes": ""
       },
       {
@@ -11979,7 +11977,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Parabones",
         "notes": ""
@@ -11991,7 +11989,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Banzai Bill",
         "notes": ""
@@ -12003,7 +12001,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Chargin' Chuck",
         "notes": ""
@@ -12015,7 +12013,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Bowser; KoopaHack",
         "notes": ""
@@ -12027,7 +12025,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Letter",
         "notes": ""
@@ -12039,7 +12037,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Puzzle Part (Metro Kingdom)",
         "notes": ""
@@ -12051,7 +12049,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Picture Match Part (Mario)",
         "notes": ""
@@ -12063,70 +12061,10 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Yoshi; YoshiModel",
         "notes": ""
-      },
-      {
-        "token": "Turnip",
-        "token_type": "capture",
-        "display_name": "Turnip",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Turnip; Radish",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "Nut",
-        "token_type": "capture",
-        "display_name": "Nut",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Nut; GrowPlantSeed",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "Jaxi",
-        "token_type": "capture",
-        "display_name": "Jaxi",
-        "category": "Capture",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Jaxi; SphinxRide",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "Bike",
-        "token_type": "capture",
-        "display_name": "Bike",
-        "category": "Capture",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Bike; Motorcycle",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "RocketFlower",
-        "token_type": "capture",
-        "display_name": "Rocket Flower",
-        "category": "Capture",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Rocket Flower",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       },
       {
         "token": "WorldPeace_Cap",
@@ -12197,7 +12135,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj3428.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
         "notes": "See progression_events.csv for Sand Kingdom."
       },
       {
@@ -12221,7 +12159,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj5126.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
         "notes": "See progression_events.csv for Wooded Kingdom."
       },
       {
@@ -12365,7 +12303,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj583.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
         "notes": "See progression_events.csv for Snow Kingdom."
       },
       {
@@ -12461,7 +12399,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj144.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
         "notes": "See progression_events.csv for Moon Kingdom."
       },
       {
@@ -12570,7 +12508,7 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Cap Kingdom",
-        "notes": "Requires being able to reach the Cap Kingdom. (e.g. a hint-art moon that depends on another kingdom)."
+        "notes": "Requires being able to reach the Cap Kingdom (e.g. a hint-art moon that depends on another kingdom)."
       },
       {
         "token": "KingdomAccess_Cascade",
@@ -12714,7 +12652,7 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Bowser's Kingdom",
-        "notes": "Requires being able to reach the Bowser's Kingdom."
+        "notes": "Requires being able to reach Bowser's Kingdom."
       },
       {
         "token": "KingdomAccess_Moon",
@@ -12763,6 +12701,78 @@
         "can_start_with_seed": "false",
         "aliases": "Darker Side",
         "notes": "Requires being able to reach the Darker Side."
+      },
+      {
+        "token": "Swing",
+        "token_type": "ability",
+        "display_name": "Swing",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swing",
+        "notes": ""
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       },
       {
         "token": "MoonLowGravity",
@@ -12825,23 +12835,59 @@
         "notes": "Going flat: the pipes built from the DokanChange2D archive, which are the only way into an in-stage 2D section. Pipes back out of 2D are never withheld, so anything reached only through a 2D section needs this."
       },
       {
-        "token": "TimerChallenge",
+        "token": "PSwitch",
         "token_type": "ability",
-        "display_name": "Timer Challenges",
+        "display_name": "P-Switches",
         "category": "Movement",
         "prerequisite": "kNoPrerequisite",
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Timer Challenges; TimerChallenge; P-Switch; Scarecrow",
-        "notes": "Every timed challenge: P-Switches (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer) and scarecrows (CapRack), which all share one AppearSwitchTimer. Without it the timer expires the frame it starts, so anything that needs the timed objects to stay up needs this."
+        "aliases": "P-Switches; PSwitch; P-Switch; TrampleSwitchTimer; CapSwitchTimer; HipDropSwitchTimer",
+        "notes": "Pressing a timer switch (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer): the press itself is refused until owned. Also grows the Wooded Kingdom flower roads (RailCollision) and keeps the Lost Kingdom poison pillars up, since switches start both."
+      },
+      {
+        "token": "CapFlower",
+        "token_type": "ability",
+        "display_name": "Cappy Flowers",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Cappy Flowers; CapFlower; CapFlowerGroup; Flower Path",
+        "notes": "Cappy flower paths (CapFlowerGroup): without it the path wilts the frame it starts, so any moon that needs the whole path in bloom needs this."
+      },
+      {
+        "token": "Scarecrow",
+        "token_type": "ability",
+        "display_name": "Scarecrows",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Scarecrows; Scarecrow; CapRack; CapRackTimer",
+        "notes": "Timed scarecrows (CapRack placed as CapRackTimer), in sub-areas too: the timer expires the frame it starts. Also grows the Snow Kingdom Wintery Flower Road, which scarecrows start. A sub-area scarecrow moon needs this and the sub-area key."
+      },
+      {
+        "token": "Notes",
+        "token_type": "ability",
+        "display_name": "Notes",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Notes; Note; NoteObjDirector; Taking Notes",
+        "notes": "Note runs (NoteObjDirector): without it the notes vanish the frame the run starts. Every Taking Notes moon needs this."
       }
     ],
     "rooms": [
       {
         "stage": "MeganeLiftExStage",
         "kingdom": "Sand Kingdom",
-        "stage_display_name": "The Invisible Maze",
+        "stage_display_name": "Transparent Lifts",
         "stage_start_node_id": "MeganeLiftExStage::start",
         "area_scope": "subarea",
         "listed_in_stage_warp": "true",
@@ -12906,7 +12952,7 @@
       {
         "stage": "SandWorldMeganeExStage",
         "kingdom": "Sand Kingdom",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "stage_start_node_id": "SandWorldMeganeExStage::start",
         "area_scope": "subarea",
         "listed_in_stage_warp": "true",
@@ -13223,7 +13269,7 @@
       {
         "stage": "MeganeLiftExStage",
         "kingdom": "Sand Kingdom",
-        "stage_display_name": "The Invisible Maze",
+        "stage_display_name": "Transparent Lifts",
         "area_scope": "subarea",
         "scenario_no": "",
         "active_layers": "",
@@ -13295,7 +13341,7 @@
       {
         "stage": "SandWorldMeganeExStage",
         "kingdom": "Sand Kingdom",
-        "stage_display_name": "Transparent Lifts",
+        "stage_display_name": "The Invisible Maze",
         "area_scope": "subarea",
         "scenario_no": "",
         "active_layers": "",
@@ -13437,8 +13483,9 @@
         "notes": "No ScenarioInfo.byml in archive."
       }
     ],
-    "captureGates": [],
-    "captureGateObjects": [],
+    "captureRequirements": [],
+    "captureRequirementObjects": [],
+    "captureLocks": [],
     "nodePositions": {
       "MeganeLiftExStage::stage_change::meganelift01::raw": {
         "x": 120,

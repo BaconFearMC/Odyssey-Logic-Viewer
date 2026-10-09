@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "kingdom": "Wooded Kingdom",
-  "savedAt": "2026-09-19T17:59:37.740Z",
+  "savedAt": "2026-10-09T00:48:33.527Z",
   "workspace": {
-    "schemaVersion": 2,
-    "loadedAt": "2026-09-19T17:01:46.592Z",
+    "schemaVersion": 3,
+    "loadedAt": "2026-10-08T23:26:22.240Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -136,22 +136,32 @@
         "source_file",
         "notes"
       ],
-      "captureGates": [
-        "gate_id",
+      "captureRequirements": [
+        "requirement_id",
+        "kind",
         "kingdom",
         "logic_stage",
-        "edge_id",
-        "source_capture_token",
-        "replacement_capture_token",
+        "target_id",
+        "capture_token",
+        "extra_requirement_expr",
         "difficulty",
+        "option_scenarios",
         "match_mode",
         "minimum_count",
         "notes"
       ],
-      "captureGateObjects": [
-        "gate_id",
+      "captureRequirementObjects": [
+        "requirement_id",
         "placement_stage",
         "object_id"
+      ],
+      "captureLocks": [
+        "kingdom",
+        "logic_stage",
+        "target_id",
+        "placement_stage",
+        "object_id",
+        "notes"
       ]
     },
     "logicNodes": [
@@ -3862,6 +3872,42 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "ForestWorldHomeStage::place::new_place_30",
+        "kingdom": "Wooded Kingdom",
+        "stage": "ForestWorldHomeStage",
+        "stage_display_name": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Above the Iron Mountain Path Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "AnimalChaseExStage::place::new_place",
+        "kingdom": "Wooded Kingdom",
+        "stage": "AnimalChaseExStage",
+        "stage_display_name": "Herding Sheep",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "2nd Sheep",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -3871,7 +3917,7 @@
         "area_scope": "subarea",
         "from_node_id": "ShootingElevatorExStage::entrance::EX_Tankuro::sub_near",
         "to_node_id": "ShootingElevatorExStage::entrance::EX_Tankuro_Exit::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "PSwitch",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -3916,7 +3962,7 @@
         "area_scope": "subarea",
         "from_node_id": "RailCollisionExStage::entrance::EX_RailCollision::sub_near",
         "to_node_id": "RailCollisionExStage::entrance::EX_RailCollision_Exit::sub_far",
-        "requirement_expr": "(TimerChallenge & WallJump) | (TimerChallenge & Kuribo & LedgeGrab) | (TimerChallenge & Kuribo & Dive)",
+        "requirement_expr": "(PSwitch & WallJump) | (PSwitch & Kuribo & LedgeGrab) | (PSwitch & Kuribo & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced;advanced",
@@ -4141,10 +4187,10 @@
         "area_scope": "overworld",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj447",
         "to_node_id": "ForestWorldHomeStage::checkpoint::obj3734",
-        "requirement_expr": "free",
+        "requirement_expr": "PSwitch | (NeutralThrow & GroundPound & RollBoost & Vault & Dive) | (NeutralThrow & Vault & Dive) | (NeutralThrow & TripleJump & Vault & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;expert;advanced",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -4156,7 +4202,7 @@
         "area_scope": "overworld",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
         "to_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
-        "requirement_expr": "(Tank & Climb) | Climb | (Vault & Dive & NeutralThrow) | (NeutralThrow & Dive)",
+        "requirement_expr": "(Tank & Climb & Grab) | (Climb & Grab) | (Vault & Dive & NeutralThrow) | (NeutralThrow & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced;advanced;expert",
@@ -4306,14 +4352,14 @@
         "area_scope": "overworld",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
         "to_node_id": "ForestWorldHomeStage::checkpoint::obj3835",
-        "requirement_expr": "free",
+        "requirement_expr": "PSwitch",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": "3,4,5,6,7,2"
+        "option_scenarios": "3,4,5,6,7"
       },
       {
         "edge_id": "edge_user_0150",
@@ -5221,10 +5267,10 @@
         "area_scope": "subarea",
         "from_node_id": "ForestWorldTowerStage::entrance::Tower002::sub_far",
         "to_node_id": "ForestWorldTowerStage::entrance::Tower002::sub_near",
-        "requirement_expr": "free",
+        "requirement_expr": "PSwitch | (NeutralThrow & Vault & Dive) | (Vault & WallJump & NeutralThrow) | (NeutralThrow & Vault & WallJump & LedgeGrab)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;expert;advanced",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -6301,7 +6347,7 @@
         "area_scope": "subarea",
         "from_node_id": "ShootingElevatorExStage::entrance::EX_Tankuro::sub_near",
         "to_node_id": "ShootingElevatorExStage::place::new_place",
-        "requirement_expr": "SingleJump | Tank | FireBros",
+        "requirement_expr": "(SingleJump & PSwitch) | (Tank & PSwitch) | (FireBros & PSwitch)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced;casual;casual",
@@ -6361,7 +6407,7 @@
         "area_scope": "subarea",
         "from_node_id": "RailCollisionExStage::entrance::EX_RailCollision::sub_near",
         "to_node_id": "RailCollisionExStage::place::new_place",
-        "requirement_expr": "(TimerChallenge & WallJump) | (TimerChallenge & Kuribo & LedgeGrab) | (TimerChallenge & Kuribo & Dive)",
+        "requirement_expr": "(PSwitch & WallJump) | (PSwitch & Kuribo & LedgeGrab) | (PSwitch & Kuribo & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced;advanced",
@@ -6391,7 +6437,7 @@
         "area_scope": "subarea",
         "from_node_id": "ForestWorldTowerStage::entrance::Tower002::sub_near",
         "to_node_id": "ForestWorldTowerStage::place::new_place",
-        "requirement_expr": "free",
+        "requirement_expr": "PSwitch",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -7029,6 +7075,66 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0875.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0978",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_30",
+        "requirement_expr": "PSwitch | (NeutralThrow & Dive) | (NeutralThrow & Vault & Dive) | (TripleJump & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;expert;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0979",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::checkpoint::obj3835",
+        "to_node_id": "ForestWorldHomeStage::place::new_place_30",
+        "requirement_expr": "Kakku",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4,5"
+      },
+      {
+        "edge_id": "edge_user_0980",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_30",
+        "to_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0978.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0981",
+        "kingdom": "Wooded Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "AnimalChaseExStage::entrance::EX_AnimalChase::sub_near",
+        "to_node_id": "AnimalChaseExStage::place::new_place",
+        "requirement_expr": "PSwitch | GroundPound",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;expert",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -7333,7 +7439,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj3708",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Scarecrow",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -7717,7 +7823,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj447",
         "state_requirement_expr": "",
-        "requirement_expr": "TimerChallenge",
+        "requirement_expr": "PSwitch",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -8053,7 +8159,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "ForestWorldHomeStage::place::new_place_25",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Notes",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -8293,7 +8399,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj447",
         "state_requirement_expr": "",
-        "requirement_expr": "(Swing & TimerChallenge)",
+        "requirement_expr": "(Swing & Scarecrow)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -8435,7 +8541,7 @@
         "obj_id": "5184",
         "uid": "161",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
+        "from_node_id": "ForestWorldHomeStage::place::new_place_30",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Wooded",
@@ -8677,7 +8783,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "ForestWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "Roll | KingdomAccess_Wooded",
+        "requirement_expr": "(Roll & Notes) | (KingdomAccess_Wooded & Notes)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -8965,7 +9071,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldBossStage::entrance::boss001::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "NeutralThrow | DownThrow | SpinThrow | UpThrow",
+        "requirement_expr": "(NeutralThrow & CapFlower) | (DownThrow & CapFlower) | (SpinThrow & CapFlower) | (UpThrow & CapFlower)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -9349,7 +9455,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ShootingElevatorExStage::entrance::EX_Tankuro::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "PSwitch",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -9445,7 +9551,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "RailCollisionExStage::entrance::EX_RailCollision::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "(TimerChallenge & WallJump & Dive) | (TimerChallenge & Backflip & WallJump & LedgeGrab) | (TimerChallenge & GroundPoundJump & WallJump & LedgeGrab) | (TimerChallenge & SideFlip & WallJump & LedgeGrab) | (TimerChallenge & TripleJump & WallJump & LedgeGrab) | (TimerChallenge & Vault & WallJump & NeutralThrow) | (TimerChallenge & Backflip & Vault & NeutralThrow) | (TimerChallenge & SideFlip & Vault & NeutralThrow) | (TimerChallenge & GroundPoundJump & Vault & NeutralThrow) | (TimerChallenge & Spin & Vault & NeutralThrow) | (TimerChallenge & TripleJump & Vault & NeutralThrow) | (TimerChallenge & Kuribo) | (TimerChallenge & NeutralThrow & Vault) | (TimerChallenge & UpThrow & Vault) | (TimerChallenge & WallJump & LedgeGrab & SpinThrow) | (TimerChallenge & DownThrow & WallJump & LedgeGrab) | (TimerChallenge & UpThrow & WallJump & LedgeGrab) | (TimerChallenge & NeutralThrow & WallJump)",
+        "requirement_expr": "(PSwitch & WallJump & Dive) | (PSwitch & Backflip & WallJump & LedgeGrab) | (PSwitch & GroundPoundJump & WallJump & LedgeGrab) | (PSwitch & SideFlip & WallJump & LedgeGrab) | (PSwitch & TripleJump & WallJump & LedgeGrab) | (PSwitch & Vault & WallJump & NeutralThrow) | (PSwitch & Backflip & Vault & NeutralThrow) | (PSwitch & SideFlip & Vault & NeutralThrow) | (PSwitch & GroundPoundJump & Vault & NeutralThrow) | (PSwitch & Spin & Vault & NeutralThrow) | (PSwitch & TripleJump & Vault & NeutralThrow) | (PSwitch & Kuribo) | (PSwitch & NeutralThrow & Vault) | (PSwitch & UpThrow & Vault) | (PSwitch & WallJump & LedgeGrab & SpinThrow) | (PSwitch & DownThrow & WallJump & LedgeGrab) | (PSwitch & UpThrow & WallJump & LedgeGrab) | (PSwitch & NeutralThrow & WallJump)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -9827,7 +9933,7 @@
         "obj_id": "552",
         "uid": "200",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "AnimalChaseExStage::entrance::EX_AnimalChase::sub_near",
+        "from_node_id": "AnimalChaseExStage::place::new_place",
         "state_requirement_expr": "",
         "requirement_expr": "Climb | (Backflip & LedgeGrab) | (GroundPoundJump & LedgeGrab) | (SideFlip & LedgeGrab) | (Spin & LedgeGrab) | TripleJump | WallJump | (Vault & NeutralThrow) | Dive | (UpThrow & Vault) | (DownThrow & Vault & WallJump) | (DownThrow & Vault & LedgeGrab)",
         "world_peace_token": "WorldPeace_Wooded",
@@ -10021,7 +10127,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj5216",
         "state_requirement_expr": "",
-        "requirement_expr": "(NeutralThrow & TimerChallenge) | (DownThrow & TimerChallenge) | (SpinThrow & TimerChallenge) | (UpThrow & TimerChallenge)",
+        "requirement_expr": "(NeutralThrow & Scarecrow) | (DownThrow & Scarecrow) | (SpinThrow & Scarecrow) | (UpThrow & Scarecrow)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -10037,9 +10143,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-890600.000",
-        "placement_y": "427030.000",
-        "placement_z": "-957700.000",
+        "placement_x": "-934400.000",
+        "placement_y": "448030.000",
+        "placement_z": "-1004800.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_ForestWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -10309,7 +10415,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj447",
         "state_requirement_expr": "",
-        "requirement_expr": "TimerChallenge & Senobi",
+        "requirement_expr": "PSwitch & Senobi",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -10357,7 +10463,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
         "state_requirement_expr": "",
-        "requirement_expr": "(Swing & TimerChallenge) | (TripleJump & Dive & TimerChallenge) | (Backflip & WallJump & Dive & TimerChallenge) | (GroundPoundJump & Dive & TimerChallenge) | (TripleJump & LedgeGrab & TimerChallenge) | (Spin & LedgeGrab & TimerChallenge) | (Spin & WallJump & Dive & TimerChallenge) | (RocketFlower & TimerChallenge)",
+        "requirement_expr": "(Swing & Scarecrow) | (TripleJump & Dive & Scarecrow) | (Backflip & WallJump & Dive & Scarecrow) | (GroundPoundJump & Dive & Scarecrow) | (TripleJump & LedgeGrab & Scarecrow) | (Spin & LedgeGrab & Scarecrow) | (Spin & WallJump & Dive & Scarecrow) | (RocketFlower & Scarecrow)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -10405,7 +10511,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj2821",
         "state_requirement_expr": "",
-        "requirement_expr": "Swing | (Vault & Dive & NeutralThrow) | KingdomAccess_Wooded | Kakku",
+        "requirement_expr": "(Swing & PSwitch) | (Vault & Dive & NeutralThrow & PSwitch) | (KingdomAccess_Wooded & PSwitch) | (Kakku & PSwitch) | Swing",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -10436,7 +10542,7 @@
         "shine_info_object_name": "鍵付き宝箱",
         "shine_info_scenario_name": "ヒミツの花バタケ ぐるり回って",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced;expert;casual",
+        "difficulty": "casual;advanced;expert;casual;advanced",
         "option_scenarios": "1,2,3,4,5",
         "__editor_id": "ForestWorldHomeStage:7285:1011"
       },
@@ -10549,7 +10655,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldWoodsStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "TimerChallenge",
+        "requirement_expr": "Scarecrow",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -10725,7 +10831,7 @@
         "category": "Movement",
         "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cap Return Jump",
         "notes": ""
@@ -10953,7 +11059,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Frog",
         "notes": ""
@@ -10965,7 +11071,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Spark Pylon; ElectricWireMover",
         "notes": ""
@@ -10977,7 +11083,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Paragoomba",
         "notes": ""
@@ -10989,7 +11095,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Chain Chomp",
         "notes": ""
@@ -11001,7 +11107,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Big Chain Chomp",
         "notes": ""
@@ -11013,7 +11119,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Broode's Chain Chomp",
         "notes": ""
@@ -11025,7 +11131,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "T-Rex",
         "notes": ""
@@ -11037,7 +11143,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Binoculars",
         "notes": ""
@@ -11049,7 +11155,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Bullet Bill",
         "notes": ""
@@ -11061,7 +11167,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Moe-Eye",
         "notes": ""
@@ -11073,7 +11179,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cactus",
         "notes": ""
@@ -11085,7 +11191,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Goomba",
         "notes": ""
@@ -11097,7 +11203,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Knucklotec's Fist",
         "notes": ""
@@ -11109,7 +11215,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Mini Rocket",
         "notes": ""
@@ -11121,7 +11227,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Glydon",
         "notes": ""
@@ -11133,7 +11239,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Lakitu; Jugem",
         "notes": ""
@@ -11145,7 +11251,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Zipper",
         "notes": ""
@@ -11157,7 +11263,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cheep Cheep",
         "notes": ""
@@ -11169,7 +11275,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Puzzle Part (Lake Kingdom)",
         "notes": ""
@@ -11181,7 +11287,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Poison Piranha Plant",
         "notes": ""
@@ -11193,7 +11299,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Uproot",
         "notes": ""
@@ -11205,7 +11311,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Fire Bro",
         "notes": ""
@@ -11217,7 +11323,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Sherm",
         "notes": ""
@@ -11229,7 +11335,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Coin Coffer",
         "notes": ""
@@ -11241,7 +11347,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Tree",
         "notes": ""
@@ -11253,7 +11359,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Boulder",
         "notes": ""
@@ -11265,7 +11371,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Picture Match Part (Goomba)",
         "notes": ""
@@ -11277,7 +11383,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Tropical Wiggler",
         "notes": ""
@@ -11289,7 +11395,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Pole",
         "notes": ""
@@ -11301,7 +11407,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Manhole",
         "notes": ""
@@ -11313,7 +11419,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Taxi",
         "notes": ""
@@ -11325,7 +11431,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "RC Car; RadiconNpc",
         "notes": ""
@@ -11337,7 +11443,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Ty-foo",
         "notes": ""
@@ -11349,7 +11455,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Shiverian Racer",
         "notes": ""
@@ -11361,7 +11467,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cheep Cheep (Snow Kingdom)",
         "notes": ""
@@ -11373,7 +11479,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Gushen",
         "notes": ""
@@ -11385,7 +11491,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Lava Bubble; LavaBubble",
         "notes": ""
@@ -11397,7 +11503,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Volbonan",
         "notes": ""
@@ -11409,7 +11515,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Hammer Bro",
         "notes": ""
@@ -11421,7 +11527,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Meat",
         "notes": ""
@@ -11433,7 +11539,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Fire Piranha Plant",
         "notes": ""
@@ -11445,7 +11551,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Pokio",
         "notes": ""
@@ -11457,7 +11563,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Jizo; StatueJizo",
         "notes": ""
@@ -11469,7 +11575,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Bowser Statue",
         "notes": ""
@@ -11481,7 +11587,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Parabones",
         "notes": ""
@@ -11493,7 +11599,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Banzai Bill",
         "notes": ""
@@ -11505,7 +11611,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Chargin' Chuck",
         "notes": ""
@@ -11517,7 +11623,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Bowser; KoopaHack",
         "notes": ""
@@ -11529,7 +11635,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Letter",
         "notes": ""
@@ -11541,7 +11647,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Puzzle Part (Metro Kingdom)",
         "notes": ""
@@ -11553,7 +11659,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Picture Match Part (Mario)",
         "notes": ""
@@ -11565,7 +11671,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Yoshi; YoshiModel",
         "notes": ""
@@ -12339,16 +12445,52 @@
         "notes": "Going flat: the pipes built from the DokanChange2D archive, which are the only way into an in-stage 2D section. Pipes back out of 2D are never withheld, so anything reached only through a 2D section needs this."
       },
       {
-        "token": "TimerChallenge",
+        "token": "PSwitch",
         "token_type": "ability",
-        "display_name": "Timer Challenges",
+        "display_name": "P-Switches",
         "category": "Movement",
         "prerequisite": "kNoPrerequisite",
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Timer Challenges; TimerChallenge; P-Switch; Scarecrow",
-        "notes": "Every timed challenge: P-Switches (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer) and scarecrows (CapRack), which all share one AppearSwitchTimer. Without it the timer expires the frame it starts, so anything that needs the timed objects to stay up needs this."
+        "aliases": "P-Switches; PSwitch; P-Switch; TrampleSwitchTimer; CapSwitchTimer; HipDropSwitchTimer",
+        "notes": "Pressing a timer switch (TrampleSwitchTimer/CapSwitchTimer/HipDropSwitchTimer): the press itself is refused until owned. Also grows the Wooded Kingdom flower roads (RailCollision) and keeps the Lost Kingdom poison pillars up, since switches start both."
+      },
+      {
+        "token": "CapFlower",
+        "token_type": "ability",
+        "display_name": "Cappy Flowers",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Cappy Flowers; CapFlower; CapFlowerGroup; Flower Path",
+        "notes": "Cappy flower paths (CapFlowerGroup): without it the path wilts the frame it starts, so any moon that needs the whole path in bloom needs this."
+      },
+      {
+        "token": "Scarecrow",
+        "token_type": "ability",
+        "display_name": "Scarecrows",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Scarecrows; Scarecrow; CapRack; CapRackTimer",
+        "notes": "Timed scarecrows (CapRack placed as CapRackTimer), in sub-areas too: the timer expires the frame it starts. Also grows the Snow Kingdom Wintery Flower Road, which scarecrows start. A sub-area scarecrow moon needs this and the sub-area key."
+      },
+      {
+        "token": "Notes",
+        "token_type": "ability",
+        "display_name": "Notes",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Notes; Note; NoteObjDirector; Taking Notes",
+        "notes": "Note runs (NoteObjDirector): without it the notes vanish the frame the run starts. Every Taking Notes moon needs this."
       }
     ],
     "rooms": [
@@ -12828,8 +12970,9 @@
         "notes": "No ScenarioInfo.byml in archive."
       }
     ],
-    "captureGates": [],
-    "captureGateObjects": [],
+    "captureRequirements": [],
+    "captureRequirementObjects": [],
+    "captureLocks": [],
     "nodePositions": {
       "AnimalChaseExStage::stage_change::EX_AnimalChase::raw": {
         "x": 1620,
@@ -13483,6 +13626,14 @@
         "x": 556.3880827791868,
         "y": 849.8148710115225
       },
+      "ForestWorldHomeStage::place::new_place_28": {
+        "x": 3329.0271764161625,
+        "y": 1661.2594885731862
+      },
+      "ForestWorldHomeStage::place::new_place_29": {
+        "x": 770.9139193870246,
+        "y": 1192.193148867718
+      },
       "moon:ForestWorldHomeStage:1064:129": {
         "x": 1570.1617626104523,
         "y": 721.2143575074778
@@ -13600,8 +13751,8 @@
         "y": 465.1731498674203
       },
       "moon:ForestWorldHomeStage:5184:161": {
-        "x": 1814.3135517431974,
-        "y": 635.4351455460502
+        "x": 1899.8591965830683,
+        "y": 538.3983291406319
       },
       "moon:ForestWorldHomeStage:5190:163": {
         "x": 1300.0544982024317,
@@ -13775,13 +13926,13 @@
         "x": 350,
         "y": 1220
       },
-      "ForestWorldHomeStage::place::new_place_28": {
-        "x": 3329.0271764161625,
-        "y": 1661.2594885731862
+      "ForestWorldHomeStage::place::new_place_30": {
+        "x": 1899.7952034197904,
+        "y": 684.4384055242766
       },
-      "ForestWorldHomeStage::place::new_place_29": {
-        "x": 747.9160665442236,
-        "y": 1032.253709924882
+      "AnimalChaseExStage::place::new_place": {
+        "x": 503.599525388874,
+        "y": 805.944464579047
       }
     }
   }
