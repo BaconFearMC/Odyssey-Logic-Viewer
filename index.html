@@ -6766,16 +6766,13 @@ function setupMergedFilterBar(tokens){
     const q = (query || "").trim().toLowerCase();
     gridEl.innerHTML = "";
     const labelMatches = token => !q || filterLabelFor(token).toLowerCase().includes(q);
-    // Sub-tokens (PS/CF/SC) are hidden behind their parent tile (Timer
-    // Challenges): shown only once the parent is clicked/selected, or when a
-    // search directly matches them.
+    // Sub-tokens (PS/CF/SC/NO) never appear in this grid; they only live in
+    // the pop-up that opens from their parent tile (Timer Challenges).
     const matches = [];
     tokenList.forEach(token => {
       const parent = kind === "ability" ? ABILITY_SUBTOKEN_PARENT[token] : null;
-      if(parent){
-        if(q && labelMatches(token) && !matches.includes(token)) matches.push(token);
-        return;
-      }
+      if(parent) return; // only ever shown in the Timer Challenges pop-up
+
       if(labelMatches(token)) matches.push(token);
     });
     if(matches.length === 0){
