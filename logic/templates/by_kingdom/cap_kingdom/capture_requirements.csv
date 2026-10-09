@@ -1,0 +1,23 @@
+requirement_id,kind,kingdom,logic_stage,target_id,capture_token,extra_requirement_expr,difficulty,option_scenarios,match_mode,minimum_count,notes
+cr_FrogSearchExStage_moon_local_239_Frog,logic,Cap Kingdom,FrogSearchExStage,moon_local_239,Frog,,,,any,,
+ca_FrogSearchExStage_moon_local_239_Tsukkun_1,alternative,Cap Kingdom,FrogSearchExStage,moon_local_239,Tsukkun,,casual,,any,,
+ca_FrogSearchExStage_moon_local_239_FireBros_1,alternative,Cap Kingdom,FrogSearchExStage,moon_local_239,FireBros,,casual,,any,,
+ca_FrogSearchExStage_moon_local_239_Hosui_1,alternative,Cap Kingdom,FrogSearchExStage,moon_local_239,Hosui,,casual,,any,,
+ca_FrogSearchExStage_moon_local_239_HammerBros_1,alternative,Cap Kingdom,FrogSearchExStage,moon_local_239,HammerBros,,casual,,any,,
+ca_FrogSearchExStage_moon_local_239_Senobi_1,alternative,Cap Kingdom,FrogSearchExStage,moon_local_239,Senobi,,casual,,any,,
+cr_FrogSearchExStage_moon_local_238_Frog,logic,Cap Kingdom,FrogSearchExStage,moon_local_238,Frog,,,,any,,
+ca_FrogSearchExStage_moon_local_238_Hosui_1,alternative,Cap Kingdom,FrogSearchExStage,moon_local_238,Hosui,,casual,"1,2,3,4",any,,
+ca_FrogSearchExStage_moon_local_238_Tsukkun_1,alternative,Cap Kingdom,FrogSearchExStage,moon_local_238,Tsukkun,,casual,"1,2,3,4",any,,
+ca_FrogSearchExStage_moon_local_238_Senobi_1,alternative,Cap Kingdom,FrogSearchExStage,moon_local_238,Senobi,,casual,"1,2,3,4",any,,
+cr_CapWorldHomeStage_moon_local_1019_Frog,logic,Cap Kingdom,CapWorldHomeStage,moon_local_1019,Frog,,,,none,,Migrated from capture gates: no vanilla object was listed for this capture.
+ca_CapWorldHomeStage_moon_local_1019_Kakku_1,alternative,Cap Kingdom,CapWorldHomeStage,moon_local_1019,Kakku,,advanced,,any,,requires Top Hat Tower checkpoint
+ca_CapWorldHomeStage_moon_local_1019_Hosui_1,alternative,Cap Kingdom,CapWorldHomeStage,moon_local_1019,Hosui,,casual,,any,,
+cr_CapWorldHomeStage_edge_user_0116_Frog,logic,Cap Kingdom,CapWorldHomeStage,edge_user_0116,Frog,,,,any,,Bootstrapped identity gate; review object reachability
+cr_CapWorldHomeStage_edge_user_0118_Frog,logic,Cap Kingdom,CapWorldHomeStage,edge_user_0118,Frog,,,,any,,Bootstrapped identity gate; review object reachability
+cr_CapWorldHomeStage_edge_user_0122_Frog,logic,Cap Kingdom,CapWorldHomeStage,edge_user_0122,Frog,,,,any,,Bootstrapped identity gate; review object reachability
+cr_CapWorldHomeStage_edge_user_0708_Frog,logic,Cap Kingdom,CapWorldHomeStage,edge_user_0708,Frog,,,,any,,Bootstrapped identity gate; review object reachability
+cr_FrogSearchExStage_edge_user_0747_Frog,logic,Cap Kingdom,FrogSearchExStage,edge_user_0747,Frog,,,,any,,Bootstrapped identity gate; review object reachability
+cr_CapWorldHomeStage_moon_local_815_Frog,logic,Cap Kingdom,CapWorldHomeStage,moon_local_815,Frog,,,,any,,Bootstrapped identity gate; review object reachability
+cr_CapWorldHomeStage_moon_local_816_Frog,logic,Cap Kingdom,CapWorldHomeStage,moon_local_816,Frog,,,,any,,Bootstrapped identity gate; review object reachability
+cr_CapWorldHomeStage_moon_local_1018_Frog,logic,Cap Kingdom,CapWorldHomeStage,moon_local_1018,Frog,,,,any,,Bootstrapped identity gate; review object reachability
+cr_CapWorldHomeStage_moon_local_1156_Frog,logic,Cap Kingdom,CapWorldHomeStage,moon_local_1156,Frog,,,,any,,Bootstrapped identity gate; review object reachability
