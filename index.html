@@ -6693,13 +6693,8 @@ function showSubPopup(parent, anchorBtn, selectedSet, onChange){
   hideSubPopup();
   const pop = document.createElement("div");
   pop.className = "filter-subpopup";
-  // Cappy Flowers only appear in the pop-up when a moon in the kingdom
-  // being viewed actually requires them (or the player already picked it).
-  const kingdomMoons = KINGDOMS[KINGDOM_ORDER[currentKingdomIndex]] || [];
-  const kingdomUsesCappyFlower = kingdomMoons.some(m => moonTokens(m).has("CappyFlower"));
   (ABILITY_SUBTOKENS[parent] || []).forEach(tok => {
     if(!ICON_MANIFEST[tok]) return;
-    if(tok === "CappyFlower" && !kingdomUsesCappyFlower && !selectedSet.has(tok)) return;
     const b = document.createElement("button");
     b.type = "button";
     b.className = "filter-option filter-suboption" + (selectedSet.has(tok) ? " selected" : "");
