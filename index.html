@@ -1524,6 +1524,11 @@
     padding:5px;
   }
   .filter-option:hover{ background:rgba(255,255,255,0.05); }
+  .filter-option.filter-suboption{
+    background:rgba(255,255,255,0.04);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.08);
+    border-radius:10px;
+  }
   .filter-option-icon{
     width:60px; height:60px;
     border:2px solid var(--border);
@@ -2117,6 +2122,12 @@ let ICON_MANIFEST = {
   NpcTalk: { filenames:["AbilityNPCTalking.png"], label:"NPC Talking", color:"#34406e", category:"Movement", tokenType:"ability" },
   TimerChallenge: { filenames:["AbilityTimerChallenges.png"], label:"Timer Challenges", color:"#34406e", category:"Movement", tokenType:"ability" },
   Pipe2D: { filenames:["Ability2DPipes.png"], label:"Enter 2D Pipes", color:"#34406e", category:"Movement", tokenType:"ability" },
+  // Timer Challenge sub-requirements (PS / CF / SC). Real tokens in their own
+  // right so each shows up individually on moon nodes; in the filter picker
+  // they only appear behind the Timer Challenges tile (see ABILITY_SUBTOKENS).
+  PSwitch: { filenames:["AbilityPSwitches.png","AbilityPSwitch.png","pswitch.png"], label:"P-Switches", color:"#34406e", category:"Movement", tokenType:"ability" },
+  CappyFlower: { filenames:["AbilityCappyFlowers.png","AbilityCappyFlower.png","cappyflower.png"], label:"Cappy Flowers", color:"#34406e", category:"Movement", tokenType:"ability" },
+  Scarecrow: { filenames:["AbilityScarecrows.png","AbilityScarecrow.png","scarecrow.png"], label:"Scarecrows", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
 
 // Movement/CapThrow ("ability") icon sets found in the wild are commonly
@@ -2143,7 +2154,18 @@ const ABILITY_FILENAME_OVERRIDES = {
   TimerChallenge: "AbilityTimerChallenges",
   RocketFlower: "AbilityRocketFlower",
   Pipe2D: "Ability2DPipes",
+  PSwitch: "AbilityPSwitches",
+  CappyFlower: "AbilityCappyFlowers",
+  Scarecrow: "AbilityScarecrows",
 };
+
+// Tokens that live "behind" another filter tile: hidden from the main picker
+// grid until the parent tile is clicked, then shown right beneath it.
+const ABILITY_SUBTOKENS = {
+  TimerChallenge: ["PSwitch", "CappyFlower", "Scarecrow"],
+};
+const ABILITY_SUBTOKEN_PARENT = {};
+Object.keys(ABILITY_SUBTOKENS).forEach(parent => ABILITY_SUBTOKENS[parent].forEach(t => { ABILITY_SUBTOKEN_PARENT[t] = parent; }));
 
 // Filter-panel DISPLAY LABEL overrides — renames how a token reads in the
 // Ability/Capture filter picker (and its chips/tooltips) without touching
@@ -2192,6 +2214,9 @@ const FORCE_ABILITY_FILTER_TOKENS = {
   TimerChallenge: true,
   RocketFlower: true,
   Pipe2D: true,
+  PSwitch: true,
+  CappyFlower: true,
+  Scarecrow: true,
 };
 
 /* =========================================================
@@ -2378,7 +2403,7 @@ const ABILITY_DISPLAY_ORDER = [
   "DoubleJump", "TripleJump", "SideFlip", "Spin", "WallJump",
   "LedgeGrab", "Climb", "Swing",
   "MoonLowGravity", "Grab", "Swim", "Bike", "Jaxi",
-  "RocketFlower", "NpcTalk", "TimerChallenge", "Pipe2D",
+  "RocketFlower", "NpcTalk", "TimerChallenge", "PSwitch", "CappyFlower", "Scarecrow", "Pipe2D",
 ];
 const ABILITY_DISPLAY_ORDER_INDEX = {};
 ABILITY_DISPLAY_ORDER.forEach((token, i) => { ABILITY_DISPLAY_ORDER_INDEX[token] = i; });
@@ -6668,12 +6693,27 @@ function setupMergedFilterBar(tokens){
     clearBtn.style.display = "";
   }
 
+  const openSubGroups = new Set();
   function renderOptions(kind, tokenList, selectedSet, gridEl, query){
     const q = (query || "").trim().toLowerCase();
     gridEl.innerHTML = "";
-    const matches = tokenList.filter(token => {
-      const label = filterLabelFor(token);
-      return !q || label.toLowerCase().includes(q);
+    const labelMatches = token => !q || filterLabelFor(token).toLowerCase().includes(q);
+    // Sub-tokens (PS/CF/SC) are hidden behind their parent tile (Timer
+    // Challenges): shown only once the parent is clicked/selected, or when a
+    // search directly matches them.
+    const matches = [];
+    tokenList.forEach(token => {
+      const parent = kind === "ability" ? ABILITY_SUBTOKEN_PARENT[token] : null;
+      if(parent){
+        if(q && labelMatches(token) && !matches.includes(token)) matches.push(token);
+        return;
+      }
+      const subs = kind === "ability" ? (ABILITY_SUBTOKENS[token] || []).filter(t => tokenList.includes(t)) : [];
+      const subMatch = subs.some(labelMatches);
+      if(labelMatches(token) || subMatch) matches.push(token);
+      if(subs.length && (selectedSet.has(token) || openSubGroups.has(token))){
+        subs.forEach(t => { if(!q || labelMatches(t) || labelMatches(token)) if(!matches.includes(t)) matches.push(t); });
+      }
     });
     if(matches.length === 0){
       const none = document.createElement("div");
@@ -6687,7 +6727,9 @@ function setupMergedFilterBar(tokens){
       const notImplemented = kind === "ability" && NOT_IMPLEMENTED_ABILITY_TOKENS[token];
       const btn = document.createElement("button");
       btn.type = "button";
+      const isSub = kind === "ability" && !!ABILITY_SUBTOKEN_PARENT[token];
       btn.className = "filter-option"
+        + (isSub ? " filter-suboption" : "")
         + (selectedSet.has(token) ? " selected" : "")
         + (notImplemented ? " not-implemented" : "");
       const iconWrap = document.createElement("div");
@@ -6708,7 +6750,15 @@ function setupMergedFilterBar(tokens){
         btn.addEventListener("click", () => {
           if(selectedSet.has(token)) selectedSet.delete(token);
           else selectedSet.add(token);
-          btn.classList.toggle("selected", selectedSet.has(token));
+          // Clicking a parent tile (Timer Challenges) reveals / hides the
+          // tiles behind it; deselecting it also clears them.
+          if(kind === "ability" && ABILITY_SUBTOKENS[token]){
+            if(selectedSet.has(token)) openSubGroups.add(token);
+            else { openSubGroups.delete(token); ABILITY_SUBTOKENS[token].forEach(t => selectedSet.delete(t)); }
+            renderOptions(kind, tokenList, selectedSet, gridEl, query);
+          } else {
+            btn.classList.toggle("selected", selectedSet.has(token));
+          }
           renderChips();
           updateFilterSummary();
           renderGrid();
