@@ -1,10 +1,10 @@
 stage,kingdom,stage_display_name,stage_start_node_id,area_scope,listed_in_stage_warp,has_shine_db_moons,active_entrance_link_count,excluded_entrance_link_count,has_raw_stage_data_points,status,notes
-MeganeLiftExStage,Sand Kingdom,The Invisible Maze,MeganeLiftExStage::start,subarea,true,true,1,0,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link.
+MeganeLiftExStage,Sand Kingdom,Transparent Lifts,MeganeLiftExStage::start,subarea,true,true,1,0,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link.
 RocketFlowerExStage,Sand Kingdom,Colossal Ruins,RocketFlowerExStage::start,subarea,true,true,1,0,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link.
 SandWorldCostumeStage,Sand Kingdom,Costume Room,SandWorldCostumeStage::start,subarea,true,true,1,0,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link.
 SandWorldHomeStage,Sand Kingdom,Sand Kingdom,SandWorldHomeStage::start,overworld,true,true,16,5,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link. Includes embedded map SandWorldKillerTowerZone.
 SandWorldKillerExStage,Sand Kingdom,Bullet Bill Maze,SandWorldKillerExStage::start,subarea,true,true,1,0,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link.
-SandWorldMeganeExStage,Sand Kingdom,Transparent Lifts,SandWorldMeganeExStage::start,subarea,true,true,1,1,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link.
+SandWorldMeganeExStage,Sand Kingdom,The Invisible Maze,SandWorldMeganeExStage::start,subarea,true,true,1,1,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link.
 SandWorldPressExStage,Sand Kingdom,Ice Cave,SandWorldPressExStage::start,subarea,true,true,1,0,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link.
 SandWorldPyramid000Stage,Sand Kingdom,Inverted Pyramid: Lower Interior,SandWorldPyramid000Stage::start,subarea,true,false,0,1,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link.
 SandWorldPyramid001Stage,Sand Kingdom,Inverted Pyramid: Upper Interior,SandWorldPyramid001Stage::start,subarea,true,true,0,1,true,listed,Every listed room gets a stage_start node even when EntranceDB has no active link.

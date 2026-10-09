@@ -22,7 +22,7 @@ edge_user_0263,Lake Kingdom,overworld,LakeWorldHomeStage::entrance::CapTrampolin
 edge_user_0030,Lake Kingdom,overworld,LakeWorldTownZone::checkpoint::obj583,LakeWorldTownZone::stage_change::Go::raw,Swim,,human_route,casual,true,editor,Created in graph editor.,,
 edge_user_0368,Lake Kingdom,overworld,LakeWorldHomeStage::place::new_place,LakeWorldTownZone::start,free,,human_route,casual,true,editor,Created in graph editor.,,
 edge_user_0370,Lake Kingdom,overworld,LakeWorldTownZone::checkpoint::obj1323,LakeWorldTownZone::stage_change::Come::raw,free,,human_route,casual,true,editor,Created in graph editor.,,
-edge_user_0384,Lake Kingdom,overworld,LakeWorldTownZone::checkpoint::obj220,LakeWorldTimerAthletic000Zone::start,TimerChallenge,,human_route,casual,true,editor,Created in graph editor.,,
+edge_user_0384,Lake Kingdom,overworld,LakeWorldTownZone::checkpoint::obj220,LakeWorldTimerAthletic000Zone::start,Scarecrow,,human_route,casual,true,editor,Created in graph editor.,,
 edge_user_0413,Lake Kingdom,subarea,LakeWorldShopStage::entrance::LakeWorldShop::sub_near,LakeWorldShopStage::entrance::LakeWorldShop::sub_far,free,,human_route,casual,true,editor,Created in graph editor.,,
 edge_user_0414,Lake Kingdom,subarea,FastenerExStage::entrance::FastenerEx::sub_near,FastenerExStage::entrance::FastenerEx::sub_far,free,,human_route,casual,true,editor,Created in graph editor.,,
 edge_user_0749,Lake Kingdom,overworld,LakeWorldHomeStage::start,LakeWorldHomeStage::place::new_place_11,(Fastener & Swim),,human_route,casual,true,editor,Created in graph editor.,,

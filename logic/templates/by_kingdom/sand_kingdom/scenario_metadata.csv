@@ -9,13 +9,13 @@ SandWorldUnderground001Stage,Sand Kingdom,Deepest Underground,subarea,2,Common,0
 SandWorldUnderground001Stage,Sand Kingdom,Deepest Underground,subarea,3,Common,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,SandWorldUnderground001StageMap.szs,ScenarioInfo.byml,extracted,
 SandWorldUnderground001Stage,Sand Kingdom,Deepest Underground,subarea,4,A;Scenario3;Scenario2_3;Scenario1_3,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,SandWorldUnderground001StageMap.szs,ScenarioInfo.byml,extracted,
 SandWorldUnderground001Stage,Sand Kingdom,Deepest Underground,subarea,5,Scenario3,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,SandWorldUnderground001StageMap.szs,ScenarioInfo.byml,extracted,
-MeganeLiftExStage,Sand Kingdom,The Invisible Maze,subarea,,,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,MeganeLiftExStageMap.szs,,missing,No ScenarioInfo.byml in archive.
+MeganeLiftExStage,Sand Kingdom,Transparent Lifts,subarea,,,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,MeganeLiftExStageMap.szs,,missing,No ScenarioInfo.byml in archive.
 RocketFlowerExStage,Sand Kingdom,Colossal Ruins,subarea,,,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,RocketFlowerExStageMap.szs,,missing,No ScenarioInfo.byml in archive.
 SandWorldCostumeStage,Sand Kingdom,Costume Room,subarea,,,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,SandWorldCostumeStageMap.szs,,missing,No ScenarioInfo.byml in archive.
 SandWorldHomeStage,Sand Kingdom,Sand Kingdom,overworld,,,,SandWorldHomeTownZoneMap.szs,ScenarioInfo.byml,raw,ScenarioInfo type=Array; inspect manually if needed.
 SandWorldKillerExStage,Sand Kingdom,Bullet Bill Maze,subarea,,,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,SandWorldKillerExStageMap.szs,,missing,No ScenarioInfo.byml in archive.
 SandWorldHomeStage,Sand Kingdom,Sand Kingdom,overworld,,,,SandWorldKillerTowerZoneMap.szs,,missing,No ScenarioInfo.byml in archive.
-SandWorldMeganeExStage,Sand Kingdom,Transparent Lifts,subarea,,,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,SandWorldMeganeExStageMap.szs,,missing,No ScenarioInfo.byml in archive.
+SandWorldMeganeExStage,Sand Kingdom,The Invisible Maze,subarea,,,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,SandWorldMeganeExStageMap.szs,,missing,No ScenarioInfo.byml in archive.
 SandWorldPressExStage,Sand Kingdom,Ice Cave,subarea,,,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,SandWorldPressExStageMap.szs,,missing,No ScenarioInfo.byml in archive.
 SandWorldPyramid000Stage,Sand Kingdom,Inverted Pyramid: Lower Interior,subarea,,,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,SandWorldPyramid000StageMap.szs,,missing,No ScenarioInfo.byml in archive.
 SandWorldPyramid001Stage,Sand Kingdom,Inverted Pyramid: Upper Interior,subarea,,,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,SandWorldPyramid001StageMap.szs,,missing,No ScenarioInfo.byml in archive.
