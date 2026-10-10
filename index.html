@@ -2148,7 +2148,7 @@ let ICON_MANIFEST = {
   // right so each shows up individually on moon nodes; in the filter picker
   // they only appear behind the Timer Challenges tile (see ABILITY_SUBTOKENS).
   PSwitch: { filenames:["AbilityPSwitches.png","AbilityPSwitch.png","pswitch.png"], label:"P-Switches", color:"#34406e", category:"Movement", tokenType:"ability" },
-  CappyFlower: { filenames:["AbilityCappyFlowers.png","AbilityCappyFlower.png","CappyFlowers.png","CappyFlower.png","cappy-flowers.png","cappy-flower.png","cappyflowers.png","cappyflower.png"], label:"Cappy Flowers", color:"#34406e", category:"Movement", tokenType:"ability" },
+  CappyFlower: { filenames:["AbilityCappyFlowers.png","AbilityCappyFlower.png","AbilityCappyFlowers_1.png","CappyFlowers.png","CappyFlower.png","Cappy_Flowers.png","Cappy_Flower.png","Cappy Flowers.png","Cappy Flower.png","cappy-flowers.png","cappy-flower.png","cappyflowers.png","cappyflower.png","AbilityCappyFlowers.PNG","AbilityCappyFlower.PNG","AbilityCappyFlowers_1.PNG","CappyFlowers.PNG","CappyFlower.PNG","Cappy_Flowers.PNG","Cappy_Flower.PNG","Cappy Flowers.PNG","Cappy Flower.PNG","cappy-flowers.PNG","cappy-flower.PNG","cappyflowers.PNG","cappyflower.PNG","AbilityCappyFlowers.webp","AbilityCappyFlower.webp","AbilityCappyFlowers_1.webp","CappyFlowers.webp","CappyFlower.webp","Cappy_Flowers.webp","Cappy_Flower.webp","Cappy Flowers.webp","Cappy Flower.webp","cappy-flowers.webp","cappy-flower.webp","cappyflowers.webp","cappyflower.webp","AbilityCappyFlowers.jpg","AbilityCappyFlower.jpg","AbilityCappyFlowers_1.jpg","CappyFlowers.jpg","CappyFlower.jpg","Cappy_Flowers.jpg","Cappy_Flower.jpg","Cappy Flowers.jpg","Cappy Flower.jpg","cappy-flowers.jpg","cappy-flower.jpg","cappyflowers.jpg","cappyflower.jpg","AbilityCappyFlowers.jpeg","AbilityCappyFlower.jpeg","AbilityCappyFlowers_1.jpeg","CappyFlowers.jpeg","CappyFlower.jpeg","Cappy_Flowers.jpeg","Cappy_Flower.jpeg","Cappy Flowers.jpeg","Cappy Flower.jpeg","cappy-flowers.jpeg","cappy-flower.jpeg","cappyflowers.jpeg","cappyflower.jpeg","AbilityCappyFlowers.gif","AbilityCappyFlower.gif","AbilityCappyFlowers_1.gif","CappyFlowers.gif","CappyFlower.gif","Cappy_Flowers.gif","Cappy_Flower.gif","Cappy Flowers.gif","Cappy Flower.gif","cappy-flowers.gif","cappy-flower.gif","cappyflowers.gif","cappyflower.gif","AbilityCappyFlowers.svg","AbilityCappyFlower.svg","AbilityCappyFlowers_1.svg","CappyFlowers.svg","CappyFlower.svg","Cappy_Flowers.svg","Cappy_Flower.svg","Cappy Flowers.svg","Cappy Flower.svg","cappy-flowers.svg","cappy-flower.svg","cappyflowers.svg","cappyflower.svg"], label:"Cappy Flowers", color:"#34406e", category:"Movement", tokenType:"ability" },
   Scarecrow: { filenames:["AbilityScarecrows.png","AbilityScarecrow.png","scarecrow.png"], label:"Scarecrows", color:"#34406e", category:"Movement", tokenType:"ability" },
   Notes: { filenames:["AbilityNotes.png","notes.png"], label:"Notes", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
@@ -2421,6 +2421,7 @@ function mergeTokensIntoManifest(logicTokens){
       tokenType: t.token_type,
     };
   });
+  try{ syncSubTokenIcons(); }catch(e){}
 }
 
 /* =========================================================
@@ -2455,7 +2456,25 @@ const ABILITY_DISPLAY_ORDER = [
 const ABILITY_DISPLAY_ORDER_INDEX = {};
 ABILITY_DISPLAY_ORDER.forEach((token, i) => { ABILITY_DISPLAY_ORDER_INDEX[token] = i; });
 
+// Any data-defined twin of PS / CF / SC / NO (same name, different token key)
+// shares our icon file names, so the same image loads wherever that token is
+// drawn (filter strip, moon cards, search), not just in the pop-up.
+function syncSubTokenIcons(){
+  Object.keys(ABILITY_SUBTOKEN_PARENT).forEach(sub => {
+    const own = ICON_MANIFEST[sub];
+    if(!own) return;
+    subTwinsOf(sub).forEach(k => {
+      const tw = ICON_MANIFEST[k];
+      if(!tw) return;
+      const merged = [...new Set([...(own.filenames || []), ...(tw.filenames || [])])];
+      own.filenames = merged;
+      tw.filenames = merged;
+    });
+  });
+}
+
 function buildFilterLists(){
+  syncSubTokenIcons();
   const abilities = [];
   const captures = [];
   Object.keys(ICON_MANIFEST).forEach(token => {
@@ -6638,6 +6657,7 @@ function makeFilterIconEl(token, sizeClass){
   img.onerror = function(){
     attempt++;
     if(attempt < info.filenames.length){ img.src = "icon/" + info.filenames[attempt]; return; }
+    console.warn("[icon] no image found for \"" + label + "\"; tried icon/ + ", info.filenames.slice(0, 8).join(", "), "...");
     const fb = document.createElement("div");
     fb.className = "icon-fallback";
     fb.style.setProperty("--icon-color", info.color || "#34406e");
