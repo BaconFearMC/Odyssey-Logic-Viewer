@@ -1524,6 +1524,17 @@
     padding:5px;
   }
   .filter-option:hover{ background:rgba(255,255,255,0.05); }
+  .filter-option.has-submenu{ position:relative; }
+  .filter-option.has-submenu::after{
+    content:"\25BE";
+    position:absolute; top:3px; right:3px;
+    width:15px; height:15px; line-height:15px; text-align:center;
+    font-size:11px; font-weight:700;
+    color:#1b1b1b; background:#f2c200;
+    border-radius:50%;
+    box-shadow:0 1px 3px rgba(0,0,0,0.5);
+    pointer-events:none;
+  }
   .filter-option.filter-suboption{
     background:rgba(255,255,255,0.04);
     box-shadow:inset 0 0 0 1px rgba(255,255,255,0.08);
@@ -2177,6 +2188,28 @@ const ABILITY_FILENAME_OVERRIDES = {
 const ABILITY_SUBTOKENS = {
   TimerChallenge: ["PSwitch", "CappyFlower", "Scarecrow", "Notes"],
 };
+// If the loaded logic data already defines its own token for one of these
+// (same display label, different key), that token is the real one: use it in
+// the pop-up and keep it out of the main grids so nothing shows twice.
+function _subNorm(x){
+  return String(x || "").toLowerCase().replace(/^ability/, "").replace(/[^a-z0-9]/g, "").replace(/s$/, "");
+}
+function subTokenAliasFor(tok){
+  const want = _subNorm((ICON_MANIFEST[tok] || {}).label || tok);
+  const hit = Object.keys(ICON_MANIFEST).find(k => k !== tok && !ABILITY_SUBTOKEN_PARENT[k] && ICON_MANIFEST[k] &&
+    k !== "TimerChallenge" && (_subNorm(ICON_MANIFEST[k].label) === want || _subNorm(k) === want));
+  return hit || null;
+}
+// True for any token that belongs only in the Timer Challenges pop-up
+// (including a data-defined twin of one, matched by key or label) so it never
+// shows in the main ability / capture grids.
+function isSubTokenDuplicate(token){
+  if(ABILITY_SUBTOKEN_PARENT[token]) return true;
+  if(token === "TimerChallenge") return false;
+  const forms = new Set([_subNorm(token), _subNorm((ICON_MANIFEST[token] || {}).label)]);
+  return Object.keys(ABILITY_SUBTOKEN_PARENT).some(sub =>
+    forms.has(_subNorm(sub)) || forms.has(_subNorm((ICON_MANIFEST[sub] || {}).label)));
+}
 const ABILITY_SUBTOKEN_PARENT = {};
 Object.keys(ABILITY_SUBTOKENS).forEach(parent => ABILITY_SUBTOKENS[parent].forEach(t => { ABILITY_SUBTOKEN_PARENT[t] = parent; }));
 
@@ -2417,7 +2450,7 @@ const ABILITY_DISPLAY_ORDER = [
   "DoubleJump", "TripleJump", "SideFlip", "Spin", "WallJump",
   "LedgeGrab", "Climb", "Swing",
   "MoonLowGravity", "Grab", "Swim", "Bike", "Jaxi",
-  "RocketFlower", "NpcTalk", "TimerChallenge", "PSwitch", "CappyFlower", "Scarecrow", "Notes", "Pipe2D",
+  "RocketFlower", "NpcTalk", "Pipe2D", "TimerChallenge",
 ];
 const ABILITY_DISPLAY_ORDER_INDEX = {};
 ABILITY_DISPLAY_ORDER.forEach((token, i) => { ABILITY_DISPLAY_ORDER_INDEX[token] = i; });
@@ -6678,23 +6711,43 @@ function updateFilterSummary(){
 // one shared panel, with the Abilities picker on top and the Captures
 // picker below it. Selecting anything from either grid re-renders the
 // combined chip strip, the filter-summary sentence, and the moon grid.
-let subPopupEl = null, subPopupTimer = null, subPopupOutside = null;
+let subPopupEl = null, subPopupAnchor = null, subPopupReposition = null;
 function hideSubPopup(){
-  clearTimeout(subPopupTimer);
-  if(subPopupOutside){ document.removeEventListener("pointerdown", subPopupOutside, true); subPopupOutside = null; }
+  if(subPopupReposition){
+    window.removeEventListener("resize", subPopupReposition);
+    window.removeEventListener("scroll", subPopupReposition, true);
+    subPopupReposition = null;
+  }
+  subPopupAnchor = null;
   if(!subPopupEl) return;
   const el = subPopupEl; subPopupEl = null;
   el.classList.remove("show");
   setTimeout(() => el.remove(), 180);
 }
-// Small bubble anchored to a parent filter tile (Timer Challenges) listing the
-// tiles behind it. Auto-dismisses after a few idle seconds or on outside click.
+function resolvedSubTokens(parent){
+  return (ABILITY_SUBTOKENS[parent] || []).map(t => subTokenAliasFor(t) || t).filter(t => ICON_MANIFEST[t]);
+}
+function subsSelected(parent, selectedSet){
+  return resolvedSubTokens(parent).some(t => selectedSet.has(t));
+}
+function positionSubPopup(){
+  if(!subPopupEl || !subPopupAnchor || !subPopupAnchor.isConnected) return;
+  const r = subPopupAnchor.getBoundingClientRect();
+  const pw = subPopupEl.offsetWidth, ph = subPopupEl.offsetHeight;
+  const left = Math.max(8, Math.min(window.innerWidth - pw - 8, r.left + r.width/2 - pw/2));
+  let top = r.bottom + 8;
+  if(top + ph > window.innerHeight - 8) top = Math.max(8, r.top - ph - 8);
+  subPopupEl.style.left = left + "px";
+  subPopupEl.style.top = top + "px";
+}
+// Bubble anchored to the Timer Challenges tile. It stays open until the player
+// picks one of the options (no timeout, no click-away); picking closes it.
 function showSubPopup(parent, anchorBtn, selectedSet, onChange){
   hideSubPopup();
   const pop = document.createElement("div");
   pop.className = "filter-subpopup";
-  (ABILITY_SUBTOKENS[parent] || []).forEach(tok => {
-    if(!ICON_MANIFEST[tok]) return;
+  pop.dataset.parent = parent;
+  resolvedSubTokens(parent).forEach(tok => {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "filter-option filter-suboption" + (selectedSet.has(tok) ? " selected" : "");
@@ -6709,28 +6762,19 @@ function showSubPopup(parent, anchorBtn, selectedSet, onChange){
     b.addEventListener("click", (e) => {
       e.stopPropagation();
       if(selectedSet.has(tok)) selectedSet.delete(tok); else selectedSet.add(tok);
-      b.classList.toggle("selected", selectedSet.has(tok));
       onChange();
-      arm();
+      hideSubPopup();
     });
     pop.appendChild(b);
   });
   document.body.appendChild(pop);
-  const r = anchorBtn.getBoundingClientRect();
-  const pw = pop.offsetWidth, ph = pop.offsetHeight;
-  let left = Math.max(8, Math.min(window.innerWidth - pw - 8, r.left + r.width/2 - pw/2));
-  let top = r.bottom + 8;
-  if(top + ph > window.innerHeight - 8) top = Math.max(8, r.top - ph - 8);
-  pop.style.left = left + "px";
-  pop.style.top = top + "px";
-  requestAnimationFrame(() => pop.classList.add("show"));
   subPopupEl = pop;
-  function arm(){ clearTimeout(subPopupTimer); subPopupTimer = setTimeout(hideSubPopup, 3500); }
-  pop.addEventListener("pointerenter", () => clearTimeout(subPopupTimer));
-  pop.addEventListener("pointerleave", arm);
-  subPopupOutside = (e) => { if(!pop.contains(e.target) && !anchorBtn.contains(e.target)) hideSubPopup(); };
-  document.addEventListener("pointerdown", subPopupOutside, true);
-  arm();
+  subPopupAnchor = anchorBtn;
+  positionSubPopup();
+  subPopupReposition = positionSubPopup;
+  window.addEventListener("resize", subPopupReposition);
+  window.addEventListener("scroll", subPopupReposition, true);
+  requestAnimationFrame(() => pop.classList.add("show"));
 }
 
 function setupMergedFilterBar(tokens){
@@ -6749,6 +6793,7 @@ function setupMergedFilterBar(tokens){
 
   function renderChips(){
     chipsEl.innerHTML = "";
+    selectedAbilities.delete("TimerChallenge"); // menu-only tile, never a filter itself
     if(selectedAbilities.size === 0 && selectedCaptures.size === 0){
       const empty = document.createElement("span");
       empty.className = "filter-bar-empty";
@@ -6757,7 +6802,7 @@ function setupMergedFilterBar(tokens){
       clearBtn.style.display = "none";
       return;
     }
-    abilities.forEach(token => { if(selectedAbilities.has(token)) chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip")); });
+    abilities.forEach(token => { if(token !== "TimerChallenge" && selectedAbilities.has(token)) chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip")); });
     captures.forEach(token => { if(selectedCaptures.has(token)) chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip")); });
     clearBtn.style.display = "";
   }
@@ -6770,8 +6815,7 @@ function setupMergedFilterBar(tokens){
     // the pop-up that opens from their parent tile (Timer Challenges).
     const matches = [];
     tokenList.forEach(token => {
-      const parent = kind === "ability" ? ABILITY_SUBTOKEN_PARENT[token] : null;
-      if(parent) return; // only ever shown in the Timer Challenges pop-up
+      if(isSubTokenDuplicate(token)) return; // only ever shown in the Timer Challenges pop-up
 
       if(labelMatches(token)) matches.push(token);
     });
@@ -6788,9 +6832,12 @@ function setupMergedFilterBar(tokens){
       const btn = document.createElement("button");
       btn.type = "button";
       const isSub = kind === "ability" && !!ABILITY_SUBTOKEN_PARENT[token];
+      const hasSubmenu = kind === "ability" && !!ABILITY_SUBTOKENS[token];
+      if(hasSubmenu && subPopupEl && subPopupEl.dataset.parent === token){ subPopupAnchor = btn; setTimeout(positionSubPopup, 0); }
       btn.className = "filter-option"
+        + (hasSubmenu ? " has-submenu" : "")
         + (isSub ? " filter-suboption" : "")
-        + (selectedSet.has(token) ? " selected" : "")
+        + ((selectedSet.has(token) || (kind === "ability" && subsSelected(token, selectedSet))) ? " selected" : "")
         + (notImplemented ? " not-implemented" : "");
       const iconWrap = document.createElement("div");
       iconWrap.className = "filter-option-icon";
@@ -6808,19 +6855,19 @@ function setupMergedFilterBar(tokens){
         });
       } else {
         btn.addEventListener("click", () => {
+          // Timer Challenges is not an ability on its own: clicking it just
+          // opens the pop-up menu (PS / CF / SC / NO) to pick from.
+          if(kind === "ability" && ABILITY_SUBTOKENS[token]){
+            if(subPopupEl && subPopupEl.dataset.parent === token) return; // must pick an option first
+            showSubPopup(token, btn, selectedSet, () => {
+              btn.classList.toggle("selected", subsSelected(token, selectedSet));
+              renderChips(); updateFilterSummary(); renderGrid();
+            });
+            return;
+          }
           if(selectedSet.has(token)) selectedSet.delete(token);
           else selectedSet.add(token);
-          // Clicking a parent tile (Timer Challenges) reveals / hides the
-          // tiles behind it; deselecting it also clears them.
           btn.classList.toggle("selected", selectedSet.has(token));
-          if(kind === "ability" && ABILITY_SUBTOKENS[token]){
-            if(selectedSet.has(token)){
-              showSubPopup(token, btn, selectedSet, () => { renderChips(); updateFilterSummary(); renderGrid(); });
-            } else {
-              hideSubPopup();
-              ABILITY_SUBTOKENS[token].forEach(t => selectedSet.delete(t));
-            }
-          }
           renderChips();
           updateFilterSummary();
           renderGrid();
