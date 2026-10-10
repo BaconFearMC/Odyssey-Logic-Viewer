@@ -2148,7 +2148,7 @@ let ICON_MANIFEST = {
   // right so each shows up individually on moon nodes; in the filter picker
   // they only appear behind the Timer Challenges tile (see ABILITY_SUBTOKENS).
   PSwitch: { filenames:["AbilityPSwitches.png","AbilityPSwitch.png","pswitch.png"], label:"P-Switches", color:"#34406e", category:"Movement", tokenType:"ability" },
-  CappyFlower: { filenames:["AbilityCappyFlowers.png","AbilityCappyFlower.png","cappyflower.png"], label:"Cappy Flowers", color:"#34406e", category:"Movement", tokenType:"ability" },
+  CappyFlower: { filenames:["AbilityCappyFlowers.png","AbilityCappyFlower.png","CappyFlowers.png","CappyFlower.png","cappy-flowers.png","cappy-flower.png","cappyflowers.png","cappyflower.png"], label:"Cappy Flowers", color:"#34406e", category:"Movement", tokenType:"ability" },
   Scarecrow: { filenames:["AbilityScarecrows.png","AbilityScarecrow.png","scarecrow.png"], label:"Scarecrows", color:"#34406e", category:"Movement", tokenType:"ability" },
   Notes: { filenames:["AbilityNotes.png","notes.png"], label:"Notes", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
@@ -6724,8 +6724,26 @@ function hideSubPopup(){
   el.classList.remove("show");
   setTimeout(() => el.remove(), 180);
 }
+// The pop-up always shows our own four tokens (with their own icons). Any
+// data-defined twin (same name, different key) is toggled along with it so
+// moon logic that uses the twin still matches.
 function resolvedSubTokens(parent){
-  return (ABILITY_SUBTOKENS[parent] || []).map(t => subTokenAliasFor(t) || t).filter(t => ICON_MANIFEST[t]);
+  const list = (ABILITY_SUBTOKENS[parent] || []).filter(t => ICON_MANIFEST[t]);
+  // If the logic data defines a twin of a token that already has a working
+  // icon file, let our tile also try the twin's icon file names.
+  list.forEach(t => {
+    const own = ICON_MANIFEST[t];
+    subTwinsOf(t).forEach(k => {
+      const tw = ICON_MANIFEST[k];
+      if(tw && tw.filenames) own.filenames = [...new Set([...(own.filenames || []), ...tw.filenames])];
+    });
+  });
+  return list;
+}
+function subTwinsOf(tok){
+  const want = _subNorm((ICON_MANIFEST[tok] || {}).label || tok);
+  return Object.keys(ICON_MANIFEST).filter(k => k !== tok && !ABILITY_SUBTOKEN_PARENT[k] && k !== "TimerChallenge" &&
+    (_subNorm((ICON_MANIFEST[k] || {}).label) === want || _subNorm(k) === want));
 }
 function subsSelected(parent, selectedSet){
   return resolvedSubTokens(parent).some(t => selectedSet.has(t));
@@ -6761,7 +6779,8 @@ function showSubPopup(parent, anchorBtn, selectedSet, onChange){
     b.appendChild(nm);
     b.addEventListener("click", (e) => {
       e.stopPropagation();
-      if(selectedSet.has(tok)) selectedSet.delete(tok); else selectedSet.add(tok);
+      const on = !selectedSet.has(tok);
+      [tok, ...subTwinsOf(tok)].forEach(k => { if(on) selectedSet.add(k); else selectedSet.delete(k); });
       onChange();
       hideSubPopup();
     });
@@ -6802,7 +6821,7 @@ function setupMergedFilterBar(tokens){
       clearBtn.style.display = "none";
       return;
     }
-    abilities.forEach(token => { if(token !== "TimerChallenge" && selectedAbilities.has(token)) chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip")); });
+    abilities.forEach(token => { if(token !== "TimerChallenge" && (!isSubTokenDuplicate(token) || ABILITY_SUBTOKEN_PARENT[token]) && selectedAbilities.has(token)) chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip")); });
     captures.forEach(token => { if(selectedCaptures.has(token)) chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip")); });
     clearBtn.style.display = "";
   }
