@@ -1788,6 +1788,7 @@
   #filterBars[data-filter-mode="unlocks"] .filter-preset[data-for="cando"]{ display:none; }
   .filter-preset:hover{ background:rgba(255,255,255,0.06); color:var(--text); }
   .filter-preset.active{ background:var(--gold-light); border-color:var(--gold); color:var(--gold); }
+  .preset-all{ font-size:9.5px; letter-spacing:0.06em; padding:1px 5px; border:1px solid currentColor; border-radius:8px; opacity:0.85; }
   .preset-icon{ width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; font-size:18px; overflow:hidden; }
   .preset-icon img, .preset-icon > div, .preset-icon .icon-fallback{ width:100%; height:100%; object-fit:cover; display:block; border:none; }
   @media (max-width:760px){
@@ -6117,6 +6118,23 @@ let FILTER_LIST_CAPTURES = [];
 //              anywhere in its requirements — the original behavior).
 let filterMode = "cando";
 
+// Set only while one of the "What Does This Unlock?" presets is the exact
+// current selection. Presets mean "a route that needs ALL of these"; items
+// picked one by one keep the "needs ANY of these" behavior.
+let unlockAllSet = null;
+function requireAllActive(){
+  if(filterMode !== "unlocks" || !unlockAllSet) return false;
+  const cur = new Set([...selectedAbilities, ...selectedCaptures]);
+  if(cur.size !== unlockAllSet.size) return false;
+  for(const t of unlockAllSet) if(!cur.has(t)) return false;
+  return true;
+}
+function groupHasAllTokens(group, tokens){
+  const set = new Set();
+  group.forEach(t => { set.add(t); if(ABILITY_FILTER_FOLD_TOKENS[t]) set.add(ABILITY_FILTER_FOLD_TOKENS[t]); });
+  return tokens.every(t => set.has(t));
+}
+
 function moonTokens(moon){
   const set = new Set();
   (moon.orGroups || []).forEach(group => group.forEach(tok => {
@@ -6148,6 +6166,11 @@ function moonMatchesUnlocks(moon){
   // let through anymore — they don't use anything you picked, so they're
   // excluded. (Always-unlocked tokens can't be selected in the picker, so a
   // free branch can never be what matched.)
+  // Preset selection: ONE route must need every selected item together.
+  if(requireAllActive()){
+    const need = [...selectedAbilities, ...selectedCaptures];
+    return (moon.orGroups || []).some(g => groupHasAllTokens(g, need));
+  }
   const toks = moonTokens(moon);
   let any = false;
   selectedAbilities.forEach(t => { if(toks.has(t)) any = true; });
@@ -6292,7 +6315,9 @@ function renderGrid(){
     } else if(videoMode !== "all"){
       emptyState.textContent = videoMode === "has" ? "No routes in this kingdom have a video yet." : "Every route in this kingdom already has a video!";
     } else if(tokenGridFiltering){
-      emptyState.textContent = "No moons in this kingdom match the selected Ability/Capture filters.";
+      emptyState.textContent = requireAllActive()
+        ? "No moon in this kingdom has a route that needs all of the preset's abilities together."
+        : "No moons in this kingdom match the selected Ability/Capture filters.";
     } else {
       emptyState.textContent = "No moons left to show with this filter.";
     }
@@ -6836,6 +6861,11 @@ function updateFilterSummary(){
     return;
   }
   const exempt = filterMode === "cando";
+  if(requireAllActive()){
+    summaryEl.style.display = "block";
+    summaryEl.textContent = "🎮 Preset: only moons with a route that needs ALL of " + joinWithAnd(abilityNames.concat(captureNames)) + " together.";
+    return;
+  }
   const parts = [];
   if(abilityNames.length){
     parts.push((exempt ? "Exempt the Abilit" : "I have the Abilit") + (abilityNames.length === 1 ? "y" : "ies") + " " + joinWithAnd(abilityNames) + ".");
@@ -6971,6 +7001,7 @@ function setupMergedFilterBar(tokens){
   const captureGridEl = document.getElementById("captureFilterGrid");
 
   function renderChips(){
+    unlockAllSet = null; // any manual change drops the preset's "all of these" rule
     if(typeof updatePresetStates === "function") updatePresetStates();
     chipsEl.innerHTML = "";
     selectedAbilities.delete("TimerChallenge"); // menu-only tile, never a filter itself
@@ -7162,6 +7193,7 @@ function setupMergedFilterBar(tokens){
     hideSubPopup();
     renderChips();
     refreshOpenPanels();
+    if(def.exclusive && !turnOff) unlockAllSet = new Set(r.abilities.concat(r.captures));
     updateFilterSummary();
     renderGrid();
   }
@@ -7171,7 +7203,7 @@ function setupMergedFilterBar(tokens){
     b.className = "filter-preset";
     b.dataset.for = def.mode || "cando";
     b.title = (def.mode === "unlocks")
-      ? def.label + " — shows every moon that uses these (click again to clear)"
+      ? def.label + " — only moons with a route needing ALL of these together (pick items one by one for any-of; click again to clear)"
       : def.label + " — marks these as Free (click again to undo)";
     const ic = document.createElement("span");
     ic.className = "preset-icon";
@@ -7190,6 +7222,12 @@ function setupMergedFilterBar(tokens){
     lb.className = "preset-label";
     lb.textContent = def.label;
     b.appendChild(lb);
+    if(def.mode === "unlocks"){
+      const all = document.createElement("span");
+      all.className = "preset-all";
+      all.textContent = "ALL " + def.resolve().abilities.length;
+      b.appendChild(all);
+    }
     b.addEventListener("click", (e) => { e.stopPropagation(); applyPreset(def); });
     presetsEl.appendChild(b);
     presetBtns[def.id] = b;
