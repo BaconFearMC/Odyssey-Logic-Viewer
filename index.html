@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityVault.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1752,16 +1752,24 @@
   }
 
   /* ---- Shared requirement header ("This moon requires X. Beyond this…") --
-     Deliberately quiet: small muted text, tiny icon, no box or accent bar. */
+     Original boxed look, scaled down. */
   .hoist-wrap{ width:100%; display:flex; flex-direction:column; gap:6px; }
-  .hoist-head{ display:flex; flex-direction:column; align-items:center; gap:1px; text-align:center; }
-  .hoist-line{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:2px 6px; font-size:11.5px; color:var(--text-dim); }
-  .hoist-lead, .hoist-and{ color:var(--text-dim); }
-  .hoist-token{ display:inline-flex; align-items:center; gap:4px; }
-  .hoist-token-name{ color:var(--text); font-size:11.5px; white-space:nowrap; }
-  .hoist-token .icon{ width:22px; height:22px; clip-path:none; border-radius:4px; }
-  .hoist-token .icon-fallback{ width:22px; height:22px; font-size:9px; clip-path:none; border-radius:4px; }
-  .hoist-then{ font-size:10.5px; color:var(--text-dim); opacity:0.7; }
+  .hoist-head{
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    padding:5px 8px;
+    background:rgba(230,194,0,0.07);
+    border:1px solid rgba(230,194,0,0.35);
+    border-left:3px solid var(--gold);
+    text-align:center;
+  }
+  .hoist-line{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:3px 6px; font-size:11.5px; color:var(--text); }
+  .hoist-lead{ color:var(--text); }
+  .hoist-and{ color:var(--text-dim); }
+  .hoist-token{ display:inline-flex; align-items:center; gap:5px; }
+  .hoist-token-name{ color:var(--gold); font-size:11.5px; white-space:nowrap; }
+  .hoist-token .icon{ width:32px; height:32px; clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
+  .hoist-token .icon-fallback{ width:32px; height:32px; font-size:11px; }
+  .hoist-then{ font-size:10.5px; color:var(--text-dim); letter-spacing:0.02em; }
 
   /* ---- Filter presets ---------------------------------------------------- */
   .filter-presets{ flex:0 0 auto; display:flex; gap:8px; align-items:center; margin-left:auto; }
