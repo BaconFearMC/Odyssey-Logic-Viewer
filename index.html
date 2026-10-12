@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityTripleJump.png">
+<link rel="icon" href="icon/AbilityVault.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1751,22 +1751,17 @@
     #glitchToggle{ top:58px; right:12px; }
   }
 
-  /* ---- Shared requirement header ("This moon requires X. Beyond this…") --- */
-  .hoist-wrap{ width:100%; display:flex; flex-direction:column; gap:8px; }
-  .hoist-head{
-    display:flex; flex-direction:column; align-items:center; gap:4px;
-    padding:8px 10px;
-    background:rgba(230,194,0,0.07);
-    border:1px solid rgba(230,194,0,0.35);
-    border-left:3px solid var(--gold);
-    text-align:center;
-  }
-  .hoist-line{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px 8px; font-size:13px; color:var(--text); }
-  .hoist-lead{ color:var(--text); }
-  .hoist-and{ color:var(--text-dim); }
-  .hoist-token{ display:inline-flex; align-items:center; gap:6px; }
-  .hoist-token-name{ color:var(--gold); font-size:13px; white-space:nowrap; }
-  .hoist-then{ font-size:11.5px; color:var(--text-dim); letter-spacing:0.02em; }
+  /* ---- Shared requirement header ("This moon requires X. Beyond this…") --
+     Deliberately quiet: small muted text, tiny icon, no box or accent bar. */
+  .hoist-wrap{ width:100%; display:flex; flex-direction:column; gap:6px; }
+  .hoist-head{ display:flex; flex-direction:column; align-items:center; gap:1px; text-align:center; }
+  .hoist-line{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:2px 6px; font-size:11.5px; color:var(--text-dim); }
+  .hoist-lead, .hoist-and{ color:var(--text-dim); }
+  .hoist-token{ display:inline-flex; align-items:center; gap:4px; }
+  .hoist-token-name{ color:var(--text); font-size:11.5px; white-space:nowrap; }
+  .hoist-token .icon{ width:22px; height:22px; clip-path:none; border-radius:4px; }
+  .hoist-token .icon-fallback{ width:22px; height:22px; font-size:9px; clip-path:none; border-radius:4px; }
+  .hoist-then{ font-size:10.5px; color:var(--text-dim); opacity:0.7; }
 
   /* ---- Filter presets ---------------------------------------------------- */
   .filter-presets{ flex:0 0 auto; display:flex; gap:8px; align-items:center; margin-left:auto; }
@@ -1781,6 +1776,8 @@
     clip-path: polygon(var(--cut-sm) 0, 100% 0, 100% calc(100% - var(--cut-sm)), calc(100% - var(--cut-sm)) 100%, 0 100%, 0 var(--cut-sm));
     transition:background .12s ease, border-color .12s ease, color .12s ease;
   }
+  #filterBars[data-filter-mode="cando"] .filter-preset[data-for="unlocks"],
+  #filterBars[data-filter-mode="unlocks"] .filter-preset[data-for="cando"]{ display:none; }
   .filter-preset:hover{ background:rgba(255,255,255,0.06); color:var(--text); }
   .filter-preset.active{ background:var(--gold-light); border-color:var(--gold); color:var(--gold); }
   .preset-icon{ width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; font-size:18px; overflow:hidden; }
@@ -7125,6 +7122,13 @@ function setupMergedFilterBar(tokens){
         return captures.find(tok => al.indexOf(_pn(filterLabelFor(tok))) !== -1 || al.indexOf(_pn(tok)) !== -1) || null;
       },
     },
+    // "What Does This Unlock?" presets — replace the current selection.
+    { id: "capjump",  mode: "unlocks", exclusive: true, label: "Classic Cap Jump", emoji: "🧢", iconFixed: "Vault",
+      resolve: () => ({ abilities: ["Vault", "NeutralThrow", "Dive"].filter(t => ICON_MANIFEST[t]), captures: [] }) },
+    { id: "annoying", mode: "unlocks", exclusive: true, label: "Annoying Vaults", emoji: "😤", iconFixed: "DownThrow",
+      resolve: () => ({ abilities: ["Vault", "DownThrow"].filter(t => ICON_MANIFEST[t]), captures: [] }) },
+    { id: "torture",  mode: "unlocks", exclusive: true, label: "Torture Vaults", emoji: "💀", iconFixed: "UpThrow",
+      resolve: () => ({ abilities: ["Vault", "UpThrow"].filter(t => ICON_MANIFEST[t]), captures: [] }) },
   ];
   const presetsEl = document.getElementById("filterPresets");
   const presetBtns = {};
@@ -7143,10 +7147,8 @@ function setupMergedFilterBar(tokens){
   function applyPreset(def){
     const r = def.resolve();
     const turnOff = presetIsActive(def);
-    if(!turnOff && filterMode !== "cando"){
-      const tab = document.getElementById("filterModeCanDo");
-      if(tab) tab.click();
-    }
+    // Unlock presets are single-purpose: they replace whatever was selected.
+    if(def.exclusive && !turnOff){ selectedAbilities.clear(); selectedCaptures.clear(); }
     r.abilities.forEach(t => { if(turnOff) selectedAbilities.delete(t); else selectedAbilities.add(t); });
     r.captures.forEach(t => { if(turnOff) selectedCaptures.delete(t); else selectedCaptures.add(t); });
     hideSubPopup();
@@ -7159,7 +7161,10 @@ function setupMergedFilterBar(tokens){
     const b = document.createElement("button");
     b.type = "button";
     b.className = "filter-preset";
-    b.title = def.label + " — marks these as Free (click again to undo)";
+    b.dataset.for = def.mode || "cando";
+    b.title = (def.mode === "unlocks")
+      ? def.label + " — shows every moon that uses these (click again to clear)"
+      : def.label + " — marks these as Free (click again to undo)";
     const ic = document.createElement("span");
     ic.className = "preset-icon";
     if(def.icon){
@@ -7168,7 +7173,7 @@ function setupMergedFilterBar(tokens){
       img.onerror = function(){ ic.textContent = def.emoji; };
       ic.appendChild(img);
     } else {
-      const tok = def.iconToken ? def.iconToken() : null;
+      const tok = def.iconToken ? def.iconToken() : (def.iconFixed || null);
       if(tok) ic.appendChild(makeFilterIconEl(tok, ""));
       else ic.textContent = def.emoji;
     }
@@ -7197,6 +7202,7 @@ function setupFilterModeTabs(){
     tab.addEventListener("click", () => {
       if(tab.dataset.mode === filterMode) return;
       filterMode = tab.dataset.mode;
+      const fb = document.getElementById("filterBars"); if(fb) fb.dataset.filterMode = filterMode;
       tabs.forEach(t => t.classList.toggle("active", t === tab));
       updateFilterSummary();
       renderGrid();
@@ -7206,6 +7212,7 @@ function setupFilterModeTabs(){
 
 let filterBarsInitialized = false;
 function initFilterBars(){
+  const fb0 = document.getElementById("filterBars"); if(fb0) fb0.dataset.filterMode = filterMode;
   const tokens = buildFilterLists();
   setupMergedFilterBar(tokens);
   setupFilterModeTabs();
