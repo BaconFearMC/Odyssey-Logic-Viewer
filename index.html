@@ -1491,17 +1491,21 @@
      always-unlocked base moveset, per ALWAYS_UNLOCKED_TOKENS), laid out
      as an exact 10 x 3 grid so every row is full with no scrolling. */
   #abilityFilterGrid{
-    grid-template-columns: repeat(10, 84px);
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:12px 10px;
     max-height:none;
     overflow-y:visible;
   }
   /* Capture panel: 52 captures laid out as an exact 13 x 4 grid (13 x 4 = 52)
      so every row is full, and no scrollbar is needed to see them all. */
   #captureFilterGrid{
-    grid-template-columns: repeat(13, 84px);
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:12px 10px;
     max-height:none;
     overflow-y:visible;
   }
+  /* Forced row break inside the ability grid (Swing sits right after Climb). */
+  .filter-grid-break{ flex:0 0 100%; height:0; margin-top:-12px; }
   .filter-option{
     display:flex;
     flex-direction:column;
@@ -1510,7 +1514,9 @@
     background:none;
     border:none;
     cursor:pointer;
-    padding:5px;
+    padding:5px 6px;
+    min-width:84px;
+    flex:0 0 auto;
   }
   .filter-option:hover{ background:rgba(255,255,255,0.05); }
   .filter-option.has-submenu{ position:relative; }
@@ -1556,16 +1562,14 @@
     box-shadow:0 0 0 1px var(--gold);
   }
   .filter-option-name{
-    font-size:10.5px;
+    font-size:11px;
     line-height:1.25;
     color:var(--text-dim);
     text-align:center;
-    max-width:84px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
+    white-space:nowrap;      /* always one line, never cut off */
+    overflow:visible;
+    text-overflow:clip;
+    max-width:none;
   }
   .filter-option.selected .filter-option-name{ color:var(--text); }
   .filter-option.not-implemented{
@@ -1746,6 +1750,47 @@
     #searchToggle{ top:16px; left:12px; }
     #glitchToggle{ top:58px; right:12px; }
   }
+
+  /* ---- Shared requirement header ("This moon requires X. Beyond this…") --- */
+  .hoist-wrap{ width:100%; display:flex; flex-direction:column; gap:8px; }
+  .hoist-head{
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    padding:8px 10px;
+    background:rgba(230,194,0,0.07);
+    border:1px solid rgba(230,194,0,0.35);
+    border-left:3px solid var(--gold);
+    text-align:center;
+  }
+  .hoist-line{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px 8px; font-size:13px; color:var(--text); }
+  .hoist-lead{ color:var(--text); }
+  .hoist-and{ color:var(--text-dim); }
+  .hoist-token{ display:inline-flex; align-items:center; gap:6px; }
+  .hoist-token-name{ color:var(--gold); font-size:13px; white-space:nowrap; }
+  .hoist-then{ font-size:11.5px; color:var(--text-dim); letter-spacing:0.02em; }
+
+  /* ---- Filter presets ---------------------------------------------------- */
+  .filter-presets{ flex:0 0 auto; display:flex; gap:8px; align-items:center; margin-left:auto; }
+  .filter-preset{
+    display:flex; align-items:center; gap:8px;
+    background:var(--bg-panel);
+    border:2px solid var(--border); border-bottom-width:3px;
+    padding:5px 12px 5px 6px;
+    color:var(--text-dim);
+    font-family:inherit; font-size:12px; white-space:nowrap;
+    cursor:pointer;
+    clip-path: polygon(var(--cut-sm) 0, 100% 0, 100% calc(100% - var(--cut-sm)), calc(100% - var(--cut-sm)) 100%, 0 100%, 0 var(--cut-sm));
+    transition:background .12s ease, border-color .12s ease, color .12s ease;
+  }
+  .filter-preset:hover{ background:rgba(255,255,255,0.06); color:var(--text); }
+  .filter-preset.active{ background:var(--gold-light); border-color:var(--gold); color:var(--gold); }
+  .preset-icon{ width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; font-size:18px; overflow:hidden; }
+  .preset-icon img, .preset-icon > div, .preset-icon .icon-fallback{ width:100%; height:100%; object-fit:cover; display:block; border:none; }
+  @media (max-width:760px){
+    .filter-bar-row{ flex-wrap:wrap; }
+    .filter-presets{ width:100%; margin-left:0; justify-content:center; flex-wrap:wrap; order:3; }
+  }
+  .filter-subpopup{ flex-wrap:wrap; max-width:calc(100vw - 16px); }
+  .filter-subpopup .filter-option-name{ white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -1877,6 +1922,7 @@
         <span>Filters</span>
       </span>
       <div class="filter-bar-chips" id="tokenFilterChips"></div>
+      <div class="filter-presets" id="filterPresets"></div>
       <button type="button" class="filter-bar-clear" id="tokenFilterClear" aria-label="Clear Ability/Capture filter" style="display:none;">&times;</button>
     </div>
     <div class="filter-bar-panel" id="tokenFilterPanel">
@@ -4269,7 +4315,7 @@ function renderEntranceReqs(list, className, disableCollapse){
     } else if(r.free){
       const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; row.appendChild(t);
     } else {
-      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse));
+      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance"));
     }
     wrap.appendChild(row);
   });
@@ -5700,6 +5746,8 @@ function buildMovementOptions(moon, boxed){
   // require advanced or expert tech.
   const stack = document.createElement("div");
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
+  const hoisted = hoistedTokensFor(moon.tierLanes);
+  const hoistSet = hoistedFormSet(hoisted);
 
   moon.tierLanes.forEach(lane => {
     const laneEl = document.createElement("div");
@@ -5719,11 +5767,12 @@ function buildMovementOptions(moon, boxed){
       // parsing) or because "Exempt!" mode just stripped out every token
       // the player selected to stop seeing — either way, say so instead of
       // showing an empty chip.
-      const displayGroup = exemptedDisplayGroup(andGroup);
+      const preHoistGroup = exemptedDisplayGroup(andGroup);
+      const displayGroup = hoistSet.size ? preHoistGroup.filter(t => !hoistSet.has(t)) : preHoistGroup;
       if(displayGroup.length === 0){
         const chip = document.createElement("div");
         chip.className = "option-chip free-chip";
-        chip.textContent = "Free";
+        chip.textContent = (hoistSet.size && preHoistGroup.length > 0) ? "Nothing else" : "Free";
         chip.dataset.slot = slotOf(andGroup, i);
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
         attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i));
@@ -5781,7 +5830,7 @@ function buildMovementOptions(moon, boxed){
   // slice of the second under a fade, and an expand toggle pinned to the
   // box's own top-right corner.
   const totalOptions = moon.tierLanes.reduce((sum, lane) => sum + lane.groups.length, 0);
-  return wrapOptionsIfCollapsible(stack, totalOptions);
+  return wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions), hoisted, "moon");
 }
 
 /* =========================================================
@@ -6118,6 +6167,70 @@ function exemptedDisplayGroup(andGroup){
   if(filterMode !== "cando") return andGroup;
   if(selectedAbilities.size === 0 && selectedCaptures.size === 0) return andGroup;
   return andGroup.filter(tok => !tokenIsSelected(tok));
+}
+
+// ---- Shared requirement ("hoisted") ---------------------------------------
+// When EVERY route of a Moon/Node needs one of these, it's pulled out of the
+// individual chips and stated once on top: "This moon requires P-Switches.
+// Beyond this, it requires:" followed by each method without that token.
+const HOIST_TOKENS = ["PSwitch", "CappyFlower", "Scarecrow", "Notes"];
+function hoistForms(tok){ return [tok].concat(typeof subTwinsOf === "function" ? subTwinsOf(tok) : []); }
+function hoistedTokensFor(tierLanes){
+  const groups = [];
+  (tierLanes || []).forEach(l => (l.groups || []).forEach(g => groups.push(g)));
+  if(groups.length === 0) return [];
+  return HOIST_TOKENS.filter(tok => {
+    if(!ICON_MANIFEST[tok]) return false;
+    const forms = hoistForms(tok);
+    // Already marked as "I Have This!" -> it's stripped by the filter instead.
+    if(filterMode === "cando" && forms.some(f => tokenIsSelected(f))) return false;
+    return groups.every(g => g.some(t => forms.indexOf(t) !== -1));
+  });
+}
+function hoistedFormSet(hoisted){
+  const set = new Set();
+  hoisted.forEach(tok => hoistForms(tok).forEach(f => set.add(f)));
+  return set;
+}
+function buildHoistHeader(hoisted, noun){
+  const head = document.createElement("div");
+  head.className = "hoist-head";
+  const line = document.createElement("div");
+  line.className = "hoist-line";
+  const lead = document.createElement("span");
+  lead.className = "hoist-lead";
+  lead.textContent = "This " + noun + " requires";
+  line.appendChild(lead);
+  hoisted.forEach((tok, i) => {
+    if(i > 0){
+      const and = document.createElement("span");
+      and.className = "hoist-and";
+      and.textContent = i === hoisted.length - 1 ? "and" : ",";
+      line.appendChild(and);
+    }
+    const pill = document.createElement("span");
+    pill.className = "hoist-token";
+    pill.appendChild(makeIcon(tok));
+    const nm = document.createElement("span");
+    nm.className = "hoist-token-name";
+    nm.textContent = (ICON_MANIFEST[tok] || {}).label || tok;
+    pill.appendChild(nm);
+    line.appendChild(pill);
+  });
+  head.appendChild(line);
+  const then = document.createElement("div");
+  then.className = "hoist-then";
+  then.textContent = "Beyond this, it requires:";
+  head.appendChild(then);
+  return head;
+}
+function wrapWithHoistHeader(body, hoisted, noun){
+  if(!hoisted.length) return body;
+  const wrap = document.createElement("div");
+  wrap.className = "hoist-wrap";
+  wrap.appendChild(buildHoistHeader(hoisted, noun));
+  wrap.appendChild(body);
+  return wrap;
 }
 
 function renderGrid(){
@@ -6735,7 +6848,8 @@ function updateFilterSummary(){
 // one shared panel, with the Abilities picker on top and the Captures
 // picker below it. Selecting anything from either grid re-renders the
 // combined chip strip, the filter-summary sentence, and the moon grid.
-let subPopupEl = null, subPopupAnchor = null, subPopupReposition = null;
+let subPopupEl = null, subPopupAnchor = null, subPopupReposition = null, subPopupOutside = null;
+function subPopupKey(e){ if(e.key === "Escape") hideSubPopup(); }
 function hideSubPopup(){
   if(subPopupReposition){
     window.removeEventListener("resize", subPopupReposition);
@@ -6743,6 +6857,11 @@ function hideSubPopup(){
     subPopupReposition = null;
   }
   subPopupAnchor = null;
+  if(subPopupOutside){
+    document.removeEventListener("click", subPopupOutside, true);
+    document.removeEventListener("keydown", subPopupKey, true);
+    subPopupOutside = null;
+  }
   if(!subPopupEl) return;
   const el = subPopupEl; subPopupEl = null;
   el.classList.remove("show");
@@ -6782,8 +6901,9 @@ function positionSubPopup(){
   subPopupEl.style.left = left + "px";
   subPopupEl.style.top = top + "px";
 }
-// Bubble anchored to the Timer Challenges tile. It stays open until the player
-// picks one of the options (no timeout, no click-away); picking closes it.
+// Bubble anchored to the Timer Challenges tile. Options toggle on/off and the
+// bubble stays open for multi-select; click the tile again, click away, or
+// press Esc to close it.
 function showSubPopup(parent, anchorBtn, selectedSet, onChange){
   hideSubPopup();
   const pop = document.createElement("div");
@@ -6805,8 +6925,8 @@ function showSubPopup(parent, anchorBtn, selectedSet, onChange){
       e.stopPropagation();
       const on = !selectedSet.has(tok);
       [tok, ...subTwinsOf(tok)].forEach(k => { if(on) selectedSet.add(k); else selectedSet.delete(k); });
+      b.classList.toggle("selected", on);   // stays open so several can be picked
       onChange();
-      hideSubPopup();
     });
     pop.appendChild(b);
   });
@@ -6818,6 +6938,17 @@ function showSubPopup(parent, anchorBtn, selectedSet, onChange){
   window.addEventListener("resize", subPopupReposition);
   window.addEventListener("scroll", subPopupReposition, true);
   requestAnimationFrame(() => pop.classList.add("show"));
+  // Click anywhere else (or press Esc) to close without changing anything.
+  subPopupOutside = (e) => {
+    if(pop.contains(e.target)) return;
+    if(subPopupAnchor && subPopupAnchor.contains(e.target)) return; // the tile toggles it itself
+    hideSubPopup();
+  };
+  setTimeout(() => {
+    if(subPopupEl !== pop) return;
+    document.addEventListener("click", subPopupOutside, true);
+    document.addEventListener("keydown", subPopupKey, true);
+  }, 0);
 }
 
 function setupMergedFilterBar(tokens){
@@ -6835,6 +6966,7 @@ function setupMergedFilterBar(tokens){
   const captureGridEl = document.getElementById("captureFilterGrid");
 
   function renderChips(){
+    if(typeof updatePresetStates === "function") updatePresetStates();
     chipsEl.innerHTML = "";
     selectedAbilities.delete("TimerChallenge"); // menu-only tile, never a filter itself
     if(selectedAbilities.size === 0 && selectedCaptures.size === 0){
@@ -6901,7 +7033,7 @@ function setupMergedFilterBar(tokens){
           // Timer Challenges is not an ability on its own: clicking it just
           // opens the pop-up menu (PS / CF / SC / NO) to pick from.
           if(kind === "ability" && ABILITY_SUBTOKENS[token]){
-            if(subPopupEl && subPopupEl.dataset.parent === token) return; // must pick an option first
+            if(subPopupEl && subPopupEl.dataset.parent === token){ hideSubPopup(); return; } // click the tile again to close
             showSubPopup(token, btn, selectedSet, () => {
               btn.classList.toggle("selected", subsSelected(token, selectedSet));
               renderChips(); updateFilterSummary(); renderGrid();
@@ -6917,6 +7049,13 @@ function setupMergedFilterBar(tokens){
         });
       }
       gridEl.appendChild(btn);
+      // Swing sits to the right of Climb: row 1 ends after Roll Boost, row 2
+      // after Swing; every row stays centered.
+      if(kind === "ability" && !q && (token === "RollBoost" || token === "Swing")){
+        const br = document.createElement("div");
+        br.className = "filter-grid-break";
+        gridEl.appendChild(br);
+      }
     });
   }
 
@@ -6944,6 +7083,104 @@ function setupMergedFilterBar(tokens){
   abilitySearchEl.addEventListener("click", (e) => e.stopPropagation());
   captureSearchEl.addEventListener("input", () => renderOptions("capture", captures, selectedCaptures, captureGridEl, captureSearchEl.value));
   captureSearchEl.addEventListener("click", (e) => e.stopPropagation());
+
+
+  // ---- Presets (right side of the Filters row) ---------------------------
+  // Both presets "disable" things: they select the items and switch to the
+  // "I Have This!" tab, which strips them out of the logic (they read Free).
+  const _pn = x => String(x || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const PRESET_DEFS = [
+    {
+      id: "classic", label: "Classic Abilities", icon: "icon/AbilityJump.png", emoji: "🎮",
+      resolve: () => {
+        const want = ["MoonLowGravity","Grab","Swim","Bike","Jaxi","RocketFlower","NpcTalk","Pipe2D","PSwitch","CappyFlower","Scarecrow","Notes"];
+        const out = [];
+        want.forEach(tok => {
+          if(!ICON_MANIFEST[tok]) return;
+          out.push(tok);
+          if(ABILITY_SUBTOKEN_PARENT[tok]) subTwinsOf(tok).forEach(k => out.push(k));
+        });
+        return { abilities: out, captures: [] };
+      },
+    },
+    {
+      id: "useless", label: "Useless Captures", emoji: "🌿",
+      resolve: () => {
+        const aliases = [
+          ["moeeye", "moe"],
+          ["poisonpiranhaplant", "poisonpiranha"],
+          ["boulder"],
+          ["firepiranhaplant", "firepiranha"],
+          ["charginchuck", "chuck"],
+        ];
+        const out = [];
+        aliases.forEach(al => {
+          const hit = captures.find(tok => al.indexOf(_pn(filterLabelFor(tok))) !== -1 || al.indexOf(_pn(tok)) !== -1);
+          if(hit) out.push(hit);
+        });
+        return { abilities: [], captures: out };
+      },
+      iconToken: () => {
+        const al = ["poisonpiranhaplant", "poisonpiranha"];
+        return captures.find(tok => al.indexOf(_pn(filterLabelFor(tok))) !== -1 || al.indexOf(_pn(tok)) !== -1) || null;
+      },
+    },
+  ];
+  const presetsEl = document.getElementById("filterPresets");
+  const presetBtns = {};
+  function presetIsActive(def){
+    const r = def.resolve();
+    const all = r.abilities.length + r.captures.length;
+    if(all === 0) return false;
+    return r.abilities.every(t => selectedAbilities.has(t)) && r.captures.every(t => selectedCaptures.has(t));
+  }
+  function updatePresetStates(){
+    PRESET_DEFS.forEach(def => {
+      const b = presetBtns[def.id];
+      if(b) b.classList.toggle("active", presetIsActive(def));
+    });
+  }
+  function applyPreset(def){
+    const r = def.resolve();
+    const turnOff = presetIsActive(def);
+    if(!turnOff && filterMode !== "cando"){
+      const tab = document.getElementById("filterModeCanDo");
+      if(tab) tab.click();
+    }
+    r.abilities.forEach(t => { if(turnOff) selectedAbilities.delete(t); else selectedAbilities.add(t); });
+    r.captures.forEach(t => { if(turnOff) selectedCaptures.delete(t); else selectedCaptures.add(t); });
+    hideSubPopup();
+    renderChips();
+    refreshOpenPanels();
+    updateFilterSummary();
+    renderGrid();
+  }
+  PRESET_DEFS.forEach(def => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "filter-preset";
+    b.title = def.label + " — marks these as Free (click again to undo)";
+    const ic = document.createElement("span");
+    ic.className = "preset-icon";
+    if(def.icon){
+      const img = document.createElement("img");
+      img.src = def.icon; img.alt = "";
+      img.onerror = function(){ ic.textContent = def.emoji; };
+      ic.appendChild(img);
+    } else {
+      const tok = def.iconToken ? def.iconToken() : null;
+      if(tok) ic.appendChild(makeFilterIconEl(tok, ""));
+      else ic.textContent = def.emoji;
+    }
+    b.appendChild(ic);
+    const lb = document.createElement("span");
+    lb.className = "preset-label";
+    lb.textContent = def.label;
+    b.appendChild(lb);
+    b.addEventListener("click", (e) => { e.stopPropagation(); applyPreset(def); });
+    presetsEl.appendChild(b);
+    presetBtns[def.id] = b;
+  });
 
   renderChips();
 }
@@ -7145,9 +7382,11 @@ function buildTierLanesFromBranches(branches){
 // .tier-stack/.tier-lane/.tier-pill/.option-chip classes the moon cards
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
-function renderReachTierLanes(tierLanes, disableCollapse){
+function renderReachTierLanes(tierLanes, disableCollapse, noun){
   const stack = document.createElement("div");
   stack.className = "tier-stack";
+  const hoisted = hoistedTokensFor(tierLanes);
+  const hoistSet = hoistedFormSet(hoisted);
   tierLanes.forEach(lane => {
     const laneEl = document.createElement("div");
     laneEl.className = "tier-lane " + lane.tier;
@@ -7161,10 +7400,11 @@ function renderReachTierLanes(tierLanes, disableCollapse){
     optsEl.className = "tier-options";
     lane.groups.forEach((andGroup, i) => {
       const chip = document.createElement("div");
-      const displayGroup = exemptedDisplayGroup(andGroup);
+      const preHoistGroup = exemptedDisplayGroup(andGroup);
+      const displayGroup = hoistSet.size ? preHoistGroup.filter(t => !hoistSet.has(t)) : preHoistGroup;
       if(displayGroup.length === 0){
         chip.className = "option-chip free-chip";
-        chip.textContent = "Free";
+        chip.textContent = (hoistSet.size && preHoistGroup.length > 0) ? "Nothing else" : "Free";
       } else {
         chip.className = "option-chip";
         appendAndGroupIcons(chip, displayGroup);
@@ -7183,7 +7423,7 @@ function renderReachTierLanes(tierLanes, disableCollapse){
     stack.appendChild(laneEl);
   });
   const totalOptions = tierLanes.reduce((sum, lane) => sum + lane.groups.length, 0);
-  return wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse);
+  return wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse), hoisted, noun || "node");
 }
 
 // Appends either a tiered requirement stack or a plain "Free" tag to
