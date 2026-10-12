@@ -2077,18 +2077,21 @@ function squash(str){
    LOGIC VIDEO AUTO-NAMING — the filename (no extension) an
    assets/logicvideos/ clip is expected to be saved under for one
    specific requirement branch on a moon card, so a clip can be dropped
-   in with zero manual mapping. Built from the moon's own name with any
-   trailing per-moon counter stripped (redundant here — the tier + the
-   branch's position within that tier already disambiguate multiple
+   in with zero manual mapping. Built from the moon's own full name,
+   INCLUDING any number in it (the number tells numbered moons apart; the
+   tier + the branch's position within that tier only disambiguate multiple
    routes on the same moon), squashed to lowercase/no-separators, then
    the tier key and the branch's 1-based position in that tier's lane
    appended directly with no separator.
    e.g. "Sand Kingdom Timer Challenge 3"'s 2nd casual branch ->
-   "sandkingdomtimerchallengecasual2"
+   "sandkingdomtimerchallenge3casual2"
    ========================================================= */
 function videoAutoName(moonName, tierKey, indexInTier){
-  const stripped = (moonName || "").replace(/\s+\d+\s*$/, "");
-  return squash(stripped) + tierKey + indexInTier;
+  // The number in a moon's own name is part of its identity ("Sand Kingdom
+  // Timer Challenge 3" is a different moon from "... 1"), so it stays in the
+  // name. The tier key starts with a letter, so "challenge3" + "casual" + "2"
+  // can never be confused with another moon's name or route number.
+  return squash(moonName || "") + tierKey + indexInTier;
 }
 
 /* =========================================================
@@ -6392,7 +6395,7 @@ function renderGrid(){
    Each route is wrapped in a lightweight pseudo-moon ({ isCheckpointNode,
    label, tierLanes, ... }) so the existing click-to-video / submit /
    approve machinery works unchanged. Its `name` is built to be unique
-   per kingdom + checkpoint (+ source) and to end in a non-digit, so
+   per kingdom + checkpoint (+ source) so
    videoAutoName() gives a stable file name such as
    "woodedkingdomironroadhalfwaypointcheckpointcasual1".
    ========================================================= */
@@ -8334,10 +8337,16 @@ const VIDEO_SUBMIT = {
   function buildMoonIndex(){
     const idx = new Map();
     const add = (kingdom, moon) => {
-      const key = squash((moon.name || "").replace(/\s+\d+\s*$/, ""));
-      if(!key) return;
-      if(!idx.has(key)) idx.set(key, []);
-      idx.get(key).push({ kingdom, moon });
+      const full = squash(moon.name || "");
+      if(!full) return;
+      if(!idx.has(full)) idx.set(full, []);
+      idx.get(full).push({ kingdom, moon });
+      // Clips uploaded before numbers were kept were named without them.
+      const legacy = squash((moon.name || "").replace(/\s+\d+\s*$/, ""));
+      if(legacy && legacy !== full){
+        if(!idx.has(legacy)) idx.set(legacy, []);
+        idx.get(legacy).push({ kingdom, moon });
+      }
     };
     try{ Object.keys(KINGDOMS).forEach(k => KINGDOMS[k].forEach(m => add(k, m))); }catch(e){ console.warn("[approve] moon index (moons) failed:", e); }
     try{
