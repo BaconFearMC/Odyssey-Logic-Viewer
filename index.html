@@ -6077,19 +6077,11 @@ function tokenIsSelected(tok){
 // token — ability or capture — appears anywhere in its requirements (any
 // OR-branch, any AND-slot).
 function moonMatchesUnlocks(moon){
-  const groups = moon.orGroups || [];
-  // Free moons have no requirements to match against, so they always pass
-  // through an active filter rather than being excluded by it.
-  if(groups.length === 0) return true;
-  // A branch made up entirely of always-unlocked ("optional") tokens gets
-  // stripped down to an empty group during parsing (see the
-  // ALWAYS_UNLOCKED_TOKENS check in parseMoon) — it's a fully free route
-  // that doesn't require unlocking anything. If ANY branch is like this,
-  // the moon is gettable with nothing selected at all, so it should never
-  // be hidden by an ability/capture filter — same treatment as a moon with
-  // zero groups. This is what was hiding e.g. Swim-only moons whenever any
-  // other filter chip was active.
-  if(groups.some(group => group.length === 0)) return true;
+  // Only moons that actually reference a selected Ability/Capture pass.
+  // Free moons (no requirements) and moons with a fully-free branch are NOT
+  // let through anymore — they don't use anything you picked, so they're
+  // excluded. (Always-unlocked tokens can't be selected in the picker, so a
+  // free branch can never be what matched.)
   const toks = moonTokens(moon);
   let any = false;
   selectedAbilities.forEach(t => { if(toks.has(t)) any = true; });
