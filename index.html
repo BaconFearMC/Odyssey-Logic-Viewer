@@ -1797,6 +1797,44 @@
   }
   .filter-subpopup{ flex-wrap:wrap; max-width:calc(100vw - 16px); }
   .filter-subpopup .filter-option-name{ white-space:nowrap; }
+
+  /* ---- Clear "what's selected" display ---------------------------------- */
+  #filterBars{ --mode-accent:var(--worldpeace); --mode-bg:rgba(79,214,176,0.10); }
+  #filterBars[data-filter-mode="unlocks"]{ --mode-accent:var(--gold); --mode-bg:rgba(230,194,0,0.10); }
+  #filterBars .filter-bar{ border-color:var(--mode-accent); border-left-width:5px; }
+  .filter-bar-chips{ flex-direction:column; align-items:flex-start; gap:6px; }
+  .filter-sel-caption{ font-size:12.5px; color:var(--mode-accent); letter-spacing:0.02em; text-align:left; }
+  .filter-sel-pills{ display:flex; flex-wrap:wrap; gap:6px; }
+  .filter-sel-pill{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:3px 8px 3px 3px;
+    background:var(--mode-bg);
+    border:2px solid var(--mode-accent);
+    color:var(--text);
+    font-family:inherit; font-size:12.5px; white-space:nowrap;
+    cursor:pointer;
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  }
+  .filter-sel-pill:hover{ background:rgba(255,77,94,0.18); border-color:var(--red); }
+  .filter-sel-pill .pill-icon{ width:34px; height:34px; display:inline-block; flex:0 0 auto; overflow:hidden; }
+  .filter-sel-pill .pill-icon > div, .filter-sel-pill .pill-icon img, .filter-sel-pill .pill-icon .icon-fallback{ width:100%; height:100%; object-fit:cover; display:block; border:none; }
+  .filter-sel-pill .pill-x{ color:var(--text-dim); font-size:16px; line-height:1; }
+  .filter-sel-pill:hover .pill-x{ color:var(--red); }
+  /* Mode tabs: active one is unmistakable, inactive one is dimmed. */
+  .filter-mode-tab{ opacity:0.6; }
+  .filter-mode-tab.active{ opacity:1; border-width:3px; }
+  #filterModeCanDo.active{ background:rgba(79,214,176,0.14); border-color:var(--worldpeace); }
+  #filterModeCanDo.active .filter-mode-title{ color:var(--worldpeace); }
+  #filterModeCanDo.active{ color:var(--worldpeace); }
+  .filter-mode-tab.active::after{
+    content:"ACTIVE"; flex:0 0 auto; margin-left:auto;
+    font-size:9.5px; letter-spacing:0.08em; padding:2px 7px; border-radius:9px;
+    background:currentColor; color:inherit;
+  }
+  .filter-mode-tab.active::after{ background:none; border:1px solid currentColor; }
+  /* Summary banner under the filters */
+  .filter-summary{ font-size:14px; padding:12px 16px; border:2px solid var(--mode-accent); border-left-width:6px; background:var(--mode-bg); color:var(--text); }
+  @media (max-width:640px){ .filter-sel-caption{ font-size:11.5px; } }
 </style>
 </head>
 <body>
@@ -6861,6 +6899,7 @@ function updateFilterSummary(){
     return;
   }
   const exempt = filterMode === "cando";
+  summaryEl.dataset.mode = filterMode;
   if(requireAllActive()){
     summaryEl.style.display = "block";
     summaryEl.textContent = "🎮 Preset: only moons with a route that needs ALL of " + joinWithAnd(abilityNames.concat(captureNames)) + " together.";
@@ -7003,20 +7042,64 @@ function setupMergedFilterBar(tokens){
   function renderChips(){
     unlockAllSet = null; // any manual change drops the preset's "all of these" rule
     if(typeof updatePresetStates === "function") updatePresetStates();
+    drawChips();
+  }
+  // Draws the selection strip for the CURRENT tab. Safe to call on a tab
+  // switch (it doesn't touch the preset rule).
+  function drawChips(){
     chipsEl.innerHTML = "";
     selectedAbilities.delete("TimerChallenge"); // menu-only tile, never a filter itself
-    if(selectedAbilities.size === 0 && selectedCaptures.size === 0){
+    const exempt = filterMode === "cando";
+    const none = selectedAbilities.size === 0 && selectedCaptures.size === 0;
+    const cap = document.createElement("div");
+    cap.className = "filter-sel-caption";
+    const allMode = typeof requireAllActive === "function" && requireAllActive();
+    cap.textContent = exempt
+      ? "✅ Marked as Free (hidden from the logic):"
+      : (allMode ? "🔓 Showing moons with a route needing ALL of:" : "🔓 Showing moons that use ANY of:");
+    chipsEl.appendChild(cap);
+    if(none){
       const empty = document.createElement("span");
       empty.className = "filter-bar-empty";
-      empty.textContent = "Any Ability / Capture";
+      empty.textContent = exempt
+        ? "Nothing yet — open Filters and pick what you already have."
+        : "Nothing yet — open Filters and pick Abilities/Captures to look up.";
       chipsEl.appendChild(empty);
       clearBtn.style.display = "none";
       return;
     }
-    abilities.forEach(token => { if(token !== "TimerChallenge" && (!isSubTokenDuplicate(token) || ABILITY_SUBTOKEN_PARENT[token]) && selectedAbilities.has(token)) chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip")); });
-    captures.forEach(token => { if(selectedCaptures.has(token)) chipsEl.appendChild(makeFilterIconEl(token, "filter-bar-chip")); });
+    const pills = document.createElement("div");
+    pills.className = "filter-sel-pills";
+    const addPill = (token, set) => {
+      const pill = document.createElement("button");
+      pill.type = "button";
+      pill.className = "filter-sel-pill";
+      pill.title = "Click to remove " + filterLabelFor(token);
+      const ic = document.createElement("span");
+      ic.className = "pill-icon";
+      ic.appendChild(makeFilterIconEl(token, ""));
+      pill.appendChild(ic);
+      const nm = document.createElement("span");
+      nm.className = "pill-name";
+      nm.textContent = filterLabelFor(token);
+      pill.appendChild(nm);
+      const x = document.createElement("span");
+      x.className = "pill-x";
+      x.textContent = "×";
+      pill.appendChild(x);
+      pill.addEventListener("click", (e) => {
+        e.stopPropagation();
+        [token, ...(ABILITY_SUBTOKEN_PARENT[token] ? subTwinsOf(token) : [])].forEach(k => set.delete(k));
+        renderChips(); refreshOpenPanels(); updateFilterSummary(); renderGrid();
+      });
+      pills.appendChild(pill);
+    };
+    abilities.forEach(token => { if(token !== "TimerChallenge" && (!isSubTokenDuplicate(token) || ABILITY_SUBTOKEN_PARENT[token]) && selectedAbilities.has(token)) addPill(token, selectedAbilities); });
+    captures.forEach(token => { if(selectedCaptures.has(token)) addPill(token, selectedCaptures); });
+    chipsEl.appendChild(pills);
     clearBtn.style.display = "";
   }
+  window.__drawFilterChips = drawChips;
 
   function renderOptions(kind, tokenList, selectedSet, gridEl, query){
     const q = (query || "").trim().toLowerCase();
@@ -7193,7 +7276,7 @@ function setupMergedFilterBar(tokens){
     hideSubPopup();
     renderChips();
     refreshOpenPanels();
-    if(def.exclusive && !turnOff) unlockAllSet = new Set(r.abilities.concat(r.captures));
+    if(def.exclusive && !turnOff){ unlockAllSet = new Set(r.abilities.concat(r.captures)); drawChips(); }
     updateFilterSummary();
     renderGrid();
   }
@@ -7250,6 +7333,7 @@ function setupFilterModeTabs(){
       filterMode = tab.dataset.mode;
       const fb = document.getElementById("filterBars"); if(fb) fb.dataset.filterMode = filterMode;
       tabs.forEach(t => t.classList.toggle("active", t === tab));
+      if(window.__drawFilterChips) window.__drawFilterChips();
       updateFilterSummary();
       renderGrid();
     });
