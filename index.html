@@ -146,6 +146,16 @@
     color:#1e1035;
   }
   #viewModeToggle{ right:24px; top:24px; }
+  #filterMoonsToggle{ right:24px; top:66px; }
+  #filterMoonsToggle.active{ background:var(--gold); border-color:#8a7500; color:#1b1c1f; }
+  #filterMoonsPanel{
+    position:fixed; right:24px; top:108px; z-index:22; display:none; flex-direction:column; gap:6px;
+    background:var(--bg-panel); border:2px solid var(--border); padding:10px 12px; min-width:190px;
+    box-shadow:3px 4px 0 var(--ink);
+  }
+  #filterMoonsPanel.open{ display:flex; }
+  #filterMoonsPanel label{ display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:700; color:var(--text); }
+  #filterMoonsPanel input{ width:16px; height:16px; accent-color:var(--gold); cursor:pointer; }
   #viewModeToggle.active{
     background:var(--gold);
     border-color:#8a7500;
@@ -1747,6 +1757,8 @@
     h1{ font-size:18px; padding:10px 18px; }
     .corner-btn{ font-size:11.5px; padding:6px 11px; }
     #viewModeToggle{ top:16px; right:12px; }
+    #filterMoonsToggle{ top:58px; right:12px; }
+    #filterMoonsPanel{ top:100px; right:12px; }
     #searchToggle{ top:16px; left:12px; }
     #glitchToggle{ top:58px; right:12px; }
   }
@@ -1852,6 +1864,18 @@
   </span>
   <span id="viewModeToggleLabel">By Moon</span>
 </button>
+
+<button class="corner-btn" id="filterMoonsToggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Filter moons by area type">
+  <span class="icon-svg" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4Z"/></svg>
+  </span>
+  <span>Filter Moons</span>
+</button>
+<div id="filterMoonsPanel" role="group" aria-label="Filter moons">
+  <label><input type="checkbox" data-mf="overworld" checked> Overworld</label>
+  <label><input type="checkbox" data-mf="subarea" checked> Subarea Moons</label>
+  <label><input type="checkbox" data-mf="moonrock" checked> Moon Rock Moons</label>
+</div>
 
 <div id="debugPanel" role="menu" aria-label="Debug options">
 <button class="corner-btn" id="unmarkedToggle" type="button" aria-label="Show only unmarked logic moons">
@@ -3051,6 +3075,103 @@ function buildCheckpointLookup(nodes, edges){
 }
 
 /* =========================================================
+   SUBAREA DETECTION + EXEMPTIONS
+   A moon counts as a Subarea moon when the node it hangs off is in a
+   subarea stage. Detection is the data flag (area_scope === "subarea")
+   OR, as a fallback for nodes whose flag is missing/wrong (e.g. Through
+   the Freezing Waterway's far-side pipe), any node sitting in a stage that
+   is linked to the overworld by a substage_entrance but is not the
+   kingdom's home stage.
+
+   SUBAREA_EXEMPTIONS lists areas that must NOT be treated as subareas, so
+   their moons list under Overworld instead. SYNTAX, one string per rule:
+
+       "<Kingdom>: <words>"
+
+     <Kingdom>  a kingdom name ("Cap Kingdom", "Dark Side", "Snow"...), or *
+                to match in any kingdom.
+     <words>    space-separated words. A rule matches when EVERY word appears
+                (any case, punctuation ignored) in a node's stage display
+                name, node display name, raw stage key or entrance id. Use
+                a|b for alternatives ("hariet|harriet"). Leave out
+                "Entrance"/"Exit": a match exempts the whole stage, so both
+                ends of a pipe/door are covered.
+   Unmatched rules are reported in the console.
+   ========================================================= */
+const SUBAREA_EXEMPTIONS = [
+    // Sand Kingdom
+  "Sand Kingdom: Underground Ruins",
+  "Sand Kingdom: Deepest Underground",
+
+  // Metro Kingdom
+  "Metro Kingdom: New Donk City Tower",
+
+  // Seaside Kingdom
+  "Seaside Kingdom: Underwater Tunnel",
+
+  // Wooded Kingdom
+  "Wooded Kingdom: Secret Flower Field",
+  "Wooded Kingdom: Sky Garden Tower",
+
+  // Moon Kingdom
+  "Moon Kingdom: Underground Caverns",
+
+  // Snow Kingdom
+  "Snow Kingdom: Shiveria Town",
+  "Snow Kingdom: Class A Lobby",
+];
+const SUBAREA_CTX = {}; // kingdom -> { homeStage, subStages:Set, exemptStages:Set }
+function _saNorm(x){ return String(x == null ? "" : x).toLowerCase().replace(/[^a-z0-9|]+/g, " ").trim(); }
+function buildSubareaContext(kingdomName, nodes){
+  nodes = nodes || [];
+  const counts = {};
+  nodes.forEach(n => { if(n.node_type === "home_entrance" && n.stage) counts[n.stage] = (counts[n.stage] || 0) + 1; });
+  if(!Object.keys(counts).length) nodes.forEach(n => { if(n.stage && n.area_scope !== "subarea") counts[n.stage] = (counts[n.stage] || 0) + 1; });
+  const homeStage = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0] || null;
+  const subStages = new Set(nodes.filter(n => n.node_type === "substage_entrance" && n.stage && n.stage !== homeStage).map(n => n.stage));
+  const byEnt = {};
+  nodes.forEach(n => { if(n.entrance_id && (n.node_type === "home_entrance" || n.node_type === "substage_entrance")) (byEnt[n.entrance_id] = byEnt[n.entrance_id] || []).push(n); });
+  const rules = [];
+  SUBAREA_EXEMPTIONS.forEach(str => {
+    const i = String(str).indexOf(":");
+    if(i < 0) return;
+    const k = str.slice(0, i).trim();
+    const kn = k === "*" ? "*" : resolveKingdomAlias(k);
+    if(kn !== "*" && kn !== kingdomName) return;
+    const words = _saNorm(str.slice(i + 1)).split(" ").filter(Boolean).map(w => w.split("|").filter(Boolean));
+    if(words.length) rules.push({ str, words, hit: false });
+  });
+  const exemptStages = new Set();
+  nodes.forEach(n => {
+    const isEntrance = n.node_type === "home_entrance" || n.node_type === "substage_entrance";
+    if(!isEntrance && !(n.stage && n.stage !== homeStage)) return;
+    const hay = _saNorm([n.stage_display_name, n.display_name, n.stage, n.entrance_id].join(" ")).replace(/\|/g, " ");
+    rules.forEach(r => {
+      if(!r.words.every(alts => alts.some(w => hay.indexOf(w) !== -1))) return;
+      r.hit = true;
+      if(n.stage && n.stage !== homeStage) exemptStages.add(n.stage);
+      (byEnt[n.entrance_id] || []).forEach(o => { if(o.stage && o.stage !== homeStage) exemptStages.add(o.stage); });
+    });
+  });
+  const promoted = new Set(nodes.filter(n => n.stage && subStages.has(n.stage) && n.area_scope !== "subarea" && !exemptStages.has(n.stage)).map(n => n.stage_display_name || n.stage));
+  SUBAREA_CTX[kingdomName] = { homeStage, subStages, exemptStages };
+  const unmatched = rules.filter(r => !r.hit).map(r => r.str);
+  console.log(`[${kingdomName}] subarea ctx: home="${homeStage}", exempt stages: [${[...exemptStages].join(", ")}]` + (promoted.size ? `, fallback-detected subareas: [${[...promoted].join(", ")}]` : ""));
+  if(unmatched.length) console.log(`[${kingdomName}] exemption rules with no match here: ${unmatched.join(" | ")}`);
+}
+// -> { name, stage } when `node` is in a (non-exempt) subarea, else null.
+function subareaInfoFor(node, kingdomName){
+  if(!node) return null;
+  const ctx = SUBAREA_CTX[kingdomName] || {};
+  const stage = node.stage;
+  if(stage && ctx.exemptStages && ctx.exemptStages.has(stage)) return null;
+  if(node.area_scope === "subarea" || (stage && ctx.subStages && ctx.subStages.has(stage) && stage !== ctx.homeStage)){
+    return { name: node.stage_display_name || stage, stage };
+  }
+  return null;
+}
+
+/* =========================================================
    MOON PARSER — turns one moonAccess row into the render
    shape: { name, orGroups, subarea, badges, checkpoint }
    ========================================================= */
@@ -3172,9 +3293,10 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
   let subarea = null;
   let subareaStage = null; // raw stage key (e.g. "WaterTubeExStage"), not the display name — used to find sibling entrances
   const node = nodeMap[row.from_node_id];
-  if(node && node.area_scope === "subarea"){
-    subarea = node.stage_display_name;
-    subareaStage = node.stage;
+  const subInfo = subareaInfoFor(node, kingdomName);
+  if(subInfo){
+    subarea = subInfo.name;
+    subareaStage = subInfo.stage;
   }
   const subareaNodeId = subarea ? row.from_node_id : null;
 
@@ -4285,7 +4407,7 @@ function moonPlacement(row){
 
 function computeEntranceReqs(row, ownMoon, ws, nodeMap, kingdomName){
   const node = nodeMap[row.from_node_id];
-  if(!node || node.area_scope !== "subarea") return null;
+  if(!node || !subareaInfoFor(node, kingdomName)) return null;
   const entrances = subareaEntrances(ws.logicNodes, node.stage);
   // 1 pipe (one-entrance subareas like Dinosaur Nest) or an unambiguous
   // Entrance Pipe + Exit Pipe pair. Anything busier is skipped.
@@ -4420,6 +4542,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
   const { reachExprs: nodeReachExpr, reachBranches: nodeReachBranches } = buildNodeReachIndex(ws.logicNodes || [], ws.routeEdges || []);
 
+  buildSubareaContext(kingdomName, ws.logicNodes || []);
   const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => {
     // A moon shows ONLY its own requirement. The cost of reaching its
     // checkpoint/custom node/subarea pipe is node info and lives in the
@@ -5793,7 +5916,8 @@ function buildMovementOptions(moon, boxed){
   // require advanced or expert tech.
   const stack = document.createElement("div");
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
-  const hoisted = hoistedTokensFor(moon.tierLanes);
+  // Darker Side moons never use the shared "This moon requires X. Beyond this…" header.
+  const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(moon.tierLanes);
   const hoistSet = hoistedFormSet(hoisted);
 
   moon.tierLanes.forEach(lane => {
@@ -6302,6 +6426,15 @@ function wrapWithHoistHeader(body, hoisted, noun){
   return wrap;
 }
 
+// Moon-type filter (Filter Moons button). Subarea takes priority over Moon Rock;
+// anything else is Overworld. Checkpoints/Custom Nodes/Paintings follow Overworld.
+const moonFilters = { overworld:true, subarea:true, moonrock:true };
+function moonCategory(m){
+  if(m.subarea) return "subarea";
+  return (m.badges || []).includes("moonRock") ? "moonrock" : "overworld";
+}
+function moonFiltersActive(){ return !(moonFilters.overworld && moonFilters.subarea && moonFilters.moonrock); }
+
 function renderGrid(){
   const name = KINGDOM_ORDER[currentKingdomIndex];
   const grid = document.getElementById("grid");
@@ -6309,10 +6442,18 @@ function renderGrid(){
   const emptyState = document.getElementById("emptyState");
   grid.innerHTML = "";
 
-  renderPaintingReqs(name);
-  renderCheckpointReqs(name);
-  renderCheckpointReqs(name, "custom_place");
+  if(moonFilters.overworld){
+    renderPaintingReqs(name);
+    renderCheckpointReqs(name);
+    renderCheckpointReqs(name, "custom_place");
+  } else {
+    ["paintingReqs", "checkpointReqs", "customNodeReqs"].forEach(id => {
+      const el = document.getElementById(id);
+      if(el){ el.innerHTML = ""; el.style.display = "none"; }
+    });
+  }
   let moons = KINGDOMS[name] || [];
+  if(moonFiltersActive()) moons = moons.filter(m => moonFilters[moonCategory(m)]);
   if(unmarkedMode) moons = moons.filter(isMoonUnmarked);
   // "Hidden" used to drop a moon entirely the instant ANY one of its
   // OR-branches was glitched-tier — even when that same moon also had a
@@ -6343,13 +6484,15 @@ function renderGrid(){
     moons = applyVideoFilter(moons);
   }
 
-  const filtering = unmarkedMode || glitchMode !== "all" || tokenGridFiltering || videoMode !== "all";
+  const filtering = moonFiltersActive() || unmarkedMode || glitchMode !== "all" || tokenGridFiltering || videoMode !== "all";
 
   if(filtering && moons.length === 0){
     grid.style.display = "none";
     checkpointGroups.style.display = "none";
     emptyState.style.display = "block";
-    if(unmarkedMode){
+    if(moonFiltersActive() && !unmarkedMode && glitchMode === "hide" && !tokenGridFiltering && videoMode === "all"){
+      emptyState.textContent = "No moons in this kingdom match the Filter Moons selection.";
+    } else if(unmarkedMode){
       emptyState.textContent = "No Marked Moons! This kingdom has fully completed levels of Logic for All Moons!";
     } else if(glitchMode === "only"){
       emptyState.textContent = "No Glitched-logic moons in this kingdom!";
@@ -6808,6 +6951,23 @@ document.getElementById("videoToggle").addEventListener("click", () => {
   document.getElementById("videoToggleLabel").textContent = VIDEO_LABELS[videoMode];
   renderGrid();
 });
+
+(function(){
+  const btn = document.getElementById("filterMoonsToggle");
+  const panel = document.getElementById("filterMoonsPanel");
+  const sync = () => {
+    btn.classList.toggle("active", moonFiltersActive());
+    btn.setAttribute("aria-expanded", panel.classList.contains("open") ? "true" : "false");
+  };
+  btn.addEventListener("click", (e) => { e.stopPropagation(); panel.classList.toggle("open"); sync(); });
+  panel.addEventListener("click", (e) => e.stopPropagation());
+  document.addEventListener("click", () => { panel.classList.remove("open"); sync(); });
+  panel.querySelectorAll("input[data-mf]").forEach(cb => cb.addEventListener("change", () => {
+    moonFilters[cb.getAttribute("data-mf")] = cb.checked;
+    sync();
+    renderGrid();
+  }));
+})();
 
 document.getElementById("viewModeToggle").addEventListener("click", () => {
   viewMode = viewMode === "moon" ? "checkpoint" : "moon";
