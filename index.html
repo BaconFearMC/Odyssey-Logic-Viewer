@@ -1698,6 +1698,38 @@
     text-align:left;
   }
   .filter-section-heading:first-child{ margin-top:4px; }
+  /* Bonus Abilities row: heading on the left, Shown toggle on the top right. */
+  .filter-section-head-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin:14px 0 4px;
+  }
+  .filter-section-head-row .filter-section-heading{ margin:0; }
+  .bonus-toggle{
+    display:inline-flex; align-items:center; gap:8px;
+    background:none; border:none; cursor:pointer; padding:2px 0 2px 8px;
+    color:var(--text-dim);
+    font-family:"Fredoka One", 'Segoe UI', system-ui, sans-serif;
+    font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+  }
+  .bonus-toggle .bonus-switch{
+    position:relative; width:34px; height:18px; border-radius:9px;
+    background:var(--bg); border:2px solid var(--border);
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .bonus-toggle .bonus-switch::after{
+    content:""; position:absolute; top:1px; left:1px; width:12px; height:12px;
+    border-radius:50%; background:var(--text-dim);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .bonus-toggle[aria-pressed="true"]{ color:var(--gold); }
+  .bonus-toggle[aria-pressed="true"] .bonus-switch{ border-color:var(--gold); background:rgba(242,194,0,0.18); }
+  .bonus-toggle[aria-pressed="true"] .bonus-switch::after{ transform:translateX(16px); background:var(--gold); }
+  #bonusFilterSection[hidden]{ display:none; }
+  #bonusFilterGrid{
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:12px 10px; max-height:none; overflow-y:visible; margin-top:8px;
+  }
+  #bonusFilterGrid[hidden]{ display:none; }
   /* Live summary sentence shown under the merged filter once at least
      one Ability/Capture is selected, e.g. "Exempt the Abilities
      SideFlip and Roll. Removed from the logic below." */
@@ -1997,6 +2029,15 @@
       <div class="filter-section-heading">Abilities</div>
       <input type="text" class="filter-bar-search" id="abilityFilterSearch" placeholder="Search abilities…" autocomplete="off">
       <div class="filter-bar-grid" id="abilityFilterGrid"></div>
+      <div id="bonusFilterSection" hidden>
+        <div class="filter-section-head-row">
+          <div class="filter-section-heading">Bonus Abilities</div>
+          <button type="button" class="bonus-toggle" id="bonusFilterToggle" aria-pressed="false" title="Show or hide Bonus Abilities">
+            <span class="bonus-toggle-text">Shown</span><span class="bonus-switch" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="filter-bar-grid" id="bonusFilterGrid" hidden></div>
+      </div>
       <div class="filter-section-heading">Captures</div>
       <input type="text" class="filter-bar-search" id="captureFilterSearch" placeholder="Search captures…" autocomplete="off">
       <div class="filter-bar-grid" id="captureFilterGrid"></div>
@@ -2500,9 +2541,14 @@ const KINGDOM_ACCESS_TOKEN_TO_KINGDOM = {
 // as "Free" instead of showing the token's icon. Populated per-kingdom-file
 // load from that file's logicTokens rows (see mergeTokensIntoManifest).
 const ALWAYS_UNLOCKED_TOKENS = {};
+// Opt-in "Bonus Abilities" (Wallet, Paintings, Odyssey Travel, ...). Any
+// ability token whose logicTokens notes mention "Bonus Abilities" is added
+// here on load, so new ones land in the Bonus Abilities row automatically.
+const BONUS_ABILITY_TOKENS = {};
 
 function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
+    if(t.token_type === "ability" && /bonus abilit/i.test(String(t.notes || ""))) BONUS_ABILITY_TOKENS[t.token] = true;
     const truthy = t.always_unlocked === true || t.always_unlocked === 1 ||
       /^(true|1|yes)$/i.test(String(t.always_unlocked).trim());
     // Jaxi / Bike / RocketFlower are "override prop" captures: the raw
@@ -7200,6 +7246,25 @@ function setupMergedFilterBar(tokens){
   const abilitySearchEl = document.getElementById("abilityFilterSearch");
   const captureSearchEl = document.getElementById("captureFilterSearch");
   const abilityGridEl = document.getElementById("abilityFilterGrid");
+  const bonusSectionEl = document.getElementById("bonusFilterSection");
+  const bonusGridEl = document.getElementById("bonusFilterGrid");
+  const bonusToggleEl = document.getElementById("bonusFilterToggle");
+  let bonusShown = false;
+  const mainAbilities = () => abilities.filter(t => !BONUS_ABILITY_TOKENS[t]);
+  const bonusAbilities = () => abilities.filter(t => BONUS_ABILITY_TOKENS[t]);
+  // Draws the main Abilities grid plus the separate Bonus Abilities row.
+  function renderAbilityGrids(){
+    renderOptions("ability", mainAbilities(), selectedAbilities, abilityGridEl, abilitySearchEl.value);
+    const bonus = bonusAbilities();
+    bonusSectionEl.hidden = bonus.length === 0;
+    bonusToggleEl.setAttribute("aria-pressed", bonusShown ? "true" : "false");
+    bonusGridEl.hidden = !bonusShown;
+    if(bonus.length && bonusShown){
+      renderOptions("ability", bonus, selectedAbilities, bonusGridEl, abilitySearchEl.value);
+    } else {
+      bonusGridEl.innerHTML = "";
+    }
+  }
   const captureGridEl = document.getElementById("captureFilterGrid");
 
   function renderChips(){
@@ -7343,7 +7408,7 @@ function setupMergedFilterBar(tokens){
 
   function refreshOpenPanels(){
     if(!barEl.classList.contains("open")) return;
-    renderOptions("ability", abilities, selectedAbilities, abilityGridEl, abilitySearchEl.value);
+    renderAbilityGrids();
     renderOptions("capture", captures, selectedCaptures, captureGridEl, captureSearchEl.value);
   }
 
@@ -7361,7 +7426,12 @@ function setupMergedFilterBar(tokens){
     updateFilterSummary();
     renderGrid();
   });
-  abilitySearchEl.addEventListener("input", () => renderOptions("ability", abilities, selectedAbilities, abilityGridEl, abilitySearchEl.value));
+  abilitySearchEl.addEventListener("input", renderAbilityGrids);
+  bonusToggleEl.addEventListener("click", (e) => {
+    e.stopPropagation();
+    bonusShown = !bonusShown;
+    renderAbilityGrids();
+  });
   abilitySearchEl.addEventListener("click", (e) => e.stopPropagation());
   captureSearchEl.addEventListener("input", () => renderOptions("capture", captures, selectedCaptures, captureGridEl, captureSearchEl.value));
   captureSearchEl.addEventListener("click", (e) => e.stopPropagation());
