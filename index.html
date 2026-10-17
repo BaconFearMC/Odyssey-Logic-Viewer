@@ -1698,32 +1698,36 @@
     text-align:left;
   }
   .filter-section-heading:first-child{ margin-top:4px; }
-  /* Bonus Abilities row: heading on the left, Shown toggle on the top right. */
-  .filter-section-head-row{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    margin:14px 0 4px;
+  /* Bonus Abilities: a bordered card. Left = title + a plain-language status
+     line; right = a labelled Off / On switch that turns them on or off in the
+     logic itself (off = they never appear as requirements anywhere). */
+  #bonusFilterSection{
+    margin-top:16px; padding:10px 12px 12px;
+    border:2px dashed var(--border);
+    transition:border-color .15s ease, background .15s ease;
   }
-  .filter-section-head-row .filter-section-heading{ margin:0; }
-  .bonus-toggle{
-    display:inline-flex; align-items:center; gap:8px;
-    background:none; border:none; cursor:pointer; padding:2px 0 2px 8px;
-    color:var(--text-dim);
+  #bonusFilterSection.on{ border-style:solid; border-color:var(--gold); background:rgba(242,194,0,0.05); }
+  .bonus-head{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  .bonus-head-text{ min-width:0; flex:1 1 240px; text-align:left; }
+  .bonus-head-text .filter-section-heading{ margin:0; }
+  .bonus-status{
+    margin:5px 0 0 12px; font-size:12.5px; line-height:1.35; color:var(--text-dim);
+  }
+  .bonus-status b{ color:var(--text); }
+  .bonus-seg{
+    display:inline-flex; flex:0 0 auto; border:2px solid var(--border);
+    background:var(--bg); padding:2px; gap:2px;
+  }
+  .bonus-seg-btn{
+    border:none; cursor:pointer; padding:6px 16px; min-width:56px;
+    background:none; color:var(--text-dim);
     font-family:"Fredoka One", 'Segoe UI', system-ui, sans-serif;
-    font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    font-size:13px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    transition:background .12s ease, color .12s ease;
   }
-  .bonus-toggle .bonus-switch{
-    position:relative; width:34px; height:18px; border-radius:9px;
-    background:var(--bg); border:2px solid var(--border);
-    transition:background .15s ease, border-color .15s ease;
-  }
-  .bonus-toggle .bonus-switch::after{
-    content:""; position:absolute; top:1px; left:1px; width:12px; height:12px;
-    border-radius:50%; background:var(--text-dim);
-    transition:transform .15s ease, background .15s ease;
-  }
-  .bonus-toggle[aria-pressed="true"]{ color:var(--gold); }
-  .bonus-toggle[aria-pressed="true"] .bonus-switch{ border-color:var(--gold); background:rgba(242,194,0,0.18); }
-  .bonus-toggle[aria-pressed="true"] .bonus-switch::after{ transform:translateX(16px); background:var(--gold); }
+  .bonus-seg-btn:hover{ color:var(--text); }
+  .bonus-seg-btn[aria-pressed="true"][data-on="0"]{ background:var(--border); color:var(--text); }
+  .bonus-seg-btn[aria-pressed="true"][data-on="1"]{ background:var(--gold); color:#1b1b1b; }
   #bonusFilterSection[hidden]{ display:none; }
   #bonusFilterGrid{
     display:flex; flex-wrap:wrap; justify-content:center;
@@ -2030,11 +2034,15 @@
       <input type="text" class="filter-bar-search" id="abilityFilterSearch" placeholder="Search abilities…" autocomplete="off">
       <div class="filter-bar-grid" id="abilityFilterGrid"></div>
       <div id="bonusFilterSection" hidden>
-        <div class="filter-section-head-row">
-          <div class="filter-section-heading">Bonus Abilities</div>
-          <button type="button" class="bonus-toggle" id="bonusFilterToggle" aria-pressed="false" title="Show or hide Bonus Abilities">
-            <span class="bonus-toggle-text">Shown</span><span class="bonus-switch" aria-hidden="true"></span>
-          </button>
+        <div class="bonus-head">
+          <div class="bonus-head-text">
+            <div class="filter-section-heading">Bonus Abilities</div>
+            <div class="bonus-status" id="bonusFilterStatus"></div>
+          </div>
+          <div class="bonus-seg" role="group" aria-label="Use Bonus Abilities in the logic">
+            <button type="button" class="bonus-seg-btn" data-on="0" aria-pressed="true">Off</button>
+            <button type="button" class="bonus-seg-btn" data-on="1" aria-pressed="false">On</button>
+          </div>
         </div>
         <div class="filter-bar-grid" id="bonusFilterGrid" hidden></div>
       </div>
@@ -2545,6 +2553,19 @@ const ALWAYS_UNLOCKED_TOKENS = {};
 // ability token whose logicTokens notes mention "Bonus Abilities" is added
 // here on load, so new ones land in the Bonus Abilities row automatically.
 const BONUS_ABILITY_TOKENS = {};
+// Whether Bonus Abilities count in the logic. Off (default): every bonus token
+// is treated as Free, so it never shows as a requirement on any moon, node,
+// checkpoint or filter result. On: they behave like any other ability.
+let BONUS_ENABLED = false;
+function syncBonusFreeState(){
+  Object.keys(BONUS_ABILITY_TOKENS).forEach(tok => {
+    if(BONUS_ENABLED) delete ALWAYS_UNLOCKED_TOKENS[tok];
+    else ALWAYS_UNLOCKED_TOKENS[tok] = true;
+  });
+}
+// Raw file data per kingdom, kept so the logic can be rebuilt when the
+// Bonus Abilities switch changes.
+const KINGDOM_SOURCES = {};
 
 function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
@@ -2658,7 +2679,7 @@ function buildFilterLists(){
     // Explicit force-include always wins, even if the real loaded logicTokens
     // row happens to mark this token always_unlocked or otherwise excluded —
     // Bike/Jaxi/RocketFlower/etc. must always surface as filter options.
-    if(FORCE_ABILITY_FILTER_TOKENS[token]){
+    if(FORCE_ABILITY_FILTER_TOKENS[token] || BONUS_ABILITY_TOKENS[token]){
       abilities.push(token);
       return;
     }
@@ -4569,6 +4590,8 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   // field says. Manual file-picker loads fall back to the file's own field.
   const kingdomName = forcedName || fileData.kingdom || sourceLabel;
   mergeTokensIntoManifest(ws.logicTokens);
+  syncBonusFreeState();
+  KINGDOM_SOURCES[kingdomName] = { fileData, sourceLabel, forcedName };
 
   // Rebuild everything from THIS load's data every time — never reuse a
   // nodeMap/checkpointLookup left over from a previous load of this same
@@ -7248,8 +7271,8 @@ function setupMergedFilterBar(tokens){
   const abilityGridEl = document.getElementById("abilityFilterGrid");
   const bonusSectionEl = document.getElementById("bonusFilterSection");
   const bonusGridEl = document.getElementById("bonusFilterGrid");
-  const bonusToggleEl = document.getElementById("bonusFilterToggle");
-  let bonusShown = false;
+  const bonusStatusEl = document.getElementById("bonusFilterStatus");
+  const bonusSegBtns = bonusSectionEl.querySelectorAll(".bonus-seg-btn");
   const mainAbilities = () => abilities.filter(t => !BONUS_ABILITY_TOKENS[t]);
   const bonusAbilities = () => abilities.filter(t => BONUS_ABILITY_TOKENS[t]);
   // Draws the main Abilities grid plus the separate Bonus Abilities row.
@@ -7257,9 +7280,14 @@ function setupMergedFilterBar(tokens){
     renderOptions("ability", mainAbilities(), selectedAbilities, abilityGridEl, abilitySearchEl.value);
     const bonus = bonusAbilities();
     bonusSectionEl.hidden = bonus.length === 0;
-    bonusToggleEl.setAttribute("aria-pressed", bonusShown ? "true" : "false");
-    bonusGridEl.hidden = !bonusShown;
-    if(bonus.length && bonusShown){
+    bonusSectionEl.classList.toggle("on", BONUS_ENABLED);
+    bonusSegBtns.forEach(b => b.setAttribute("aria-pressed", (b.dataset.on === "1") === BONUS_ENABLED ? "true" : "false"));
+    const names = bonus.map(filterLabelFor).join(", ");
+    bonusStatusEl.innerHTML = BONUS_ENABLED
+      ? "<b>On</b> — " + names + " now count as requirements in the logic."
+      : "<b>Off</b> — " + names + " are ignored: they won't appear as requirements anywhere. Turn on to include them.";
+    bonusGridEl.hidden = !BONUS_ENABLED;
+    if(bonus.length && BONUS_ENABLED){
       renderOptions("ability", bonus, selectedAbilities, bonusGridEl, abilitySearchEl.value);
     } else {
       bonusGridEl.innerHTML = "";
@@ -7427,11 +7455,20 @@ function setupMergedFilterBar(tokens){
     renderGrid();
   });
   abilitySearchEl.addEventListener("input", renderAbilityGrids);
-  bonusToggleEl.addEventListener("click", (e) => {
+  bonusSegBtns.forEach(btn => btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    bonusShown = !bonusShown;
-    renderAbilityGrids();
-  });
+    const want = btn.dataset.on === "1";
+    if(want === BONUS_ENABLED) return;
+    BONUS_ENABLED = want;
+    // Bonus abilities that are switched off no longer exist in the logic, so
+    // they can't stay selected as filters either.
+    if(!BONUS_ENABLED) bonusAbilities().forEach(t => selectedAbilities.delete(t));
+    applyBonusSetting();
+    renderChips();
+    refreshOpenPanels();
+    updateFilterSummary();
+    renderGrid();
+  }));
   abilitySearchEl.addEventListener("click", (e) => e.stopPropagation());
   captureSearchEl.addEventListener("input", () => renderOptions("capture", captures, selectedCaptures, captureGridEl, captureSearchEl.value));
   captureSearchEl.addEventListener("click", (e) => e.stopPropagation());
@@ -8934,6 +8971,18 @@ const VIDEO_SUBMIT = {
     }
   }
 })();
+
+// Rebuilds every kingdom's logic with Bonus Abilities on or off, then redraws.
+function applyBonusSetting(){
+  syncBonusFreeState();
+  Object.keys(KINGDOM_SOURCES).forEach(k => {
+    const src = KINGDOM_SOURCES[k];
+    loadKingdomFile(src.fileData, src.sourceLabel, src.forcedName);
+  });
+  applyNodeMergeRulesToAllLoadedKingdoms();
+  buildSearchIndex();
+  renderKingdom(KINGDOM_ORDER[Math.max(0, currentKingdomIndex)] || KINGDOM_ORDER[0]);
+}
 
 async function init(){
   const autoloaded = await tryAutoload();
