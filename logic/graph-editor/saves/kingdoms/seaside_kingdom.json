@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Seaside Kingdom",
-  "savedAt": "2026-10-09T01:56:30.158Z",
+  "savedAt": "2026-10-09T17:45:08.782Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-08T23:26:22.240Z",
+    "loadedAt": "2026-10-09T17:42:54.157Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -4467,9 +4467,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-7447.574",
-        "placement_y": "20724.360",
-        "placement_z": "8484.760",
+        "placement_x": "-450.099",
+        "placement_y": "24024.360",
+        "placement_z": "-9450.185",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -4515,9 +4515,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "456900.000",
-        "placement_y": "15300.000",
-        "placement_z": "-465900.000",
+        "placement_x": "537300.000",
+        "placement_y": "18000.000",
+        "placement_z": "-548100.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -4929,9 +4929,9 @@
         "obj_id": "11",
         "uid": "457",
         "flags": "ShineFlag_None",
-        "from_node_id": "SeaWorldSphinxQuizZone::start",
+        "from_node_id": "SeaWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "NpcTalk",
+        "requirement_expr": "(NpcTalk & Swim)",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -4947,9 +4947,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "1200.000",
-        "placement_y": "-13300.000",
-        "placement_z": "-64300.000",
+        "placement_x": "2400.000",
+        "placement_y": "-26800.000",
+        "placement_z": "-127900.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -5075,7 +5075,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
         "state_requirement_expr": "",
-        "requirement_expr": "(Swim & NpcTalk) | NpcTalk | (NpcTalk & RocketFlower)",
+        "requirement_expr": "(Swim & NpcTalk & Wallet) | (NpcTalk & Wallet) | (NpcTalk & RocketFlower & Wallet)",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -5476,8 +5476,8 @@
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
         "placement_x": "-2000.000",
-        "placement_y": "29762.176",
-        "placement_z": "-951450.000",
+        "placement_y": "33662.176",
+        "placement_z": "-1075650.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -6291,9 +6291,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-590000.000",
-        "placement_y": "21250.000",
-        "placement_z": "-707000.000",
+        "placement_x": "-694400.000",
+        "placement_y": "25150.000",
+        "placement_z": "-831200.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -6867,9 +6867,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "-62345.831",
-        "placement_y": "23850.000",
-        "placement_z": "-36516.804",
+        "placement_x": "-18439.202",
+        "placement_y": "26550.000",
+        "placement_z": "-69482.351",
         "placement_source_archives": "SeaWorldLavaZoneMap.szs;ShineInfo.szs",
         "placement_source_files": "SeaWorldLavaZoneMap.byml;ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -6916,8 +6916,8 @@
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
         "placement_x": "1800.000",
-        "placement_y": "19900.000",
-        "placement_z": "-683400.000",
+        "placement_y": "23800.000",
+        "placement_z": "-807600.000",
         "placement_source_archives": "SeaWorldUnderGlassZoneMap.szs;ShineInfo.szs",
         "placement_source_files": "SeaWorldUnderGlassZoneMap.byml;ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "4",
@@ -7459,7 +7459,7 @@
         "category": "Movement",
         "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Cap Return Jump",
         "notes": ""
@@ -7687,7 +7687,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Frog",
         "notes": ""
@@ -7699,7 +7699,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Spark Pylon; ElectricWireMover",
         "notes": ""
@@ -7711,7 +7711,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Paragoomba",
         "notes": ""
@@ -7723,7 +7723,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Chain Chomp",
         "notes": ""
@@ -7735,7 +7735,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Big Chain Chomp",
         "notes": ""
@@ -7747,7 +7747,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Broode's Chain Chomp",
         "notes": ""
@@ -7759,7 +7759,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "T-Rex",
         "notes": ""
@@ -7771,7 +7771,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Binoculars",
         "notes": ""
@@ -7783,7 +7783,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Bullet Bill",
         "notes": ""
@@ -7795,7 +7795,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Moe-Eye",
         "notes": ""
@@ -7807,7 +7807,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Cactus",
         "notes": ""
@@ -7819,7 +7819,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Goomba",
         "notes": ""
@@ -7831,7 +7831,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Knucklotec's Fist",
         "notes": ""
@@ -7843,7 +7843,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Mini Rocket",
         "notes": ""
@@ -7855,7 +7855,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Glydon",
         "notes": ""
@@ -7867,7 +7867,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Lakitu; Jugem",
         "notes": ""
@@ -7879,7 +7879,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Zipper",
         "notes": ""
@@ -7891,7 +7891,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Cheep Cheep",
         "notes": ""
@@ -7903,7 +7903,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Puzzle Part (Lake Kingdom)",
         "notes": ""
@@ -7915,7 +7915,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Poison Piranha Plant",
         "notes": ""
@@ -7927,7 +7927,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Uproot",
         "notes": ""
@@ -7939,7 +7939,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Fire Bro",
         "notes": ""
@@ -7951,7 +7951,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Sherm",
         "notes": ""
@@ -7963,7 +7963,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Coin Coffer",
         "notes": ""
@@ -7975,7 +7975,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Tree",
         "notes": ""
@@ -7987,7 +7987,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Boulder",
         "notes": ""
@@ -7999,7 +7999,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Picture Match Part (Goomba)",
         "notes": ""
@@ -8011,7 +8011,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Tropical Wiggler",
         "notes": ""
@@ -8023,7 +8023,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Pole",
         "notes": ""
@@ -8035,7 +8035,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Manhole",
         "notes": ""
@@ -8047,7 +8047,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Taxi",
         "notes": ""
@@ -8059,7 +8059,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "RC Car; RadiconNpc",
         "notes": ""
@@ -8071,7 +8071,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Ty-foo",
         "notes": ""
@@ -8083,7 +8083,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Shiverian Racer",
         "notes": ""
@@ -8095,7 +8095,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Cheep Cheep (Snow Kingdom)",
         "notes": ""
@@ -8107,7 +8107,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Gushen",
         "notes": ""
@@ -8119,7 +8119,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Lava Bubble; LavaBubble",
         "notes": ""
@@ -8131,7 +8131,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Volbonan",
         "notes": ""
@@ -8143,7 +8143,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Hammer Bro",
         "notes": ""
@@ -8155,7 +8155,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Meat",
         "notes": ""
@@ -8167,7 +8167,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Fire Piranha Plant",
         "notes": ""
@@ -8179,7 +8179,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Pokio",
         "notes": ""
@@ -8191,7 +8191,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Jizo; StatueJizo",
         "notes": ""
@@ -8203,7 +8203,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Bowser Statue",
         "notes": ""
@@ -8215,7 +8215,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Parabones",
         "notes": ""
@@ -8227,7 +8227,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Banzai Bill",
         "notes": ""
@@ -8239,7 +8239,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Chargin' Chuck",
         "notes": ""
@@ -8251,7 +8251,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Bowser; KoopaHack",
         "notes": ""
@@ -8263,7 +8263,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Letter",
         "notes": ""
@@ -8275,7 +8275,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Puzzle Part (Metro Kingdom)",
         "notes": ""
@@ -8287,7 +8287,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Picture Match Part (Mario)",
         "notes": ""
@@ -8299,7 +8299,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "true",
+        "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Yoshi; YoshiModel",
         "notes": ""
@@ -9119,6 +9119,42 @@
         "can_start_with_seed": "false",
         "aliases": "Notes; Note; NoteObjDirector; Taking Notes",
         "notes": "Note runs (NoteObjDirector): without it the notes vanish the frame the run starts. Every Taking Notes moon needs this."
+      },
+      {
+        "token": "Wallet",
+        "token_type": "ability",
+        "display_name": "Wallet",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Wallet; Coins; Yellow Coins; Gold Coins",
+        "notes": "Carrying yellow coins (Bonus Abilities, opt-in). Without it no yellow coin can be picked up, so nothing can be bought on a gold-coin Crazy Cap shelf: every Shopping in ... moon needs this, and so does every key sold there, since a shelf reuses its shop moon's requirement."
+      },
+      {
+        "token": "Paintings",
+        "token_type": "ability",
+        "display_name": "Paintings",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Paintings; Warp Paintings; WorldWarpHole",
+        "notes": "Travelling through warp paintings (Bonus Abilities, opt-in). Without it no painting can be entered (unlocked ones still show their art). Do not name it in requirements: MoonRando applies it to every painting link (expandStageAccessFromPaintings)."
+      },
+      {
+        "token": "OdysseyTravel",
+        "token_type": "ability",
+        "display_name": "Odyssey Travel",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Odyssey Travel; Odyssey; Globe; Kingdom Travel",
+        "notes": "Handing in moons and flying the Odyssey (Bonus Abilities, opt-in). Without it Cappy catches on the globe but nothing happens, and only Return to Start leads home. Do not name it in requirements: MoonRando applies it to every kingdom the Odyssey opens (unlockKingdom)."
       }
     ],
     "rooms": [
@@ -10203,8 +10239,8 @@
         "y": 1144.6542625957557
       },
       "SeaWorldHomeStage::entrance::PukupukuCaveStart::home_in": {
-        "x": 2268.2271304706883,
-        "y": 2245.3531290590854
+        "x": 2252.70513876887,
+        "y": 2250.99743682811
       },
       "SeaWorldHomeStage::entrance::RoomEventWorldSea::home_in": {
         "x": 2114.535753355059,
@@ -10231,8 +10267,8 @@
         "y": 1605.4251015745563
       },
       "SeaWorldHomeStage::entrance::TreasureEventWorldSea::home_in": {
-        "x": 2018.977703508685,
-        "y": 1894.136151775918
+        "x": 2025.5986965632294,
+        "y": 1950.8887146247052
       },
       "SeaWorldHomeStage::entrance::shindo_Lv2::home_in": {
         "x": 138.48974609374977,
@@ -10595,8 +10631,8 @@
         "y": 509.9050292968751
       },
       "moon:SeaWorldSphinxQuizZone:11:457": {
-        "x": 2639.7211005632266,
-        "y": 1736.5115995185324
+        "x": 1835.4041752516475,
+        "y": 2021.5502722531703
       },
       "moon:SeaWorldSphinxQuizZone:81:458": {
         "x": 2581.637844578351,

@@ -7535,7 +7535,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "NpcTalk",
+        "requirement_expr": "(NpcTalk & Wallet)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -12491,6 +12491,42 @@
         "can_start_with_seed": "false",
         "aliases": "Notes; Note; NoteObjDirector; Taking Notes",
         "notes": "Note runs (NoteObjDirector): without it the notes vanish the frame the run starts. Every Taking Notes moon needs this."
+      },
+      {
+        "token": "Wallet",
+        "token_type": "ability",
+        "display_name": "Wallet",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Wallet; Coins; Yellow Coins; Gold Coins",
+        "notes": "Carrying yellow coins (Bonus Abilities, opt-in). Without it no yellow coin can be picked up, so nothing can be bought on a gold-coin Crazy Cap shelf: every Shopping in ... moon needs this, and so does every key sold there, since a shelf reuses its shop moon's requirement."
+      },
+      {
+        "token": "Paintings",
+        "token_type": "ability",
+        "display_name": "Paintings",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Paintings; Warp Paintings; WorldWarpHole",
+        "notes": "Travelling through warp paintings (Bonus Abilities, opt-in). Without it no painting can be entered (unlocked ones still show their art). Do not name it in requirements: MoonRando applies it to every painting link (expandStageAccessFromPaintings)."
+      },
+      {
+        "token": "OdysseyTravel",
+        "token_type": "ability",
+        "display_name": "Odyssey Travel",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Odyssey Travel; Odyssey; Globe; Kingdom Travel",
+        "notes": "Handing in moons and flying the Odyssey (Bonus Abilities, opt-in). Without it Cappy catches on the globe but nothing happens, and only Return to Start leads home. Do not name it in requirements: MoonRando applies it to every kingdom the Odyssey opens (unlockKingdom)."
       }
     ],
     "rooms": [
