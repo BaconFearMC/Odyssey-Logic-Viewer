@@ -183,6 +183,13 @@
   #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr 1fr; }
   #paintingReqs .cp-req{ border-left-color:#8a4f78; }
   .cp-req-empty{ font-size:12.5px; color:var(--text-dim); font-style:italic; }
+  /* Consolidated card for every Checkpoint that is simply "Free": one row per checkpoint, each row
+     keeps its own Free tag so its video badge / submit click still work. */
+  .cp-req.cp-req-free-group{ border-left-color:var(--tier-casual); }
+  .cp-req-free-list{ display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:6px 12px; }
+  .cp-req-free-item{ display:flex; align-items:center; justify-content:space-between; gap:8px; background:rgba(128,128,128,.07); padding:6px 10px; min-width:0; }
+  .cp-req-free-item-name{ font-size:13px; color:var(--text); min-width:0; overflow-wrap:anywhere; }
+  .cp-req-free-item .options-row{ margin:0; flex:0 0 auto; }
   @media (max-width:720px){ #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr; } }
   /* Custom Node Requirements: separate section, only visible while in Submit Video mode. */
   #customNodeReqs{ display:none; }
@@ -6870,6 +6877,14 @@ function renderCheckpointReqs(kingdomName, nodeType){
 
   const grid = document.createElement("div");
   grid.className = "cp-reqs-grid";
+
+  // Consolidate: a Checkpoint whose every route is plain "Free" gets a row in one shared card instead of
+  // its own card. Each row still renders a real Free tag (buildMovementOptions), so every clip stays visible.
+  const isPlainFree = cp => cp.variants.every(v => !v.moon.tierLanes || v.moon.tierLanes.length === 0);
+  const freeCps = list.filter(isPlainFree);
+  const consolidate = freeCps.length >= 2;
+  if(consolidate) list = list.filter(cp => !isPlainFree(cp));
+
   list.forEach(cp => {
     const card = document.createElement("div");
     card.className = "cp-req";
@@ -6898,6 +6913,33 @@ function renderCheckpointReqs(kingdomName, nodeType){
     });
     grid.appendChild(card);
   });
+
+  if(consolidate){
+    const card = document.createElement("div");
+    card.className = "cp-req cp-req-free-group";
+    card.dataset.submittable = "1";
+    const nm = document.createElement("p");
+    nm.className = "cp-req-name";
+    const i2 = document.createElement("img");
+    i2.src = nodeIcon; i2.alt = ""; i2.onerror = function(){ this.style.display = "none"; };
+    const t = document.createElement("span");
+    t.textContent = "Free " + (isCustom ? "Custom Nodes" : "Checkpoints");
+    nm.append(i2, t);
+    card.appendChild(nm);
+    const items = document.createElement("div");
+    items.className = "cp-req-free-list";
+    freeCps.forEach(cp => cp.variants.forEach(v => {
+      const row = document.createElement("div");
+      row.className = "cp-req-free-item";
+      const lab = document.createElement("span");
+      lab.className = "cp-req-free-item-name";
+      lab.textContent = cp.name + (v.sourceLabel ? " (" + v.sourceLabel + ")" : "");
+      row.append(lab, buildMovementOptions(v.moon, false));
+      items.appendChild(row);
+    }));
+    card.appendChild(items);
+    grid.appendChild(card);
+  }
   root.appendChild(grid);
   measureOptionsCollapsiblesIn(root);
 }
