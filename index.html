@@ -183,13 +183,44 @@
   #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr 1fr; }
   #paintingReqs .cp-req{ border-left-color:#8a4f78; }
   .cp-req-empty{ font-size:12.5px; color:var(--text-dim); font-style:italic; }
-  /* Consolidated card for every Checkpoint that is simply "Free": one row per checkpoint, each row
-     keeps its own Free tag so its video badge / submit click still work. */
-  .cp-req.cp-req-free-group{ border-left-color:var(--tier-casual); }
-  .cp-req-free-list{ display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:6px 12px; }
-  .cp-req-free-item{ display:flex; align-items:center; justify-content:space-between; gap:8px; background:rgba(128,128,128,.07); padding:6px 10px; min-width:0; }
-  .cp-req-free-item-name{ font-size:13px; color:var(--text); min-width:0; overflow-wrap:anywhere; }
-  .cp-req-free-item .options-row{ margin:0; flex:0 0 auto; }
+
+  /* ---- Checkpoint / Painting card refresh --------------------------------
+     Same data and click behaviour; just a tidier card: tinted title band, cut corners,
+     pill source labels, hover lift, and a compact one-line card for "Free" Checkpoints. */
+  .cp-reqs-title{ position:relative; padding-bottom:3px; }
+  .cp-reqs-title::after{ content:""; position:absolute; left:0; bottom:-2px; width:100%; height:2px; background:linear-gradient(90deg, var(--gold), transparent); }
+  .cp-reqs-count{ font-size:11px; color:var(--text-dim); background:var(--bg-chip); border:1px solid var(--border); padding:1px 8px; letter-spacing:.3px; align-self:center; }
+  .cp-reqs-sub{ margin-top:8px; }
+  .cp-req{
+    gap:10px; padding:12px 14px 14px;
+    clip-path: polygon(0 0, calc(100% - var(--cut-md)) 0, 100% var(--cut-md), 100% 100%, 0 100%);
+    transition: border-color .12s ease, background .12s ease;
+  }
+  .cp-req:hover{ border-color:#4a4b50; background:#26272b; }
+  .cp-req-name{
+    margin:-12px -14px 0; padding:10px 14px; border-bottom:1px solid var(--border);
+    background:rgba(255,255,255,.035); font-size:15px; letter-spacing:.2px;
+  }
+  .cp-req-name img{ width:22px; height:22px; padding:2px; background:rgba(0,0,0,.28); border:1px solid var(--border); border-radius:50%; }
+  .cp-req-source{ background:rgba(255,255,255,.03); border-left:2px solid var(--panel-line); padding:8px 10px; gap:6px; }
+  .cp-req-source-label{
+    align-self:flex-start; font-size:10.5px; padding:1px 8px; letter-spacing:.6px;
+    color:var(--gold); background:var(--gold-light); border:1px solid rgba(230,194,0,.25);
+  }
+  /* Free Checkpoints: still one card each, just collapsed to a single compact line. */
+  .cp-reqs-grid-compact{ grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px; margin-top:14px; }
+  .cp-req.cp-req-compact{ flex-direction:row; align-items:center; justify-content:space-between; gap:10px; padding:7px 12px; border-left-color:var(--tier-casual); }
+  .cp-req-compact .cp-req-name{ margin:0; padding:0; border:0; background:none; font-size:13.5px; min-width:0; }
+  .cp-req-compact .cp-req-name span{ overflow-wrap:anywhere; }
+  .cp-req-compact .cp-req-name img{ width:18px; height:18px; }
+  .cp-req-compact .cp-req-source{ background:none; border:0; padding:0; flex:0 0 auto; }
+  .cp-req-compact .options-row{ margin:0; }
+  /* Paintings: Come = teal accent, Go = gold accent. */
+  #paintingReqs .cp-req.cp-req-come{ border-left-color:var(--worldpeace); }
+  #paintingReqs .cp-req.cp-req-come .cp-req-name{ background:var(--worldpeace-bg); }
+  #paintingReqs .cp-req.cp-req-go{ border-left-color:var(--gold); }
+  #paintingReqs .cp-req.cp-req-go .cp-req-name{ background:rgba(230,194,0,.10); }
+  .cp-req-empty{ padding:6px 2px; }
   @media (max-width:720px){ #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr; } }
   /* Custom Node Requirements: separate section, only visible while in Submit Video mode. */
   #customNodeReqs{ display:none; }
@@ -6783,7 +6814,7 @@ function renderPaintingReqs(kingdomName){
   grid.className = "cp-reqs-grid";
   list.forEach(p => {
     const card = document.createElement("div");
-    card.className = "cp-req";
+    card.className = "cp-req cp-req-" + String(p.side || "").toLowerCase();
     const nm = document.createElement("p");
     nm.className = "cp-req-name";
     const i2 = document.createElement("img");
@@ -6865,7 +6896,9 @@ function renderCheckpointReqs(kingdomName, nodeType){
   ic.src = nodeIcon; ic.alt = ""; ic.onerror = function(){ this.style.display = "none"; };
   const h = document.createElement("h2");
   h.className = "cp-reqs-title"; h.textContent = isCustom ? "Custom Node Requirements" : "Checkpoint Requirements";
-  head.append(ic, h);
+  const cnt = document.createElement("span");
+  cnt.className = "cp-reqs-count"; cnt.textContent = String(list.length);
+  head.append(ic, h, cnt);
   root.appendChild(head);
 
   const sub = document.createElement("p");
@@ -6877,17 +6910,14 @@ function renderCheckpointReqs(kingdomName, nodeType){
 
   const grid = document.createElement("div");
   grid.className = "cp-reqs-grid";
-
-  // Consolidate: a Checkpoint whose every route is plain "Free" gets a row in one shared card instead of
-  // its own card. Each row still renders a real Free tag (buildMovementOptions), so every clip stays visible.
-  const isPlainFree = cp => cp.variants.every(v => !v.moon.tierLanes || v.moon.tierLanes.length === 0);
-  const freeCps = list.filter(isPlainFree);
-  const consolidate = freeCps.length >= 2;
-  if(consolidate) list = list.filter(cp => !isPlainFree(cp));
-
+  const freeGrid = document.createElement("div");
+  freeGrid.className = "cp-reqs-grid cp-reqs-grid-compact";
   list.forEach(cp => {
     const card = document.createElement("div");
     card.className = "cp-req";
+    // A Checkpoint with a single, plain-Free route becomes a compact one-line card (still its own card).
+    const compact = cp.variants.length === 1 && (!cp.variants[0].moon.tierLanes || cp.variants[0].moon.tierLanes.length === 0);
+    if(compact) card.classList.add("cp-req-compact");
     card.dataset.submittable = "1";
     card.dataset.checkpointNode = cp.nodeId;
 
@@ -6911,36 +6941,10 @@ function renderCheckpointReqs(kingdomName, nodeType){
       wrap.appendChild(buildMovementOptions(v.moon, false));
       card.appendChild(wrap);
     });
-    grid.appendChild(card);
+    (compact ? freeGrid : grid).appendChild(card);
   });
-
-  if(consolidate){
-    const card = document.createElement("div");
-    card.className = "cp-req cp-req-free-group";
-    card.dataset.submittable = "1";
-    const nm = document.createElement("p");
-    nm.className = "cp-req-name";
-    const i2 = document.createElement("img");
-    i2.src = nodeIcon; i2.alt = ""; i2.onerror = function(){ this.style.display = "none"; };
-    const t = document.createElement("span");
-    t.textContent = "Free " + (isCustom ? "Custom Nodes" : "Checkpoints");
-    nm.append(i2, t);
-    card.appendChild(nm);
-    const items = document.createElement("div");
-    items.className = "cp-req-free-list";
-    freeCps.forEach(cp => cp.variants.forEach(v => {
-      const row = document.createElement("div");
-      row.className = "cp-req-free-item";
-      const lab = document.createElement("span");
-      lab.className = "cp-req-free-item-name";
-      lab.textContent = cp.name + (v.sourceLabel ? " (" + v.sourceLabel + ")" : "");
-      row.append(lab, buildMovementOptions(v.moon, false));
-      items.appendChild(row);
-    }));
-    card.appendChild(items);
-    grid.appendChild(card);
-  }
-  root.appendChild(grid);
+  if(grid.children.length) root.appendChild(grid);
+  if(freeGrid.children.length) root.appendChild(freeGrid);
   measureOptionsCollapsiblesIn(root);
 }
 
