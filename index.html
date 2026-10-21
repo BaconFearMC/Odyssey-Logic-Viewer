@@ -951,6 +951,17 @@
     position:relative; display:inline-flex;
     width:48.6px; height:48.6px;
   }
+  .prog-badge{
+    position:absolute; top:1px; right:1px; z-index:2;
+    display:flex; align-items:center; gap:1px;
+    padding:1px 2px; background:rgba(20,20,20,0.82);
+    border:1px solid var(--border); border-radius:3px;
+    pointer-events:none; line-height:1;
+  }
+  .prog-icon{ width:13px; height:13px; object-fit:cover; display:block; }
+  .prog-fallback{ width:13px; height:13px; font-size:9px; font-weight:700; color:#fff; background:#34406e; display:flex; align-items:center; justify-content:center; }
+  .prog-arrow{ font-size:8px; color:var(--gold); margin-left:1px; }
+  .vs-ab .prog-icon, .vs-ab .prog-fallback{ width:10px; height:10px; }
   .icon-tooltip{
     position:absolute;
     bottom:calc(100% + 6px);
@@ -1620,6 +1631,7 @@
     max-width:none;
   }
   .filter-option.selected .filter-option-name{ color:var(--text); }
+  .filter-option-name.two-line .filter-option-name-paren{ display:block; }
   .filter-option.not-implemented{
     opacity:0.4;
     cursor:not-allowed;
@@ -5709,7 +5721,12 @@ function balancedRowCounts(total, max){
 // line, so a chip with 4+ requirements stays fully visible — wrapping
 // into a compact, centered block — rather than scrolling or overflowing.
 function appendAndGroupIcons(chip, andGroup){
-  const tokens = sortedTokensForDisplay(andGroup);
+  // A move that is only shown as a progression icon on a later move in the
+  // same group (Ground Pound on Ground Pound Jump, ...) isn't listed twice.
+  const covered = new Set();
+  andGroup.forEach(t => (ABILITY_PROGRESSION[t] || []).forEach(pt => covered.add(pt)));
+  const visible = andGroup.filter(t => !covered.has(t));
+  const tokens = sortedTokensForDisplay(visible.length ? visible : andGroup);
   const rows = balancedRowCounts(tokens.length, 3);
   let idx = 0;
   rows.forEach(rowCount => {
@@ -5727,6 +5744,49 @@ function appendAndGroupIcons(chip, andGroup){
     }
     chip.appendChild(rowEl);
   });
+}
+
+// Ability progression chains: token -> the earlier moves it builds on, in
+// chain order. Shown as small icons + an up arrow in the box's top-right corner.
+const ABILITY_PROGRESSION = {
+  Backflip: ["Crouch"],
+  LongJump: ["Crouch"],
+  Roll: ["Crouch"],
+  RollBoost: ["Crouch", "Roll"],
+  GroundPoundJump: ["GroundPound"],
+  Dive: ["GroundPound"],
+  DoubleJump: ["Jump"],
+  TripleJump: ["Jump", "DoubleJump"],
+};
+function makeProgressionBadge(token){
+  const chain = ABILITY_PROGRESSION[token];
+  if(!chain || !chain.length) return null;
+  const badge = document.createElement("span");
+  badge.className = "prog-badge";
+  chain.forEach(pt => {
+    const info = ICON_MANIFEST[pt];
+    const names = info ? info.filenames.slice() : [];
+    if(pt === "Jump") names.push("AbilityJump.png");
+    const img = document.createElement("img");
+    img.className = "prog-icon";
+    img.alt = info ? info.label : pt;
+    let i = 0;
+    if(names.length) img.src = "icon/" + names[0];
+    img.onerror = function(){
+      i++;
+      if(i < names.length){ img.src = "icon/" + names[i]; return; }
+      const fb = document.createElement("span");
+      fb.className = "prog-fallback";
+      fb.textContent = (img.alt || pt).charAt(0);
+      img.replaceWith(fb);
+    };
+    badge.appendChild(img);
+  });
+  const arrow = document.createElement("span");
+  arrow.className = "prog-arrow";
+  arrow.textContent = "\u25B2";
+  badge.appendChild(arrow);
+  return badge;
 }
 
 function makeIcon(token){
@@ -5771,6 +5831,9 @@ function makeIcon(token){
     };
     wrap.appendChild(img);
   }
+
+  const progBadge = makeProgressionBadge(token);
+  if(progBadge) wrap.appendChild(progBadge);
 
   const tip = document.createElement("span");
   tip.className = "icon-tooltip";
@@ -7681,7 +7744,7 @@ function setupMergedFilterBar(tokens){
   function renderAbilityGrids(){
     renderOptions("ability", mainAbilities(), selectedAbilities, abilityGridEl, abilitySearchEl.value);
     const bonus = bonusAbilities();
-    bonusSectionEl.hidden = false; // always visible: Jump lives here (greyed out)
+    bonusSectionEl.hidden = false; // section stays visible so the On/Off switch is reachable
     bonusSectionEl.classList.toggle("on", BONUS_ENABLED);
     bonusSegBtns.forEach(b => b.setAttribute("aria-pressed", (b.dataset.on === "1") === BONUS_ENABLED ? "true" : "false"));
     const names = bonus.map(filterLabelFor).join(", ");
@@ -7696,7 +7759,8 @@ function setupMergedFilterBar(tokens){
       bonusGridEl.innerHTML = "";
     }
     const jq = (abilitySearchEl.value || "").trim().toLowerCase();
-    if(!jq || "jump".includes(jq)) bonusGridEl.appendChild(buildJumpBonusTile());
+    // Jump only appears once Bonus Abilities are enabled (and stays disabled).
+    if(BONUS_ENABLED && (!jq || "jump".includes(jq))) bonusGridEl.appendChild(buildJumpBonusTile());
   }
   const captureGridEl = document.getElementById("captureFilterGrid");
 
@@ -7800,7 +7864,19 @@ function setupMergedFilterBar(tokens){
       btn.appendChild(iconWrap);
       const nameEl = document.createElement("span");
       nameEl.className = "filter-option-name";
-      nameEl.textContent = label;
+      // Captures only: a name containing "(" may wrap to two lines, with the
+      // second line starting at the "(". Everything else stays on one line.
+      const parenAt = kind === "capture" ? label.indexOf("(") : -1;
+      if(parenAt > 0){
+        nameEl.classList.add("two-line");
+        nameEl.appendChild(document.createTextNode(label.slice(0, parenAt).trimEnd()));
+        const second = document.createElement("span");
+        second.className = "filter-option-name-paren";
+        second.textContent = label.slice(parenAt);
+        nameEl.appendChild(second);
+      } else {
+        nameEl.textContent = label;
+      }
       btn.appendChild(nameEl);
       if(notImplemented){
         btn.title = "Not Implemented Yet";
