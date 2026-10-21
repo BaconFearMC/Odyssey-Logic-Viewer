@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDoubleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2052,6 +2052,10 @@
   #paintingReqs .cp-req.cp-req-compact, #checkpointReqs .cp-req.cp-req-compact, #customNodeReqs .cp-req.cp-req-compact{ padding:10px 14px; }
   .cp-req-compact .cp-req-name{ font-size:14.5px; }
   .cp-req-empty{ font-size:13.5px; }
+
+  /* Unrated routes can't take submissions */
+  body.submit-mode .tier-lane.unrated .option-chip,
+  body.submit-mode .tier-lane.unrated .free-tag{ outline:none !important; cursor:not-allowed !important; opacity:.5; }
 </style>
 </head>
 <body>
@@ -6701,7 +6705,6 @@ function filterNodeMoon(m){
   if(!m) return null;
   if(unlocksFilterActive() && !nodeMatchesUnlocks(m)) return null;
   if(videoMode !== "all"){
-    if(m.isSubareaEntrance) return null; // entrances can't carry clips
     const r = applyVideoFilter([m]);
     return r.length ? r[0] : null;
   }
@@ -6718,6 +6721,7 @@ function collectNodeMoons(name){
     getPaintingVariants(name).forEach(p => p.variants.forEach(v => out.push(v.moon)));
     getCheckpointVariants(name).forEach(c => c.variants.forEach(v => out.push(v.moon)));
     getCheckpointVariants(name, "custom_place").forEach(c => c.variants.forEach(v => out.push(v.moon)));
+    getSubareaEntranceCards(name).forEach(c => c.entries.forEach(e => out.push(e.moon)));
   }catch(e){}
   return out;
 }
@@ -7097,11 +7101,14 @@ function getSubareaEntranceCards(kingdomName){
         .forEach(h => { rows = rows.concat(computeFormulaicSources(kingdomName, h.node_id)); });
       rows.forEach(r => {
         if(r.impossible) return;
+        const nm = kingdomName + " " + title + " Subarea " + pipe + " from " + r.label.replace(/^From\s+/i, "") + " Entry";
         entries.push({ pipe, sourceLabel: r.label, moon: {
-          name: kingdomName + " " + title + " " + pipe + " " + r.label,
-          label: title + " — " + pipe + " — " + r.label,
+          name: nm,
+          label: title + " (Subarea) — " + pipe + " — " + r.label,
           kingdom: kingdomName, subarea: null, isSubareaEntrance: true,
-          tierLanes: r.free ? [] : (r.lanes || []),
+          isCheckpointNode: true, isSubareaNode: true,
+          checkpoint: title + " Subarea", checkpointType: "subarea_entrance",
+          tierLanes: applyVideoSlotLock(nm, r.free ? [] : (r.lanes || [])),
         }});
       });
     });
@@ -7143,7 +7150,8 @@ function renderSubareaReqs(kingdomName){
   grid.className = "cp-reqs-grid";
   list.forEach(c => {
     const card = document.createElement("div");
-    card.className = "cp-req cp-req-static";
+    card.className = "cp-req";
+    card.dataset.submittable = "1";
     const nm = document.createElement("p");
     nm.className = "cp-req-name";
     const i2 = document.createElement("img");
@@ -8399,7 +8407,7 @@ function attachVideoBadge(nodeEl, moon, tierKey, indexInTier){
 // toast and leaves the overlay untouched.
 function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier){
   if(submitMode){
-    if(!isSubmittable(moon)) return;
+    if(!isSubmittable(moon) || tierKey === "unrated") return; // Unrated routes can't take clips
     Promise.race([logicVideoExists(videoAutoName(moon.name, tierKey, indexInTier)), new Promise(r => setTimeout(() => r(false), 1500))]).then(has => {
       if(has) return;
       if(window.vsSelect) window.vsSelect(moon, tierKey, tierLabel, andGroup, indexInTier);
@@ -8660,9 +8668,10 @@ const VIDEO_SUBMIT = {
     });
   });
   window.vsSelect = function(moon, tier, label, group, idx){
+    if(tier === "unrated") return;
     ctx = { moon, tier, label, idx, group: group || [] };
     const box = $("vsSel"); box.innerHTML = "";
-    const k = document.createElement("div"); k.className = "vs-sel-sub"; k.textContent = moon.isCheckpointNode ? (moon.kingdom + (moon.isPaintingNode ? " · " + moon.checkpoint : moon.isCustomNode ? " · Custom Node" : " · Checkpoint (warp point)")) : (moon.kingdom + " · tracked from " + (moon.checkpointType === "custom_place" ? "Custom Node: " : "Checkpoint: ") + cpName(moon)); box.appendChild(k);
+    const k = document.createElement("div"); k.className = "vs-sel-sub"; k.textContent = moon.isCheckpointNode ? (moon.kingdom + (moon.isSubareaNode ? " · Subarea entrance: " + moon.checkpoint.replace(/\s*Subarea\s*$/i, "") : moon.isPaintingNode ? " · " + moon.checkpoint : moon.isCustomNode ? " · Custom Node" : " · Checkpoint (warp point)")) : (moon.kingdom + " · tracked from " + (moon.checkpointType === "custom_place" ? "Custom Node: " : "Checkpoint: ") + cpName(moon)); box.appendChild(k);
     const n = document.createElement("div"); n.className = "vs-sel-moon"; n.textContent = moon.label || moon.name; box.appendChild(n);
     const pill = document.createElement("span"); pill.className = "tier-pill" + (TIER_LABEL[tier] ? " " + tier : ""); pill.textContent = label || tier; box.appendChild(pill);
     const chip = document.createElement("div"); chip.className = "option-chip" + (TIER_LABEL[tier] ? " " + tier : "");
@@ -8796,6 +8805,13 @@ const VIDEO_SUBMIT = {
       const n = videoAutoName(v.moon.name, sl.tier, sl.idx);
       if(!m.has(n)) m.set(n, { kingdom:k, moon:v.moon, slot:sl, ok:true });
     })));
+    // Subarea entrances are submittable too.
+    Object.keys(KINGDOM_NODE_DATA).forEach(k => { try{ getSubareaEntranceCards(k).forEach(c => c.entries.forEach(e => slotsFor(e.moon).forEach(sl => {
+      const n = videoAutoName(e.moon.name, sl.tier, sl.idx);
+      if(!m.has(n)) m.set(n, { kingdom:k, moon:e.moon, slot:sl, ok:true });
+    }))); }catch(err){} });
+    // Unrated routes can never be approved.
+    m.forEach(v => { if(v.slot && v.slot.tier === "unrated") v.ok = false; });
     return m;
   }
   // ---- Video slot lock exporter ------------------------------------------
@@ -8809,6 +8825,7 @@ const VIDEO_SUBMIT = {
     Object.keys(KINGDOM_NODE_DATA).forEach(k => {
       ["checkpoint", "custom_place"].forEach(t => { try{ getCheckpointVariants(k, t).forEach(v => v.variants.forEach(x => all.push(x.moon))); }catch(e){} });
       try{ getPaintingVariants(k).forEach(v => v.variants.forEach(x => all.push(x.moon))); }catch(e){}
+      try{ getSubareaEntranceCards(k).forEach(c => c.entries.forEach(x => all.push(x.moon))); }catch(e){}
     });
     const out = {};
     Object.keys(VIDEO_SLOT_LOCK).forEach(n => { out[n] = JSON.parse(JSON.stringify(VIDEO_SLOT_LOCK[n])); });
@@ -9156,7 +9173,7 @@ const VIDEO_SUBMIT = {
     const nm = document.createElement("p"); nm.className = "moon-name"; nm.textContent = moon.label || moon.name; card.appendChild(nm);
     const info = document.createElement("span"); info.className = "checkpoint-info info-static";
     const img = document.createElement("img"); img.alt = "";
-    img.src = (moon.isCustomNode || moon.checkpointType === "custom_place") ? "icon/customnode.png" : "icon/infocheckpoint.png";
+    img.src = moon.isSubareaNode ? "icon/infosubarea.png" : (moon.isCustomNode || moon.checkpointType === "custom_place") ? "icon/customnode.png" : "icon/infocheckpoint.png";
     img.onerror = function(){ this.style.display = "none"; };
     info.appendChild(img); card.appendChild(info);
     card.appendChild(buildMovementOptions(moon, false));
@@ -9255,7 +9272,7 @@ const VIDEO_SUBMIT = {
         const cpShort = moon.checkpoint ? moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "").replace(/\s*Custom Node\s*$/i, "") : "";
         const isCustom = moon.isCustomNode || moon.checkpointType === "custom_place";
         let where = hit.kingdom;
-        if(moon.isCheckpointNode) where += moon.isPaintingNode ? " · " + moon.checkpoint : isCustom ? " · Custom Node" : " · Checkpoint (warp point)";
+        if(moon.isCheckpointNode) where += moon.isSubareaNode ? " · Subarea entrance" : moon.isPaintingNode ? " · " + moon.checkpoint : isCustom ? " · Custom Node" : " · Checkpoint (warp point)";
         else if(cpShort) where += " · tracked from " + (isCustom ? "Custom Node: " : "Checkpoint: ") + cpShort;
         if(moon.subarea) where += " · Subarea: " + moon.subarea;
         whereEl.textContent = where;
