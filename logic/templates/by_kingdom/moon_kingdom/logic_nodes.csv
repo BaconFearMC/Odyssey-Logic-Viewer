@@ -88,3 +88,4 @@ MoonWorldHomeStage::place::new_place_7,Moon Kingdom,MoonWorldHomeStage,Moon King
 MoonWorldHomeStage::place::new_place_8,Moon Kingdom,MoonWorldHomeStage,Moon Kingdom,overworld,custom_place,editor,,,,Moon Peach Free,,,,,Human-authored logic place.,
 MoonAthleticExStage::place::new_place,Moon Kingdom,MoonAthleticExStage,Giant Swings,subarea,custom_place,editor,,,,A Swing on Top of a Swing Free,,,,,Human-authored logic place.,
 MoonWorldHomeStage::place::new_place_9,Moon Kingdom,MoonWorldHomeStage,Moon Kingdom,overworld,custom_place,editor,,,,Cliffside Treasure Chest Free,,,,,Human-authored logic place.,
+MoonWorldHomeStage::place::new_place_10,Moon Kingdom,MoonWorldHomeStage,Moon Kingdom,overworld,custom_place,editor,,,,Moon Timer 1 Free,,,,,Human-authored logic place.,
