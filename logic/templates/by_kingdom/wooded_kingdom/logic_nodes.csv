@@ -207,3 +207,5 @@ ForestWorldHomeStage::place::new_place_28,Wooded Kingdom,ForestWorldHomeStage,Wo
 ForestWorldHomeStage::place::new_place_29,Wooded Kingdom,ForestWorldHomeStage,Wooded Kingdom,overworld,custom_place,editor,,,,Charging Station Area,,,,,Human-authored logic place.,
 ForestWorldHomeStage::place::new_place_30,Wooded Kingdom,ForestWorldHomeStage,Wooded Kingdom,overworld,custom_place,editor,,,,Above the Iron Mountain Path Free,,,,,Human-authored logic place.,
 AnimalChaseExStage::place::new_place,Wooded Kingdom,AnimalChaseExStage,Herding Sheep,subarea,custom_place,editor,,,,2nd Sheep,,,,,Human-authored logic place.,
+ForestWorldTowerStage::place::new_place_2,Wooded Kingdom,ForestWorldTowerStage,Sky Garden Tower,subarea,custom_place,editor,,,,Tower Nut Free,,,,,Human-authored logic place.,
+ForestWorldHomeStage::place::new_place_31,Wooded Kingdom,ForestWorldHomeStage,Wooded Kingdom,overworld,custom_place,editor,,,,Secret Flower Field Roof,,,,,Human-authored logic place.,

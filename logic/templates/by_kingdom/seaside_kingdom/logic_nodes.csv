@@ -125,3 +125,5 @@ SeaWorldHomeStage::place::new_place_9,Seaside Kingdom,SeaWorldHomeStage,Seaside 
 SeaWorldHomeStage::place::new_place_10,Seaside Kingdom,SeaWorldHomeStage,Seaside Kingdom,overworld,custom_place,editor,,,,What the Waves Left Behind Free,,,,,Human-authored logic place.,
 SeaWorldHomeStage::place::new_place_11,Seaside Kingdom,SeaWorldHomeStage,Seaside Kingdom,overworld,custom_place,editor,,,,Back Canyon,,,,,Human-authored logic place.,
 SeaWorldHomeStage::place::new_place_12,Seaside Kingdom,SeaWorldHomeStage,Seaside Kingdom,overworld,custom_place,editor,,,,Canyon Seed,,,,,Human-authored logic place.,
+SeaWorldHomeStage::place::new_place_13,Seaside Kingdom,SeaWorldHomeStage,Seaside Kingdom,overworld,custom_place,editor,,,,Taking Notes Ocean Surface Dash Free,,,,,Human-authored logic place.,
+SeaWorldHomeStage::place::new_place_14,Seaside Kingdom,SeaWorldHomeStage,Seaside Kingdom,overworld,custom_place,editor,,,,Shopping Free,,,,,Human-authored logic place.,
