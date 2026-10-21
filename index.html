@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityVault.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3312,7 +3312,9 @@ function buildCheckpointLookup(nodes, edges){
   const sourceType = {}; // node_id -> "checkpoint" | "custom_place", for source nodes only
   const queue = [];
 
+  const isHiddenNode = n => /purples/i.test(n.display_name || "");
   (nodes || []).forEach(n => {
+    if(isHiddenNode(n)) return; // "Purples" nodes never appear
     if(n.node_type === "custom_place"){
       checkpointOf[n.node_id] = n.node_id;
       sourceType[n.node_id] = "custom_place";
@@ -3320,7 +3322,7 @@ function buildCheckpointLookup(nodes, edges){
     }
   });
   (nodes || []).forEach(n => {
-    if(n.node_type === "checkpoint" && !(n.node_id in checkpointOf)){
+    if(!isHiddenNode(n) && n.node_type === "checkpoint" && !(n.node_id in checkpointOf)){
       checkpointOf[n.node_id] = n.node_id;
       sourceType[n.node_id] = "checkpoint";
       queue.push(n.node_id);
@@ -5357,10 +5359,30 @@ function applyNodeMergeRules(kingdomName){
       // Looked up BY NAME among the kingdom's Custom Nodes — not via the moon's
       // BFS-tracked node, which can be a different/nearer node and used to make
       // this rule silently stop matching.
-      const flat = x => (x || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const kBare = kingdomName.replace(/\s*Kingdom\s*$/i, "");
+      // Tolerant normalizer: case, "&"/"and", punctuation, a leading "The", and a
+      // leading kingdom-name prefix are all ignored on BOTH sides of the compare.
+      const norm = x => {
+        let t = (x || "").toLowerCase().replace(/&/g, " and ");
+        [kingdomName, kBare].forEach(k => { if(k && t.trim().startsWith(k.toLowerCase() + " ")) t = t.trim().slice(k.length); });
+        return t.replace(/[^a-z0-9]/g, "").replace(/^the(?=.)/, "");
+      };
       const clean = n => (n.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "");
-      const want = [flat(moon.name) + "free", flat(moon.name) + "moonfree"];
-      const freeNode = (data.nodes || []).find(n => n.node_type === "custom_place" && want.includes(flat(clean(n))));
+      const nm = n => ({ display_name: n.display_name || n.label || n.name || n.node_id || "" });
+      const moonKey = norm(moon.name);
+      const isFreeFor = n => {
+        const dn = nm(n).display_name;
+        if(/purples/i.test(dn) || !/free\s*$/i.test(clean({ display_name: dn }))) return false;
+        const base = clean({ display_name: dn }).replace(/\s*(moon\s*)?free\s*$/i, "");
+        return norm(base) === moonKey;
+      };
+      const freeNodes = (data.nodes || []).filter(isFreeFor);
+      const freeNode = freeNodes[0] ? Object.assign({}, freeNodes[0], { display_name: nm(freeNodes[0]).display_name }) : null;
+      if(!freeNode && (data.nodes || []).some(n => /free\s*$/i.test(nm(n).display_name) && norm(nm(n).display_name).includes(moonKey))){
+        console.warn(`[free-node] "${moon.name}": a node with a similar "Free" name exists but did not match exactly — check its spelling.`);
+      }
+      // A second "<Moon> Free" node (e.g. both "X Free" and "X Moon Free") shows as an extra icon.
+      freeNodes.slice(1).forEach(n => moon._extraNodes.push({ name: clean({ display_name: nm(n).display_name }), id: n.node_id, kingdom: kingdomName, merged: true }));
       if(freeNode){
         const cpName = clean(freeNode);
         if(moon.checkpointNodeId !== freeNode.node_id){
@@ -5728,6 +5750,7 @@ window.listOverrideNodes = function(kingdomAlias){
   }
   const checkpoints = [...new Set((data.nodes || [])
     .filter(n => n.node_type === "checkpoint" || n.node_type === "custom_place")
+    .filter(n => !/purples/i.test(n.display_name || ""))
     .map(n => (n.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "")))];
   const subareas = [...new Set((data.nodes || [])
     .filter(n => n.area_scope === "subarea")
@@ -6142,7 +6165,7 @@ function buildMoonCard(moon){
 
     card.appendChild(info);
   }
-  if(moon.checkpoint && (moon.checkpointType === "custom_place" || !moon.subarea)){
+  if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && (moon.checkpointType === "custom_place" || !moon.subarea)){
     // A plain Checkpoint (checkpointType === "checkpoint") is redundant once
     // a Subarea icon is already shown — the subarea already tells you where
     // the moon is, a generic overworld checkpoint doesn't add anything for
@@ -6207,7 +6230,7 @@ function buildMoonCard(moon){
   }
 
   // Additional Custom Nodes (multiple nodes on one moon).
-  (moon._extraNodes || []).forEach(x => {
+  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name)).forEach(x => {
     const xi = document.createElement("span");
     xi.className = "checkpoint-info";
     const xlabel = "Tracked from: " + x.name;
