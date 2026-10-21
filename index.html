@@ -1921,6 +1921,108 @@
   /* Summary banner under the filters */
   .filter-summary{ font-size:14px; padding:12px 16px; border:2px solid var(--mode-accent); border-left-width:6px; background:var(--mode-bg); color:var(--text); }
   @media (max-width:640px){ .filter-sel-caption{ font-size:11.5px; } }
+
+  /* ===== Moons / Access Points scope slider ===== */
+  #scopeSlider{
+    position:absolute; right:24px; top:108px; z-index:20;
+    width:282px; display:grid; grid-template-columns:repeat(3,1fr);
+    background:var(--bg-panel); border:2px solid var(--border); border-bottom-width:3px;
+    padding:3px; filter:drop-shadow(2px 3px 0 var(--ink)); isolation:isolate;
+  }
+  #scopeSlider button{
+    position:relative; z-index:1; background:none; border:0; padding:7px 4px; cursor:pointer;
+    font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:.4px; text-transform:uppercase; color:var(--text-dim); white-space:nowrap;
+    transition:color .15s ease;
+  }
+  #scopeSlider button[aria-checked="true"]{ color:#1b1c1f; }
+  #scopeSlider button:not([aria-checked="true"]):hover{ color:var(--text); }
+  #scopeSlider .scope-thumb{
+    position:absolute; z-index:0; top:3px; bottom:3px; left:3px; width:calc((100% - 6px) / 3);
+    background:var(--text-dim); transition:transform .2s ease, background .2s ease;
+    clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px);
+  }
+  #scopeSlider[data-scope="moons"] .scope-thumb{ transform:translateX(0); background:var(--gold); }
+  #scopeSlider[data-scope="all"] .scope-thumb{ transform:translateX(100%); background:#c9c9c9; }
+  #scopeSlider[data-scope="access"] .scope-thumb{ transform:translateX(200%); background:var(--worldpeace); }
+  #filterMoonsPanel{ top:160px; }
+  @media (max-width:640px){
+    #scopeSlider{ top:100px; right:12px; width:236px; }
+    #scopeSlider button{ font-size:9.5px; padding:6px 2px; letter-spacing:.2px; }
+    #filterMoonsPanel{ top:152px; }
+  }
+
+  /* ===== Access Points (Paintings / Checkpoints / Subarea Entrances) =====
+     Same card language as the moon grid (top rail, hard drop shadow, same grid
+     size) but each kind carries its own accent colour + a kind pill. */
+  #paintingReqs{ --acc:#d27fb8; }
+  #checkpointReqs{ --acc:var(--worldpeace); }
+  #subareaReqs{ --acc:var(--subarea); }
+  #customNodeReqs{ --acc:var(--moonrock); }
+  .cp-reqs{ margin:30px 0 8px; }
+  .cp-reqs-head{
+    padding:8px 14px; margin:0 0 10px; background:var(--bg-panel);
+    border:2px solid var(--border); border-left:6px solid var(--acc);
+    filter:drop-shadow(2px 3px 0 var(--ink));
+  }
+  .cp-reqs-head img{ width:30px; height:30px; }
+  .cp-reqs-title{ color:var(--acc); font-size:18px; }
+  .cp-reqs-title::after{ background:linear-gradient(90deg, var(--acc), transparent); }
+  .cp-reqs-count{ margin-left:auto; color:var(--acc); border-color:var(--acc); }
+  .cp-reqs-sub{ margin:0 0 16px 2px; }
+  #paintingReqs .cp-reqs-grid, #checkpointReqs .cp-reqs-grid, #subareaReqs .cp-reqs-grid, #customNodeReqs .cp-reqs-grid{
+    grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px;
+  }
+  #paintingReqs .cp-reqs-grid-compact, #checkpointReqs .cp-reqs-grid-compact, #customNodeReqs .cp-reqs-grid-compact{
+    grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px;
+  }
+  #paintingReqs .cp-req, #checkpointReqs .cp-req, #subareaReqs .cp-req, #customNodeReqs .cp-req,
+  #paintingReqs .cp-req.cp-req-come, #paintingReqs .cp-req.cp-req-go{
+    position:relative; clip-path:none; background:var(--bg-panel);
+    border:2px solid var(--border); border-top:3px solid var(--acc);
+    padding:14px 16px; gap:8px; filter:drop-shadow(2px 3px 0 var(--ink));
+    transition:transform .15s ease, filter .15s ease;
+  }
+  .cp-req:hover{ background:var(--bg-panel); transform:translateY(-2px); filter:drop-shadow(2px 5px 0 var(--ink)); }
+  #paintingReqs .cp-req .cp-req-name, #checkpointReqs .cp-req .cp-req-name, #subareaReqs .cp-req .cp-req-name, #customNodeReqs .cp-req .cp-req-name{
+    margin:0; padding:0 92px 8px 0; background:none; font-size:14px; font-weight:600; line-height:1.3;
+    border-bottom:1px solid var(--border);
+  }
+  .cp-req-name img{ background:var(--bg-chip); }
+  .cp-req-kind{
+    position:absolute; top:12px; right:12px; padding:2px 8px; font-size:10px; font-weight:700;
+    letter-spacing:.6px; text-transform:uppercase; color:var(--acc); background:var(--bg-chip);
+    border:1px solid var(--acc);
+    clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px);
+  }
+  .cp-req-compact .cp-req-kind{ display:none; }
+  #paintingReqs .cp-req.cp-req-compact, #checkpointReqs .cp-req.cp-req-compact, #customNodeReqs .cp-req.cp-req-compact{
+    padding:8px 12px; border-top-width:2px;
+  }
+  #paintingReqs .cp-req.cp-req-compact .cp-req-name, #checkpointReqs .cp-req.cp-req-compact .cp-req-name{ padding:0; border:0; }
+  .cp-req-source{ border-left:3px solid var(--acc); }
+  .cp-req-source-label{ color:var(--acc); background:var(--bg-chip); border-color:var(--acc); }
+  body.submit-mode .cp-req.cp-req-static .option-chip,
+  body.submit-mode .cp-req.cp-req-static .free-tag{ outline:none; cursor:pointer; }
+
+  /* ===== Much stronger "this icon matched your filter" highlight =====
+     (the old box-shadow was cut off by the icon's chamfer clip-path) */
+  .icon-wrap.filter-match{ z-index:2; animation:filterGlow 1.8s ease-in-out infinite; }
+  .icon-wrap.filter-match::before{
+    content:""; position:absolute; inset:-5px; z-index:0; background:var(--gold);
+    clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px);
+  }
+  .icon-wrap.filter-match > .icon, .icon-wrap.filter-match > .icon-fallback,
+  .icon-wrap.optional-ability.filter-match > .icon, .icon-wrap.optional-ability.filter-match > .icon-fallback{
+    position:relative; z-index:1; box-shadow:none; outline:none; border-color:#1b1c1f;
+  }
+  @keyframes filterGlow{
+    0%,100%{ filter:drop-shadow(0 0 4px rgba(230,194,0,.75)); }
+    50%{ filter:drop-shadow(0 0 11px rgba(230,194,0,1)); }
+  }
+  @media (prefers-reduced-motion:reduce){ .icon-wrap.filter-match{ animation:none; filter:drop-shadow(0 0 8px var(--gold)); } }
+  .filter-option.selected{ background:var(--gold-light); box-shadow:inset 0 0 0 2px var(--gold); }
+  .filter-option.selected .filter-option-name{ color:var(--gold); }
 </style>
 </head>
 <body>
@@ -1949,6 +2051,12 @@
   <label><input type="checkbox" data-mf="overworld" checked> Overworld</label>
   <label><input type="checkbox" data-mf="subarea" checked> Subarea Moons</label>
   <label><input type="checkbox" data-mf="moonrock" checked> Moon Rock Moons</label>
+</div>
+<div id="scopeSlider" role="radiogroup" aria-label="Show moons, access points, or both" data-scope="all">
+  <span class="scope-thumb" aria-hidden="true"></span>
+  <button type="button" role="radio" data-scope="moons" aria-checked="false">Moons</button>
+  <button type="button" role="radio" data-scope="all" aria-checked="true">Both</button>
+  <button type="button" role="radio" data-scope="access" aria-checked="false">Access Points</button>
 </div>
 
 <div id="debugPanel" role="menu" aria-label="Debug options">
@@ -2109,6 +2217,7 @@
 <div class="empty-state" id="emptyState" style="display:none;"></div>
 <div class="cp-reqs" id="paintingReqs" style="display:none;"></div>
 <div class="cp-reqs" id="checkpointReqs" style="display:none;"></div>
+<div class="cp-reqs" id="subareaReqs" style="display:none;"></div>
 <div class="cp-reqs" id="customNodeReqs"></div>
 
 <div class="search-overlay" id="searchOverlay">
@@ -6536,6 +6645,57 @@ function wrapWithHoistHeader(body, hoisted, noun){
 // Moon-type filter (Filter Moons button). Subarea takes priority over Moon Rock;
 // anything else is Overworld. Checkpoints/Custom Nodes/Paintings follow Overworld.
 const moonFilters = { overworld:true, subarea:true, moonrock:true };
+// Moons / Access Points scope: "moons" | "all" | "access"
+let viewScope = "all";
+(function(){
+  const sl = document.getElementById("scopeSlider");
+  if(!sl) return;
+  sl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    viewScope = b.dataset.scope;
+    sl.dataset.scope = viewScope;
+    sl.querySelectorAll("button").forEach(x => x.setAttribute("aria-checked", x === b ? "true" : "false"));
+    renderGrid();
+  }));
+})();
+
+// ---- Filters applied to Access Point cards (Paintings / Checkpoints / Subarea Entrances) ----
+function unlocksFilterActive(){ return filterMode === "unlocks" && (selectedAbilities.size > 0 || selectedCaptures.size > 0); }
+function nodeFiltersActive(){ return unlocksFilterActive() || videoMode !== "all"; }
+function nodeMatchesUnlocks(m){
+  const og = [];
+  (m.tierLanes || []).forEach(l => l.groups.forEach(g => og.push(g)));
+  return moonMatchesUnlocks({ orGroups: og });
+}
+// Returns the (possibly lane-trimmed) moon if it should still show, else null.
+function filterNodeMoon(m){
+  if(!m) return null;
+  if(unlocksFilterActive() && !nodeMatchesUnlocks(m)) return null;
+  if(videoMode !== "all"){
+    if(m.isSubareaEntrance) return null; // entrances can't carry clips
+    const r = applyVideoFilter([m]);
+    return r.length ? r[0] : null;
+  }
+  return m;
+}
+function glitchFilterNodeMoon(m){
+  if(glitchMode === "hide") return isFullyGlitched(m) ? null : withGlitchedLanesStripped(m);
+  if(glitchMode === "only") return hasGlitchedLane(m) ? m : null;
+  return m;
+}
+function collectNodeMoons(name){
+  const out = [];
+  try{
+    getPaintingVariants(name).forEach(p => p.variants.forEach(v => out.push(v.moon)));
+    getCheckpointVariants(name).forEach(c => c.variants.forEach(v => out.push(v.moon)));
+    getCheckpointVariants(name, "custom_place").forEach(c => c.variants.forEach(v => out.push(v.moon)));
+  }catch(e){}
+  return out;
+}
+function addKindPill(card, text){
+  const k = document.createElement("span");
+  k.className = "cp-req-kind"; k.textContent = text;
+  card.appendChild(k);
+}
 function moonCategory(m){
   if(m.subarea) return "subarea";
   return (m.badges || []).includes("moonRock") ? "moonrock" : "overworld";
@@ -6549,15 +6709,44 @@ function renderGrid(){
   const emptyState = document.getElementById("emptyState");
   grid.innerHTML = "";
 
-  if(moonFilters.overworld){
+  const showMoons = viewScope !== "access";
+  const accessOn = viewScope !== "moons" && (moonFilters.overworld || viewScope === "access");
+  if(accessOn){
+    if(videoMode !== "all"){
+      const nm = collectNodeMoons(name);
+      if(!videoProbeDone(nm)){
+        const t = ++videoFilterToken;
+        probeVideosFor(nm).then(() => { if(t === videoFilterToken) renderGrid(); });
+      }
+    }
+    const cn = document.getElementById("customNodeReqs");
+    if(cn) cn.style.display = "";
     renderPaintingReqs(name);
     renderCheckpointReqs(name);
+    renderSubareaReqs(name);
     renderCheckpointReqs(name, "custom_place");
   } else {
-    ["paintingReqs", "checkpointReqs", "customNodeReqs"].forEach(id => {
+    ["paintingReqs", "checkpointReqs", "subareaReqs", "customNodeReqs"].forEach(id => {
       const el = document.getElementById(id);
       if(el){ el.innerHTML = ""; el.style.display = "none"; }
     });
+  }
+  if(!showMoons){
+    grid.style.display = "none";
+    checkpointGroups.style.display = "none";
+    const anyAccess = ["paintingReqs", "checkpointReqs", "subareaReqs"].some(id => {
+      const el = document.getElementById(id);
+      return el && el.style.display !== "none" && el.children.length;
+    });
+    if(anyAccess){ emptyState.style.display = "none"; }
+    else {
+      emptyState.style.display = "block";
+      emptyState.textContent = nodeFiltersActive() || glitchMode !== "all"
+        ? "No access points in this kingdom match the current filters."
+        : "No access points to show for this kingdom.";
+    }
+    applyFilterMatchHighlight();
+    return;
   }
   let moons = KINGDOMS[name] || [];
   if(moonFiltersActive()) moons = moons.filter(m => moonFilters[moonCategory(m)]);
@@ -6794,6 +6983,10 @@ function renderPaintingReqs(kingdomName){
   if(glitchMode === "hide"){
     list = list.map(p => ({ ...p, variants: p.variants.map(v => ({ ...v, moon: withGlitchedLanesStripped(v.moon) })) }));
   }
+  if(nodeFiltersActive()){
+    list = list.filter(p => p.nodeId).map(p => ({ ...p, variants: p.variants.map(v => { const m = filterNodeMoon(v.moon); return m ? { ...v, moon: m } : null; }).filter(Boolean) })).filter(p => p.variants.length);
+    if(!list.length){ root.style.display = "none"; return; }
+  }
   root.style.display = "";
 
   const head = document.createElement("div");
@@ -6822,6 +7015,7 @@ function renderPaintingReqs(kingdomName){
     const t = document.createElement("span"); t.textContent = p.name;
     nm.append(i2, t);
     card.appendChild(nm);
+    addKindPill(card, "Painting");
     if(!p.nodeId){
       const e = document.createElement("div"); e.className = "cp-req-empty"; e.textContent = "No " + p.side + " painting in this kingdom.";
       card.appendChild(e);
@@ -6843,6 +7037,101 @@ function renderPaintingReqs(kingdomName){
         card.appendChild(wrap);
       });
     }
+    grid.appendChild(card);
+  });
+  root.appendChild(grid);
+  measureOptionsCollapsiblesIn(root);
+}
+
+/* Subarea Entrances: what it costs to reach the overworld-side door of each subarea
+   (the home_entrance sharing an entrance_id with the subarea's substage_entrance). */
+function getSubareaEntranceCards(kingdomName){
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  if(!data) return [];
+  const ctx = SUBAREA_CTX[kingdomName] || {};
+  const nodes = data.nodes || [];
+  const stages = new Map();
+  nodes.forEach(n => {
+    if(n.node_type !== "substage_entrance" || !n.stage || n.stage === ctx.homeStage) return;
+    if(ctx.exemptStages && ctx.exemptStages.has(n.stage)) return;
+    if(!stages.has(n.stage)) stages.set(n.stage, n.stage_display_name || n.stage);
+  });
+  const out = [];
+  stages.forEach((title, stage) => {
+    const ens = subareaEntrances(nodes, stage);
+    const entries = [];
+    ens.forEach(en => {
+      const pipe = pipeLabel(en, ens);
+      let rows = [];
+      nodes.filter(n => n.node_type === "home_entrance" && n.entrance_id === en.entrance_id)
+        .forEach(h => { rows = rows.concat(computeFormulaicSources(kingdomName, h.node_id)); });
+      rows.forEach(r => {
+        if(r.impossible) return;
+        entries.push({ pipe, sourceLabel: r.label, moon: {
+          name: kingdomName + " " + title + " " + pipe + " " + r.label,
+          label: title + " — " + pipe + " — " + r.label,
+          kingdom: kingdomName, subarea: null, isSubareaEntrance: true,
+          tierLanes: r.free ? [] : (r.lanes || []),
+        }});
+      });
+    });
+    if(entries.length) out.push({ stage, name: title, entries });
+  });
+  out.sort((a, b) => a.name.localeCompare(b.name));
+  return out;
+}
+
+function renderSubareaReqs(kingdomName){
+  const root = document.getElementById("subareaReqs");
+  if(!root) return;
+  root.innerHTML = "";
+  let list = getSubareaEntranceCards(kingdomName).map(c => ({ ...c, entries: c.entries.map(e => {
+    let m = glitchFilterNodeMoon(e.moon);
+    if(m) m = filterNodeMoon(m);
+    return m ? { ...e, moon: m } : null;
+  }).filter(Boolean) })).filter(c => c.entries.length);
+  if(!list.length){ root.style.display = "none"; return; }
+  root.style.display = "";
+
+  const head = document.createElement("div");
+  head.className = "cp-reqs-head";
+  const ic = document.createElement("img");
+  ic.src = "icon/infosubarea.png"; ic.alt = ""; ic.onerror = function(){ this.style.display = "none"; };
+  const h = document.createElement("h2");
+  h.className = "cp-reqs-title"; h.textContent = "Subarea Entrance Requirements";
+  const cnt = document.createElement("span");
+  cnt.className = "cp-reqs-count"; cnt.textContent = String(list.length);
+  head.append(ic, h, cnt);
+  root.appendChild(head);
+
+  const sub = document.createElement("p");
+  sub.className = "cp-reqs-sub";
+  sub.textContent = "What it takes to reach each subarea's entrance from the main route of this kingdom.";
+  root.appendChild(sub);
+
+  const grid = document.createElement("div");
+  grid.className = "cp-reqs-grid";
+  list.forEach(c => {
+    const card = document.createElement("div");
+    card.className = "cp-req cp-req-static";
+    const nm = document.createElement("p");
+    nm.className = "cp-req-name";
+    const i2 = document.createElement("img");
+    i2.src = "icon/infosubarea.png"; i2.alt = ""; i2.onerror = function(){ this.style.display = "none"; };
+    const t = document.createElement("span"); t.textContent = c.name;
+    nm.append(i2, t);
+    card.appendChild(nm);
+    addKindPill(card, "Subarea");
+    c.entries.forEach(e => {
+      const wrap = document.createElement("div");
+      wrap.className = "cp-req-source";
+      const lab = document.createElement("div");
+      lab.className = "cp-req-source-label";
+      lab.textContent = e.pipe + " · " + e.sourceLabel + ":";
+      wrap.appendChild(lab);
+      wrap.appendChild(buildMovementOptions(e.moon, false));
+      card.appendChild(wrap);
+    });
     grid.appendChild(card);
   });
   root.appendChild(grid);
@@ -6882,6 +7171,9 @@ function renderCheckpointReqs(kingdomName, nodeType){
     list = list.map(cp => ({ ...cp, variants: cp.variants.filter(v => !isFullyGlitched(v.moon)).map(v => ({ ...v, moon: withGlitchedLanesStripped(v.moon) })) }));
   } else if(glitchMode === "only"){
     list = list.map(cp => ({ ...cp, variants: cp.variants.filter(v => hasGlitchedLane(v.moon)) }));
+  }
+  if(nodeFiltersActive()){
+    list = list.map(cp => ({ ...cp, variants: cp.variants.map(v => { const m = filterNodeMoon(v.moon); return m ? { ...v, moon: m } : null; }).filter(Boolean) }));
   }
   list = list.filter(cp => cp.variants.length);
 
@@ -6928,6 +7220,7 @@ function renderCheckpointReqs(kingdomName, nodeType){
     const t = document.createElement("span"); t.textContent = cp.name;
     nm.append(i2, t);
     card.appendChild(nm);
+    addKindPill(card, isCustom ? "Custom Node" : "Checkpoint");
 
     cp.variants.forEach(v => {
       const wrap = document.createElement("div");
@@ -7303,6 +7596,29 @@ function showSubPopup(parent, anchorBtn, selectedSet, onChange){
   }, 0);
 }
 
+// Greyed-out, not-yet-implemented "Jump" tile shown in the Bonus Abilities row.
+function buildJumpBonusTile(){
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "filter-option not-implemented";
+  btn.title = "Not Implemented Yet";
+  const iw = document.createElement("div");
+  iw.className = "filter-option-icon";
+  const img = document.createElement("img");
+  img.src = "icon/AbilityJump.png"; img.alt = "Jump";
+  img.onerror = function(){
+    const fb = document.createElement("div");
+    fb.className = "icon-fallback"; fb.textContent = "J";
+    img.replaceWith(fb);
+  };
+  iw.appendChild(img);
+  const nm = document.createElement("span");
+  nm.className = "filter-option-name"; nm.textContent = "Jump";
+  btn.append(iw, nm);
+  btn.addEventListener("click", (e) => { e.stopPropagation(); showNotImplementedToast(); });
+  return btn;
+}
+
 function setupMergedFilterBar(tokens){
   const { abilities, captures } = tokens;
   FILTER_LIST_ABILITIES = abilities;
@@ -7325,19 +7641,22 @@ function setupMergedFilterBar(tokens){
   function renderAbilityGrids(){
     renderOptions("ability", mainAbilities(), selectedAbilities, abilityGridEl, abilitySearchEl.value);
     const bonus = bonusAbilities();
-    bonusSectionEl.hidden = bonus.length === 0;
+    bonusSectionEl.hidden = false; // always visible: Jump lives here (greyed out)
     bonusSectionEl.classList.toggle("on", BONUS_ENABLED);
     bonusSegBtns.forEach(b => b.setAttribute("aria-pressed", (b.dataset.on === "1") === BONUS_ENABLED ? "true" : "false"));
     const names = bonus.map(filterLabelFor).join(", ");
     bonusStatusEl.innerHTML = BONUS_ENABLED
       ? "<b>On</b> — " + names + " now count as requirements in the logic."
       : "<b>Off</b> — " + names + " are ignored: they won't appear as requirements anywhere. Turn on to include them.";
-    bonusGridEl.hidden = !BONUS_ENABLED;
+    if(!bonus.length) bonusStatusEl.innerHTML = "<b>Coming soon</b> — Jump isn't implemented yet.";
+    bonusGridEl.hidden = false;
     if(bonus.length && BONUS_ENABLED){
       renderOptions("ability", bonus, selectedAbilities, bonusGridEl, abilitySearchEl.value);
     } else {
       bonusGridEl.innerHTML = "";
     }
+    const jq = (abilitySearchEl.value || "").trim().toLowerCase();
+    if(!jq || "jump".includes(jq)) bonusGridEl.appendChild(buildJumpBonusTile());
   }
   const captureGridEl = document.getElementById("captureFilterGrid");
 
