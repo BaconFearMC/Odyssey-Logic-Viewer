@@ -5330,6 +5330,12 @@ function applyNodeMergeRules(kingdomName){
     moon.orGroups = moon._baseOrGroups;
     moon.entranceReqs = moon._baseEntranceReqs;
     moon._mergedNodeKind = null;
+    // Snapshot/restore the tracked node (an automatic "<Moon> Free" rule may re-point it).
+    if(!moon._baseTracked) moon._baseTracked = { checkpoint: moon.checkpoint, checkpointType: moon.checkpointType, checkpointNodeId: moon.checkpointNodeId };
+    moon.checkpoint = moon._baseTracked.checkpoint;
+    moon.checkpointType = moon._baseTracked.checkpointType;
+    moon.checkpointNodeId = moon._baseTracked.checkpointNodeId;
+    moon._extraNodes = [];
 
     const rulesForMoon = NODE_MERGE_RULES
       .filter(r => normalizeMergeName(r.moon) === normalizeMergeName(moon.name))
@@ -5347,10 +5353,25 @@ function applyNodeMergeRules(kingdomName){
     // NODE_MERGE_RULES entry needed (so 'Above the Iron Mountain Path Free'
     // folds into 'Above the Iron Mountain Path' and shows "(included above)").
     let autoRule = null;
-    if(!legacyRule && moon.checkpoint && moon.checkpointType === "custom_place"){
+    if(!legacyRule && data){
+      // Looked up BY NAME among the kingdom's Custom Nodes — not via the moon's
+      // BFS-tracked node, which can be a different/nearer node and used to make
+      // this rule silently stop matching.
       const flat = x => (x || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-      const cpName = moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "");
-      if(flat(cpName) === flat(moon.name) + "free") autoRule = { moon: moon.name, mode: null, node: cpName, kingdomAlias: null };
+      const clean = n => (n.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "");
+      const want = [flat(moon.name) + "free", flat(moon.name) + "moonfree"];
+      const freeNode = (data.nodes || []).find(n => n.node_type === "custom_place" && want.includes(flat(clean(n))));
+      if(freeNode){
+        const cpName = clean(freeNode);
+        if(moon.checkpointNodeId !== freeNode.node_id){
+          // Keep the originally tracked Custom Node as an additional icon.
+          if(moon.checkpoint && moon.checkpointType === "custom_place"){
+            moon._extraNodes.push({ name: moon.checkpoint.replace(/\s*Checkpoint\s*$/i, ""), id: moon.checkpointNodeId, kingdom: kingdomName, merged: false });
+          }
+          moon.checkpoint = cpName; moon.checkpointType = "custom_place"; moon.checkpointNodeId = freeNode.node_id;
+        }
+        autoRule = { moon: moon.name, mode: null, node: cpName, kingdomAlias: null };
+      }
     }
     // Explicit overrideREPLACE wins over a plain rule if both match.
     const replaceRule = rulesForMoon.find(r => r.mode === "overrideREPLACE");
@@ -5387,7 +5408,7 @@ function applyNodeMergeRules(kingdomName){
         // requirement is empty is wrongly folded down to "Free".
         const nodeId = moon.checkpointNodeId;
         const nodeIsFreeNode = !!autoRule || /(^|\s)free\s*$/i.test(String(plainRule.node || "").trim());
-        const reachBranches = (nodeId && nodeId === moon.fromNodeId && nodeIsFreeNode)
+        const reachBranches = (nodeIsFreeNode && (!!autoRule || (nodeId && nodeId === moon.fromNodeId)))
           ? [{ group: [], scenarios: null, tier: "casual" }]
           : branchesForNodeId(data, nodeId);
         const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
@@ -5402,6 +5423,18 @@ function applyNodeMergeRules(kingdomName){
     addRules.forEach(r => {
       const src = resolveOverrideSource(moon, r, kingdomName);
       if(src) applyOverrideNodeToMoon(moon, r.node, src.kingdomName, src.data, /*replace=*/false, src.sameKingdom);
+    });
+
+    // Every extra Custom Node this moon draws on (overrideADD / overrideREPLACE)
+    // gets its own icon on the card, alongside the primary one.
+    [replaceRule].concat(addRules).filter(Boolean).forEach(r => {
+      const src = resolveOverrideSource(moon, r, kingdomName);
+      if(!src || !src.data) return;
+      const id = findNamedNodeId(src.data, r.node);
+      const nd = id && src.data.nodeMap ? src.data.nodeMap[id] : null;
+      if(!nd || nd.node_type !== "custom_place") return;
+      if(id === moon.checkpointNodeId || moon._extraNodes.some(x => x.id === id)) return;
+      moon._extraNodes.push({ name: r.node, id, kingdom: src.kingdomName, merged: true });
     });
   });
   applyPyramidLogic(kingdomName);
@@ -6172,6 +6205,35 @@ function buildMoonCard(moon){
 
     card.appendChild(info);
   }
+
+  // Additional Custom Nodes (multiple nodes on one moon).
+  (moon._extraNodes || []).forEach(x => {
+    const xi = document.createElement("span");
+    xi.className = "checkpoint-info";
+    const xlabel = "Tracked from: " + x.name;
+    if(x.merged){
+      xi.classList.add("info-static");
+      xi.setAttribute("aria-label", xlabel + " — requirements already included above");
+    } else {
+      xi.tabIndex = 0;
+      xi.setAttribute("role", "button");
+      xi.setAttribute("aria-label", xlabel + " — click for its requirements");
+    }
+    const ximg = document.createElement("img");
+    ximg.src = "icon/customnode.png"; ximg.alt = "";
+    ximg.onerror = function(){ this.style.display = "none"; };
+    xi.appendChild(ximg);
+    const xtip = document.createElement("span");
+    xtip.className = "icon-tooltip";
+    xtip.textContent = xlabel + (x.merged ? " (included above)" : "");
+    xi.appendChild(xtip);
+    if(!x.merged){
+      const open = () => openNodeInfo({ kind: "custom_place", kingdom: x.kingdom, nodeId: x.id, fallbackName: x.name });
+      xi.addEventListener("click", open);
+      xi.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); open(); } });
+    }
+    card.appendChild(xi);
+  });
 
   // Subarea moons whose pipes differ show per-pipe rows INSTEAD of the single
   // requirement line (the rows already include the moon's own cost).
