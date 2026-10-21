@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityVault.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -5318,6 +5318,10 @@ function applyOverrideNodeToMoon(moon, nodeName, kingdomName, data, replace, sam
 // always starts from a snapshot of the moon's real, computed-from-data
 // requirement (taken once, the first time this runs for that moon) rather
 // than compounding a merge on top of a previous merge.
+// >>> 0 = a "<Moon> Free" node's own reach cost is crossed into the moon like any other node
+//     (a moon is only "Free" if getting to the node is genuinely free).
+//     1 = old behavior: a moon sitting on a Free node always reads plain "Free".
+const FREE_NODE_SKIPS_REACH_COST = 0;
 function applyNodeMergeRules(kingdomName){
   const moons = KINGDOMS[kingdomName];
   if(!moons) return;
@@ -5430,12 +5434,22 @@ function applyNodeMergeRules(kingdomName){
         // requirement is empty is wrongly folded down to "Free".
         const nodeId = moon.checkpointNodeId;
         const nodeIsFreeNode = !!autoRule || /(^|\s)free\s*$/i.test(String(plainRule.node || "").trim());
-        const reachBranches = (nodeIsFreeNode && (!!autoRule || (nodeId && nodeId === moon.fromNodeId)))
+        const reachBranches = (FREE_NODE_SKIPS_REACH_COST && nodeIsFreeNode && (!!autoRule || (nodeId && nodeId === moon.fromNodeId)))
           ? [{ group: [], scenarios: null, tier: "casual" }]
           : branchesForNodeId(data, nodeId);
-        const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
-        const ok = applyMergedBranchesToMoon(moon, crossBranches(ownBranches, reachBranches), kingdomName);
-        if(ok) moon._mergedNodeKind = moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint";
+        // A moon in a Subarea renders its per-pipe entranceReqs rows INSTEAD of
+        // tierLanes, so merging only into tierLanes left the icon claiming
+        // "(included above)" while nothing above had changed. Start from the
+        // entrance-crossed branches (same as the subarea merge) and drop the
+        // rows so the merged result is what actually displays.
+        const ownBranches = moon._baseEntranceReqs
+          ? branchesFromEntranceReqs(moon._baseEntranceReqs)
+          : ownBranchesFromTierLanes(moon._baseTierLanes);
+        const ok = ownBranches.length && applyMergedBranchesToMoon(moon, crossBranches(ownBranches, reachBranches), kingdomName);
+        if(ok){
+          moon.entranceReqs = null;
+          moon._mergedNodeKind = moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint";
+        }
       }
     }
 
