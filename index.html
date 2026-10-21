@@ -5374,10 +5374,20 @@ function applyNodeMergeRules(kingdomName){
       } else {
         // Checkpoint / Custom Node: cross the node's OWN reach cost (how
         // you get TO that node) with the moon's base requirement.
+        //
+        // loadKingdomFile calls parseMoon with EMPTY reach maps, so a
+        // moon's base requirement (_baseTierLanes) NEVER contains the
+        // cost of reaching the node it sits on. The only nodes where
+        // skipping that cost is intended are "<Something> Free" nodes
+        // (the automatic rule above and the explicit "... Free" rules in
+        // NODE_MERGE_RULES): a Free node means "this moon is free from
+        // here", so its reach cost is deliberately not added. Any other
+        // node a moon sits on (e.g. Lake Kingdom's "Underwater Moons")
+        // must still be crossed in, otherwise a moon whose own
+        // requirement is empty is wrongly folded down to "Free".
         const nodeId = moon.checkpointNodeId;
-        // Moon sits ON this node: its reach cost is already in the base
-        // requirement (parseMoon), so don't cross it in a second time.
-        const reachBranches = (nodeId && nodeId === moon.fromNodeId)
+        const nodeIsFreeNode = !!autoRule || /(^|\s)free\s*$/i.test(String(plainRule.node || "").trim());
+        const reachBranches = (nodeId && nodeId === moon.fromNodeId && nodeIsFreeNode)
           ? [{ group: [], scenarios: null, tier: "casual" }]
           : branchesForNodeId(data, nodeId);
         const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
