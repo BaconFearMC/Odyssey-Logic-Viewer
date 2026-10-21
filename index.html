@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityVault.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -732,6 +732,23 @@
   .tier-lane.expert .tier-pill{ color:#330d0d; background:var(--tier-expert); border-color:var(--tier-expert-border); }
   .tier-lane.glitched .tier-pill{ color:#1e1035; background:var(--tier-glitched); border-color:var(--tier-glitched-border); }
   .tier-lane.unrated .tier-pill{ color:var(--text-dim); background:var(--bg-chip); border-color:var(--border); box-shadow:none; clip-path:none; padding:4px 10px; }
+  /* ---- Unrated lanes shown as "assumed Casual" (a darker green) -----------
+     Outside UNMARKED (Bug Fixing) mode an Unrated lane reads as Casual, just
+     a shade darker, with a hover note. In UNMARKED mode the plain grey
+     Unrated look above is used instead (no .assumed-casual class). */
+  .tier-lane.unrated.assumed-casual .tier-pill,
+  .tier-stack.boxed .tier-lane.unrated.assumed-casual .tier-pill{
+    color:#d7efe0; background:#2a8a57; border-color:#1d5c3b;
+    clip-path: polygon(0 50%, 8px 0, 100% 0, 100% 100%, 8px 100%);
+    padding:4px 10px 4px 12px; box-shadow:0 2px 0 0 rgba(0,0,0,0.4); cursor:help;
+  }
+  .tier-stack.boxed .tier-lane.unrated.assumed-casual .tier-pill{ padding:3px 9px 3px 11px; }
+  .tier-lane.unrated.assumed-casual .option-chip,
+  .tier-stack.boxed .tier-lane.unrated.assumed-casual .option-chip{
+    border-color:#1d3d2b; border-left-color:#2a8a57; background:#16251c;
+  }
+  .tier-stack.boxed .tier-lane.unrated.assumed-casual{ border-color:#1d3d2b; }
+  .tier-lane.unrated.assumed-casual .option-chip:hover{ box-shadow:2px 2px 0 0 rgba(42,138,87,0.35); }
   .tier-options{
     display:flex; flex-direction:column; align-items:flex-start; gap:6px; max-width:100%; min-width:0;
   }
@@ -3648,6 +3665,7 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
     checkpoint,
     checkpointType,
     checkpointNodeId,
+    fromNodeId: row.from_node_id,
     badges,
     hintIdx: Number.isNaN(hintIdx) ? null : hintIdx,
   };
@@ -5100,8 +5118,17 @@ function branchesFromEntranceReqs(entries){
 // since that would mean the merge rule describes a route that can't
 // actually be taken — a data problem, not something to silently paper
 // over by hiding the moon's real requirement.
+// Drops any branch that another branch makes pointless (needs a subset of its
+// tokens, at an equal-or-easier tier, covering at least its scenarios).
+// Exact duplicates keep only the first. Used on merge results so stacked
+// routes don't pile up redundant rows.
+function pruneDominatedBranches(br){
+  return br.filter((b, i) => !br.some((a, j) => j !== i
+    && pyramidDominates(a, b) && (!pyramidDominates(b, a) || j < i)));
+}
+
 function applyMergedBranchesToMoon(moon, branches, kingdomName){
-  const clean = summarizeBranches(branches, kingdomName);
+  const clean = summarizeBranches(pruneDominatedBranches(branches), kingdomName);
   if(clean.impossible){
     console.warn(`[merge] "${moon.name}": merging this node produced no viable route — leaving its requirement unchanged.`);
     return false;
@@ -5196,7 +5223,13 @@ function resolveOverrideBranches(moon, nodeName, data, sameKingdom){
   }
 
   const nodeId = findNamedNodeId(data, nodeName);
-  if(nodeId) return crossBranches(ownBranches, branchesForNodeId(data, nodeId));
+  if(nodeId){
+    // A moon that sits directly ON this node already had the node's reach
+    // cost folded into its own requirement at parse time (see parseMoon) —
+    // crossing it in again is what doubled up rows.
+    if(sameKingdom && moon.fromNodeId && nodeId === moon.fromNodeId) return ownBranches;
+    return crossBranches(ownBranches, branchesForNodeId(data, nodeId));
+  }
 
   const stage = findSubareaByName(data, nodeName);
   if(stage) return crossBranches(ownBranches, branchesForSubareaStage(data, stage));
@@ -5301,7 +5334,6 @@ function applyNodeMergeRules(kingdomName){
     const rulesForMoon = NODE_MERGE_RULES
       .filter(r => normalizeMergeName(r.moon) === normalizeMergeName(moon.name))
       .map(normalizeMergeRule);
-    if(!rulesForMoon.length) return;
 
     // Plain (mode-less) rules: unchanged from the original behavior —
     // only match the moon's OWN preexisting Subarea/Checkpoint by name.
@@ -5310,15 +5342,26 @@ function applyNodeMergeRules(kingdomName){
         (moon.subarea && normalizeMergeName(r.node) === normalizeMergeName(moon.subarea)) ||
         (moon.checkpoint && normalizeMergeName(r.node) === normalizeMergeName(moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "")))
       ));
+    // Automatic rule: a Custom Node named exactly "<Moon Name> Free" that this
+    // moon is tracked from merges like a plain { moon, node } rule, with no
+    // NODE_MERGE_RULES entry needed (so 'Above the Iron Mountain Path Free'
+    // folds into 'Above the Iron Mountain Path' and shows "(included above)").
+    let autoRule = null;
+    if(!legacyRule && moon.checkpoint && moon.checkpointType === "custom_place"){
+      const flat = x => (x || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const cpName = moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "");
+      if(flat(cpName) === flat(moon.name) + "free") autoRule = { moon: moon.name, mode: null, node: cpName, kingdomAlias: null };
+    }
     // Explicit overrideREPLACE wins over a plain rule if both match.
     const replaceRule = rulesForMoon.find(r => r.mode === "overrideREPLACE");
     const addRules = rulesForMoon.filter(r => r.mode === "overrideADD");
+    const plainRule = legacyRule || autoRule;
 
     if(replaceRule){
       const src = resolveOverrideSource(moon, replaceRule, kingdomName);
       if(src) applyOverrideNodeToMoon(moon, replaceRule.node, src.kingdomName, src.data, /*replace=*/true, src.sameKingdom);
-    } else if(legacyRule){
-      if(moon.subarea && normalizeMergeName(legacyRule.node) === normalizeMergeName(moon.subarea)){
+    } else if(plainRule){
+      if(moon.subarea && normalizeMergeName(plainRule.node) === normalizeMergeName(moon.subarea)){
         if(!moon._baseEntranceReqs){
           console.warn(`[merge] "${moon.name}": no entrance data available for "${moon.subarea}" — nothing to merge.`);
         } else {
@@ -5332,7 +5375,11 @@ function applyNodeMergeRules(kingdomName){
         // Checkpoint / Custom Node: cross the node's OWN reach cost (how
         // you get TO that node) with the moon's base requirement.
         const nodeId = moon.checkpointNodeId;
-        const reachBranches = branchesForNodeId(data, nodeId);
+        // Moon sits ON this node: its reach cost is already in the base
+        // requirement (parseMoon), so don't cross it in a second time.
+        const reachBranches = (nodeId && nodeId === moon.fromNodeId)
+          ? [{ group: [], scenarios: null, tier: "casual" }]
+          : branchesForNodeId(data, nodeId);
         const ownBranches = ownBranchesFromTierLanes(moon._baseTierLanes);
         const ok = applyMergedBranchesToMoon(moon, crossBranches(ownBranches, reachBranches), kingdomName);
         if(ok) moon._mergedNodeKind = moon.checkpointType === "custom_place" ? "custom_place" : "checkpoint";
@@ -5892,6 +5939,7 @@ function makeKingdomIcon(kingdomName, sizeClass){
 // requirement_expr branches, so the logic hasn't been fully tagged yet.
 // This is exactly the data-entry gap TIER_ORDER's "unrated" catch-all
 // exists for, so it doubles as the "still needs a difficulty pass" flag.
+function unmarkedDebugOn(){ try{ return !!unmarkedMode; }catch(e){ return false; } }
 function isMoonUnmarked(moon){
   return (moon.tierLanes || []).some(lane => lane.tier === "unrated");
 }
@@ -6253,6 +6301,12 @@ function buildMovementOptions(moon, boxed){
     const pill = document.createElement("span");
     pill.className = "tier-pill";
     pill.textContent = lane.label;
+    // Unrated shows as (darker green) Casual unless UNMARKED debug mode is on.
+    if(lane.tier === "unrated" && !unmarkedDebugOn()){
+      laneEl.classList.add("assumed-casual");
+      pill.textContent = TIER_LABEL.casual;
+      pill.title = "Unmarked (assumed Casual)";
+    }
     laneEl.appendChild(pill);
 
     const optsEl = document.createElement("div");
@@ -8334,6 +8388,12 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun){
     const pill = document.createElement("span");
     pill.className = "tier-pill";
     pill.textContent = lane.label;
+    // Unrated shows as (darker green) Casual unless UNMARKED debug mode is on.
+    if(lane.tier === "unrated" && !unmarkedDebugOn()){
+      laneEl.classList.add("assumed-casual");
+      pill.textContent = TIER_LABEL.casual;
+      pill.title = "Unmarked (assumed Casual)";
+    }
     laneEl.appendChild(pill);
 
     const optsEl = document.createElement("div");
