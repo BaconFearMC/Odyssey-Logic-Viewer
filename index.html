@@ -1924,14 +1924,14 @@
 
   /* ===== Moons / Access Points scope slider ===== */
   #scopeSlider{
-    position:absolute; right:24px; top:108px; z-index:20;
-    width:282px; display:grid; grid-template-columns:repeat(3,1fr);
+    position:relative; z-index:2; margin:0 auto 20px;
+    width:340px; max-width:100%; display:grid; grid-template-columns:repeat(3,1fr);
     background:var(--bg-panel); border:2px solid var(--border); border-bottom-width:3px;
     padding:3px; filter:drop-shadow(2px 3px 0 var(--ink)); isolation:isolate;
   }
   #scopeSlider button{
     position:relative; z-index:1; background:none; border:0; padding:7px 4px; cursor:pointer;
-    font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:11px; font-weight:700;
+    font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:12px; font-weight:700;
     letter-spacing:.4px; text-transform:uppercase; color:var(--text-dim); white-space:nowrap;
     transition:color .15s ease;
   }
@@ -1945,11 +1945,9 @@
   #scopeSlider[data-scope="moons"] .scope-thumb{ transform:translateX(0); background:var(--gold); }
   #scopeSlider[data-scope="all"] .scope-thumb{ transform:translateX(100%); background:#c9c9c9; }
   #scopeSlider[data-scope="access"] .scope-thumb{ transform:translateX(200%); background:var(--worldpeace); }
-  #filterMoonsPanel{ top:160px; }
   @media (max-width:640px){
-    #scopeSlider{ top:100px; right:12px; width:236px; }
+    #scopeSlider{ width:100%; }
     #scopeSlider button{ font-size:9.5px; padding:6px 2px; letter-spacing:.2px; }
-    #filterMoonsPanel{ top:152px; }
   }
 
   /* ===== Access Points (Paintings / Checkpoints / Subarea Entrances) =====
@@ -2023,6 +2021,37 @@
   @media (prefers-reduced-motion:reduce){ .icon-wrap.filter-match{ animation:none; filter:drop-shadow(0 0 8px var(--gold)); } }
   .filter-option.selected{ background:var(--gold-light); box-shadow:inset 0 0 0 2px var(--gold); }
   .filter-option.selected .filter-option-name{ color:var(--gold); }
+
+  /* ===== Access Points readability pass ===== */
+  .cp-reqs{ margin:44px 0 0; padding-top:0; }
+  .cp-reqs-head{ padding:12px 18px; gap:12px; }
+  .cp-reqs-title{ font-size:21px; padding-bottom:4px; }
+  .cp-reqs-count{ font-size:13px; padding:2px 11px; }
+  .cp-reqs-sub{ font-size:13.5px; line-height:1.4; margin:0 0 18px 4px; }
+  .cp-reqs-caption{
+    margin:18px 0 10px 4px; font-size:12px; font-weight:700; letter-spacing:1px;
+    text-transform:uppercase; color:var(--text-dim); display:flex; align-items:center; gap:10px;
+  }
+  .cp-reqs-caption::after{ content:""; flex:1; height:1px; background:var(--border); }
+  #paintingReqs .cp-reqs-grid, #checkpointReqs .cp-reqs-grid, #subareaReqs .cp-reqs-grid, #customNodeReqs .cp-reqs-grid{ gap:18px; }
+  #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr 1fr; } /* Come + Go: half the row each */
+  @media (max-width:720px){ #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr; } }
+  #paintingReqs .cp-req, #checkpointReqs .cp-req, #subareaReqs .cp-req, #customNodeReqs .cp-req,
+  #paintingReqs .cp-req.cp-req-come, #paintingReqs .cp-req.cp-req-go{ padding:16px 18px 18px; gap:12px; }
+  #paintingReqs .cp-req .cp-req-name, #checkpointReqs .cp-req .cp-req-name, #subareaReqs .cp-req .cp-req-name, #customNodeReqs .cp-req .cp-req-name{
+    font-size:16px; padding-bottom:10px;
+  }
+  .cp-req-name img{ width:26px; height:26px; }
+  .cp-req-kind{ font-size:10.5px; top:14px; right:14px; }
+  .cp-req-source{ background:rgba(255,255,255,.035); padding:10px 12px 12px; gap:8px; }
+  .cp-req-source-label{
+    align-self:stretch; background:none; border:0; padding:0; font-size:12.5px; font-weight:600;
+    letter-spacing:.2px; text-transform:none; color:var(--text);
+  }
+  .cp-req-source-label::before{ content:""; display:inline-block; width:7px; height:7px; margin-right:7px; background:var(--acc); vertical-align:1px; }
+  #paintingReqs .cp-req.cp-req-compact, #checkpointReqs .cp-req.cp-req-compact, #customNodeReqs .cp-req.cp-req-compact{ padding:10px 14px; }
+  .cp-req-compact .cp-req-name{ font-size:14.5px; }
+  .cp-req-empty{ font-size:13.5px; }
 </style>
 </head>
 <body>
@@ -2051,12 +2080,6 @@
   <label><input type="checkbox" data-mf="overworld" checked> Overworld</label>
   <label><input type="checkbox" data-mf="subarea" checked> Subarea Moons</label>
   <label><input type="checkbox" data-mf="moonrock" checked> Moon Rock Moons</label>
-</div>
-<div id="scopeSlider" role="radiogroup" aria-label="Show moons, access points, or both" data-scope="all">
-  <span class="scope-thumb" aria-hidden="true"></span>
-  <button type="button" role="radio" data-scope="moons" aria-checked="false">Moons</button>
-  <button type="button" role="radio" data-scope="all" aria-checked="true">Both</button>
-  <button type="button" role="radio" data-scope="access" aria-checked="false">Access Points</button>
 </div>
 
 <div id="debugPanel" role="menu" aria-label="Debug options">
@@ -2198,6 +2221,13 @@
     </div>
   </div>
   <div class="filter-summary" id="filterSummary" style="display:none;"></div>
+</div>
+
+<div id="scopeSlider" role="radiogroup" aria-label="Show moons, access points, or both" data-scope="all">
+  <span class="scope-thumb" aria-hidden="true"></span>
+  <button type="button" role="radio" data-scope="moons" aria-checked="false">Moons</button>
+  <button type="button" role="radio" data-scope="all" aria-checked="true">Both</button>
+  <button type="button" role="radio" data-scope="access" aria-checked="false">Access Points</button>
 </div>
 
 <div class="kingdom-pager" id="kingdomPager">
@@ -7236,8 +7266,10 @@ function renderCheckpointReqs(kingdomName, nodeType){
     });
     (compact ? freeGrid : grid).appendChild(card);
   });
-  if(grid.children.length) root.appendChild(grid);
-  if(freeGrid.children.length) root.appendChild(freeGrid);
+  const cap = t => { const c = document.createElement("div"); c.className = "cp-reqs-caption"; c.textContent = t; return c; };
+  const both = grid.children.length && freeGrid.children.length;
+  if(grid.children.length){ if(both) root.appendChild(cap("Needs something")); root.appendChild(grid); }
+  if(freeGrid.children.length){ if(both) root.appendChild(cap("Free to reach")); root.appendChild(freeGrid); }
   measureOptionsCollapsiblesIn(root);
 }
 
