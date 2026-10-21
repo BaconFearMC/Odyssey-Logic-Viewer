@@ -2327,6 +2327,7 @@
 <div class="nothing-yet-toast" id="nothingYetToast">Nothing yet…</div>
 
 <!-- Supabase client (submissions database). If this fails to load, Submit falls back to downloading the file. -->
+<script>console.log("[build] free-node fix v5 (Oct 21) loaded");document.title=document.title.replace(/ \[v5\]$/,"")+" [v5]";</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 
 
@@ -5387,6 +5388,13 @@ function applyNodeMergeRules(kingdomName){
       }
       // A second "<Moon> Free" node (e.g. both "X Free" and "X Moon Free") shows as an extra icon.
       freeNodes.slice(1).forEach(n => moon._extraNodes.push({ name: clean({ display_name: nm(n).display_name }), id: n.node_id, kingdom: kingdomName, merged: true }));
+      // Also: a moon tracked from a Custom Node whose name ends in "Free" always
+      // counts, even when the node's name isn't literally "<Moon> Free"
+      // (e.g. moon "The Bullet Bill Maze: Side Path" on "Bullet Bill Side Path Free").
+      if(!freeNode && moon.checkpointType === "custom_place" && moon.checkpoint
+         && /(^|\s)free\s*$/i.test(moon.checkpoint) && !/purples/i.test(moon.checkpoint)){
+        autoRule = { moon: moon.name, mode: null, node: moon.checkpoint, kingdomAlias: null };
+      }
       if(freeNode){
         const cpName = clean(freeNode);
         if(moon.checkpointNodeId !== freeNode.node_id){
