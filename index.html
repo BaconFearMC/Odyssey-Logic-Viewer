@@ -952,16 +952,26 @@
     width:48.6px; height:48.6px;
   }
   .prog-badge{
-    position:absolute; top:1px; right:1px; z-index:2;
-    display:flex; align-items:center; gap:1px;
-    padding:1px 2px; background:rgba(20,20,20,0.82);
-    border:1px solid var(--border); border-radius:3px;
+    position:absolute; top:-7px; right:-7px; z-index:3;
+    display:flex; align-items:center; flex-direction:row-reverse;
     pointer-events:none; line-height:1;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,0.7));
   }
-  .prog-icon{ width:13px; height:13px; object-fit:cover; display:block; }
-  .prog-fallback{ width:13px; height:13px; font-size:9px; font-weight:700; color:#fff; background:#34406e; display:flex; align-items:center; justify-content:center; }
-  .prog-arrow{ font-size:8px; color:var(--gold); margin-left:1px; }
-  .vs-ab .prog-icon, .vs-ab .prog-fallback{ width:10px; height:10px; }
+  .prog-icon, .prog-fallback{
+    width:24px; height:24px; box-sizing:border-box; display:block; object-fit:cover;
+    border:2px solid var(--gold); border-radius:6px; background:#1b1b1b;
+    margin-right:-9px;
+  }
+  .prog-icon:last-of-type, .prog-fallback:last-of-type{ margin-right:0; }
+  .prog-fallback{ font-size:12px; font-weight:700; color:#fff; background:#34406e; display:flex; align-items:center; justify-content:center; }
+  .prog-arrow{
+    position:absolute; bottom:-6px; right:-5px; z-index:4;
+    width:16px; height:16px; border-radius:50%;
+    background:var(--gold); color:#1b1b1b; border:2px solid #1b1b1b; box-sizing:border-box;
+    display:flex; align-items:center; justify-content:center;
+    font-size:9px; font-weight:900; line-height:1;
+  }
+  .vs-ab .prog-icon, .vs-ab .prog-fallback{ width:16px; height:16px; margin-right:-6px; }
   .icon-tooltip{
     position:absolute;
     bottom:calc(100% + 6px);
@@ -2033,6 +2043,9 @@
   @media (prefers-reduced-motion:reduce){ .icon-wrap.filter-match{ animation:none; filter:drop-shadow(0 0 8px var(--gold)); } }
   .filter-option.selected{ background:var(--gold-light); box-shadow:inset 0 0 0 2px var(--gold); }
   .filter-option.selected .filter-option-name{ color:var(--gold); }
+  .filter-option.implied{ background:var(--gold-light); box-shadow:inset 0 0 0 2px rgba(242,194,0,0.45); border-style:dashed; }
+  .filter-option.implied .filter-option-name{ color:var(--gold); }
+  .filter-option.implied .filter-option-name::after{ content:" \u2713"; }
 
   /* ===== Access Points readability pass ===== */
   .cp-reqs{ margin:44px 0 0; padding-top:0; }
@@ -6245,7 +6258,9 @@ function buildMovementOptions(moon, boxed){
     const optsEl = document.createElement("div");
     optsEl.className = "tier-options";
 
+    const hideNonFree = laneHasFilterFreeMethod(lane);
     lane.groups.forEach((andGroup, i)=>{
+      if(hideNonFree && exemptedDisplayGroup(andGroup).length > 0) return;
       // A branch can end up with no tokens either because it was already
       // free (Single Jump / "already in this kingdom" stripped out during
       // parsing) or because "Exempt!" mode just stripped out every token
@@ -6313,7 +6328,7 @@ function buildMovementOptions(moon, boxed){
   // the box collapses to a peek: the first option shown in full, a cropped
   // slice of the second under a fade, and an expand toggle pinned to the
   // box's own top-right corner.
-  const totalOptions = moon.tierLanes.reduce((sum, lane) => sum + lane.groups.length, 0);
+  const totalOptions = moon.tierLanes.reduce((sum, lane) => sum + lane.groups.length - laneHiddenCount(lane), 0);
   return wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions), hoisted, "moon");
 }
 
@@ -6628,8 +6643,17 @@ function moonTokens(moon){
 
 // True if `tok` (or whatever it folds to — see ABILITY_FILTER_FOLD_TOKENS)
 // is one of the currently-selected Ability/Capture filter items.
+// "I Have This!" only: owning a move implies owning the earlier moves in its
+// progression chain (Backflip -> Crouch), never the other way around.
+function impliedProgressiveTokens(){
+  const out = new Set();
+  if(filterMode !== "cando") return out;
+  selectedAbilities.forEach(t => (ABILITY_PROGRESSION[t] || []).forEach(pt => out.add(pt)));
+  return out;
+}
 function tokenIsSelected(tok){
   if(selectedAbilities.has(tok) || selectedCaptures.has(tok)) return true;
+  if(filterMode === "cando" && impliedProgressiveTokens().has(tok)) return true;
   const folded = ABILITY_FILTER_FOLD_TOKENS[tok];
   if(folded && (selectedAbilities.has(folded) || selectedCaptures.has(folded))) return true;
   return false;
@@ -6673,6 +6697,19 @@ function exemptedDisplayGroup(andGroup){
   if(filterMode !== "cando") return andGroup;
   if(selectedAbilities.size === 0 && selectedCaptures.size === 0) return andGroup;
   return andGroup.filter(tok => !tokenIsSelected(tok));
+}
+
+// "I Have This!": if the marked items make at least one method in a tier lane
+// Free, that lane's remaining (non-free) methods are hidden until the filter
+// is cleared. Each tier (Casual / Advanced / Expert / ...) is judged on its own.
+function laneHasFilterFreeMethod(lane){
+  if(filterMode !== "cando") return false;
+  if(selectedAbilities.size === 0 && selectedCaptures.size === 0) return false;
+  return (lane.groups || []).some(g => g.length > 0 && exemptedDisplayGroup(g).length === 0);
+}
+function laneHiddenCount(lane){
+  if(!laneHasFilterFreeMethod(lane)) return 0;
+  return lane.groups.filter(g => exemptedDisplayGroup(g).length > 0).length;
 }
 
 // ---- Shared requirement ("hoisted") ---------------------------------------
@@ -7722,6 +7759,16 @@ function buildJumpBonusTile(){
   return btn;
 }
 
+// Marks picker tiles that are only "owned" because a later move in their
+// progression chain is selected (I Have This! only).
+function refreshImpliedTiles(){
+  const implied = impliedProgressiveTokens();
+  document.querySelectorAll(".filter-option[data-token]").forEach(el => {
+    const t = el.dataset.token;
+    el.classList.toggle("implied", implied.has(t) && !selectedAbilities.has(t));
+  });
+}
+
 function setupMergedFilterBar(tokens){
   const { abilities, captures } = tokens;
   FILTER_LIST_ABILITIES = abilities;
@@ -7766,6 +7813,7 @@ function setupMergedFilterBar(tokens){
 
   function renderChips(){
     unlockAllSet = null; // any manual change drops the preset's "all of these" rule
+    refreshImpliedTiles();
     if(typeof updatePresetStates === "function") updatePresetStates();
     drawChips();
   }
@@ -7853,7 +7901,9 @@ function setupMergedFilterBar(tokens){
       const isSub = kind === "ability" && !!ABILITY_SUBTOKEN_PARENT[token];
       const hasSubmenu = kind === "ability" && !!ABILITY_SUBTOKENS[token];
       if(hasSubmenu && subPopupEl && subPopupEl.dataset.parent === token){ subPopupAnchor = btn; setTimeout(positionSubPopup, 0); }
+      btn.dataset.token = token;
       btn.className = "filter-option"
+        + (kind === "ability" && !selectedSet.has(token) && impliedProgressiveTokens().has(token) ? " implied" : "")
         + (hasSubmenu ? " has-submenu" : "")
         + (isSub ? " filter-suboption" : "")
         + ((selectedSet.has(token) || (kind === "ability" && subsSelected(token, selectedSet))) ? " selected" : "")
@@ -7899,6 +7949,7 @@ function setupMergedFilterBar(tokens){
           if(selectedSet.has(token)) selectedSet.delete(token);
           else selectedSet.add(token);
           btn.classList.toggle("selected", selectedSet.has(token));
+          refreshImpliedTiles();
           renderChips();
           updateFilterSummary();
           renderGrid();
@@ -8085,6 +8136,7 @@ function setupFilterModeTabs(){
       const fb = document.getElementById("filterBars"); if(fb) fb.dataset.filterMode = filterMode;
       tabs.forEach(t => t.classList.toggle("active", t === tab));
       if(window.__drawFilterChips) window.__drawFilterChips();
+      refreshImpliedTiles();
       updateFilterSummary();
       renderGrid();
     });
@@ -8286,7 +8338,9 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun){
 
     const optsEl = document.createElement("div");
     optsEl.className = "tier-options";
+    const hideNonFree = laneHasFilterFreeMethod(lane);
     lane.groups.forEach((andGroup, i) => {
+      if(hideNonFree && exemptedDisplayGroup(andGroup).length > 0) return;
       const chip = document.createElement("div");
       const preHoistGroup = exemptedDisplayGroup(andGroup);
       const displayGroup = hoistSet.size ? preHoistGroup.filter(t => !hoistSet.has(t)) : preHoistGroup;
@@ -8310,7 +8364,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun){
     laneEl.appendChild(optsEl);
     stack.appendChild(laneEl);
   });
-  const totalOptions = tierLanes.reduce((sum, lane) => sum + lane.groups.length, 0);
+  const totalOptions = tierLanes.reduce((sum, lane) => sum + lane.groups.length - laneHiddenCount(lane), 0);
   return wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse), hoisted, noun || "node");
 }
 
