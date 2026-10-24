@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Mushroom Kingdom",
-  "savedAt": "2026-10-09T02:47:27.765Z",
+  "savedAt": "2026-10-24T02:21:56.923Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-08T23:26:22.240Z",
+    "loadedAt": "2026-10-23T21:17:11.834Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2792,6 +2792,24 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "PeachWorldHomeStage::place::new_place_3",
+        "kingdom": "Mushroom Kingdom",
+        "stage": "PeachWorldHomeStage",
+        "stage_display_name": "Mushroom Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Mushroom Timer Challenge",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2816,7 +2834,7 @@
         "area_scope": "overworld",
         "from_node_id": "PeachWorldHomeStage::stage_change::Come::raw",
         "to_node_id": "PeachWorldHomeStage::checkpoint::obj1455",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2846,7 +2864,7 @@
         "area_scope": "overworld",
         "from_node_id": "PeachWorldHomeStage::start",
         "to_node_id": "PeachWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2981,7 +2999,7 @@
         "area_scope": "overworld",
         "from_node_id": "PeachWorldHomeStage::checkpoint::obj162",
         "to_node_id": "PeachWorldHomeStage::entrance::BossForestA::home_in",
-        "requirement_expr": "Climb | (NeutralThrow & Vault & WallJump & Dive) | Yoshi | (NeutralThrow & TripleJump & Vault & RocketFlower)",
+        "requirement_expr": "(Climb & Grab) | (NeutralThrow & Vault & WallJump & Dive) | Yoshi | (NeutralThrow & TripleJump & Vault & RocketFlower)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced;advanced;expert",
@@ -3213,66 +3231,6 @@
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0329.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0331",
-        "kingdom": "Mushroom Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "PeachWorldHomeStage::start",
-        "to_node_id": "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_in",
-        "requirement_expr": "Yoshi",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0332",
-        "kingdom": "Mushroom Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_in",
-        "to_node_id": "PeachWorldHomeStage::start",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0331.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0333",
-        "kingdom": "Mushroom Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "PeachWorldHomeStage::start",
-        "to_node_id": "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_out",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0334",
-        "kingdom": "Mushroom Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_out",
-        "to_node_id": "PeachWorldHomeStage::start",
-        "requirement_expr": "Yoshi",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0333.",
         "option_scenarios": ""
       },
       {
@@ -4024,6 +3982,81 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "1,2,3"
+      },
+      {
+        "edge_id": "edge_user_1015",
+        "kingdom": "Mushroom Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "PeachWorldHomeStage::checkpoint::obj1143",
+        "to_node_id": "PeachWorldHomeStage::place::new_place_3",
+        "requirement_expr": "Scarecrow",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1069",
+        "kingdom": "Mushroom Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "PeachWorldHomeStage::place::new_place_2",
+        "to_node_id": "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_in",
+        "requirement_expr": "Yoshi",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1070",
+        "kingdom": "Mushroom Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_in",
+        "to_node_id": "PeachWorldHomeStage::start",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1071",
+        "kingdom": "Mushroom Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "PeachWorldHomeStage::start",
+        "to_node_id": "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_in",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1070.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1118",
+        "kingdom": "Mushroom Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_in",
+        "to_node_id": "PeachWorldHomeStage::place::new_place_2",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1069.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -4808,7 +4841,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "RocketFlower | Dive | LongJump | RollBoost",
+        "requirement_expr": "RocketFlower | (Dive & SingleJump) | (LongJump & SingleJump) | RollBoost | (Yoshi & Roll & SingleJump)",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -4840,7 +4873,7 @@
         "shine_info_scenario_name": "キノコ王国 レギュラーカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:1678:967",
-        "difficulty": "casual;expert;advanced;casual",
+        "difficulty": "casual;expert;advanced;casual;expert",
         "option_scenarios": ""
       },
       {
@@ -4856,7 +4889,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PeachWorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "RocketFlower | RollBoost",
+        "requirement_expr": "RocketFlower | RollBoost | (SingleJump & Dive) | (Yoshi & Roll & SingleJump) | (SingleJump & LongJump)",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -4888,7 +4921,7 @@
         "shine_info_scenario_name": "キノコ王国 マスターカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:1679:968",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;expert;expert;expert",
         "option_scenarios": ""
       },
       {
@@ -4998,9 +5031,9 @@
         "obj_id": "1732",
         "uid": "977",
         "flags": "ShineFlag_None",
-        "from_node_id": "PeachWorldHomeStage::checkpoint::obj1143",
+        "from_node_id": "PeachWorldHomeStage::place::new_place_3",
         "state_requirement_expr": "",
-        "requirement_expr": "Scarecrow",
+        "requirement_expr": "Bike | RollBoost | SingleJump | (Dive & SingleJump) | (LongJump & SingleJump)",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -5032,8 +5065,8 @@
         "shine_info_scenario_name": "キノコ王国で チクタク・アスレチック",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PeachWorldHomeStage:1732:977",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;casual;expert;advanced;advanced",
+        "option_scenarios": "1,2,3"
       },
       {
         "moon_id": "PeachWorldHomeStage:1719:978",
@@ -5574,9 +5607,9 @@
         "obj_id": "1507",
         "uid": "1119",
         "flags": "ShineFlag_None",
-        "from_node_id": "PeachWorldHomeStage::start",
+        "from_node_id": "PeachWorldHomeStage::place::new_place_2",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Wooded & KingdomAccess_Snow & KingdomAccess_Sand & KingdomAccess_Seaside & KingdomAccess_Ruined & KingdomAccess_Moon & KingdomAccess_Metro & KingdomAccess_Luncheon & KingdomAccess_Lost & KingdomAccess_Lake & KingdomAccess_Cloud & KingdomAccess_Bowsers & KingdomAccess_Cap & KingdomAccess_Cascade)",
+        "requirement_expr": "(KingdomAccess_Wooded & KingdomAccess_Snow & KingdomAccess_Sand & KingdomAccess_Seaside & KingdomAccess_Ruined & KingdomAccess_Moon & KingdomAccess_Metro & KingdomAccess_Luncheon & KingdomAccess_Lost & KingdomAccess_Lake & KingdomAccess_Cloud & KingdomAccess_Bowsers & KingdomAccess_Cap & KingdomAccess_Cascade & NpcTalk & @CapWorldHomeStage::place::new_place_13 & @WaterfallWorldHomeStage::place::new_place_19 & @SandWorldHomeStage::place::new_place_28 & @LakeWorldHomeStage::place::new_place_20 & @ForestWorldHomeStage::place::new_place_34 & @CloudWorldHomeStage::place::new_place & @ClashWorldHomeStage::place::new_place_6 & @CityWorldHomeStage::place::new_place_13 & @SnowWorldTownStage::place::new_place_2 & @SeaWorldHomeStage::place::new_place_15 & @LavaWorldHomeStage::place::new_place_12 & @BossRaidWorldHomeStage::place::new_place_2 & @SkyWorldHomeStage::place::new_place_16 & @MoonWorldHomeStage::place::new_place_8)",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -6056,7 +6089,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "PeachWorldCastleStage::entrance::PeachCastleGate::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "KingdomAccess_Cap",
+        "requirement_expr": "(KingdomAccess_Cap & GroundPound)",
         "world_peace_token": "WorldPeace_Mushroom",
         "moon_rock_token": "MoonRockActive_Mushroom",
         "access_type": "primary",
@@ -8820,8 +8853,8 @@
         "y": 524.2197802197802
       },
       "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_in": {
-        "x": 446.16436459973886,
-        "y": 581.6126958305704
+        "x": 1796.9899183503903,
+        "y": 1777.2192631133587
       },
       "PeachWorldHomeStage::entrance::PeachWorldEx1a::home_out": {
         "x": 1926.3296364518417,
@@ -9231,6 +9264,14 @@
         "x": 1729.740633029302,
         "y": 1120.4271526358684
       },
+      "PeachWorldHomeStage::place::new_place_2": {
+        "x": 1532.7659946411484,
+        "y": 1944.798933601384
+      },
+      "PeachWorldHomeStage::place::new_place_3": {
+        "x": 855.428466796875,
+        "y": 2471.428545270647
+      },
       "moon:PeachWorldHomeStage:756:605": {
         "x": 1262,
         "y": 208
@@ -9312,8 +9353,8 @@
         "y": 574.0213101815311
       },
       "moon:PeachWorldHomeStage:1732:977": {
-        "x": 998,
-        "y": 2374
+        "x": 1283.3820507688936,
+        "y": 2496.3065931866686
       },
       "moon:PeachWorldHomeStage:1719:978": {
         "x": 1255.1009169908616,
@@ -9360,8 +9401,8 @@
         "y": 1010
       },
       "moon:PeachWorldHomeStage:1507:1119": {
-        "x": 62.5,
-        "y": 351
+        "x": 1347.0399282782932,
+        "y": 2114.7628563402277
       },
       "moon:PeachWorldHomeStage:2209:1121": {
         "x": 1166.7135957910273,
@@ -9402,10 +9443,6 @@
       "moon:PeachWorldCastleStage:131:1152": {
         "x": 941.2797606280739,
         "y": 419.30723345058385
-      },
-      "PeachWorldHomeStage::place::new_place_2": {
-        "x": 1532.7659946411484,
-        "y": 1944.798933601384
       }
     }
   }

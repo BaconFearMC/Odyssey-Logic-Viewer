@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Cascade Kingdom",
-  "savedAt": "2026-10-09T00:51:48.046Z",
+  "savedAt": "2026-10-24T03:30:38.448Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-08T23:26:22.240Z",
+    "loadedAt": "2026-10-23T21:17:11.834Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1496,6 +1496,42 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_19",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cascade Peach",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Madame Broode Arena",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -1610,14 +1646,14 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
-        "requirement_expr": "(WanwanBig & Pipe2D) | (TripleJump & Dive & WallJump & Backflip) | (Backflip & Vault & Dive & WallJump & NeutralThrow) | (SideFlip & Vault & Dive & WallJump & NeutralThrow) | (TripleJump & Vault & Dive & WallJump & NeutralThrow) | (GroundPoundJump & Vault & Dive & WallJump & NeutralThrow) | (TRex & Pipe2D) | Pipe2D",
+        "requirement_expr": "(WanwanBig & Pipe2D) | (TripleJump & Dive & WallJump & Backflip) | (Backflip & Vault & Dive & WallJump & NeutralThrow) | (SideFlip & Vault & Dive & WallJump & NeutralThrow) | (TripleJump & Vault & Dive & WallJump & NeutralThrow) | (GroundPoundJump & Vault & Dive & WallJump & NeutralThrow) | (TRex & Pipe2D) | Pipe2D | (TRex & ElectricWire)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;casual;casual",
+        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;casual;casual;casual",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": "1;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1;2,3,4"
+        "option_scenarios": "1;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1;2,3,4;2,3,4"
       },
       {
         "edge_id": "edge_user_0170",
@@ -1940,7 +1976,7 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::stage_change::Come::raw",
         "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj2832",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2315,7 +2351,7 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::start",
         "to_node_id": "WaterfallWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "Swim | (Vault & Dive & NeutralThrow)",
+        "requirement_expr": "(Swim & Paintings) | (Vault & Dive & NeutralThrow & Paintings)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced",
@@ -2330,10 +2366,10 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "to_node_id": "WaterfallWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "Dive",
+        "requirement_expr": "(Dive & Paintings) | (WallJump & NeutralThrow & Paintings)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;expert",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -2368,6 +2404,81 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1106",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_19",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4"
+      },
+      {
+        "edge_id": "edge_user_1155",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "requirement_expr": "TRex",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1156",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1155.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1157",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1158",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1157.",
+        "option_scenarios": "2,3,4"
       }
     ],
     "moonAccess": [
@@ -2622,7 +2733,7 @@
         "obj_id": "2467",
         "uid": "209",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_19",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Mushroom & NpcTalk)",
         "world_peace_token": "WorldPeace_Cascade",
@@ -2960,7 +3071,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "Swim | SingleJump | NeutralThrow | UpThrow | Dive",
+        "requirement_expr": "Swim | SingleJump | NeutralThrow | UpThrow | Dive | (DownThrow & Spin & WallJump & CapReturnJump)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2992,8 +3103,8 @@
         "shine_info_scenario_name": "滝つぼの宝箱",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:1928:216",
-        "difficulty": "casual;glitched;advanced;advanced;advanced",
-        "option_scenarios": "2,3,4,5;2,3,4,5,1"
+        "difficulty": "casual;glitched;advanced;advanced;advanced;expert",
+        "option_scenarios": "2,3,4,5;2,3,4,5,1;2,3,4,5;2,3,4,5;2,3,4,5"
       },
       {
         "moon_id": "WaterfallWorldHomeStage:2455:217",
@@ -3054,7 +3165,7 @@
         "obj_id": "21",
         "uid": "218",
         "flags": "ShineFlag_Story | ShineFlag_Multi",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
         "state_requirement_expr": "",
         "requirement_expr": "BreedaWanwan | KingdomAccess_Cascade",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3536,7 +3647,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "WindBlowExStage::entrance::WindBlowExStart::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "NeutralThrow | DownThrow | SpinThrow | UpThrow",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3568,7 +3679,7 @@
         "shine_info_scenario_name": "とんでけ 突風ブリッジ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WindBlowExStage:299:674",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -3584,7 +3695,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::place::new_place_18",
         "state_requirement_expr": "",
-        "requirement_expr": "LongJump | Roll | Spin | TripleJump | Dive | LedgeGrab | WallJump | (Vault & NeutralThrow) | KingdomAccess_Cascade",
+        "requirement_expr": "LongJump | Roll | Spin | TripleJump | Dive | LedgeGrab | WallJump | (Vault & NeutralThrow) | KingdomAccess_Cascade | (UpThrow & Vault & SingleJump)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3616,7 +3727,7 @@
         "shine_info_scenario_name": "滝の国 レギュラーカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:2741:708",
-        "difficulty": "casual;casual;casual;casual;casual;advanced;advanced;advanced;expert",
+        "difficulty": "casual;casual;casual;casual;casual;advanced;advanced;advanced;expert;advanced",
         "option_scenarios": ""
       },
       {
@@ -3920,7 +4031,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "WaterfallWorldHomeStage::place::new_place_18",
         "state_requirement_expr": "",
-        "requirement_expr": "LongJump | Roll | Spin | TripleJump | Dive | LedgeGrab | WallJump | (Vault & NeutralThrow)",
+        "requirement_expr": "LongJump | Roll | Spin | TripleJump | Dive | LedgeGrab | WallJump | (Vault & NeutralThrow) | (NeutralThrow & SingleJump & CapReturnJump) | (UpThrow & Vault & SingleJump)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3952,7 +4063,7 @@
         "shine_info_scenario_name": "滝の国 マスターカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:2947:894",
-        "difficulty": "casual;casual;casual;casual;casual;advanced;advanced;advanced",
+        "difficulty": "casual;casual;casual;casual;casual;advanced;advanced;advanced;expert;advanced",
         "option_scenarios": ""
       },
       {
@@ -6507,8 +6618,8 @@
         "y": 1332
       },
       "moon:WaterfallWorldHomeStage:2467:209": {
-        "x": 100,
-        "y": 1764
+        "x": 442.0991118615924,
+        "y": 1101.8018826904286
       },
       "moon:WaterfallWorldHomeStage:2490:210": {
         "x": 2021.9985970213686,
@@ -6543,8 +6654,8 @@
         "y": 643.6507074335275
       },
       "moon:WaterfallWorldHomeStage:21:218": {
-        "x": 1013.1365266987641,
-        "y": 1645.1276832336343
+        "x": 892.915861340831,
+        "y": 1575.8240296771546
       },
       "moon:Lift2DExStage:6784:221": {
         "x": 1160.4596740939235,
@@ -6587,8 +6698,8 @@
         "y": 431.5384636810545
       },
       "moon:WaterfallWorldHomeStage:2741:708": {
-        "x": 1115.5913039207774,
-        "y": 229.81550471634435
+        "x": 1118.9364861746128,
+        "y": 231.48809584326213
       },
       "moon:WaterfallWorldHomeStage:2778:770": {
         "x": 47.72957342818427,
@@ -6645,6 +6756,14 @@
       "moon:WaterfallWorldHomeStage:3523:1167": {
         "x": 100.45382585751975,
         "y": 1860.395778364116
+      },
+      "WaterfallWorldHomeStage::place::new_place_19": {
+        "x": 389.775464521589,
+        "y": 1238.0884559391206
+      },
+      "WaterfallWorldHomeStage::place::new_place_20": {
+        "x": 634.7307578127128,
+        "y": 1448.0093693533208
       }
     }
   }

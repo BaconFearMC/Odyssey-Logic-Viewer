@@ -1,11 +1,11 @@
 {
   "app": "smo-randomizer-logic-editor",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "kingdom": "Cloud Kingdom",
-  "savedAt": "2026-09-18T04:10:49.288Z",
+  "savedAt": "2026-10-24T02:00:51.519Z",
   "workspace": {
-    "schemaVersion": 2,
-    "loadedAt": "2026-09-17T16:39:38.464Z",
+    "schemaVersion": 3,
+    "loadedAt": "2026-10-23T21:17:11.834Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -136,22 +136,32 @@
         "source_file",
         "notes"
       ],
-      "captureGates": [
-        "gate_id",
+      "captureRequirements": [
+        "requirement_id",
+        "kind",
         "kingdom",
         "logic_stage",
-        "edge_id",
-        "source_capture_token",
-        "replacement_capture_token",
+        "target_id",
+        "capture_token",
+        "extra_requirement_expr",
         "difficulty",
+        "option_scenarios",
         "match_mode",
         "minimum_count",
         "notes"
       ],
-      "captureGateObjects": [
-        "gate_id",
+      "captureRequirementObjects": [
+        "requirement_id",
         "placement_stage",
         "object_id"
+      ],
+      "captureLocks": [
+        "kingdom",
+        "logic_stage",
+        "target_id",
+        "placement_stage",
+        "object_id",
+        "notes"
       ]
     },
     "logicNodes": [
@@ -514,6 +524,24 @@
         "z": "0.000",
         "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
         "notes": "Raw UnitConfigName=WorldWarpHole."
+      },
+      {
+        "node_id": "CloudWorldHomeStage::place::new_place",
+        "kingdom": "Cloud Kingdom",
+        "stage": "CloudWorldHomeStage",
+        "stage_display_name": "Cloud Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Cloud Peach",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -598,7 +626,7 @@
         "area_scope": "overworld",
         "from_node_id": "CloudWorldHomeStage::start",
         "to_node_id": "CloudWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -613,7 +641,7 @@
         "area_scope": "overworld",
         "from_node_id": "CloudWorldHomeStage::start",
         "to_node_id": "CloudWorldHomeStage::stage_change::Come::raw",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -628,7 +656,7 @@
         "area_scope": "overworld",
         "from_node_id": "CloudWorldHomeStage::stage_change::Come::raw",
         "to_node_id": "CloudWorldHomeStage::start",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -636,6 +664,21 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0599.",
         "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1108",
+        "kingdom": "Cloud Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CloudWorldHomeStage::start",
+        "to_node_id": "CloudWorldHomeStage::place::new_place",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4"
       }
     ],
     "moonAccess": [
@@ -986,7 +1029,7 @@
         "obj_id": "130",
         "uid": "1118",
         "flags": "ShineFlag_None",
-        "from_node_id": "CloudWorldHomeStage::start",
+        "from_node_id": "CloudWorldHomeStage::place::new_place",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Mushroom & NpcTalk)",
         "world_peace_token": "WorldPeace_Cloud",
@@ -2919,8 +2962,9 @@
         "notes": "No ScenarioInfo.byml in archive."
       }
     ],
-    "captureGates": [],
-    "captureGateObjects": [],
+    "captureRequirements": [],
+    "captureRequirementObjects": [],
+    "captureLocks": [],
     "nodePositions": {
       "CloudWorldHomeStage::entrance::Fukuwarai::home_in": {
         "x": 525.0632911392404,
@@ -2946,6 +2990,30 @@
         "x": 518.7341772151899,
         "y": 312.48468834671485
       },
+      "Cube2DExStage::stage_change::cube::raw": {
+        "x": 1385.2173913043478,
+        "y": 348.66666666666663
+      },
+      "Cube2DExStage::entrance::cube::sub_far": {
+        "x": 1615.2173913043478,
+        "y": 348.66666666666663
+      },
+      "Cube2DExStage::entrance::cube::sub_near": {
+        "x": 1155.2173913043478,
+        "y": 348.66666666666663
+      },
+      "FukuwaraiKuriboStage::stage_change::Fukuwarai::raw": {
+        "x": 980,
+        "y": 120
+      },
+      "FukuwaraiKuriboStage::entrance::Fukuwarai::sub_far": {
+        "x": 210,
+        "y": 560
+      },
+      "FukuwaraiKuriboStage::entrance::Fukuwarai::sub_near": {
+        "x": 210,
+        "y": 160
+      },
       "CloudWorldHomeStage::stage_change::Start::raw": {
         "x": 463.23683544303793,
         "y": 1100
@@ -2970,26 +3038,6 @@
         "x": 417.46835443037975,
         "y": 120
       },
-      "moon:CloudWorldHomeStage:130:1118": {
-        "x": 930.1265822784809,
-        "y": 596.4472483829575
-      },
-      "moon:CloudWorldHomeStage:392:1160": {
-        "x": 1620,
-        "y": 718.4177439689946
-      },
-      "Cube2DExStage::stage_change::cube::raw": {
-        "x": 1385.2173913043478,
-        "y": 348.66666666666663
-      },
-      "Cube2DExStage::entrance::cube::sub_far": {
-        "x": 1615.2173913043478,
-        "y": 348.66666666666663
-      },
-      "Cube2DExStage::entrance::cube::sub_near": {
-        "x": 1155.2173913043478,
-        "y": 348.66666666666663
-      },
       "moon:Cube2DExStage:38:914": {
         "x": 120,
         "y": 1100
@@ -2998,18 +3046,6 @@
         "x": 1620,
         "y": 120
       },
-      "FukuwaraiKuriboStage::stage_change::Fukuwarai::raw": {
-        "x": 980,
-        "y": 120
-      },
-      "FukuwaraiKuriboStage::entrance::Fukuwarai::sub_far": {
-        "x": 210,
-        "y": 560
-      },
-      "FukuwaraiKuriboStage::entrance::Fukuwarai::sub_near": {
-        "x": 210,
-        "y": 160
-      },
       "moon:FukuwaraiKuriboStage:116:982": {
         "x": 1320,
         "y": 120
@@ -3017,6 +3053,18 @@
       "moon:FukuwaraiKuriboStage:117:983": {
         "x": 1320,
         "y": 224
+      },
+      "moon:CloudWorldHomeStage:130:1118": {
+        "x": 930.1265822784809,
+        "y": 596.4472483829575
+      },
+      "moon:CloudWorldHomeStage:392:1160": {
+        "x": 1620,
+        "y": 718.4177439689946
+      },
+      "CloudWorldHomeStage::place::new_place": {
+        "x": 595.9404788467467,
+        "y": 506.629177633434
       }
     }
   }

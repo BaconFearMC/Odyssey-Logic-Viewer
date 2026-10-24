@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Bowser's Kingdom",
-  "savedAt": "2026-10-09T02:44:34.431Z",
+  "savedAt": "2026-10-24T04:27:00.085Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-08T23:26:22.240Z",
+    "loadedAt": "2026-10-23T21:17:11.834Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1946,6 +1946,24 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SkyWorldHomeStage::place::new_place_16",
+        "kingdom": "Bowser's Kingdom",
+        "stage": "SkyWorldHomeStage",
+        "stage_display_name": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Bowser Peach",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2045,7 +2063,7 @@
         "area_scope": "overworld",
         "from_node_id": "SkyWorldHomeStage::stage_change::Come::raw",
         "to_node_id": "SkyWorldHomeStage::checkpoint::obj2697",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2075,14 +2093,14 @@
         "area_scope": "overworld",
         "from_node_id": "SkyWorldHomeStage::place::new_place_3",
         "to_node_id": "SkyWorldHomeStage::checkpoint::obj1626",
-        "requirement_expr": "free",
+        "requirement_expr": "KingdomAccess_Bowsers | CapReturnJump",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0300.",
-        "option_scenarios": ""
+        "option_scenarios": "2,3,4;1"
       },
       {
         "edge_id": "edge_user_0299",
@@ -2375,7 +2393,7 @@
         "area_scope": "overworld",
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1888",
         "to_node_id": "SkyWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2405,14 +2423,14 @@
         "area_scope": "overworld",
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1392",
         "to_node_id": "SkyWorldCastleZone::checkpoint::obj1888",
-        "requirement_expr": "(Vault & WallJump & Dive & NeutralThrow)",
+        "requirement_expr": "(Vault & WallJump & Dive & NeutralThrow) | SingleJump | CapReturnJump | Dive | Vault | LongJump | Backflip | SideFlip | Spin | WallJump | Tsukkun",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "expert",
+        "difficulty": "expert;casual;casual;advanced;advanced;casual;casual;casual;casual;advanced;casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0270.",
-        "option_scenarios": "1,2,3,4,5"
+        "option_scenarios": "1,2,3,4,5;2,3,4,5;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4"
       },
       {
         "edge_id": "edge_user_0274",
@@ -2465,10 +2483,10 @@
         "area_scope": "overworld",
         "from_node_id": "SkyWorldHomeStage::place::new_place",
         "to_node_id": "SkyWorldHomeStage::entrance::sora001::home_in",
-        "requirement_expr": "Climb",
+        "requirement_expr": "(Climb & Grab) | (Grab & Tsukkun)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -2555,10 +2573,10 @@
         "area_scope": "overworld",
         "from_node_id": "SkyWorldHomeStage::place::new_place_4",
         "to_node_id": "SkyWorldHomeStage::entrance::sora001::home_in",
-        "requirement_expr": "Climb",
+        "requirement_expr": "(Climb & Grab) | (Grab & Tsukkun)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -2754,7 +2772,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert;advanced",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "1;2,3,4,5;2,3,4,5;2,3,4,5;2,3,4,5;2,3,4,5;2,3,4,5;2,3,4,5;2,3,4,5;2,3,4,5;2,3,4"
@@ -3039,7 +3057,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -3324,7 +3342,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "glitched",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -3336,6 +3354,66 @@
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1891",
         "to_node_id": "SkyWorldHomeStage::place::new_place_15",
         "requirement_expr": "NpcTalk",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1031",
+        "kingdom": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SkyWorldHomeStage::place::new_place_3",
+        "to_node_id": "SkyWorldHomeStage::checkpoint::obj2697",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "glitched",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0814.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1032",
+        "kingdom": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SkyWorldHomeStage::place::new_place_8",
+        "to_node_id": "SkyWorldHomeStage::start",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0417.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1104",
+        "kingdom": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SkyWorldHomeStage::place::new_place_13",
+        "to_node_id": "SkyWorldCastleZone::checkpoint::obj1891",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0605.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1105",
+        "kingdom": "Bowser's Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SkyWorldHomeStage::checkpoint::obj2028",
+        "to_node_id": "SkyWorldHomeStage::place::new_place_16",
+        "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -3359,7 +3437,7 @@
         "flags": "ShineFlag_Story",
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1888",
         "state_requirement_expr": "",
-        "requirement_expr": "(Tsukkun & ElectricWire) | (GroundPound & ElectricWire)",
+        "requirement_expr": "(Tsukkun & ElectricWire) | (GroundPound & ElectricWire) | KingdomAccess_Bowsers",
         "world_peace_token": "WorldPeace_Bowsers",
         "moon_rock_token": "MoonRockActive_Bowsers",
         "access_type": "primary",
@@ -3391,8 +3469,8 @@
         "shine_info_available_scenarios": "1;2;3;4;5;6",
         "shine_info_object_name": "GK連戦監視者_シャイン【2m置き】",
         "shine_info_scenario_name": "激闘！ ブルーダルズ",
-        "difficulty": "casual;advanced",
-        "option_scenarios": "1,2,3,4"
+        "difficulty": "casual;advanced;casual",
+        "option_scenarios": "1,2,3,4;1,2,3,4;2,3,4"
       },
       {
         "moon_id": "SkyWorldHomeStage:1673:315",
@@ -3951,9 +4029,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "50256.763",
-        "placement_y": "3655500.000",
-        "placement_z": "68703.673",
+        "placement_x": "50255.741",
+        "placement_y": "8510700.000",
+        "placement_z": "68707.180",
         "placement_source_archives": "SkyWorldCastleZoneMap.szs",
         "placement_source_files": "SkyWorldCastleZoneMap.byml",
         "placement_count": "3",
@@ -4143,9 +4221,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "24955.758",
-        "placement_y": "3666500.000",
-        "placement_z": "74303.919",
+        "placement_x": "24953.419",
+        "placement_y": "8521700.000",
+        "placement_z": "74307.720",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SkyWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "0",
@@ -4365,7 +4443,7 @@
         "obj_id": "2569",
         "uid": "338",
         "flags": "ShineFlag_None",
-        "from_node_id": "SkyWorldHomeStage::checkpoint::obj2028",
+        "from_node_id": "SkyWorldHomeStage::place::new_place_16",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Mushroom & NpcTalk)",
         "world_peace_token": "WorldPeace_Bowsers",
@@ -4479,9 +4557,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "19546.253",
-        "placement_y": "1192000.000",
-        "placement_z": "-60570.542",
+        "placement_x": "19543.635",
+        "placement_y": "6047200.000",
+        "placement_z": "-60573.756",
         "placement_source_archives": "SkyWorldCastleZoneMap.szs",
         "placement_source_files": "SkyWorldCastleZoneMap.byml",
         "placement_count": "3",
@@ -6047,7 +6125,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1392",
         "state_requirement_expr": "",
-        "requirement_expr": "(GroundPound & KingdomAccess_Sand)",
+        "requirement_expr": "(GroundPound & KingdomAccess_Sand & @SandWorldHomeStage::checkpoint::obj1511)",
         "world_peace_token": "WorldPeace_Bowsers",
         "moon_rock_token": "MoonRockActive_Bowsers",
         "access_type": "primary",
@@ -6111,9 +6189,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "71207.584",
-        "placement_y": "3641950.000",
-        "placement_z": "76003.962",
+        "placement_x": "71207.656",
+        "placement_y": "8497150.000",
+        "placement_z": "76007.851",
         "placement_source_archives": "SkyWorldCastleZoneMap.szs",
         "placement_source_files": "SkyWorldCastleZoneMap.byml",
         "placement_count": "4",
@@ -6143,7 +6221,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SkyWorldCastleZone::checkpoint::obj1888",
         "state_requirement_expr": "",
-        "requirement_expr": "(SpinThrow & Notes) | (NeutralThrow & Notes) | (DownThrow & Notes) | (Tsukkun & Notes) | (Kuribo & Notes) | (KingdomAccess_Bowsers & Notes)",
+        "requirement_expr": "(SpinThrow & Notes) | (NeutralThrow & Notes) | (DownThrow & Notes) | (Tsukkun & Notes) | (Kuribo & Notes) | (Notes & Grab)",
         "world_peace_token": "WorldPeace_Bowsers",
         "moon_rock_token": "MoonRockActive_Bowsers",
         "access_type": "primary",
@@ -6175,7 +6253,7 @@
         "shine_info_available_scenarios": "4",
         "shine_info_object_name": "音符オブジェ(1つ目)",
         "shine_info_scenario_name": "なげて まわって 音符集め",
-        "difficulty": "casual;advanced;advanced;advanced;advanced;glitched",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;expert",
         "option_scenarios": ""
       },
       {
@@ -6207,9 +6285,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-3202.840",
-        "placement_y": "3714750.000",
-        "placement_z": "-16900.698",
+        "placement_x": "-3206.633",
+        "placement_y": "8569950.000",
+        "placement_z": "-16901.636",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SkyWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "0",
@@ -8709,8 +8787,8 @@
         "y": 2876.741261191583
       },
       "SkyWorldHomeStage::place::new_place_8": {
-        "x": 914.9354771205357,
-        "y": 2885.3070765904017
+        "x": 874.0141327552178,
+        "y": 2882.484955003001
       },
       "SkyWorldHomeStage::place::new_place_9": {
         "x": 3855.2812848772323,
@@ -8741,8 +8819,8 @@
         "y": 457.9067734376629
       },
       "moon:SkyWorldCastleZone:3811:314": {
-        "x": 1939.2729698763658,
-        "y": 1104.0832434191673
+        "x": 1926.5435820419275,
+        "y": 1139.4422943795182
       },
       "moon:SkyWorldHomeStage:1673:315": {
         "x": 2441.168928772857,
@@ -8825,8 +8903,8 @@
         "y": 1398.4329249569137
       },
       "moon:SkyWorldHomeStage:2569:338": {
-        "x": 103.16578467333375,
-        "y": 1349.5934667484557
+        "x": 28.750943999184514,
+        "y": 1353.0546328754806
       },
       "moon:SkyWorldCastleZone:649:339": {
         "x": 1676.2620193981274,
@@ -8987,6 +9065,10 @@
       "moon:SkyWorldCastleZone:8382:1161": {
         "x": 1295.4299686380218,
         "y": 150.68096064477606
+      },
+      "SkyWorldHomeStage::place::new_place_16": {
+        "x": 239.50040145161373,
+        "y": 1281.3586266625232
       }
     }
   }

@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Snow Kingdom",
-  "savedAt": "2026-10-09T02:18:29.539Z",
+  "savedAt": "2026-10-24T04:29:03.385Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-08T23:26:22.240Z",
+    "loadedAt": "2026-10-23T21:17:11.834Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2216,6 +2216,42 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "KillerRailCollisionExStage::place::new_place",
+        "kingdom": "Snow Kingdom",
+        "stage": "KillerRailCollisionExStage",
+        "stage_display_name": "Wintery Flower Road",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Looking Back on Flower Road Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SnowWorldTownStage::place::new_place_2",
+        "kingdom": "Snow Kingdom",
+        "stage": "SnowWorldTownStage",
+        "stage_display_name": "Shiveria Town",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Snow Peach",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2615,7 +2651,7 @@
         "area_scope": "overworld",
         "from_node_id": "SnowWorldHomeStage::start",
         "to_node_id": "SnowWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "Byugo",
+        "requirement_expr": "(Byugo & Paintings)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2720,13 +2756,13 @@
         "area_scope": "subarea",
         "from_node_id": "KillerRailCollisionExStage::entrance::EX_RailCol2::sub_near",
         "to_node_id": "KillerRailCollisionExStage::entrance::EX_RailCol2_Exit::sub_far",
-        "requirement_expr": "Scarecrow",
+        "requirement_expr": "Scarecrow | (NeutralThrow & Vault & Dive & WallJump & CapReturnJump & KillerMagnum & SingleJump) | (NeutralThrow & Vault & Dive & WallJump & CapReturnJump & GroundPound & SingleJump & Roll)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
+        "difficulty": "casual;expert;expert",
         "option_scenarios": ""
       },
       {
@@ -2990,7 +3026,7 @@
         "area_scope": "overworld",
         "from_node_id": "SnowWorldHomeStage::stage_change::Come::raw",
         "to_node_id": "SnowWorldHomeStage::checkpoint::obj1387",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -3005,10 +3041,10 @@
         "area_scope": "overworld",
         "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
         "to_node_id": "SnowWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "Byugo | (Backflip & NeutralThrow & Vault & WallJump & Dive) | (GroundPoundJump & Vault & WallJump & Dive & NeutralThrow) | (SideFlip & Vault & WallJump & Dive & NeutralThrow) | (WallJump & Vault & Dive & NeutralThrow) | (NeutralThrow & TripleJump & Vault & Dive & WallJump) | (DownThrow & Backflip & Vault & WallJump & Dive) | (DownThrow & GroundPoundJump & Vault & WallJump & Dive) | (DownThrow & SideFlip & Vault & WallJump & Dive) | (DownThrow & TripleJump & Vault & WallJump & Dive) | (UpThrow & Backflip & Vault & WallJump & Dive) | (UpThrow & GroundPoundJump & Vault & WallJump & Dive) | (UpThrow & Vault & WallJump & Dive & SideFlip) | (UpThrow & Vault & WallJump & Dive & TripleJump)",
+        "requirement_expr": "(Byugo & Paintings) | (Backflip & NeutralThrow & Vault & WallJump & Dive & Paintings) | (GroundPoundJump & Vault & WallJump & Dive & NeutralThrow & Paintings) | (SideFlip & Vault & WallJump & Dive & NeutralThrow & Paintings) | (Vault & Dive & NeutralThrow & Paintings & CapReturnJump) | (NeutralThrow & TripleJump & Vault & Dive & WallJump & Paintings) | (DownThrow & Backflip & Vault & WallJump & Dive & Paintings) | (DownThrow & GroundPoundJump & Vault & WallJump & Dive & Paintings) | (DownThrow & SideFlip & Vault & WallJump & Dive & Paintings) | (DownThrow & TripleJump & Vault & WallJump & Dive & Paintings) | (UpThrow & Backflip & Vault & WallJump & Dive & Paintings) | (UpThrow & GroundPoundJump & Vault & WallJump & Dive & Paintings) | (UpThrow & Vault & WallJump & Dive & SideFlip & Paintings) | (UpThrow & Vault & WallJump & Dive & TripleJump & Paintings)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;advanced;advanced;advanced;expert;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "difficulty": "casual;advanced;advanced;advanced;expert;advanced;advanced;expert;expert;expert;advanced;expert;expert;expert",
         "option_scenarios": "2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5",
         "bidirectional": "true",
         "source": "editor",
@@ -3215,14 +3251,89 @@
         "area_scope": "subarea",
         "from_node_id": "IceWaterBlockExStage::entrance::EX_IceWater_Exit::sub_far",
         "to_node_id": "IceWaterBlockExStage::entrance::EX_IceWater::sub_near",
-        "requirement_expr": "Swim | (LongJump & GroundPoundJump) | (TripleJump & Dive) | (RollBoost & GroundPound & Dive) | (WallJump & Backflip & Dive) | (WallJump & GroundPoundJump & Dive) | (WallJump & SideFlip & Dive) | (WallJump & Spin & Dive)",
+        "requirement_expr": "(Swim & SingleJump) | (LongJump & GroundPoundJump & SingleJump) | (TripleJump & Dive) | (RollBoost & GroundPound & Dive & SingleJump) | (WallJump & Backflip & Dive) | (WallJump & GroundPoundJump & Dive & SingleJump) | (WallJump & SideFlip & Dive) | (WallJump & Spin & Dive) | (Swim & Dive & MinHp2)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;expert;advanced;expert;expert;expert;expert;expert",
+        "difficulty": "casual;expert;advanced;expert;expert;expert;expert;expert;expert",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0050.",
         "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1098",
+        "kingdom": "Snow Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "KillerRailCollisionExStage::entrance::EX_RailCol2::sub_near",
+        "to_node_id": "KillerRailCollisionExStage::place::new_place",
+        "requirement_expr": "Scarecrow | (NeutralThrow & Vault & WallJump & Dive & CapReturnJump & KillerMagnum & SingleJump) | (NeutralThrow & Vault & WallJump & Dive & CapReturnJump & GroundPound & Roll & SingleJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;expert;expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1099",
+        "kingdom": "Snow Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "KillerRailCollisionExStage::place::new_place",
+        "to_node_id": "KillerRailCollisionExStage::entrance::EX_RailCol2::sub_near",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1098.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1100",
+        "kingdom": "Snow Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "KillerRailCollisionExStage::entrance::EX_RailCol2_Exit::sub_far",
+        "to_node_id": "KillerRailCollisionExStage::place::new_place",
+        "requirement_expr": "(NeutralThrow & SingleJump & Vault & Dive & CapReturnJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1101",
+        "kingdom": "Snow Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "KillerRailCollisionExStage::place::new_place",
+        "to_node_id": "KillerRailCollisionExStage::entrance::EX_RailCol2_Exit::sub_far",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1100.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1116",
+        "kingdom": "Snow Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "SnowWorldTownStage::entrance::SnowUGEnt::sub_near",
+        "to_node_id": "SnowWorldTownStage::place::new_place_2",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4"
       }
     ],
     "moonAccess": [
@@ -3575,7 +3686,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SnowWorldHomeStage::checkpoint::obj1066",
         "state_requirement_expr": "",
-        "requirement_expr": "(Byugo & GroundPound) | (WallJump & GroundPound) | (Vault & GroundPound & NeutralThrow) | (Dive & GroundPound) | (Backflip & LedgeGrab & GroundPound) | (GroundPound & GroundPoundJump & LedgeGrab) | (SideFlip & LedgeGrab & GroundPound) | (Spin & LedgeGrab & GroundPound) | (TripleJump & GroundPound) | (UpThrow & Vault & GroundPound) | (DownThrow & Vault & LedgeGrab & GroundPound) | (NeutralThrow & GroundPound & GroundPoundJump) | (NeutralThrow & Backflip & GroundPound) | (NeutralThrow & GroundPound & SideFlip)",
+        "requirement_expr": "(Byugo & GroundPound) | (WallJump & GroundPound) | (Vault & GroundPound & NeutralThrow) | (Dive & GroundPound) | (Backflip & LedgeGrab & GroundPound) | (GroundPound & GroundPoundJump & LedgeGrab) | (SideFlip & LedgeGrab & GroundPound) | (Spin & LedgeGrab & GroundPound) | (TripleJump & GroundPound) | (UpThrow & Vault & GroundPound) | (DownThrow & Vault & LedgeGrab & GroundPound) | (NeutralThrow & GroundPound & GroundPoundJump) | (NeutralThrow & Backflip & GroundPound) | (NeutralThrow & GroundPound & SideFlip) | (Grab & GroundPound & LedgeGrab)",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -3607,7 +3718,7 @@
         "shine_info_scenario_name": "氷の中から とび出した",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SnowWorldHomeStage:1117:10",
-        "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;casual;advanced;advanced;expert;expert;expert",
+        "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;casual;advanced;advanced;expert;expert;expert;expert",
         "option_scenarios": ""
       },
       {
@@ -3719,7 +3830,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "IceWaterBlockExStage::entrance::EX_IceWater_Exit::sub_far",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -3861,9 +3972,9 @@
         "obj_id": "4422",
         "uid": "32",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "KillerRailCollisionExStage::entrance::EX_RailCol2::sub_near",
+        "from_node_id": "KillerRailCollisionExStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "Scarecrow",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -4103,7 +4214,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SnowWorldHomeStage::place::new_place_2",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Swim | KingdomAccess_Snow",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -4135,7 +4246,7 @@
         "shine_info_scenario_name": "雪の国 レギュラーカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SnowWorldHomeStage:1359:695",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -4487,7 +4598,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "SnowWorldHomeStage::place::new_place_2",
         "state_requirement_expr": "",
-        "requirement_expr": "Swim | Dive | RollBoost | LongJump | (NeutralThrow & PukupukuSnow) | (SpinThrow & PukupukuSnow)",
+        "requirement_expr": "Swim | Dive | RollBoost | LongJump | (NeutralThrow & PukupukuSnow) | (SpinThrow & PukupukuSnow) | (NeutralThrow & Vault & SingleJump & CapReturnJump)",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -4519,7 +4630,7 @@
         "shine_info_scenario_name": "雪の国 マスターカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SnowWorldHomeStage:1423:900",
-        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;expert",
         "option_scenarios": ""
       },
       {
@@ -5015,7 +5126,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SnowWorldByugoZone::start",
         "state_requirement_expr": "",
-        "requirement_expr": "GroundPound",
+        "requirement_expr": "(GroundPound & Byugo & SingleJump) | (Byugo & GroundPound & CapReturnJump) | (GroundPound & CapReturnJump)",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -5046,7 +5157,7 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "吹きすさぶアーチの上",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced",
         "option_scenarios": "",
         "__editor_id": "SnowWorldByugoZone:276:16"
       },
@@ -5157,7 +5268,7 @@
         "obj_id": "1101",
         "uid": "19",
         "flags": "ShineFlag_None",
-        "from_node_id": "SnowWorldTownStage::entrance::SnowUGEnt::sub_near",
+        "from_node_id": "SnowWorldTownStage::place::new_place_2",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Mushroom & NpcTalk)",
         "world_peace_token": "WorldPeace_Snow",
@@ -5399,7 +5510,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SnowWorldGabuzouZone::start",
         "state_requirement_expr": "",
-        "requirement_expr": "LedgeGrab | (Vault & Dive & NeutralThrow) | (NeutralThrow & TripleJump & WallJump & Dive)",
+        "requirement_expr": "LedgeGrab | (Vault & Dive & NeutralThrow) | (NeutralThrow & TripleJump & WallJump & Dive) | (UpThrow & Vault & SingleJump & Dive & SideFlip) | (UpThrow & SingleJump & Dive & CapReturnJump & WallJump) | (NeutralThrow & TripleJump & CapReturnJump & Vault & WallJump)",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -5430,7 +5541,7 @@
         "shine_info_object_name": "宝箱",
         "shine_info_scenario_name": "氷壁の宝箱",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;advanced;expert",
+        "difficulty": "casual;advanced;expert;expert;expert;expert",
         "option_scenarios": "",
         "__editor_id": "SnowWorldGabuzouZone:235:24"
       },
@@ -8205,8 +8316,8 @@
         "y": 288.367816091954
       },
       "SnowWorldHomeStage::entrance::EX_SkyBonus::home_in": {
-        "x": 87.06892997348064,
-        "y": 385.57720358508874
+        "x": 114.10008021110244,
+        "y": 397.01343474374
       },
       "SnowWorldHomeStage::entrance::FigureWalker::home_in": {
         "x": 978.4574451912649,
@@ -8441,8 +8552,8 @@
         "y": 521.0114942528736
       },
       "SnowWorldTownStage::entrance::SnowUGEnt::sub_near": {
-        "x": 854.006734006734,
-        "y": 391.94501018329936
+        "x": 452.32789351569573,
+        "y": 1606.8819957855935
       },
       "SnowWorldHomeStage::place::new_place_2": {
         "x": 291.7595838697885,
@@ -8451,6 +8562,10 @@
       "SnowWorldLobby000Stage::place::new_place_2": {
         "x": 605.7415453398008,
         "y": 300.92453019590005
+      },
+      "KillerRailCollisionExStage::place::new_place": {
+        "x": 689.5991182286589,
+        "y": 127.54311550259119
       },
       "moon:SnowWorldHomeStage:769:2": {
         "x": 1296.0825220531578,
@@ -8505,8 +8620,8 @@
         "y": 240
       },
       "moon:KillerRailCollisionExStage:4422:32": {
-        "x": 1176.4604638769986,
-        "y": 259.48843736639367
+        "x": 940.9083998614857,
+        "y": 41.39091549344623
       },
       "moon:ByugoPuzzleExStage:69:33": {
         "x": 100,
@@ -8557,7 +8672,7 @@
         "y": 40
       },
       "moon:SnowWorldHomeStage:1423:900": {
-        "x": 93.62122068575997,
+        "x": 69.42123790775398,
         "y": 1634.9586018527618
       },
       "moon:SnowWorldLobby000Stage:951:903": {
@@ -8601,8 +8716,8 @@
         "y": 1100
       },
       "moon:SnowWorldByugoZone:276:16": {
-        "x": 196.10807511613166,
-        "y": 1086.4864534945102
+        "x": 262.22142801896297,
+        "y": 1128.9174607681332
       },
       "moon:SnowWorldTownStage:531:17": {
         "x": 2107.2,
@@ -8671,6 +8786,10 @@
       "moon:SnowWorldTownStage:1187:1087": {
         "x": 768,
         "y": 1522
+      },
+      "SnowWorldTownStage::place::new_place_2": {
+        "x": 303.4374659124181,
+        "y": 1710.7158545926645
       }
     }
   }

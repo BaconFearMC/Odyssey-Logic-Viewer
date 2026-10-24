@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Luncheon Kingdom",
-  "savedAt": "2026-10-09T02:33:22.785Z",
+  "savedAt": "2026-10-24T04:09:15.273Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-08T23:26:22.240Z",
+    "loadedAt": "2026-10-23T21:17:11.834Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2468,6 +2468,78 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "LavaWorldHomeStage::place::new_place_11",
+        "kingdom": "Luncheon Kingdom",
+        "stage": "LavaWorldHomeStage",
+        "stage_display_name": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Tall Tall Roof Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "LavaWorldHomeStage::place::new_place_12",
+        "kingdom": "Luncheon Kingdom",
+        "stage": "LavaWorldHomeStage",
+        "stage_display_name": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "iminluncheon Peach",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "LavaWorldHomeStage::place::new_place_13",
+        "kingdom": "Luncheon Kingdom",
+        "stage": "LavaWorldHomeStage",
+        "stage_display_name": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Spinning Athletics Island",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "LavaWorldHomeStage::place::new_place_14",
+        "kingdom": "Luncheon Kingdom",
+        "stage": "LavaWorldHomeStage",
+        "stage_display_name": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Meat Plateau at Sea Level",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2540,10 +2612,10 @@
         "requirement_expr": "Bubble | (Vault & Dive & NeutralThrow)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -2567,13 +2639,13 @@
         "area_scope": "subarea",
         "from_node_id": "LavaWorldClockExStage::entrance::BBQEx::sub_near",
         "to_node_id": "LavaWorldClockExStage::entrance::BBQExDokan::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "(Dive & SingleJump) | SingleJump",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -2777,7 +2849,7 @@
         "area_scope": "overworld",
         "from_node_id": "LavaWorldHomeStage::checkpoint::obj6042",
         "to_node_id": "LavaWorldHomeStage::stage_change::Come::raw",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2868,21 +2940,6 @@
         "from_node_id": "LavaWorldHomeStage::place::new_place_6",
         "to_node_id": "LavaWorldHomeStage::checkpoint::obj4074",
         "requirement_expr": "FireBros",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0495",
-        "kingdom": "Luncheon Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "LavaWorldHomeStage::place::new_place_7",
-        "to_node_id": "LavaWorldHomeStage::checkpoint::obj4074",
-        "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -3092,7 +3149,7 @@
         "area_scope": "overworld",
         "from_node_id": "LavaWorldHomeStage::checkpoint::obj1061",
         "to_node_id": "LavaWorldHomeStage::checkpoint::obj4120",
-        "requirement_expr": "Vault | (GroundPound & RollBoost & TripleJump & Dive & NeutralThrow) | (LongJump & TripleJump & Dive & NeutralThrow)",
+        "requirement_expr": "(Vault & NeutralThrow) | (GroundPound & RollBoost & TripleJump & Dive & NeutralThrow) | (LongJump & TripleJump & Dive & NeutralThrow)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "advanced;expert;advanced",
@@ -3237,21 +3294,6 @@
         "option_scenarios": "1,2;3,4,5,6,7,8"
       },
       {
-        "edge_id": "edge_user_0393",
-        "kingdom": "Luncheon Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "LavaWorldHomeStage::place::new_place_3",
-        "to_node_id": "LavaWorldHomeStage::checkpoint::obj4120",
-        "requirement_expr": "Bubble",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0398",
         "kingdom": "Luncheon Kingdom",
         "area_scope": "overworld",
@@ -3264,7 +3306,7 @@
         "bidirectional": "true",
         "source": "editor",
         "notes": "Lava Bubble only available in Post Game scenario",
-        "option_scenarios": "5"
+        "option_scenarios": "5,8,7,6"
       },
       {
         "edge_id": "edge_user_0397",
@@ -3297,21 +3339,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0401",
-        "kingdom": "Luncheon Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "LavaWorldHomeStage::checkpoint::obj4074",
-        "to_node_id": "LavaWorldHomeStage::place::new_place_7",
-        "requirement_expr": "HammerBros | FireBros | Bubble | Vault | KingdomAccess_Luncheon | (TripleJump & Dive) | (Spin & Dive)",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual;casual;casual;advanced;advanced;advanced;advanced",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": "1,2,3,4,5;2,3,4,5;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8"
-      },
-      {
         "edge_id": "edge_user_0403",
         "kingdom": "Luncheon Kingdom",
         "area_scope": "overworld",
@@ -3332,7 +3359,7 @@
         "area_scope": "overworld",
         "from_node_id": "LavaWorldHomeStage::stage_change::Come::raw",
         "to_node_id": "LavaWorldHomeStage::checkpoint::obj6042",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -3347,7 +3374,7 @@
         "area_scope": "overworld",
         "from_node_id": "LavaWorldHomeStage::checkpoint::obj4120",
         "to_node_id": "LavaWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -3362,7 +3389,7 @@
         "area_scope": "overworld",
         "from_node_id": "LavaWorldHomeStage::place::new_place",
         "to_node_id": "LavaWorldHomeStage::place::new_place_2",
-        "requirement_expr": "Bubble | NeutralThrow | TripleJump | (Vault & NeutralThrow)",
+        "requirement_expr": "Bubble | (NeutralThrow & CapReturnJump) | TripleJump | (Vault & NeutralThrow)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;expert;advanced;advanced",
@@ -3437,14 +3464,14 @@
         "area_scope": "overworld",
         "from_node_id": "LavaWorldHomeStage::place::new_place_2",
         "to_node_id": "LavaWorldHomeStage::place::new_place_4",
-        "requirement_expr": "HammerBros | FireBros | (NeutralThrow & Vault & Dive) | (Vault & LedgeGrab & NeutralThrow) | (NeutralThrow & Vault & WallJump) | (TripleJump & WallJump & NeutralThrow) | Bubble | (WallJump & Dive) | (UpThrow & SideFlip & Vault & WallJump) | (DownThrow & SideFlip & Vault & WallJump) | (UpThrow & Backflip & Vault & WallJump) | (UpThrow & GroundPoundJump & Vault & WallJump) | (UpThrow & Spin & Vault & WallJump) | (UpThrow & TripleJump & Vault & WallJump) | (UpThrow & Backflip & Vault & Dive) | (UpThrow & GroundPoundJump & Vault & Dive) | (UpThrow & SideFlip & Vault & Dive) | (UpThrow & Spin & Vault & Dive) | (UpThrow & TripleJump & Vault & Dive) | (UpThrow & Backflip & Vault & LedgeGrab) | (UpThrow & SideFlip & Vault & LedgeGrab) | (UpThrow & GroundPoundJump & Vault & LedgeGrab) | (UpThrow & Spin & Vault & LedgeGrab) | (UpThrow & TripleJump & Vault & LedgeGrab) | (DownThrow & Backflip & Vault & WallJump) | (DownThrow & GroundPoundJump & Vault & WallJump) | (DownThrow & Spin & Vault & WallJump) | (DownThrow & TripleJump & Vault & WallJump) | (DownThrow & Vault & Backflip & Dive) | (DownThrow & GroundPoundJump & Vault & Dive) | (DownThrow & SideFlip & Vault & Dive) | (DownThrow & Spin & Vault & Dive) | (DownThrow & TripleJump & Vault & Dive) | (DownThrow & Backflip & Vault & LedgeGrab) | (DownThrow & GroundPoundJump & Vault & LedgeGrab) | (DownThrow & SideFlip & Vault & LedgeGrab) | (DownThrow & Spin & Vault & LedgeGrab) | (DownThrow & TripleJump & Vault & LedgeGrab) | (NeutralThrow & TripleJump & Vault)",
+        "requirement_expr": "HammerBros | FireBros | (NeutralThrow & Vault & Dive) | (Vault & LedgeGrab & NeutralThrow) | (NeutralThrow & Vault & WallJump) | (TripleJump & WallJump & NeutralThrow) | Bubble | (WallJump & Dive) | (UpThrow & SideFlip & Vault & WallJump) | (DownThrow & SideFlip & Vault & WallJump) | (UpThrow & Backflip & Vault & WallJump) | (UpThrow & GroundPoundJump & Vault & WallJump) | (UpThrow & Spin & Vault & WallJump) | (UpThrow & TripleJump & Vault & WallJump) | (UpThrow & Backflip & Vault & Dive) | (UpThrow & GroundPoundJump & Vault & Dive) | (UpThrow & SideFlip & Vault & Dive) | (UpThrow & Spin & Vault & Dive) | (UpThrow & TripleJump & Vault & Dive) | (UpThrow & Backflip & Vault & LedgeGrab) | (UpThrow & SideFlip & Vault & LedgeGrab) | (UpThrow & GroundPoundJump & Vault & LedgeGrab) | (UpThrow & Spin & Vault & LedgeGrab) | (UpThrow & TripleJump & Vault & LedgeGrab) | (DownThrow & Backflip & Vault & WallJump) | (DownThrow & GroundPoundJump & Vault & WallJump) | (DownThrow & Spin & Vault & WallJump) | (DownThrow & TripleJump & Vault & WallJump) | (DownThrow & Vault & Dive) | (DownThrow & Backflip & Vault & LedgeGrab) | (DownThrow & GroundPoundJump & Vault & LedgeGrab) | (DownThrow & SideFlip & Vault & LedgeGrab) | (DownThrow & Spin & Vault & LedgeGrab) | (DownThrow & TripleJump & Vault & LedgeGrab) | (NeutralThrow & Vault)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "advanced;advanced;advanced;advanced;advanced;expert;casual;advanced;advanced;expert;advanced;advanced;advanced;advanced;casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert",
+        "difficulty": "advanced;advanced;advanced;advanced;advanced;expert;casual;advanced;advanced;expert;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": "1,2,3,4,5,6,7,8;2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8"
+        "option_scenarios": "1,2,3,4,5,6,7,8;2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8"
       },
       {
         "edge_id": "edge_user_0616",
@@ -3486,7 +3513,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "expert",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -3501,7 +3528,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;casual;advanced;casual;casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "1,2,3,4,5,6,7,8;2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;5,6,7,8"
@@ -3546,10 +3573,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
+        "option_scenarios": "2,3,4,5,6,7,8"
       },
       {
         "edge_id": "edge_user_0480",
@@ -3561,7 +3588,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "expert",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -3602,7 +3629,7 @@
         "area_scope": "overworld",
         "from_node_id": "LavaWorldHomeStage::checkpoint::obj1061",
         "to_node_id": "LavaWorldHomeStage::place::new_place_3",
-        "requirement_expr": "free",
+        "requirement_expr": "impossible",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -3695,7 +3722,7 @@
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "advanced",
+        "difficulty": "casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0765.",
@@ -3730,36 +3757,6 @@
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "1,2,3,4,5,6,7,8"
-      },
-      {
-        "edge_id": "edge_user_0986",
-        "kingdom": "Luncheon Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "LavaWorldHomeStage::place::new_place_3",
-        "to_node_id": "LavaWorldHomeStage::entrance::BBQEx::home_in",
-        "requirement_expr": "(Bubble & Scarecrow)",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0475",
-        "kingdom": "Luncheon Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "LavaWorldHomeStage::entrance::BBQEx::home_in",
-        "to_node_id": "LavaWorldHomeStage::place::new_place_3",
-        "requirement_expr": "Bubble",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0986.",
-        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0987",
@@ -3805,6 +3802,426 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0988.",
         "option_scenarios": "2,3,4,5,6,7,8"
+      },
+      {
+        "edge_id": "edge_user_1024",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_3",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_7",
+        "requirement_expr": "HammerBros | FireBros | Bubble | Vault | KingdomAccess_Luncheon | (TripleJump & Dive) | (Spin & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;advanced;advanced;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4,5;2,3,4,5;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8"
+      },
+      {
+        "edge_id": "edge_user_1025",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_7",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_3",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1024.",
+        "option_scenarios": "1,2,3,4,5;2,3,4,5;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8"
+      },
+      {
+        "edge_id": "edge_user_0401",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::checkpoint::obj4120",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_2",
+        "requirement_expr": "Bubble",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0495",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_2",
+        "to_node_id": "LavaWorldHomeStage::checkpoint::obj4120",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0401.",
+        "option_scenarios": "2,3,4,5,6,7,8"
+      },
+      {
+        "edge_id": "edge_user_1026",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_9",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_2",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0896.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1027",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_9",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_3",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0897.",
+        "option_scenarios": "1,2,3,4,5,6,7,8;2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;5,6,7,8"
+      },
+      {
+        "edge_id": "edge_user_1030",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "LavaWorldBubbleLaneExStage::entrance::PechoBubbleExDokan::sub_far",
+        "to_node_id": "LavaWorldBubbleLaneExStage::entrance::PechoBubbleEx::sub_near",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0067.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1043",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_3",
+        "to_node_id": "LavaWorldHomeStage::checkpoint::obj4120",
+        "requirement_expr": "Bubble",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1044",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::checkpoint::obj4120",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_3",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1043.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1089",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::checkpoint::obj4117",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_11",
+        "requirement_expr": "HackFork | LongJump | (Vault & NeutralThrow) | Dive | WallJump | Bubble | RollBoost | TripleJump | (DownThrow & Vault & SingleJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1090",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_11",
+        "to_node_id": "LavaWorldHomeStage::checkpoint::obj4117",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1089.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1091",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::checkpoint::obj2292",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_11",
+        "requirement_expr": "(NeutralThrow & CapReturnJump & Dive & Vault & WallJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1092",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_11",
+        "to_node_id": "LavaWorldHomeStage::checkpoint::obj2292",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1091.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1111",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_12",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "7,8"
+      },
+      {
+        "edge_id": "edge_user_1123",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::entrance::PechoBubbleEx::home_in",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_3",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0479.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1124",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::entrance::PechoBubbleEx::home_in",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_2",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0480.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0843",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_3",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_13",
+        "requirement_expr": "Bubble",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1131",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_13",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_3",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0843.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0475",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_2",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_13",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0986",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_13",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_2",
+        "requirement_expr": "Bubble",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0475.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1119",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::checkpoint::obj1061",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_13",
+        "requirement_expr": "(Vault & NeutralThrow) | (GroundPound & RollBoost & TripleJump & Dive & NeutralThrow) | (LongJump & TripleJump & Dive & NeutralThrow) | (SingleJump & GroundPound & Roll & CapReturnJump & Dive & MinHp3)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;expert;advanced;expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1120",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_13",
+        "to_node_id": "LavaWorldHomeStage::checkpoint::obj1061",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1119.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1132",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_13",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_14",
+        "requirement_expr": "Bubble | (Vault & Dive & CapReturnJump & NeutralThrow & MinHp3)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1133",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_14",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_13",
+        "requirement_expr": "Bubble",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1132.",
+        "option_scenarios": "2,3,4,5,6,7,8"
+      },
+      {
+        "edge_id": "edge_user_1134",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_14",
+        "to_node_id": "LavaWorldHomeStage::checkpoint::obj1061",
+        "requirement_expr": "HackFork | (Vault & LedgeGrab & NeutralThrow) | (WallJump & Dive) | (Backflip & Vault & NeutralThrow) | (Backflip & WallJump & DownThrow & SpinThrow & LedgeGrab) | (Backflip & WallJump & NeutralThrow & SpinThrow & LedgeGrab) | (Backflip & WallJump & UpThrow & SpinThrow & LedgeGrab) | (Backflip & WallJump & NeutralThrow) | (GroundPoundJump & WallJump & NeutralThrow) | (SideFlip & WallJump & NeutralThrow) | (SideFlip & Vault & NeutralThrow) | (GroundPoundJump & Vault & NeutralThrow) | (Vault & Dive & NeutralThrow) | (TripleJump & WallJump & NeutralThrow) | (TripleJump & NeutralThrow & Vault) | (GroundPoundJump & WallJump & LedgeGrab & NeutralThrow) | (SideFlip & WallJump & LedgeGrab & NeutralThrow) | (TripleJump & WallJump & LedgeGrab & NeutralThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;expert;expert;expert;advanced;advanced;advanced;expert;advanced;advanced;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1135",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::checkpoint::obj1061",
+        "to_node_id": "LavaWorldHomeStage::place::new_place_14",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1134.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1121",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_14",
+        "to_node_id": "LavaWorldHomeStage::entrance::PechoBubbleEx::home_in",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1122",
+        "kingdom": "Luncheon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_13",
+        "to_node_id": "LavaWorldHomeStage::entrance::BBQEx::home_in",
+        "requirement_expr": "Scarecrow",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -3998,7 +4415,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldHomeStage:3419:243",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4,5,6,7,8"
       },
       {
         "moon_id": "LavaWorldHomeStage:4980:244",
@@ -4011,7 +4428,7 @@
         "obj_id": "4980",
         "uid": "244",
         "flags": "ShineFlag_None",
-        "from_node_id": "LavaWorldHomeStage::checkpoint::obj4074",
+        "from_node_id": "LavaWorldHomeStage::checkpoint::obj4120",
         "state_requirement_expr": "",
         "requirement_expr": "Bubble & Notes",
         "world_peace_token": "WorldPeace_Luncheon",
@@ -4046,7 +4463,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldHomeStage:4980:244",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4,5,6,7,8"
       },
       {
         "moon_id": "LavaWorldHomeStage:5575:245",
@@ -4109,7 +4526,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LavaWorldHomeStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(FireBros & GroundPound) | (HammerBros & GroundPound) | (Kuribo & GroundPound) | GroundPound | (WallJump & GroundPound) | (Vault & GroundPound & NeutralThrow) | (Dive & GroundPound) | (KingdomAccess_Luncheon & GroundPound) | (Backflip & GroundPound) | (GroundPoundJump & GroundPound) | (SideFlip & GroundPound) | (Spin & GroundPound) | (TripleJump & GroundPound)",
+        "requirement_expr": "(FireBros & GroundPound) | (HammerBros & GroundPound) | (Kuribo & GroundPound) | (GroundPound & MinHp2) | (WallJump & GroundPound) | (Vault & GroundPound & NeutralThrow) | (Dive & GroundPound) | (GroundPound & Grab) | (Backflip & GroundPound) | (GroundPoundJump & GroundPound) | (SideFlip & GroundPound) | (Spin & GroundPound) | (TripleJump & GroundPound)",
         "world_peace_token": "WorldPeace_Luncheon",
         "moon_rock_token": "MoonRockActive_Luncheon",
         "access_type": "primary",
@@ -4141,7 +4558,7 @@
         "shine_info_scenario_name": "食材たくさん見渡して",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldHomeStage:5620:246",
-        "difficulty": "casual;casual;advanced;casual;casual;casual;casual;expert;advanced;advanced;advanced;advanced;casual",
+        "difficulty": "casual;casual;advanced;advanced;casual;casual;casual;expert;advanced;advanced;advanced;advanced;casual",
         "option_scenarios": "2,3,4,5,6,8,7;1,2,3,4,5,6,7,8;2,3,4,5,6,8,7;5,6,8,7;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;1;1;1;1;1;1,2,3,4,5,6,7,8"
       },
       {
@@ -4301,7 +4718,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LavaWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "Bubble | FireBros",
         "world_peace_token": "WorldPeace_Luncheon",
         "moon_rock_token": "MoonRockActive_Luncheon",
         "access_type": "primary",
@@ -4333,8 +4750,8 @@
         "shine_info_scenario_name": "柱のかげに ひっそりと",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldHomeStage:340:250",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "advanced;casual",
+        "option_scenarios": "1,2,3,4,5,6,7,8;1,2,3,4,5,6,7,8;2,3,4,5,6,7,8"
       },
       {
         "moon_id": "LavaWorldHomeStage:355:251",
@@ -4443,7 +4860,7 @@
         "obj_id": "2184",
         "uid": "254",
         "flags": "ShineFlag_None",
-        "from_node_id": "LavaWorldHomeStage::checkpoint::obj4074",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_3",
         "state_requirement_expr": "",
         "requirement_expr": "Bubble | FireBros",
         "world_peace_token": "WorldPeace_Luncheon",
@@ -4478,7 +4895,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldHomeStage:2184:254",
         "difficulty": "casual",
-        "option_scenarios": "1,2,3,4,5;2,3,4,5"
+        "option_scenarios": "1,2,3,4,5,6,7,8;2,3,4,5,6,8,7"
       },
       {
         "moon_id": "LavaWorldHomeStage:2499:255",
@@ -4971,7 +5388,7 @@
         "obj_id": "5778",
         "uid": "268",
         "flags": "ShineFlag_None",
-        "from_node_id": "LavaWorldHomeStage::place::new_place",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_12",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Mushroom & NpcTalk)",
         "world_peace_token": "WorldPeace_Luncheon",
@@ -5259,9 +5676,9 @@
         "obj_id": "4879",
         "uid": "287",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "LavaWorldHomeStage::checkpoint::obj4117",
+        "from_node_id": "LavaWorldHomeStage::place::new_place_11",
         "state_requirement_expr": "",
-        "requirement_expr": "HackFork | LongJump | (Vault & NeutralThrow) | Dive | WallJump | Bubble | RollBoost | TripleJump",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Luncheon",
         "moon_rock_token": "MoonRockActive_Luncheon",
         "access_type": "primary",
@@ -5677,7 +6094,7 @@
         "shine_info_scenario_name": "とんで 渡って マグマ池",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldBubbleLaneExStage:414:298",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -5933,7 +6350,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LavaWorldClockExStage::entrance::BBQEx::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "Notes",
+        "requirement_expr": "(Notes & LedgeGrab) | Notes",
         "world_peace_token": "WorldPeace_Luncheon",
         "moon_rock_token": "MoonRockActive_Luncheon",
         "access_type": "primary",
@@ -5965,7 +6382,7 @@
         "shine_info_scenario_name": "くるくるアスレチックで 音符集め",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldClockExStage:320:306",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -6941,7 +7358,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "LavaBonus1Zone::entrance::town::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "NpcTalk",
+        "requirement_expr": "(NpcTalk & Wallet)",
         "world_peace_token": "WorldPeace_Luncheon",
         "moon_rock_token": "MoonRockActive_Luncheon",
         "access_type": "primary",
@@ -6989,7 +7406,7 @@
         "flags": "ShineFlag_HintArt",
         "from_node_id": "LavaWorldHomeStage::place::new_place_2",
         "state_requirement_expr": "",
-        "requirement_expr": "(KingdomAccess_Seaside & GroundPound) | (KingdomAccess_Seaside & Pukupuku)",
+        "requirement_expr": "(KingdomAccess_Seaside & GroundPound & Swim) | (KingdomAccess_Seaside & Pukupuku & NeutralThrow) | (DownThrow & Pukupuku & KingdomAccess_Seaside)",
         "world_peace_token": "WorldPeace_Luncheon",
         "moon_rock_token": "MoonRockActive_Luncheon",
         "access_type": "primary",
@@ -7021,7 +7438,7 @@
         "shine_info_scenario_name": "料理の国で見つけた お宝写真",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "LavaWorldHomeStage:6595:1090",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced;advanced",
         "option_scenarios": "2,3,4,5"
       },
       {
@@ -7288,18 +7705,6 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Climb",
-        "notes": ""
-      },
-      {
-        "token": "Swing",
-        "token_type": "ability",
-        "display_name": "Swing",
-        "category": "Movement",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Swing",
         "notes": ""
       },
       {
@@ -7869,13 +8274,13 @@
       {
         "token": "StatueKoopa",
         "token_type": "capture",
-        "display_name": "Jizo",
+        "display_name": "Bowser Statue",
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
         "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
-        "aliases": "Jizo; Bowser Statue",
+        "aliases": "Bowser Statue",
         "notes": ""
       },
       {
@@ -7975,66 +8380,6 @@
         "notes": ""
       },
       {
-        "token": "Turnip",
-        "token_type": "capture",
-        "display_name": "Turnip",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Turnip; Radish",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "Nut",
-        "token_type": "capture",
-        "display_name": "Nut",
-        "category": "Capture",
-        "prerequisite": "",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Nut; GrowPlantSeed",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "Jaxi",
-        "token_type": "capture",
-        "display_name": "Jaxi",
-        "category": "Capture",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Jaxi; SphinxRide",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "Bike",
-        "token_type": "capture",
-        "display_name": "Bike",
-        "category": "Capture",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Bike; Motorcycle",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
-        "token": "RocketFlower",
-        "token_type": "capture",
-        "display_name": "Rocket Flower",
-        "category": "Capture",
-        "prerequisite": "kNoPrerequisite",
-        "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
-        "can_start_with_seed": "false",
-        "aliases": "Rocket Flower",
-        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
-      },
-      {
         "token": "WorldPeace_Cap",
         "token_type": "event",
         "display_name": "WorldPeace_Cap",
@@ -8103,7 +8448,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj3428.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
         "notes": "See progression_events.csv for Sand Kingdom."
       },
       {
@@ -8127,7 +8472,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj5126.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
         "notes": "See progression_events.csv for Wooded Kingdom."
       },
       {
@@ -8271,7 +8616,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj583.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
         "notes": "See progression_events.csv for Snow Kingdom."
       },
       {
@@ -8367,7 +8712,7 @@
         "always_unlocked": "false",
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
-        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state. Location imported from StageData obj obj144.",
+        "aliases": "Fill the route to the Moon Rock and any prerequisite story/global state.",
         "notes": "See progression_events.csv for Moon Kingdom."
       },
       {
@@ -8476,7 +8821,7 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Cap Kingdom",
-        "notes": "Requires being able to reach the Cap Kingdom. (e.g. a hint-art moon that depends on another kingdom)."
+        "notes": "Requires being able to reach the Cap Kingdom (e.g. a hint-art moon that depends on another kingdom)."
       },
       {
         "token": "KingdomAccess_Cascade",
@@ -8620,7 +8965,7 @@
         "requires_any_cap_throw": "false",
         "can_start_with_seed": "false",
         "aliases": "Bowser's Kingdom",
-        "notes": "Requires being able to reach the Bowser's Kingdom."
+        "notes": "Requires being able to reach Bowser's Kingdom."
       },
       {
         "token": "KingdomAccess_Moon",
@@ -8669,6 +9014,78 @@
         "can_start_with_seed": "false",
         "aliases": "Darker Side",
         "notes": "Requires being able to reach the Darker Side."
+      },
+      {
+        "token": "Swing",
+        "token_type": "ability",
+        "display_name": "Swing",
+        "category": "Movement",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "false",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Swing",
+        "notes": ""
+      },
+      {
+        "token": "Turnip",
+        "token_type": "capture",
+        "display_name": "Turnip",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Turnip; Radish",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Nut",
+        "token_type": "capture",
+        "display_name": "Nut",
+        "category": "Capture",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Nut; GrowPlantSeed",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Jaxi",
+        "token_type": "capture",
+        "display_name": "Jaxi",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Jaxi; SphinxRide",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "Bike",
+        "token_type": "capture",
+        "display_name": "Bike",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Bike; Motorcycle",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
+      },
+      {
+        "token": "RocketFlower",
+        "token_type": "capture",
+        "display_name": "Rocket Flower",
+        "category": "Capture",
+        "prerequisite": "kNoPrerequisite",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "false",
+        "can_start_with_seed": "false",
+        "aliases": "Rocket Flower",
+        "notes": "Override prop alternative; always unlocked (no real capture is needed)"
       },
       {
         "token": "MoonLowGravity",
@@ -9391,8 +9808,8 @@
         "y": 560
       },
       "ForkExStage::entrance::ForkEX::sub_near": {
-        "x": 372.5438606769314,
-        "y": 334.4736852878679
+        "x": 450.6576496278738,
+        "y": 299.6768990884566
       },
       "GabuzouClockExStage::stage_change::GabuzouClockEx::raw": {
         "x": 1620,
@@ -9495,12 +9912,12 @@
         "y": 414.8380587045646
       },
       "LavaWorldHomeStage::checkpoint::obj1061": {
-        "x": 578.1762022876633,
-        "y": 3333.3535992251936
+        "x": 707.7281508909067,
+        "y": 3414.971447054095
       },
       "LavaWorldHomeStage::checkpoint::obj2292": {
-        "x": 434.3239137444266,
-        "y": 3001.5365553240467
+        "x": 442.0680504727376,
+        "y": 2995.8574909998993
       },
       "LavaWorldHomeStage::checkpoint::obj2549": {
         "x": 339.72409583782326,
@@ -9515,8 +9932,8 @@
         "y": 3498
       },
       "LavaWorldHomeStage::checkpoint::obj4120": {
-        "x": 1334.3662341925678,
-        "y": 2910.7101145184815
+        "x": 1425.8562262370906,
+        "y": 2984.5258792177024
       },
       "LavaWorldHomeStage::checkpoint::obj4619": {
         "x": 2134,
@@ -9531,8 +9948,8 @@
         "y": 886.4817561136474
       },
       "LavaWorldHomeStage::entrance::BBQEx::home_in": {
-        "x": 1699.6491304147758,
-        "y": 2163.0826927091243
+        "x": 2272.604530440948,
+        "y": 2791.858126633015
       },
       "LavaWorldHomeStage::entrance::CostumeEventWorldLava::home_in": {
         "x": 1724,
@@ -9563,8 +9980,8 @@
         "y": 2290.6569761837914
       },
       "LavaWorldHomeStage::entrance::PechoBubbleEx::home_in": {
-        "x": 1461.7230303017511,
-        "y": 2531.379137403502
+        "x": 556.6043627889394,
+        "y": 3205.585704273254
       },
       "LavaWorldHomeStage::entrance::TreasureEventWorldLava::home_in": {
         "x": 1485.7008153827205,
@@ -9619,8 +10036,8 @@
         "y": 5268
       },
       "LavaWorldHomeStage::stage_change::Go::raw": {
-        "x": 1680.827749610531,
-        "y": 2939.2386639389265
+        "x": 1719.2951310068042,
+        "y": 2956.9128912842284
       },
       "LavaWorldHomeStage::stage_change::KeyMoveEx::raw": {
         "x": 2150,
@@ -9775,12 +10192,16 @@
         "y": 3552.335979919825
       },
       "LavaWorldHomeStage::place::new_place_9": {
-        "x": 1215.9908050057797,
-        "y": 2546.5328366865674
+        "x": 1264.8546563460538,
+        "y": 2578.7622932838462
       },
       "LavaWorldHomeStage::place::new_place_10": {
         "x": 259.7874439268272,
         "y": 2892.4323405787122
+      },
+      "LavaWorldHomeStage::place::new_place_11": {
+        "x": 2318.8568987165177,
+        "y": 3230.285792759487
       },
       "moon:LavaWorldHomeStage:5616:240": {
         "x": 1166,
@@ -9795,12 +10216,12 @@
         "y": 1434
       },
       "moon:LavaWorldHomeStage:3419:243": {
-        "x": 1748.3128096210069,
-        "y": 2550.3805537839685
+        "x": 1715.0437345843907,
+        "y": 2563.8960932089512
       },
       "moon:LavaWorldHomeStage:4980:244": {
-        "x": 100,
-        "y": 2510
+        "x": 1683.5590926130485,
+        "y": 2744.326355832483
       },
       "moon:LavaWorldHomeStage:5575:245": {
         "x": 1806,
@@ -9835,8 +10256,8 @@
         "y": 3902
       },
       "moon:LavaWorldHomeStage:2184:254": {
-        "x": 100,
-        "y": 2402
+        "x": 1909.264149278863,
+        "y": 2563.8893566715915
       },
       "moon:LavaWorldHomeStage:2499:255": {
         "x": 768,
@@ -9879,7 +10300,7 @@
         "y": 2785.873753072229
       },
       "moon:LavaWorldHomeStage:5778:268": {
-        "x": 2294,
+        "x": 2520.445753167302,
         "y": 1866
       },
       "moon:LavaWorldHomeStage:5859:269": {
@@ -9891,8 +10312,8 @@
         "y": 262
       },
       "moon:LavaWorldHomeStage:4867:276": {
-        "x": 998,
-        "y": 2456
+        "x": 832.0159496358525,
+        "y": 2609.2160105224316
       },
       "moon:LavaWorldHomeStage:4868:277": {
         "x": 2572,
@@ -9903,8 +10324,8 @@
         "y": 1650
       },
       "moon:LavaWorldHomeStage:4879:287": {
-        "x": 2572,
-        "y": 3446
+        "x": 2670.2857840401784,
+        "y": 3194.5714285714284
       },
       "moon:LavaWorldHomeStage:5721:289": {
         "x": 1166,
@@ -9927,8 +10348,8 @@
         "y": 457.1428571428571
       },
       "moon:ForkExStage:692:296": {
-        "x": 1620,
-        "y": 287.31707317073176
+        "x": 943.1887142707982,
+        "y": 527.8368047970655
       },
       "moon:ForkExStage:4746:297": {
         "x": 0,
@@ -9959,8 +10380,8 @@
         "y": 670.8786763527177
       },
       "moon:LavaWorldClockExStage:320:306": {
-        "x": 1212.857142857143,
-        "y": 1145
+        "x": 1238.2735952266369,
+        "y": 1238.5790160699491
       },
       "moon:LavaWorldClockExStage:544:307": {
         "x": 1727.1509542681617,
@@ -10053,6 +10474,18 @@
       "moon:LavaWorldFenceLiftExStage:999:1101": {
         "x": 1368.9473682229209,
         "y": 186.33504499131283
+      },
+      "LavaWorldHomeStage::place::new_place_12": {
+        "x": 2284.255565440176,
+        "y": 1861.4183684075479
+      },
+      "LavaWorldHomeStage::place::new_place_13": {
+        "x": 1934.9070706373916,
+        "y": 2781.656740657791
+      },
+      "LavaWorldHomeStage::place::new_place_14": {
+        "x": 881.0684995616822,
+        "y": 3257.1844382889863
       }
     }
   }

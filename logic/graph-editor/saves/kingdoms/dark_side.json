@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Dark Side",
-  "savedAt": "2026-10-09T02:52:04.241Z",
+  "savedAt": "2026-10-23T17:10:58.675Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-08T23:26:22.240Z",
+    "loadedAt": "2026-10-23T14:23:02.449Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2166,21 +2166,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0417",
-        "kingdom": "Dark Side",
-        "area_scope": "overworld",
-        "from_node_id": "Special1WorldHomeStage::place::new_place",
-        "to_node_id": "Special1WorldHomeStage::entrance::ShootingCityYoshiEx::home_in",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0418",
         "kingdom": "Dark Side",
         "area_scope": "overworld",
@@ -2201,13 +2186,28 @@
         "area_scope": "overworld",
         "from_node_id": "Special1WorldHomeStage::start",
         "to_node_id": "Special1WorldHomeStage::entrance::KillerRoadNoCapEx::home_in",
+        "requirement_expr": "Scarecrow",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0995",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::entrance::KillerRoadNoCapEx::home_in",
+        "to_node_id": "Special1WorldHomeStage::start",
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor.",
+        "notes": "Reverse of edge_user_0420.",
         "option_scenarios": ""
       },
       {
@@ -2276,10 +2276,10 @@
         "area_scope": "subarea",
         "from_node_id": "PackunPoisonNoCapExStage::entrance::PackunPoisonNoCapEx::sub_near",
         "to_node_id": "PackunPoisonNoCapExStage::entrance::PackunPoisonNoCapEx_Exit::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "(Dive & SingleJump) | (SingleJump & MinHp2)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;advanced",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -2471,7 +2471,7 @@
         "area_scope": "overworld",
         "from_node_id": "Special1WorldHomeStage::start",
         "to_node_id": "Special1WorldHomeStage::stage_change::Come::raw",
-        "requirement_expr": "ElectricWire",
+        "requirement_expr": "(ElectricWire & Paintings)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2490,7 +2490,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2576,7 +2576,7 @@
         "area_scope": "overworld",
         "from_node_id": "Special1WorldHomeStage::stage_change::Go::raw",
         "to_node_id": "Special1WorldHomeStage::place::new_place_4",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2606,13 +2606,28 @@
         "area_scope": "overworld",
         "from_node_id": "Special1WorldHomeStage::place::new_place_4",
         "to_node_id": "Special1WorldHomeStage::entrance::PackunPoisonNoCapEx::home_in",
+        "requirement_expr": "Scarecrow",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0996",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::entrance::PackunPoisonNoCapEx::home_in",
+        "to_node_id": "Special1WorldHomeStage::place::new_place_4",
         "requirement_expr": "free",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
-        "notes": "Created in graph editor.",
+        "notes": "Reverse of edge_user_0968.",
         "option_scenarios": ""
       },
       {
@@ -2711,7 +2726,7 @@
         "area_scope": "overworld",
         "from_node_id": "Special1WorldHomeStage::place::new_place_6",
         "to_node_id": "Special1WorldHomeStage::entrance::BikeSteelNoCapEx::home_in",
-        "requirement_expr": "free",
+        "requirement_expr": "Scarecrow",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -2726,10 +2741,10 @@
         "area_scope": "overworld",
         "from_node_id": "Special1WorldHomeStage::entrance::BikeSteelNoCapEx::home_in",
         "to_node_id": "Special1WorldHomeStage::place::new_place_6",
-        "requirement_expr": "MoonLowGravity | WallJump | LedgeGrab | (NeutralThrow & Backflip) | (NeutralThrow & GroundPoundJump) | (NeutralThrow & SideFlip) | Spin | TripleJump | Dive | (Vault & NeutralThrow) | (UpThrow & Vault) | (DownThrow & Vault)",
+        "requirement_expr": "MoonLowGravity | WallJump | LedgeGrab | (NeutralThrow & Backflip) | (NeutralThrow & GroundPoundJump) | (NeutralThrow & SideFlip) | Spin | TripleJump | Dive | (Vault & NeutralThrow) | (UpThrow & Vault) | (DownThrow & Vault) | (NeutralThrow & CapReturnJump)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert;expert",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0974.",
@@ -2820,9 +2835,39 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1028",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_5",
+        "to_node_id": "Special1WorldHomeStage::stage_change::Come::raw",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0993.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1029",
+        "kingdom": "Dark Side",
+        "area_scope": "overworld",
+        "from_node_id": "Special1WorldHomeStage::place::new_place_3",
+        "to_node_id": "Special1WorldHomeStage::stage_change::Come::raw",
+        "requirement_expr": "Paintings",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0912.",
         "option_scenarios": ""
       }
     ],
@@ -2840,7 +2885,7 @@
         "flags": "ShineFlag_Story | ShineFlag_Multi",
         "from_node_id": "Special1WorldHomeStage::place::new_place_5",
         "state_requirement_expr": "",
-        "requirement_expr": "(GroundPound & MoonLowGravity) | (HammerBros & MoonLowGravity) | (Vault & Dive & NeutralThrow & GroundPound & MoonLowGravity) | (GroundPound & Backflip & MoonLowGravity) | (GroundPound & Dive & UpThrow & ElectricWire & MoonLowGravity)",
+        "requirement_expr": "(GroundPound & MoonLowGravity) | (HammerBros & MoonLowGravity) | (Vault & Dive & NeutralThrow & GroundPound & MoonLowGravity) | (GroundPound & Backflip & MoonLowGravity) | (GroundPound & Dive & UpThrow & MoonLowGravity) | (WallJump & GroundPound & MoonLowGravity) | (NeutralThrow & Vault & Dive & GroundPound) | (UpThrow & Vault & Dive & GroundPound)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -2872,7 +2917,7 @@
         "shine_info_scenario_name": "決着！ ラビットクレーター",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "Special1WorldHomeStage:130:1055",
-        "difficulty": "expert;casual;casual;advanced;advanced",
+        "difficulty": "expert;casual;advanced;advanced;advanced;advanced;advanced;advanced",
         "option_scenarios": "1,2,3,4,5"
       },
       {
@@ -3176,7 +3221,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PackunPoisonNoCapExStage::entrance::PackunPoisonNoCapEx::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "Roll | GroundPound",
+        "requirement_expr": "(Roll & Dive & SingleJump) | (GroundPound & Dive & SingleJump) | (Roll & SingleJump) | (SingleJump & GroundPound)",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -3208,7 +3253,7 @@
         "shine_info_scenario_name": "チャレンジ！ とうめいロード",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "PackunPoisonNoCapExStage:9:1068",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced;advanced",
         "option_scenarios": ""
       },
       {
@@ -3224,7 +3269,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "PackunPoisonNoCapExStage::entrance::PackunPoisonNoCapEx::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump",
         "world_peace_token": "WorldPeace_Dark",
         "moon_rock_token": "MoonRockActive_Dark",
         "access_type": "primary",
@@ -6284,8 +6329,8 @@
         "y": 723.0010070493454
       },
       "Special1WorldHomeStage::entrance::SenobiTowerYoshiEx::home_in": {
-        "x": 1123.9939646884613,
-        "y": 610.0650840404832
+        "x": 1143.7939429683659,
+        "y": 505.56537584532157
       },
       "Special1WorldHomeStage::entrance::SenobiTowerYoshiEx_Exit::home_out": {
         "x": 872.4352331606217,
@@ -6512,8 +6557,8 @@
         "y": 1394.3660714212087
       },
       "moon:Special1WorldHomeStage:130:1055": {
-        "x": 2120.536679864386,
-        "y": 332.59276098066493
+        "x": 1868.5758094401237,
+        "y": 527.1447392418627
       },
       "moon:KillerRoadNoCapExStage:3:1062": {
         "x": 851.1469778233316,
@@ -6540,8 +6585,8 @@
         "y": 602.631574266505
       },
       "moon:PackunPoisonNoCapExStage:9:1068": {
-        "x": 504.37499495164934,
-        "y": 523.871269539261
+        "x": 447.4423901609167,
+        "y": 477.5307804391117
       },
       "moon:PackunPoisonNoCapExStage:4:1069": {
         "x": 491.96022857562986,

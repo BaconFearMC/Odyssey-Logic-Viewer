@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Seaside Kingdom",
-  "savedAt": "2026-10-09T17:45:08.782Z",
+  "savedAt": "2026-10-24T03:40:13.907Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-09T17:42:54.157Z",
+    "loadedAt": "2026-10-23T21:17:11.834Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -2396,6 +2396,60 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SeaWorldHomeStage::place::new_place_13",
+        "kingdom": "Seaside Kingdom",
+        "stage": "SeaWorldHomeStage",
+        "stage_display_name": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Taking Notes Ocean Surface Dash Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SeaWorldHomeStage::place::new_place_14",
+        "kingdom": "Seaside Kingdom",
+        "stage": "SeaWorldHomeStage",
+        "stage_display_name": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Shopping Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "SeaWorldHomeStage::place::new_place_15",
+        "kingdom": "Seaside Kingdom",
+        "stage": "SeaWorldHomeStage",
+        "stage_display_name": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Seaside Peach",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -2645,7 +2699,7 @@
         "area_scope": "overworld",
         "from_node_id": "SeaWorldHomeStage::checkpoint::obj2621",
         "to_node_id": "SeaWorldHomeStage::stage_change::Come::raw",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -3020,11 +3074,11 @@
         "area_scope": "overworld",
         "from_node_id": "SeaWorldHomeStage::start",
         "to_node_id": "SeaWorldHomeStage::place::new_place_2",
-        "requirement_expr": "Climb | Hosui",
+        "requirement_expr": "(Climb & RocketFlower) | Hosui | (Swim & Climb) | (TripleJump & Dive & Climb) | (NeutralThrow & Vault & Climb) | (NeutralThrow & Dive & Climb) | (UpThrow & Vault & Dive & Climb) | (Kuribo & NeutralThrow & Climb) | (Kuribo & Dive & Climb)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;advanced",
-        "option_scenarios": "2,3,4,5;1,2,3,4,5",
+        "difficulty": "casual;advanced;casual;expert;expert;expert;expert;expert;expert",
+        "option_scenarios": "2,3,4,5;1,2,3,4,5;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor."
@@ -3282,7 +3336,7 @@
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
+        "option_scenarios": "2,3,4"
       },
       {
         "edge_id": "edge_user_0615",
@@ -3290,10 +3344,10 @@
         "area_scope": "overworld",
         "from_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
         "to_node_id": "SeaWorldHomeStage::place::new_place_5",
-        "requirement_expr": "Hosui | RocketFlower | (Vault & WallJump & NeutralThrow) | Dive | (Backflip & WallJump & NeutralThrow) | (Backflip & Vault & NeutralThrow) | (GroundPoundJump & Vault & NeutralThrow) | (GroundPoundJump & Vault & UpThrow) | (GroundPoundJump & WallJump & HammerBros) | (SideFlip & WallJump & NeutralThrow) | (SideFlip & Vault & NeutralThrow) | (SideFlip & Vault & UpThrow) | (Backflip & Vault & UpThrow) | (Spin & Vault & NeutralThrow) | (Spin & Vault & UpThrow) | (Spin & WallJump & NeutralThrow) | (TripleJump & Vault & NeutralThrow) | (TripleJump & Vault & UpThrow) | (TripleJump & WallJump & NeutralThrow) | Kuribo",
+        "requirement_expr": "Hosui | RocketFlower | (Vault & WallJump & NeutralThrow) | Dive | (Backflip & WallJump & NeutralThrow) | (Backflip & Vault & NeutralThrow) | (GroundPoundJump & Vault & NeutralThrow) | (GroundPoundJump & Vault & UpThrow) | (GroundPoundJump & WallJump & NeutralThrow) | (SideFlip & WallJump & NeutralThrow) | (SideFlip & Vault & NeutralThrow) | (SideFlip & Vault & UpThrow) | (Backflip & Vault & UpThrow) | (Spin & Vault & NeutralThrow) | (Spin & Vault & UpThrow) | (Spin & WallJump & NeutralThrow) | (TripleJump & Vault & NeutralThrow) | (TripleJump & Vault & UpThrow) | (TripleJump & WallJump & NeutralThrow) | Kuribo",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert",
+        "difficulty": "casual;expert;advanced;advanced;expert;advanced;advanced;advanced;advanced;expert;advanced;advanced;advanced;advanced;advanced;expert;advanced;advanced;advanced;expert",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -3320,7 +3374,7 @@
         "area_scope": "overworld",
         "from_node_id": "SeaWorldHomeStage::start",
         "to_node_id": "SeaWorldHomeStage::stage_change::Go::raw",
-        "requirement_expr": "free",
+        "requirement_expr": "Paintings",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -3350,7 +3404,7 @@
         "area_scope": "overworld",
         "from_node_id": "SeaWorldHomeStage::start",
         "to_node_id": "SeaWorldLavaZone::checkpoint::obj182",
-        "requirement_expr": "NeutralThrow | Swim | (NeutralThrow & Wanwan) | (DownThrow & Pukupuku) | Hosui",
+        "requirement_expr": "(NeutralThrow & CapReturnJump) | Swim | (NeutralThrow & Pukupuku) | (DownThrow & Pukupuku) | Hosui",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "expert;casual;advanced;advanced;casual",
@@ -3620,10 +3674,10 @@
         "area_scope": "overworld",
         "from_node_id": "SeaWorldHomeStage::checkpoint::obj1866",
         "to_node_id": "SeaWorldHomeStage::place::new_place_11",
-        "requirement_expr": "Swim | Hosui | (NeutralThrow & Pukupuku) | (DownThrow & Pukupuku) | (NeutralThrow & Vault & Dive) | (NeutralThrow & Vault & LedgeGrab) | (NeutralThrow & Vault & WallJump) | (UpThrow & Vault & Dive) | (UpThrow & Vault & WallJump & LedgeGrab) | (WallJump & Dive) | (NeutralThrow & GroundPoundJump & WallJump & LedgeGrab) | (NeutralThrow & Backflip & WallJump & LedgeGrab) | (NeutralThrow & SideFlip & WallJump & LedgeGrab) | (NeutralThrow & GroundPoundJump & WallJump & LedgeGrab) | (TripleJump & WallJump & LedgeGrab & NeutralThrow)",
+        "requirement_expr": "Swim | Hosui | (NeutralThrow & Pukupuku) | (DownThrow & Pukupuku) | (NeutralThrow & Vault & Dive) | (NeutralThrow & Vault & LedgeGrab) | (NeutralThrow & Vault & WallJump) | (UpThrow & Vault & Dive) | (UpThrow & Vault & WallJump & LedgeGrab) | (WallJump & Dive) | (NeutralThrow & GroundPoundJump & WallJump & LedgeGrab) | (NeutralThrow & Backflip & WallJump & LedgeGrab) | (NeutralThrow & SideFlip & WallJump & LedgeGrab) | (NeutralThrow & GroundPoundJump & WallJump & LedgeGrab) | (TripleJump & WallJump & LedgeGrab & NeutralThrow) | Kuribo | (NeutralThrow & Vault) | RocketFlower",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;casual;advanced;advanced;advanced;advanced;advanced;advanced;expert;advanced;advanced;advanced;advanced;advanced;advanced",
+        "difficulty": "casual;casual;advanced;advanced;advanced;advanced;advanced;advanced;expert;advanced;advanced;advanced;advanced;advanced;advanced;expert;expert;advanced",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -4003,6 +4057,141 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0893.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1016",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
+        "to_node_id": "SeaWorldHomeStage::place::new_place_13",
+        "requirement_expr": "(RocketFlower & Notes) | (Swim & Notes & NeutralThrow) | (Hosui & Notes) | (NeutralThrow & Pukupuku & Notes) | (DownThrow & Pukupuku & Notes) | (Swim & Notes) | (Hosui & Notes)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;advanced;advanced;expert;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1017",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::place::new_place",
+        "to_node_id": "SeaWorldHomeStage::place::new_place_13",
+        "requirement_expr": "(Kakku & Notes & Swim)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1018",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_13",
+        "to_node_id": "SeaWorldHomeStage::place::new_place",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1017.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1019",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_13",
+        "to_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1016.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0167",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
+        "to_node_id": "SeaWorldHomeStage::place::new_place_14",
+        "requirement_expr": "(Swim & NpcTalk & Wallet) | (NpcTalk & Wallet) | (NpcTalk & RocketFlower & Wallet) | (TripleJump & Dive & NpcTalk) | (NeutralThrow & Vault & NpcTalk) | (NeutralThrow & Dive & NpcTalk) | (UpThrow & Vault & Dive & NpcTalk) | (Kuribo & NeutralThrow & NpcTalk) | (Kuribo & Dive & NpcTalk)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;advanced;expert;expert;expert;expert;expert;expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4;1;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1020",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_14",
+        "to_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0167.",
+        "option_scenarios": "2,3,4;1;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1021",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::place::new_place",
+        "to_node_id": "SeaWorldHomeStage::place::new_place_14",
+        "requirement_expr": "(Kakku & NpcTalk)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1022",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_14",
+        "to_node_id": "SeaWorldHomeStage::place::new_place",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1021.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1115",
+        "kingdom": "Seaside Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "SeaWorldHomeStage::start",
+        "to_node_id": "SeaWorldHomeStage::place::new_place_15",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4"
       }
     ],
     "moonAccess": [
@@ -4067,7 +4256,7 @@
         "flags": "ShineFlag_Story",
         "from_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
         "state_requirement_expr": "",
-        "requirement_expr": "Hosui",
+        "requirement_expr": "Hosui | (NeutralThrow & TripleJump & Vault & WallJump & Dive)",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -4099,7 +4288,7 @@
         "shine_info_scenario_name": "岩柱の封印",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SeaWorldHomeStage:382:438",
-        "difficulty": "casual",
+        "difficulty": "casual;expert",
         "option_scenarios": ""
       },
       {
@@ -4163,7 +4352,7 @@
         "flags": "ShineFlag_Story",
         "from_node_id": "SeaWorldLavaZone::checkpoint::obj182",
         "state_requirement_expr": "",
-        "requirement_expr": "Hosui",
+        "requirement_expr": "(Hosui & Swim) | (Hosui & Pukupuku & NeutralThrow) | (Hosui & Pukupuku & DownThrow)",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -4195,7 +4384,7 @@
         "shine_info_scenario_name": "温泉の封印",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SeaWorldLavaZone:168:440",
-        "difficulty": "casual",
+        "difficulty": "casual;expert;expert",
         "option_scenarios": ""
       },
       {
@@ -4257,9 +4446,9 @@
         "obj_id": "1593",
         "uid": "442",
         "flags": "ShineFlag_None",
-        "from_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_13",
         "state_requirement_expr": "",
-        "requirement_expr": "(RocketFlower & Notes) | (NeutralThrow & SpinThrow & Swim & Notes) | (DownThrow & SpinThrow & Swim & Notes) | (UpThrow & SpinThrow & Swim & Notes)",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -4291,7 +4480,7 @@
         "shine_info_scenario_name": "海面ダッシュで 音符集め",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SeaWorldHomeStage:1593:442",
-        "difficulty": "casual;expert;expert;expert",
+        "difficulty": "casual",
         "option_scenarios": ""
       },
       {
@@ -4307,7 +4496,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SeaWorldHomeStage::checkpoint::obj1866",
         "state_requirement_expr": "",
-        "requirement_expr": "(Hosui & NpcTalk) | (Vault & WallJump & NeutralThrow & Dive & NpcTalk) | (Kuribo & Dive & NpcTalk) | (Kuribo & WallJump & Vault & NeutralThrow & NpcTalk) | (Kuribo & LedgeGrab & NpcTalk) | (Kuribo & NpcTalk) | (WallJump & NeutralThrow & NpcTalk)",
+        "requirement_expr": "(Hosui & NpcTalk) | (Vault & WallJump & NeutralThrow & Dive & NpcTalk) | (Kuribo & Dive & NpcTalk) | (Kuribo & WallJump & Vault & NeutralThrow & NpcTalk) | (Kuribo & LedgeGrab & NpcTalk) | (Kuribo & NpcTalk) | (WallJump & NeutralThrow & NpcTalk) | (NeutralThrow & Vault & Dive & NpcTalk) | (UpThrow & Vault & WallJump & Dive & NpcTalk) | (DownThrow & Vault & WallJump & Dive & NpcTalk) | (UpThrow & Vault & Dive & Backflip & NpcTalk) | (UpThrow & Vault & Dive & GroundPoundJump & NpcTalk) | (UpThrow & Vault & Dive & SideFlip & NpcTalk) | (UpThrow & Vault & Dive & TripleJump & NpcTalk) | (TripleJump & WallJump & Dive & NpcTalk) | (UpThrow & Vault & WallJump & NpcTalk) | (UpThrow & Vault & Dive & NpcTalk) | (NeutralThrow & WallJump & Dive & NpcTalk) | (DownThrow & WallJump & Dive & NpcTalk) | (UpThrow & WallJump & Dive & NpcTalk)",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -4339,8 +4528,8 @@
         "shine_info_scenario_name": "おつかれさま！ キノピオ隊長",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SeaWorldHomeStage:1863:443",
-        "difficulty": "casual;advanced;advanced;advanced;advanced;expert;expert",
-        "option_scenarios": "1,2,3,4,5"
+        "difficulty": "casual;advanced;advanced;advanced;advanced;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert;expert",
+        "option_scenarios": "1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;1,2,3,4,5;3,4,5;3,4;3,4;3,4;3,4"
       },
       {
         "moon_id": "SeaWorldHomeStage:2079:444",
@@ -4467,9 +4656,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-450.099",
-        "placement_y": "24024.360",
-        "placement_z": "-9450.185",
+        "placement_x": "-7447.855",
+        "placement_y": "60324.360",
+        "placement_z": "8484.882",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -4515,9 +4704,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "537300.000",
-        "placement_y": "18000.000",
-        "placement_z": "-548100.000",
+        "placement_x": "1421700.000",
+        "placement_y": "47700.000",
+        "placement_z": "-1452300.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -4947,9 +5136,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "2400.000",
-        "placement_y": "-26800.000",
-        "placement_z": "-127900.000",
+        "placement_x": "42000.000",
+        "placement_y": "-472300.000",
+        "placement_z": "-2226700.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -5073,9 +5262,9 @@
         "obj_id": "1622",
         "uid": "460",
         "flags": "ShineFlag_None",
-        "from_node_id": "SeaWorldHomeStage::checkpoint::obj1524",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_14",
         "state_requirement_expr": "",
-        "requirement_expr": "(Swim & NpcTalk & Wallet) | (NpcTalk & Wallet) | (NpcTalk & RocketFlower & Wallet)",
+        "requirement_expr": "(Wallet & NpcTalk)",
         "world_peace_token": "WorldPeace_Seaside",
         "moon_rock_token": "MoonRockActive_Seaside",
         "access_type": "primary",
@@ -5107,8 +5296,8 @@
         "shine_info_scenario_name": "シュワシュワーナで お買い物",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "SeaWorldHomeStage:1622:460",
-        "difficulty": "casual;casual;advanced",
-        "option_scenarios": "2,3,4;1;2,3,4"
+        "difficulty": "casual",
+        "option_scenarios": "2,3,4;1;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4"
       },
       {
         "moon_id": "SeaWorldHomeStage:1955:464",
@@ -5476,8 +5665,8 @@
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
         "placement_x": "-2000.000",
-        "placement_y": "33662.176",
-        "placement_z": "-1075650.000",
+        "placement_y": "76562.176",
+        "placement_z": "-2441850.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -5601,7 +5790,7 @@
         "obj_id": "2558",
         "uid": "477",
         "flags": "ShineFlag_None",
-        "from_node_id": "SeaWorldHomeStage::start",
+        "from_node_id": "SeaWorldHomeStage::place::new_place_15",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Mushroom & NpcTalk)",
         "world_peace_token": "WorldPeace_Seaside",
@@ -6291,9 +6480,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-694400.000",
-        "placement_y": "25150.000",
-        "placement_z": "-831200.000",
+        "placement_x": "-1842800.000",
+        "placement_y": "68050.000",
+        "placement_z": "-2197400.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -6867,9 +7056,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "-18439.202",
-        "placement_y": "26550.000",
-        "placement_z": "-69482.351",
+        "placement_x": "-62346.686",
+        "placement_y": "56250.000",
+        "placement_z": "-36516.924",
         "placement_source_archives": "SeaWorldLavaZoneMap.szs;ShineInfo.szs",
         "placement_source_files": "SeaWorldLavaZoneMap.byml;ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -6916,8 +7105,8 @@
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
         "placement_x": "1800.000",
-        "placement_y": "23800.000",
-        "placement_z": "-807600.000",
+        "placement_y": "66700.000",
+        "placement_z": "-2173800.000",
         "placement_source_archives": "SeaWorldUnderGlassZoneMap.szs;ShineInfo.szs",
         "placement_source_files": "SeaWorldUnderGlassZoneMap.byml;ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "4",
@@ -7459,7 +7648,7 @@
         "category": "Movement",
         "prerequisite": "kNoPrerequisite",
         "always_unlocked": "true",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cap Return Jump",
         "notes": ""
@@ -7687,7 +7876,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Frog",
         "notes": ""
@@ -7699,7 +7888,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Spark Pylon; ElectricWireMover",
         "notes": ""
@@ -7711,7 +7900,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Paragoomba",
         "notes": ""
@@ -7723,7 +7912,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Chain Chomp",
         "notes": ""
@@ -7735,7 +7924,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Big Chain Chomp",
         "notes": ""
@@ -7747,7 +7936,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Broode's Chain Chomp",
         "notes": ""
@@ -7759,7 +7948,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "T-Rex",
         "notes": ""
@@ -7771,7 +7960,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Binoculars",
         "notes": ""
@@ -7783,7 +7972,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Bullet Bill",
         "notes": ""
@@ -7795,7 +7984,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Moe-Eye",
         "notes": ""
@@ -7807,7 +7996,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cactus",
         "notes": ""
@@ -7819,7 +8008,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Goomba",
         "notes": ""
@@ -7831,7 +8020,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Knucklotec's Fist",
         "notes": ""
@@ -7843,7 +8032,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Mini Rocket",
         "notes": ""
@@ -7855,7 +8044,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Glydon",
         "notes": ""
@@ -7867,7 +8056,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Lakitu; Jugem",
         "notes": ""
@@ -7879,7 +8068,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Zipper",
         "notes": ""
@@ -7891,7 +8080,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cheep Cheep",
         "notes": ""
@@ -7903,7 +8092,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Puzzle Part (Lake Kingdom)",
         "notes": ""
@@ -7915,7 +8104,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Poison Piranha Plant",
         "notes": ""
@@ -7927,7 +8116,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Uproot",
         "notes": ""
@@ -7939,7 +8128,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Fire Bro",
         "notes": ""
@@ -7951,7 +8140,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Sherm",
         "notes": ""
@@ -7963,7 +8152,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Coin Coffer",
         "notes": ""
@@ -7975,7 +8164,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Tree",
         "notes": ""
@@ -7987,7 +8176,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Boulder",
         "notes": ""
@@ -7999,7 +8188,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Picture Match Part (Goomba)",
         "notes": ""
@@ -8011,7 +8200,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Tropical Wiggler",
         "notes": ""
@@ -8023,7 +8212,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Pole",
         "notes": ""
@@ -8035,7 +8224,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Manhole",
         "notes": ""
@@ -8047,7 +8236,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Taxi",
         "notes": ""
@@ -8059,7 +8248,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "RC Car; RadiconNpc",
         "notes": ""
@@ -8071,7 +8260,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Ty-foo",
         "notes": ""
@@ -8083,7 +8272,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Shiverian Racer",
         "notes": ""
@@ -8095,7 +8284,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Cheep Cheep (Snow Kingdom)",
         "notes": ""
@@ -8107,7 +8296,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Gushen",
         "notes": ""
@@ -8119,7 +8308,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Lava Bubble; LavaBubble",
         "notes": ""
@@ -8131,7 +8320,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Volbonan",
         "notes": ""
@@ -8143,7 +8332,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Hammer Bro",
         "notes": ""
@@ -8155,7 +8344,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Meat",
         "notes": ""
@@ -8167,7 +8356,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Fire Piranha Plant",
         "notes": ""
@@ -8179,7 +8368,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Pokio",
         "notes": ""
@@ -8191,7 +8380,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Jizo; StatueJizo",
         "notes": ""
@@ -8203,7 +8392,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Bowser Statue",
         "notes": ""
@@ -8215,7 +8404,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Parabones",
         "notes": ""
@@ -8227,7 +8416,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Banzai Bill",
         "notes": ""
@@ -8239,7 +8428,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Chargin' Chuck",
         "notes": ""
@@ -8251,7 +8440,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Bowser; KoopaHack",
         "notes": ""
@@ -8263,7 +8452,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Letter",
         "notes": ""
@@ -8275,7 +8464,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Puzzle Part (Metro Kingdom)",
         "notes": ""
@@ -8287,7 +8476,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Picture Match Part (Mario)",
         "notes": ""
@@ -8299,7 +8488,7 @@
         "category": "Capture",
         "prerequisite": "",
         "always_unlocked": "false",
-        "requires_any_cap_throw": "false",
+        "requires_any_cap_throw": "true",
         "can_start_with_seed": "false",
         "aliases": "Yoshi; YoshiModel",
         "notes": ""
@@ -10247,8 +10436,8 @@
         "y": 1185.2815414501442
       },
       "SeaWorldHomeStage::entrance::SeaWorldEX1a::home_in": {
-        "x": 1778.9259896914061,
-        "y": 1244.554663409545
+        "x": 1769.0260844745594,
+        "y": 1246.754623697043
       },
       "SeaWorldHomeStage::entrance::SeaWorldEX2::home_in": {
         "x": 1997.2308443509614,
@@ -10551,16 +10740,24 @@
         "y": 307.85778291675734
       },
       "SeaWorldHomeStage::place::new_place_12": {
-        "x": 2481.7625390977755,
-        "y": 467.602401668453
+        "x": 2479.870727827786,
+        "y": 472.64705852654885
+      },
+      "SeaWorldHomeStage::place::new_place_13": {
+        "x": 2406.181539268961,
+        "y": 1130.2472251181725
+      },
+      "SeaWorldHomeStage::place::new_place_14": {
+        "x": 1119.4286237444196,
+        "y": 1160.2858014787946
       },
       "moon:SeaWorldHomeStage:1277:437": {
         "x": 97.3033570707514,
         "y": 206.20223004630444
       },
       "moon:SeaWorldHomeStage:382:438": {
-        "x": 2294,
-        "y": 796
+        "x": 2353.913050343421,
+        "y": 807.0366778471858
       },
       "moon:SeaWorldDamageBallZone:60:439": {
         "x": 336.19841725224,
@@ -10575,8 +10772,8 @@
         "y": 4058
       },
       "moon:SeaWorldHomeStage:1593:442": {
-        "x": 2294,
-        "y": 1120
+        "x": 2774.3999845231956,
+        "y": 1121.9933609316315
       },
       "moon:SeaWorldHomeStage:1863:443": {
         "x": 1770.5504394911527,
@@ -10643,8 +10840,8 @@
         "y": 2205.2537497623407
       },
       "moon:SeaWorldHomeStage:1622:460": {
-        "x": 1166,
-        "y": 1012
+        "x": 957.4515782842699,
+        "y": 1079.4254295772662
       },
       "moon:SeaWorldHomeStage:1955:464": {
         "x": 32.66828369681272,
@@ -10687,8 +10884,8 @@
         "y": 2545.2723302733484
       },
       "moon:SeaWorldHomeStage:2558:477": {
-        "x": 768,
-        "y": 262
+        "x": 996.5714285714286,
+        "y": 33.42852783203122
       },
       "moon:WaterValleyExStage:800:478": {
         "x": 1142.4038443203049,
@@ -10837,6 +11034,10 @@
       "moon:SeaWorldHomeStage:4391:1163": {
         "x": 222.98135494723329,
         "y": 2116.438761681697
+      },
+      "SeaWorldHomeStage::place::new_place_15": {
+        "x": 744.571533203125,
+        "y": 29.714259556361526
       }
     }
   }
