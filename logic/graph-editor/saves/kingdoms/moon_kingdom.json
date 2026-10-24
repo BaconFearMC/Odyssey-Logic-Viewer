@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Moon Kingdom",
-  "savedAt": "2026-10-24T02:18:31.582Z",
+  "savedAt": "2026-10-24T16:15:58.985Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-23T21:17:11.834Z",
+    "loadedAt": "2026-10-24T16:08:32.691Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -3023,7 +3023,7 @@
         "area_scope": "overworld",
         "from_node_id": "MoonWorldHomeStage::start",
         "to_node_id": "MoonWorldHomeStage::place::new_place_10",
-        "requirement_expr": "(LongJump & MoonLowGravity & Scarecrow) | (NeutralThrow & MoonLowGravity & Scarecrow) | (DownThrow & Scarecrow) | (NeutralThrow & WallJump & Dive & Scarecrow) | (MoonLowGravity & Scarecrow & Dive) | (MoonLowGravity & Scarecrow & SideFlip & Roll & SingleJump) | (MoonLowGravity & Scarecrow & Backflip & Roll & SingleJump) | (MoonLowGravity & Scarecrow & SingleJump & LedgeGrab & Roll) | (MoonLowGravity & Scarecrow & SingleJump & WallJump & Roll) | (MoonLowGravity & Scarecrow & DoubleJump & Roll) | (MoonLowGravity & Scarecrow & Spin & SingleJump & Roll) | (SpinThrow & MoonLowGravity & SingleJump & Scarecrow & Backflip) | (SpinThrow & MoonLowGravity & Scarecrow & WallJump & SingleJump) | (SpinThrow & MoonLowGravity & Scarecrow & SideFlip & SingleJump)",
+        "requirement_expr": "(LongJump & MoonLowGravity & Scarecrow) | (NeutralThrow & MoonLowGravity & Scarecrow) | (DownThrow & Scarecrow) | (NeutralThrow & WallJump & Dive & Scarecrow) | (MoonLowGravity & Scarecrow & Dive) | (MoonLowGravity & Scarecrow & SideFlip & Roll & SingleJump & RequiresDeath) | (MoonLowGravity & Scarecrow & Backflip & Roll & SingleJump) | (MoonLowGravity & Scarecrow & SingleJump & LedgeGrab & Roll) | (MoonLowGravity & Scarecrow & SingleJump & WallJump & Roll) | (MoonLowGravity & Scarecrow & DoubleJump & Roll) | (MoonLowGravity & Scarecrow & Spin & SingleJump & Roll & RequiresDeath) | (SpinThrow & MoonLowGravity & SingleJump & Scarecrow & Backflip) | (SpinThrow & MoonLowGravity & Scarecrow & WallJump & SingleJump) | (SpinThrow & MoonLowGravity & Scarecrow & SideFlip & SingleJump)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;expert;advanced;expert;advanced;advanced;advanced;expert;expert;expert;expert;expert;expert;expert",
@@ -6644,6 +6644,18 @@
         "can_start_with_seed": "false",
         "aliases": "Odyssey Travel; Odyssey; Globe; Kingdom Travel",
         "notes": "Handing in moons and flying the Odyssey (Bonus Abilities, opt-in). Without it Cappy catches on the globe but nothing happens, and only Return to Start leads home. Do not name it in requirements: MoonRando applies it to every kingdom the Odyssey opens (unlockKingdom)."
+      },
+      {
+        "token": "AnyThrow",
+        "token_type": "derived",
+        "display_name": "Any Throw",
+        "category": "CapThrow",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "true",
+        "can_start_with_seed": "false",
+        "aliases": "Any Cap Throw",
+        "notes": "Held while any one of Neutral, Up, Down or Spin Throw is unlocked."
       }
     ],
     "rooms": [
@@ -7345,8 +7357,8 @@
         "y": 3156.444387159617
       },
       "moon:MoonWorldHomeStage:1039:578": {
-        "x": 998,
-        "y": 424
+        "x": 1015.3633273303503,
+        "y": 433.92188781405207
       },
       "moon:MoonWorldHomeStage:461:579": {
         "x": 100,

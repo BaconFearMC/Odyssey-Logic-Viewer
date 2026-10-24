@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Wooded Kingdom",
-  "savedAt": "2026-10-24T04:00:04.528Z",
+  "savedAt": "2026-10-24T16:23:04.394Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-23T21:17:11.834Z",
+    "loadedAt": "2026-10-24T16:08:32.691Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -4682,7 +4682,7 @@
         "area_scope": "overworld",
         "from_node_id": "ForestWorldHomeStage::checkpoint::obj7333",
         "to_node_id": "ForestWorldHomeStage::place::new_place_6",
-        "requirement_expr": "Gamane",
+        "requirement_expr": "(Gamane & Wallet)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -9980,7 +9980,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldWoodsStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "GroundPound",
+        "requirement_expr": "(GroundPound & TRex & SingleJump) | (Gamane & Wallet & GroundPound & SingleJump) | (GroundPound & SingleJump) | (AnyThrow & CapReturnJump & GroundPound & TRex) | (AnyThrow & CapReturnJump & Gamane & Wallet & GroundPound) | (AnyThrow & CapReturnJump & GroundPound)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -10011,7 +10011,7 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "樹海の せせらぎ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced;casual;casual;advanced",
         "option_scenarios": "",
         "__editor_id": "ForestWorldWoodsStage:186:185"
       },
@@ -10028,7 +10028,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldWoodsStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "GroundPound",
+        "requirement_expr": "(GroundPound & TRex & SingleJump) | (Gamane & Wallet & GroundPound & SingleJump) | (GroundPound & SingleJump) | (AnyThrow & TRex & CapReturnJump & GroundPound) | (AnyThrow & CapReturnJump & Gamane & Wallet & GroundPound) | (AnyThrow & CapReturnJump & GroundPound)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -10059,7 +10059,7 @@
         "shine_info_object_name": "ここ掘れポイント",
         "shine_info_scenario_name": "樹海の かたい岩",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced;casual;casual;advanced",
         "option_scenarios": "",
         "__editor_id": "ForestWorldWoodsStage:206:186"
       },
@@ -10908,9 +10908,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-1518400.000",
-        "placement_y": "728030.000",
-        "placement_z": "-1632800.000",
+        "placement_x": "-1606000.000",
+        "placement_y": "770030.000",
+        "placement_z": "-1727000.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_ForestWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -11468,7 +11468,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "ForestWorldWoodsStage::place::new_place",
         "state_requirement_expr": "",
-        "requirement_expr": "(Gamane & Climb) | (Gamane & Vault & Dive & NeutralThrow) | (Gamane & TRex) | (Gamane & TripleJump & Dive & WallJump) | (Gamane & Vault & NeutralThrow) | (UpThrow & GroundPoundJump & Vault & Gamane) | (Gamane & Vault & Backflip & UpThrow) | (UpThrow & Gamane & Vault & SideFlip) | (UpThrow & Gamane & TripleJump & Vault) | (UpThrow & Gamane & Spin & Vault) | (UpThrow & Gamane & Vault & Dive) | (DownThrow & Vault & Dive & Gamane) | (Gamane & GroundPound)",
+        "requirement_expr": "(Gamane & Climb & Wallet) | (Gamane & Vault & Dive & NeutralThrow & Wallet) | (Gamane & TRex & Wallet) | (Gamane & TripleJump & Dive & WallJump & Wallet) | (Gamane & Vault & NeutralThrow & Wallet) | (UpThrow & GroundPoundJump & Vault & Gamane & Wallet) | (Gamane & Vault & Backflip & UpThrow & Wallet) | (UpThrow & Gamane & Vault & SideFlip & Wallet) | (UpThrow & Gamane & TripleJump & Vault & Wallet) | (UpThrow & Gamane & Spin & Vault & Wallet) | (UpThrow & Gamane & Vault & Dive & Wallet) | (DownThrow & Vault & Dive & Gamane & Wallet) | (Gamane & GroundPound & Wallet)",
         "world_peace_token": "WorldPeace_Wooded",
         "moon_rock_token": "MoonRockActive_Wooded",
         "access_type": "primary",
@@ -13292,6 +13292,18 @@
         "can_start_with_seed": "false",
         "aliases": "Odyssey Travel; Odyssey; Globe; Kingdom Travel",
         "notes": "Handing in moons and flying the Odyssey (Bonus Abilities, opt-in). Without it Cappy catches on the globe but nothing happens, and only Return to Start leads home. Do not name it in requirements: MoonRando applies it to every kingdom the Odyssey opens (unlockKingdom)."
+      },
+      {
+        "token": "AnyThrow",
+        "token_type": "derived",
+        "display_name": "Any Throw",
+        "category": "CapThrow",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "true",
+        "can_start_with_seed": "false",
+        "aliases": "Any Cap Throw",
+        "notes": "Held while any one of Neutral, Up, Down or Spin Throw is unlocked."
       }
     ],
     "rooms": [
@@ -14459,6 +14471,10 @@
         "x": 2002.1364332151206,
         "y": 974.1340804962562
       },
+      "ForestWorldHomeStage::place::new_place_34": {
+        "x": 2799.910299134196,
+        "y": 126.63026366168407
+      },
       "moon:ForestWorldHomeStage:1064:129": {
         "x": 1570.1617626104523,
         "y": 721.2143575074778
@@ -14632,8 +14648,8 @@
         "y": 1100
       },
       "moon:ForestWorldWoodsStage:186:185": {
-        "x": 350,
-        "y": 1100
+        "x": 342.21239271825726,
+        "y": 1096.5388338729751
       },
       "moon:ForestWorldWoodsStage:206:186": {
         "x": 120,
@@ -14750,10 +14766,6 @@
       "moon:ForestWorldWoodsStage:415:1159": {
         "x": 350,
         "y": 1220
-      },
-      "ForestWorldHomeStage::place::new_place_34": {
-        "x": 2799.910299134196,
-        "y": 126.63026366168407
       }
     }
   }

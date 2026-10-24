@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Seaside Kingdom",
-  "savedAt": "2026-10-24T03:40:13.907Z",
+  "savedAt": "2026-10-24T15:39:35.512Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-23T21:17:11.834Z",
+    "loadedAt": "2026-10-24T15:33:35.287Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -3681,7 +3681,7 @@
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;2,3,4"
       },
       {
         "edge_id": "edge_user_0823",
@@ -4656,9 +4656,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-7447.855",
-        "placement_y": "60324.360",
-        "placement_z": "8484.882",
+        "placement_x": "10487.485",
+        "placement_y": "65824.360",
+        "placement_z": "15482.565",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -4704,9 +4704,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "1421700.000",
-        "placement_y": "47700.000",
-        "placement_z": "-1452300.000",
+        "placement_x": "1555700.000",
+        "placement_y": "52200.000",
+        "placement_z": "-1589300.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -5136,9 +5136,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "42000.000",
-        "placement_y": "-472300.000",
-        "placement_z": "-2226700.000",
+        "placement_x": "48000.000",
+        "placement_y": "-539800.000",
+        "placement_z": "-2544700.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -5665,8 +5665,8 @@
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
         "placement_x": "-2000.000",
-        "placement_y": "76562.176",
-        "placement_z": "-2441850.000",
+        "placement_y": "83062.176",
+        "placement_z": "-2648850.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -6480,9 +6480,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-1842800.000",
-        "placement_y": "68050.000",
-        "placement_z": "-2197400.000",
+        "placement_x": "-2016800.000",
+        "placement_y": "74550.000",
+        "placement_z": "-2404400.000",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -7056,9 +7056,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "-62346.686",
-        "placement_y": "56250.000",
-        "placement_z": "-36516.924",
+        "placement_x": "-29380.492",
+        "placement_y": "60750.000",
+        "placement_z": "7390.789",
         "placement_source_archives": "SeaWorldLavaZoneMap.szs;ShineInfo.szs",
         "placement_source_files": "SeaWorldLavaZoneMap.byml;ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "1",
@@ -7105,8 +7105,8 @@
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
         "placement_x": "1800.000",
-        "placement_y": "66700.000",
-        "placement_z": "-2173800.000",
+        "placement_y": "73200.000",
+        "placement_z": "-2380800.000",
         "placement_source_archives": "SeaWorldUnderGlassZoneMap.szs;ShineInfo.szs",
         "placement_source_files": "SeaWorldUnderGlassZoneMap.byml;ShineList_SeaWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "4",
@@ -10448,8 +10448,8 @@
         "y": 2141.2086561107076
       },
       "SeaWorldHomeStage::entrance::SeaWorldMoonEX1a::home_in": {
-        "x": 1765.190980280809,
-        "y": 462.5464960190736
+        "x": 1706.5738719092424,
+        "y": 491.04091270053107
       },
       "SeaWorldHomeStage::entrance::SeaWorldMoonEX2::home_in": {
         "x": 2065.474611527916,
@@ -10751,6 +10751,10 @@
         "x": 1119.4286237444196,
         "y": 1160.2858014787946
       },
+      "SeaWorldHomeStage::place::new_place_15": {
+        "x": 744.571533203125,
+        "y": 29.714259556361526
+      },
       "moon:SeaWorldHomeStage:1277:437": {
         "x": 97.3033570707514,
         "y": 206.20223004630444
@@ -11034,10 +11038,6 @@
       "moon:SeaWorldHomeStage:4391:1163": {
         "x": 222.98135494723329,
         "y": 2116.438761681697
-      },
-      "SeaWorldHomeStage::place::new_place_15": {
-        "x": 744.571533203125,
-        "y": 29.714259556361526
       }
     }
   }

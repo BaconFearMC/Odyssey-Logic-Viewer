@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Bowser's Kingdom",
-  "savedAt": "2026-10-24T04:27:00.085Z",
+  "savedAt": "2026-10-24T15:50:31.921Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-23T21:17:11.834Z",
+    "loadedAt": "2026-10-24T15:46:56.452Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -4029,9 +4029,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "50255.741",
-        "placement_y": "8510700.000",
-        "placement_z": "68707.180",
+        "placement_x": "137515.506",
+        "placement_y": "9608900.000",
+        "placement_z": "20945.535",
         "placement_source_archives": "SkyWorldCastleZoneMap.szs",
         "placement_source_files": "SkyWorldCastleZoneMap.byml",
         "placement_count": "3",
@@ -4221,9 +4221,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "24953.419",
-        "placement_y": "8521700.000",
-        "placement_z": "74307.720",
+        "placement_x": "143116.111",
+        "placement_y": "9619900.000",
+        "placement_z": "46248.154",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SkyWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "0",
@@ -4557,9 +4557,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "19543.635",
-        "placement_y": "6047200.000",
-        "placement_z": "-60573.756",
+        "placement_x": "8233.050",
+        "placement_y": "7145400.000",
+        "placement_z": "51658.002",
         "placement_source_archives": "SkyWorldCastleZoneMap.szs",
         "placement_source_files": "SkyWorldCastleZoneMap.byml",
         "placement_count": "3",
@@ -6189,9 +6189,9 @@
         "placement_quest_no_values": "-1",
         "placement_shine_optional_ids": "None",
         "placement_change_stage_ids": "",
-        "placement_x": "71207.656",
-        "placement_y": "8497150.000",
-        "placement_z": "76007.851",
+        "placement_x": "144816.264",
+        "placement_y": "9595350.000",
+        "placement_z": "-6.630",
         "placement_source_archives": "SkyWorldCastleZoneMap.szs",
         "placement_source_files": "SkyWorldCastleZoneMap.byml",
         "placement_count": "4",
@@ -6285,9 +6285,9 @@
         "placement_quest_no_values": "",
         "placement_shine_optional_ids": "",
         "placement_change_stage_ids": "",
-        "placement_x": "-3206.633",
-        "placement_y": "8569950.000",
-        "placement_z": "-16901.636",
+        "placement_x": "51905.684",
+        "placement_y": "9668150.000",
+        "placement_z": "74408.536",
         "placement_source_archives": "ShineInfo.szs",
         "placement_source_files": "ShineList_SkyWorldHomeStage.byml;ShinePosList.byml",
         "placement_count": "0",
@@ -8141,6 +8141,18 @@
         "can_start_with_seed": "false",
         "aliases": "Odyssey Travel; Odyssey; Globe; Kingdom Travel",
         "notes": "Handing in moons and flying the Odyssey (Bonus Abilities, opt-in). Without it Cappy catches on the globe but nothing happens, and only Return to Start leads home. Do not name it in requirements: MoonRando applies it to every kingdom the Odyssey opens (unlockKingdom)."
+      },
+      {
+        "token": "AnyThrow",
+        "token_type": "derived",
+        "display_name": "Any Throw",
+        "category": "CapThrow",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "true",
+        "can_start_with_seed": "false",
+        "aliases": "Any Cap Throw",
+        "notes": "Held while any one of Neutral, Up, Down or Spin Throw is unlocked."
       }
     ],
     "rooms": [
@@ -8818,6 +8830,10 @@
         "x": 1066.2402731680531,
         "y": 457.9067734376629
       },
+      "SkyWorldHomeStage::place::new_place_16": {
+        "x": 239.50040145161373,
+        "y": 1281.3586266625232
+      },
       "moon:SkyWorldCastleZone:3811:314": {
         "x": 1926.5435820419275,
         "y": 1139.4422943795182
@@ -9065,10 +9081,6 @@
       "moon:SkyWorldCastleZone:8382:1161": {
         "x": 1295.4299686380218,
         "y": 150.68096064477606
-      },
-      "SkyWorldHomeStage::place::new_place_16": {
-        "x": 239.50040145161373,
-        "y": 1281.3586266625232
       }
     }
   }
