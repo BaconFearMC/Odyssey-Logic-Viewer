@@ -3482,6 +3482,13 @@ const TIER_LABEL = { casual:"Casual", advanced:"Advanced", expert:"Expert", glit
    dropped into "unrated" instead of guessing which tier it belongs to. */
 function tiersForGroups(dnf, difficultyField){
   const raw = (difficultyField || "").split(";").map(s => s.trim().toLowerCase()).filter(Boolean);
+  // A single difficulty value on an edge/moon with several OR-branches
+  // means "every branch is this tier" (e.g. edge_user_1012: 2 branches,
+  // difficulty \"expert\"). Broadcast it instead of dumping them in Unrated.
+  if(raw.length === 1 && dnf.length > 1){
+    const t = TIER_ORDER.includes(raw[0]) ? raw[0] : "unrated";
+    return dnf.map(() => t);
+  }
   if(raw.length !== dnf.length){
     return dnf.map(() => "unrated");
   }
