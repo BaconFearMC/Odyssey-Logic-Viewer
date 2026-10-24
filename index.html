@@ -2566,6 +2566,11 @@ let ICON_MANIFEST = {
   // files, so it's seeded here (same as the entries above). Registered in
   // BONUS_ABILITY_TOKENS below, so it's free/ignored until Bonus Abilities
   // are switched on. If a real row ever appears this entry takes precedence.
+  // Any Throw: display-only. Deliberately has NO category / tokenType so
+  // buildFilterLists() can never offer it as a normal or Bonus ability; it only
+  // ever appears as the progression chip on Cap Return Jump. Its icon is not a
+  // file — makeAnyThrowImg() cycles the four throw icons like a gif.
+  AnyThrow: { filenames:["AbilityNeutralThrow.png"], label:"Any Throw", color:"#34406e" },
   RequiresDeath: { filenames:["AbilityDeath.png","AbilityRequiresDeath.png","death.png"], label:"Death", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
 
@@ -2792,12 +2797,13 @@ const ALWAYS_UNLOCKED_TOKENS = {};
 // Opt-in "Bonus Abilities" (Wallet, Paintings, Odyssey Travel, ...). Any
 // ability token whose logicTokens notes mention "Bonus Abilities" is added
 // here on load, so new ones land in the Bonus Abilities row automatically.
+// "Cap Return Jump" is a bonus tile for the CapReturnJump token (real logicTokens row, always_unlocked).
 // "Death" is the bonus tile for the RequiresDeath token (see ICON_MANIFEST).
 // "Jump" is the bonus tile for the SingleJump token: it's always_unlocked in
 // the data (base moveset), so it's pre-registered here rather than via a
 // "Bonus Abilities" note. Off = free everywhere (as before); On = a real,
 // filterable requirement like Wallet/Paintings/Odyssey Travel.
-const BONUS_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true };
+const BONUS_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true, CapReturnJump: true };
 // Whether Bonus Abilities count in the logic. Off (default): every bonus token
 // is treated as Free, so it never shows as a requirement on any moon, node,
 // checkpoint or filter result. On: they behave like any other ability.
@@ -5974,13 +5980,52 @@ const ABILITY_PROGRESSION = {
   Dive: ["GroundPound"],
   DoubleJump: ["SingleJump"],
   TripleJump: ["SingleJump", "DoubleJump"],
+  CapReturnJump: ["AnyThrow"],
 };
+// "Any Throw" has no icon file of its own: it cycles through the four throw
+// icons like a gif. One shared ticker advances every such <img> on the page,
+// so all of them stay in sync and no per-element timers need cleaning up.
+const ANY_THROW_CYCLE = ["NeutralThrow", "UpThrow", "SpinThrow", "DownThrow"];
+const ANY_THROW_CYCLE_MS = 800;
+function setAnyThrowFrame(img, frame, tries){
+  const n = ANY_THROW_CYCLE.length;
+  frame = ((frame % n) + n) % n;
+  tries = tries || 0;
+  img.dataset.frame = String(frame);
+  const info = ICON_MANIFEST[ANY_THROW_CYCLE[frame]];
+  const names = (info && info.filenames) || [];
+  let i = 0;
+  img.onerror = function(){
+    i++;
+    if(i < names.length){ img.src = "icon/" + names[i]; return; }
+    // This frame's icon is missing entirely — skip ahead to the next one
+    // (but stop if all four are missing, to avoid spinning).
+    if(tries + 1 < n) setAnyThrowFrame(img, frame + 1, tries + 1);
+  };
+  if(names.length) img.src = "icon/" + names[0];
+  else if(tries + 1 < n) setAnyThrowFrame(img, frame + 1, tries + 1);
+}
+function makeAnyThrowImg(className){
+  const img = document.createElement("img");
+  img.className = className;
+  img.alt = "Any Throw";
+  img.dataset.anyThrow = "1";
+  setAnyThrowFrame(img, 0);
+  return img;
+}
+setInterval(() => {
+  document.querySelectorAll("img[data-any-throw]").forEach(img => {
+    setAnyThrowFrame(img, (parseInt(img.dataset.frame, 10) || 0) + 1);
+  });
+}, ANY_THROW_CYCLE_MS);
+
 function makeProgressionBadge(token){
   const chain = ABILITY_PROGRESSION[token];
   if(!chain || !chain.length) return null;
   const badge = document.createElement("span");
   badge.className = "prog-badge";
   chain.forEach(pt => {
+    if(pt === "AnyThrow"){ badge.appendChild(makeAnyThrowImg("prog-icon")); return; }
     const info = ICON_MANIFEST[pt];
     const names = info ? info.filenames.slice() : [];
     if(pt === "Jump" || pt === "SingleJump") names.push("AbilityJump.png");
@@ -6027,6 +6072,8 @@ function makeIcon(token){
     d.className = "icon-fallback";
     d.textContent = "?";
     wrap.appendChild(d);
+  } else if(token === "AnyThrow"){
+    wrap.appendChild(makeAnyThrowImg("icon"));
   } else {
     const img = document.createElement("img");
     img.className = "icon";
