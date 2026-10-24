@@ -1784,42 +1784,24 @@
     text-align:left;
   }
   .filter-section-heading:first-child{ margin-top:4px; }
-  /* Bonus Abilities: a bordered card. Left = title + a plain-language status
-     line; right = a labelled Off / On switch that turns them on or off in the
-     logic itself (off = they never appear as requirements anywhere). */
-  #bonusFilterSection{
-    margin-top:16px; padding:10px 12px 12px;
-    border:2px dashed var(--border);
-    transition:border-color .15s ease, background .15s ease;
+  /* Bottom row of the Abilities panel: Jump / Cap Return Jump / Wallet /
+     Paintings / Odyssey Travel sit bottom-left, Death / Health Up bottom-right. */
+  .ability-bottom-row{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    flex-wrap:wrap; gap:12px 24px; margin-top:12px;
   }
-  #bonusFilterSection.on{ border-style:solid; border-color:var(--gold); background:rgba(242,194,0,0.05); }
-  .bonus-head{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
-  .bonus-head-text{ min-width:0; flex:1 1 240px; text-align:left; }
-  .bonus-head-text .filter-section-heading{ margin:0; }
-  .bonus-status{
-    margin:5px 0 0 12px; font-size:12.5px; line-height:1.35; color:var(--text-dim);
+  .ability-bottom-row[hidden]{ display:none; }
+  #bonusLeftGrid, #bonusRightGrid{
+    display:flex; flex-wrap:wrap; gap:12px 10px; max-height:none; overflow-y:visible; padding-right:0;
   }
-  .bonus-status b{ color:var(--text); }
-  .bonus-seg{
-    display:inline-flex; flex:0 0 auto; border:2px solid var(--border);
-    background:var(--bg); padding:2px; gap:2px;
+  #bonusLeftGrid{ justify-content:flex-start; }
+  #bonusRightGrid{ justify-content:flex-end; margin-left:auto; }
+  .filter-option.incomplete{ opacity:0.5; }
+  .filter-option-badge{
+    margin-top:-1px; padding:0 6px; border:1px solid var(--border);
+    font-size:9.5px; line-height:1.5; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--text-dim); white-space:nowrap;
   }
-  .bonus-seg-btn{
-    border:none; cursor:pointer; padding:6px 16px; min-width:56px;
-    background:none; color:var(--text-dim);
-    font-family:"Fredoka One", 'Segoe UI', system-ui, sans-serif;
-    font-size:13px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
-    transition:background .12s ease, color .12s ease;
-  }
-  .bonus-seg-btn:hover{ color:var(--text); }
-  .bonus-seg-btn[aria-pressed="true"][data-on="0"]{ background:var(--border); color:var(--text); }
-  .bonus-seg-btn[aria-pressed="true"][data-on="1"]{ background:var(--gold); color:#1b1b1b; }
-  #bonusFilterSection[hidden]{ display:none; }
-  #bonusFilterGrid{
-    display:flex; flex-wrap:wrap; justify-content:center;
-    gap:12px 10px; max-height:none; overflow-y:visible; margin-top:8px;
-  }
-  #bonusFilterGrid[hidden]{ display:none; }
   /* Live summary sentence shown under the merged filter once at least
      one Ability/Capture is selected, e.g. "Exempt the Abilities
      SideFlip and Roll. Removed from the logic below." */
@@ -2257,18 +2239,9 @@
       <div class="filter-section-heading">Abilities</div>
       <input type="text" class="filter-bar-search" id="abilityFilterSearch" placeholder="Search abilities…" autocomplete="off">
       <div class="filter-bar-grid" id="abilityFilterGrid"></div>
-      <div id="bonusFilterSection" hidden>
-        <div class="bonus-head">
-          <div class="bonus-head-text">
-            <div class="filter-section-heading">Bonus Abilities</div>
-            <div class="bonus-status" id="bonusFilterStatus"></div>
-          </div>
-          <div class="bonus-seg" role="group" aria-label="Use Bonus Abilities in the logic">
-            <button type="button" class="bonus-seg-btn" data-on="0" aria-pressed="true">Off</button>
-            <button type="button" class="bonus-seg-btn" data-on="1" aria-pressed="false">On</button>
-          </div>
-        </div>
-        <div class="filter-bar-grid" id="bonusFilterGrid" hidden></div>
+      <div class="ability-bottom-row" id="abilityBottomRow">
+        <div class="filter-bar-grid" id="bonusLeftGrid"></div>
+        <div class="filter-bar-grid" id="bonusRightGrid"></div>
       </div>
       <div class="filter-section-heading">Captures</div>
       <input type="text" class="filter-bar-search" id="captureFilterSearch" placeholder="Search captures…" autocomplete="off">
@@ -2566,12 +2539,10 @@ let ICON_MANIFEST = {
   // files, so it's seeded here (same as the entries above). Registered in
   // BONUS_ABILITY_TOKENS below, so it's free/ignored until Bonus Abilities
   // are switched on. If a real row ever appears this entry takes precedence.
-  // Any Throw: display-only. Deliberately has NO category / tokenType so
-  // buildFilterLists() can never offer it as a normal or Bonus ability; it only
-  // ever appears as the progression chip on Cap Return Jump. Its icon is not a
-  // file — makeAnyThrowImg() cycles the four throw icons like a gif.
-  AnyThrow: { filenames:["AbilityNeutralThrow.png"], label:"Any Throw", color:"#34406e" },
   RequiresDeath: { filenames:["AbilityDeath.png","AbilityRequiresDeath.png","death.png"], label:"Death", color:"#34406e", category:"Movement", tokenType:"ability" },
+  // Incomplete bonus tiles with no logicTokens row yet (shown greyed out).
+  HealthUp: { filenames:["AbilityHealthUp.png","AbilityHealth.png","healthup.png"], label:"Health Up", color:"#34406e", category:"Movement", tokenType:"ability" },
+  CapReturnJump: { filenames:["AbilityCapReturnJump.png","AbilityCapReturn.png","capreturnjump.png"], label:"Cap Return Jump", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
 
 // Movement/CapThrow ("ability") icon sets found in the wild are commonly
@@ -2794,24 +2765,18 @@ const KINGDOM_ACCESS_TOKEN_TO_KINGDOM = {
 // as "Free" instead of showing the token's icon. Populated per-kingdom-file
 // load from that file's logicTokens rows (see mergeTokensIntoManifest).
 const ALWAYS_UNLOCKED_TOKENS = {};
-// Opt-in "Bonus Abilities" (Wallet, Paintings, Odyssey Travel, ...). Any
-// ability token whose logicTokens notes mention "Bonus Abilities" is added
-// here on load, so new ones land in the Bonus Abilities row automatically.
-// "Cap Return Jump" is a bonus tile for the CapReturnJump token (real logicTokens row, always_unlocked).
-// "Death" is the bonus tile for the RequiresDeath token (see ICON_MANIFEST).
-// "Jump" is the bonus tile for the SingleJump token: it's always_unlocked in
-// the data (base moveset), so it's pre-registered here rather than via a
-// "Bonus Abilities" note. Off = free everywhere (as before); On = a real,
-// filterable requirement like Wallet/Paintings/Odyssey Travel.
-const BONUS_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true, CapReturnJump: true };
-// Whether Bonus Abilities count in the logic. Off (default): every bonus token
-// is treated as Free, so it never shows as a requirement on any moon, node,
-// checkpoint or filter result. On: they behave like any other ability.
-let BONUS_ENABLED = false;
+// "Bonus Abilities" (Jump, Cap Return Jump, Wallet, Paintings, Odyssey Travel,
+// Death, Health Up). Any ability token whose logicTokens notes mention
+// "Bonus Abilities" is added here on load. They are always part of the logic
+// now (no on/off switch) and are drawn on the bottom row of the Abilities panel.
+const BONUS_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true, HealthUp: true, CapReturnJump: true };
+// Bonus tiles that aren't finished: greyed out + labelled "Incomplete", can't
+// be picked, and stay Free in the logic so they never show as a requirement.
+const INCOMPLETE_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true, HealthUp: true, CapReturnJump: true };
 function syncBonusFreeState(){
   Object.keys(BONUS_ABILITY_TOKENS).forEach(tok => {
-    if(BONUS_ENABLED) delete ALWAYS_UNLOCKED_TOKENS[tok];
-    else ALWAYS_UNLOCKED_TOKENS[tok] = true;
+    if(INCOMPLETE_ABILITY_TOKENS[tok]) ALWAYS_UNLOCKED_TOKENS[tok] = true;
+    else delete ALWAYS_UNLOCKED_TOKENS[tok];
   });
 }
 // Raw file data per kingdom, kept so the logic can be rebuilt when the
@@ -2821,6 +2786,10 @@ const KINGDOM_SOURCES = {};
 function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
     if(t.token_type === "ability" && /bonus abilit/i.test(String(t.notes || ""))) BONUS_ABILITY_TOKENS[t.token] = true;
+    if(/^\s*cap return jump\s*$/i.test(String(t.display_name || ""))){
+      BONUS_ABILITY_TOKENS[t.token] = true;
+      INCOMPLETE_ABILITY_TOKENS[t.token] = true;
+    }
     const truthy = t.always_unlocked === true || t.always_unlocked === 1 ||
       /^(true|1|yes)$/i.test(String(t.always_unlocked).trim());
     // Jaxi / Bike / RocketFlower are "override prop" captures: the raw
@@ -2950,6 +2919,14 @@ function buildFilterLists(){
   // not present in ABILITY_DISPLAY_ORDER (shouldn't normally happen, but
   // keeps this fail-safe rather than fail-silent) is pushed to the end, in
   // whatever order it was first seen.
+  // A seeded placeholder (CapReturnJump / HealthUp) yields to a real token
+  // that carries the same label.
+  ["CapReturnJump","HealthUp"].forEach(seed => {
+    const i = abilities.indexOf(seed);
+    if(i < 0) return;
+    const lbl = String(ICON_MANIFEST[seed].label).toLowerCase();
+    if(abilities.some(t => t !== seed && String(ICON_MANIFEST[t] && ICON_MANIFEST[t].label).toLowerCase() === lbl)) abilities.splice(i,1);
+  });
   abilities.sort((a, b) => {
     const ai = ABILITY_DISPLAY_ORDER_INDEX.hasOwnProperty(a) ? ABILITY_DISPLAY_ORDER_INDEX[a] : Infinity;
     const bi = ABILITY_DISPLAY_ORDER_INDEX.hasOwnProperty(b) ? ABILITY_DISPLAY_ORDER_INDEX[b] : Infinity;
@@ -5980,52 +5957,13 @@ const ABILITY_PROGRESSION = {
   Dive: ["GroundPound"],
   DoubleJump: ["SingleJump"],
   TripleJump: ["SingleJump", "DoubleJump"],
-  CapReturnJump: ["AnyThrow"],
 };
-// "Any Throw" has no icon file of its own: it cycles through the four throw
-// icons like a gif. One shared ticker advances every such <img> on the page,
-// so all of them stay in sync and no per-element timers need cleaning up.
-const ANY_THROW_CYCLE = ["NeutralThrow", "UpThrow", "SpinThrow", "DownThrow"];
-const ANY_THROW_CYCLE_MS = 800;
-function setAnyThrowFrame(img, frame, tries){
-  const n = ANY_THROW_CYCLE.length;
-  frame = ((frame % n) + n) % n;
-  tries = tries || 0;
-  img.dataset.frame = String(frame);
-  const info = ICON_MANIFEST[ANY_THROW_CYCLE[frame]];
-  const names = (info && info.filenames) || [];
-  let i = 0;
-  img.onerror = function(){
-    i++;
-    if(i < names.length){ img.src = "icon/" + names[i]; return; }
-    // This frame's icon is missing entirely — skip ahead to the next one
-    // (but stop if all four are missing, to avoid spinning).
-    if(tries + 1 < n) setAnyThrowFrame(img, frame + 1, tries + 1);
-  };
-  if(names.length) img.src = "icon/" + names[0];
-  else if(tries + 1 < n) setAnyThrowFrame(img, frame + 1, tries + 1);
-}
-function makeAnyThrowImg(className){
-  const img = document.createElement("img");
-  img.className = className;
-  img.alt = "Any Throw";
-  img.dataset.anyThrow = "1";
-  setAnyThrowFrame(img, 0);
-  return img;
-}
-setInterval(() => {
-  document.querySelectorAll("img[data-any-throw]").forEach(img => {
-    setAnyThrowFrame(img, (parseInt(img.dataset.frame, 10) || 0) + 1);
-  });
-}, ANY_THROW_CYCLE_MS);
-
 function makeProgressionBadge(token){
   const chain = ABILITY_PROGRESSION[token];
   if(!chain || !chain.length) return null;
   const badge = document.createElement("span");
   badge.className = "prog-badge";
   chain.forEach(pt => {
-    if(pt === "AnyThrow"){ badge.appendChild(makeAnyThrowImg("prog-icon")); return; }
     const info = ICON_MANIFEST[pt];
     const names = info ? info.filenames.slice() : [];
     if(pt === "Jump" || pt === "SingleJump") names.push("AbilityJump.png");
@@ -6072,8 +6010,6 @@ function makeIcon(token){
     d.className = "icon-fallback";
     d.textContent = "?";
     wrap.appendChild(d);
-  } else if(token === "AnyThrow"){
-    wrap.appendChild(makeAnyThrowImg("icon"));
   } else {
     const img = document.createElement("img");
     img.className = "icon";
@@ -7875,7 +7811,7 @@ function makeFilterIconEl(token, sizeClass){
 const NOT_IMPLEMENTED_ABILITY_TOKENS = {};
 
 let notImplementedToastTimer = null;
-function showNotImplementedToast(){
+function showNotImplementedToast(msg){
   let toast = document.getElementById("notImplementedToast");
   if(!toast){
     toast = document.createElement("div");
@@ -7883,7 +7819,7 @@ function showNotImplementedToast(){
     toast.className = "not-implemented-toast";
     document.body.appendChild(toast);
   }
-  toast.textContent = "Not Implemented Yet";
+  toast.textContent = msg || "Not Implemented Yet";
   toast.classList.add("show");
   clearTimeout(notImplementedToastTimer);
   notImplementedToastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
@@ -8060,30 +7996,26 @@ function setupMergedFilterBar(tokens){
   const abilitySearchEl = document.getElementById("abilityFilterSearch");
   const captureSearchEl = document.getElementById("captureFilterSearch");
   const abilityGridEl = document.getElementById("abilityFilterGrid");
-  const bonusSectionEl = document.getElementById("bonusFilterSection");
-  const bonusGridEl = document.getElementById("bonusFilterGrid");
-  const bonusStatusEl = document.getElementById("bonusFilterStatus");
-  const bonusSegBtns = bonusSectionEl.querySelectorAll(".bonus-seg-btn");
+  const bonusRowEl = document.getElementById("abilityBottomRow");
+  const bonusLeftEl = document.getElementById("bonusLeftGrid");
+  const bonusRightEl = document.getElementById("bonusRightGrid");
   const mainAbilities = () => abilities.filter(t => !BONUS_ABILITY_TOKENS[t]);
   const bonusAbilities = () => abilities.filter(t => BONUS_ABILITY_TOKENS[t]);
-  // Draws the main Abilities grid plus the separate Bonus Abilities row.
+  const BONUS_LEFT_ORDER = [/^(single )?jump$/, /cap return/, /wallet/, /painting/, /odyssey/];
+  const BONUS_RIGHT_ORDER = [/death/, /health/];
+  const rankBy = (list, t) => { const l = filterLabelFor(t).toLowerCase(); const i = list.findIndex(re => re.test(l)); return i < 0 ? list.length : i; };
+  // Draws the main Abilities grid plus the bottom row (left / right groups).
   function renderAbilityGrids(){
     renderOptions("ability", mainAbilities(), selectedAbilities, abilityGridEl, abilitySearchEl.value);
     const bonus = bonusAbilities();
-    bonusSectionEl.hidden = false; // section stays visible so the On/Off switch is reachable
-    bonusSectionEl.classList.toggle("on", BONUS_ENABLED);
-    bonusSegBtns.forEach(b => b.setAttribute("aria-pressed", (b.dataset.on === "1") === BONUS_ENABLED ? "true" : "false"));
-    const names = bonus.map(filterLabelFor).join(", ");
-    bonusStatusEl.innerHTML = BONUS_ENABLED
-      ? "<b>On</b> — " + names + " now count as requirements in the logic."
-      : "<b>Off</b> — " + names + " are ignored: they won't appear as requirements anywhere. Turn on to include them.";
-    if(!bonus.length) bonusStatusEl.innerHTML = "<b>Unavailable</b> — no Bonus Abilities loaded.";
-    bonusGridEl.hidden = false;
-    if(bonus.length && BONUS_ENABLED){
-      renderOptions("ability", bonus, selectedAbilities, bonusGridEl, abilitySearchEl.value);
-    } else {
-      bonusGridEl.innerHTML = "";
-    }
+    const right = bonus.filter(t => BONUS_RIGHT_ORDER.some(re => re.test(filterLabelFor(t).toLowerCase())))
+      .sort((a, b) => rankBy(BONUS_RIGHT_ORDER, a) - rankBy(BONUS_RIGHT_ORDER, b));
+    const left = bonus.filter(t => right.indexOf(t) < 0)
+      .sort((a, b) => rankBy(BONUS_LEFT_ORDER, a) - rankBy(BONUS_LEFT_ORDER, b));
+    renderOptions("ability", left, selectedAbilities, bonusLeftEl, abilitySearchEl.value);
+    renderOptions("ability", right, selectedAbilities, bonusRightEl, abilitySearchEl.value);
+    [bonusLeftEl, bonusRightEl].forEach(el => el.querySelectorAll(".filter-bar-none").forEach(n => n.remove()));
+    bonusRowEl.hidden = !bonusLeftEl.children.length && !bonusRightEl.children.length;
   }
   const captureGridEl = document.getElementById("captureFilterGrid");
 
@@ -8171,7 +8103,8 @@ function setupMergedFilterBar(tokens){
     }
     matches.forEach(token => {
       const label = filterLabelFor(token);
-      const notImplemented = kind === "ability" && NOT_IMPLEMENTED_ABILITY_TOKENS[token];
+      const incomplete = kind === "ability" && !!INCOMPLETE_ABILITY_TOKENS[token];
+      const notImplemented = (kind === "ability" && NOT_IMPLEMENTED_ABILITY_TOKENS[token]) || incomplete;
       const btn = document.createElement("button");
       btn.type = "button";
       const isSub = kind === "ability" && !!ABILITY_SUBTOKEN_PARENT[token];
@@ -8183,7 +8116,8 @@ function setupMergedFilterBar(tokens){
         + (hasSubmenu ? " has-submenu" : "")
         + (isSub ? " filter-suboption" : "")
         + ((selectedSet.has(token) || (kind === "ability" && subsSelected(token, selectedSet))) ? " selected" : "")
-        + (notImplemented ? " not-implemented" : "");
+        + (notImplemented ? " not-implemented" : "")
+        + (incomplete ? " incomplete" : "");
       const iconWrap = document.createElement("div");
       iconWrap.className = "filter-option-icon";
       iconWrap.appendChild(makeFilterIconEl(token, ""));
@@ -8204,11 +8138,18 @@ function setupMergedFilterBar(tokens){
         nameEl.textContent = label;
       }
       btn.appendChild(nameEl);
+      if(incomplete){
+        const badge = document.createElement("span");
+        badge.className = "filter-option-badge";
+        badge.textContent = "Incomplete";
+        btn.appendChild(badge);
+        btn.setAttribute("aria-disabled", "true");
+      }
       if(notImplemented){
-        btn.title = "Not Implemented Yet";
+        btn.title = incomplete ? "Incomplete" : "Not Implemented Yet";
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
-          showNotImplementedToast();
+          showNotImplementedToast(incomplete ? "Incomplete" : undefined);
         });
       } else {
         btn.addEventListener("click", () => {
@@ -8263,20 +8204,6 @@ function setupMergedFilterBar(tokens){
     renderGrid();
   });
   abilitySearchEl.addEventListener("input", renderAbilityGrids);
-  bonusSegBtns.forEach(btn => btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const want = btn.dataset.on === "1";
-    if(want === BONUS_ENABLED) return;
-    BONUS_ENABLED = want;
-    // Bonus abilities that are switched off no longer exist in the logic, so
-    // they can't stay selected as filters either.
-    if(!BONUS_ENABLED) bonusAbilities().forEach(t => selectedAbilities.delete(t));
-    applyBonusSetting();
-    renderChips();
-    refreshOpenPanels();
-    updateFilterSummary();
-    renderGrid();
-  }));
   abilitySearchEl.addEventListener("click", (e) => e.stopPropagation());
   captureSearchEl.addEventListener("input", () => renderOptions("capture", captures, selectedCaptures, captureGridEl, captureSearchEl.value));
   captureSearchEl.addEventListener("click", (e) => e.stopPropagation());
@@ -9806,18 +9733,6 @@ const VIDEO_SUBMIT = {
     }
   }
 })();
-
-// Rebuilds every kingdom's logic with Bonus Abilities on or off, then redraws.
-function applyBonusSetting(){
-  syncBonusFreeState();
-  Object.keys(KINGDOM_SOURCES).forEach(k => {
-    const src = KINGDOM_SOURCES[k];
-    loadKingdomFile(src.fileData, src.sourceLabel, src.forcedName);
-  });
-  applyNodeMergeRulesToAllLoadedKingdoms();
-  buildSearchIndex();
-  renderKingdom(KINGDOM_ORDER[Math.max(0, currentKingdomIndex)] || KINGDOM_ORDER[0]);
-}
 
 async function init(){
   const autoloaded = await tryAutoload();
