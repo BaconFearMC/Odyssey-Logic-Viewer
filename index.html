@@ -763,6 +763,15 @@
     line-height:1.4; white-space:nowrap;
     color:var(--text-dim); background:var(--bg); border:1px solid var(--border);
   }
+  /* Origin tag: names the node a method starts from, when the same
+     destination node can be entered from several places. */
+  .origin-tag{
+    flex:0 0 auto;
+    font-size:8.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;
+    padding:2px 6px;
+    line-height:1.4; white-space:nowrap;
+    color:var(--gold); background:var(--bg); border:1px solid var(--gold-light);
+  }
   /* Difficulty is carried by the chip itself via a solid left accent bar
      (flat tint, no diagonal gradient wash) so a route reads at a glance
      even scrolled away from its tier-pill label. */
@@ -4533,6 +4542,28 @@ let KINGDOM_NODE_DATA = {};
    added in logic_nodes.csv / route_edges.csv.
    ========================================================= */
 function buildNodeReachIndex(nodes, edges){
+  // ORIGIN TAGS: when a node can be entered from MORE THAN ONE source node
+  // (e.g. a custom node reachable from the kingdom start AND from the Wedding
+  // Hall checkpoint), the routes that start from a non-start source get that
+  // source's name attached (branch.origin) so the card can say where the
+  // method comes from. Single-source nodes get no tag — nothing to
+  // disambiguate, and the node's own icon already names it.
+  const _nodeById = {};
+  (nodes || []).forEach(n => { _nodeById[n.node_id] = n; });
+  const _sources = {}; // to_node_id -> Set(from_node_id) over every usable inbound edge
+  (edges || []).forEach(e => {
+    if(!e.to_node_id || !e.from_node_id) return;
+    const rq = (e.requirement_expr || "").trim().toLowerCase();
+    if(!rq || rq === "impossible") return;
+    (_sources[e.to_node_id] = _sources[e.to_node_id] || new Set()).add(e.from_node_id);
+  });
+  const originLabelFor = e => {
+    if(!_sources[e.to_node_id] || _sources[e.to_node_id].size < 2) return null;
+    const src = _nodeById[e.from_node_id];
+    if(!src || src.node_type === "stage_start") return null;
+    const name = (src.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "").trim();
+    return name || null;
+  };
   const reachExprs = {}; // node_id -> OR-joined string of all viable inbound edge exprs (legacy shape, kept for any other caller)
   const reachBranches = {}; // node_id -> [{group:[tok,...], scenarios:[...]|null, tier, fromNodeId, edgeId}, ...] (one entry per edge's own top-level OR branch)
   (edges || []).forEach(e => {
@@ -4553,7 +4584,7 @@ function buildNodeReachIndex(nodes, edges){
     const dnf = exprToDNF(req);
     const tiers = tiersForGroups(dnf, e.difficulty);
     const taggedBranches = exprToScenarioDNF(req, e.option_scenarios)
-      .map((b, i) => Object.assign({}, b, { tier: tiers[i] || "unrated", fromNodeId: e.from_node_id, edgeId: e.edge_id }));
+      .map((b, i) => Object.assign({}, b, { tier: tiers[i] || "unrated", fromNodeId: e.from_node_id, edgeId: e.edge_id, origin: originLabelFor(e) }));
     reachBranches[e.to_node_id] = (reachBranches[e.to_node_id] || []).concat(taggedBranches);
   });
   return { reachExprs, reachBranches };
@@ -4600,7 +4631,7 @@ function crossBranches(A, B){
     if(sc && sc.length === 0) return; // no scenario where both hold
     const group = Array.from(new Set(a.group.concat(b.group)));
     const tier = (TIER_RANK[a.tier] || 0) >= (TIER_RANK[b.tier] || 0) ? a.tier : b.tier;
-    out.push({ group, scenarios: sc, tier });
+    out.push({ group, scenarios: sc, tier, origin: a.origin || b.origin || null });
   }));
   return out;
 }
@@ -4655,10 +4686,10 @@ function summarizeBranches(branches, kingdomName){
   branches.forEach(b => {
     const group = b.group.filter(tok => !ALWAYS_UNLOCKED_TOKENS[tok]
       && !(KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] && KINGDOM_ACCESS_TOKEN_TO_KINGDOM[tok] === kingdomName));
-    const key = group.slice().sort().join("+") + "|" + b.tier + "|" + (b.scenarios ? b.scenarios.join(",") : "");
+    const key = group.slice().sort().join("+") + "|" + b.tier + "|" + (b.scenarios ? b.scenarios.join(",") : "") + "|" + (b.origin || "");
     if(seenKeys.has(key)) return;
     seenKeys.add(key);
-    clean.push({ group, scenarios: b.scenarios, tier: b.tier });
+    clean.push({ group, scenarios: b.scenarios, tier: b.tier, origin: b.origin || null });
   });
   if(clean.some(b => b.group.length === 0 && !b.scenarios)) return { free: true };
   const lanes = buildTierLanesFromBranches(clean);
@@ -5102,7 +5133,7 @@ function resolveOverrideSource(moon, rule, ownKingdomName){
 // same shape computeEntranceReqs builds for "own" moon cost.
 function ownBranchesFromTierLanes(tierLanes){
   return (tierLanes && tierLanes.length)
-    ? tierLanes.reduce((acc, lane) => acc.concat(lane.groups.map(g => ({ group: g.slice(), scenarios: g.scenarios || null, tier: lane.tier }))), [])
+    ? tierLanes.reduce((acc, lane) => acc.concat(lane.groups.map(g => ({ group: g.slice(), scenarios: g.scenarios || null, tier: lane.tier, origin: g.origin || null }))), [])
     : [{ group: [], scenarios: null, tier: "casual" }];
 }
 
@@ -5116,7 +5147,7 @@ function branchesFromEntranceReqs(entries){
     if(entry.impossible) return;
     if(entry.free){ out.push({ group: [], scenarios: null, tier: "casual" }); return; }
     (entry.lanes || []).forEach(lane => lane.groups.forEach(g => {
-      out.push({ group: g.slice(), scenarios: g.scenarios || null, tier: lane.tier });
+      out.push({ group: g.slice(), scenarios: g.scenarios || null, tier: lane.tier, origin: g.origin || null });
     }));
   });
   return out;
@@ -5133,8 +5164,12 @@ function branchesFromEntranceReqs(entries){
 // Exact duplicates keep only the first. Used on merge results so stacked
 // routes don't pile up redundant rows.
 function pruneDominatedBranches(br){
+  // A branch only makes another pointless if it's available from the same
+  // place: an un-tagged branch (no origin) dominates anything, but a branch
+  // tagged "from <node>" can't hide a route that comes from somewhere else.
+  const sameWhere = (a, b) => !a.origin || a.origin === b.origin;
   return br.filter((b, i) => !br.some((a, j) => j !== i
-    && pyramidDominates(a, b) && (!pyramidDominates(b, a) || j < i)));
+    && sameWhere(a, b) && pyramidDominates(a, b) && (!(sameWhere(b, a) && pyramidDominates(b, a)) || j < i)));
 }
 
 function applyMergedBranchesToMoon(moon, branches, kingdomName){
@@ -5186,7 +5221,7 @@ function findSubareaByName(data, nodeName){
 function branchesForNodeId(data, nodeId){
   const reach = data && nodeId ? (data.reachBranches[nodeId] || []) : [];
   return reach.length
-    ? reach.map(b => ({ group: b.group, scenarios: b.scenarios || null, tier: b.tier }))
+    ? reach.map(b => ({ group: b.group, scenarios: b.scenarios || null, tier: b.tier, origin: b.origin || null }))
     : [{ group: [], scenarios: null, tier: "casual" }];
 }
 
@@ -6453,6 +6488,12 @@ function buildMovementOptions(moon, boxed){
         chip.dataset.slot = slotOf(andGroup, i);
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
         attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i));
+        if(andGroup.origin){
+          const otag = document.createElement("span");
+          otag.className = "origin-tag";
+          otag.textContent = "From " + andGroup.origin;
+          chip.appendChild(otag);
+        }
         const freeScenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
         if(freeScenarioLabel){
           const tag = document.createElement("span");
@@ -6494,6 +6535,15 @@ function buildMovementOptions(moon, boxed){
         tag.className = "scenario-tag";
         tag.textContent = scenarioLabel;
         chip.appendChild(tag);
+      }
+      if(andGroup.origin){
+        // This method only applies when approaching from a specific node
+        // (e.g. "From Wedding Hall") — see buildNodeReachIndex.
+        const otag = document.createElement("span");
+        otag.className = "origin-tag";
+        otag.textContent = "From " + andGroup.origin;
+        otag.title = "This route starts from the " + andGroup.origin + " node";
+        chip.appendChild(otag);
       }
       optsEl.appendChild(chip);
     });
@@ -8486,7 +8536,7 @@ function buildTierLanesFromBranches(branches){
   TIER_ORDER.forEach(tierKey => {
     const groups = branches
       .filter(b => b.tier === tierKey)
-      .map(b => Object.assign(b.group.slice(), { scenarios: b.scenarios }));
+      .map(b => Object.assign(b.group.slice(), { scenarios: b.scenarios, origin: b.origin || null }));
     if(groups.length) tierLanes.push({ tier: tierKey, label: TIER_LABEL[tierKey], groups });
   });
   return tierLanes.length ? tierLanes : null;
@@ -8541,6 +8591,15 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun){
         tag.className = "scenario-tag";
         tag.textContent = scenarioLabel;
         chip.appendChild(tag);
+      }
+      if(andGroup.origin){
+        // This method only applies when approaching from a specific node
+        // (e.g. "From Wedding Hall") — see buildNodeReachIndex.
+        const otag = document.createElement("span");
+        otag.className = "origin-tag";
+        otag.textContent = "From " + andGroup.origin;
+        otag.title = "This route starts from the " + andGroup.origin + " node";
+        chip.appendChild(otag);
       }
       optsEl.appendChild(chip);
     });
