@@ -4560,7 +4560,10 @@ function buildNodeReachIndex(nodes, edges){
   const originLabelFor = e => {
     if(!_sources[e.to_node_id] || _sources[e.to_node_id].size < 2) return null;
     const src = _nodeById[e.from_node_id];
-    if(!src || src.node_type === "stage_start") return null;
+    // Only checkpoint / custom-node sources are worth naming. Pipe/entrance/
+    // stage-start sources are subarea plumbing — tagging them changed how
+    // subarea moons look, so they stay untagged (exactly as before).
+    if(!src || (src.node_type !== "checkpoint" && src.node_type !== "custom_place")) return null;
     const name = (src.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "").trim();
     return name || null;
   };
