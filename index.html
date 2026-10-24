@@ -1787,8 +1787,14 @@
   /* Bottom row of the Abilities panel: Jump / Cap Return Jump / Wallet /
      Paintings / Odyssey Travel sit bottom-left, Death / Health Up bottom-right. */
   .ability-bottom-row{
+    margin-top:18px; padding:8px 12px 12px;
+    border:2px dashed var(--border); background:rgba(242,194,0,0.04);
+  }
+  .ability-bottom-row .filter-section-heading{ margin:0; }
+  .bonus-note{ margin:4px 0 8px 12px; font-size:12px; color:var(--text-dim); text-align:left; }
+  .ability-bottom-cols{
     display:flex; justify-content:space-between; align-items:flex-start;
-    flex-wrap:wrap; gap:12px 24px; margin-top:12px;
+    flex-wrap:wrap; gap:12px 24px;
   }
   .ability-bottom-row[hidden]{ display:none; }
   #bonusLeftGrid, #bonusRightGrid{
@@ -2240,8 +2246,12 @@
       <input type="text" class="filter-bar-search" id="abilityFilterSearch" placeholder="Search abilities…" autocomplete="off">
       <div class="filter-bar-grid" id="abilityFilterGrid"></div>
       <div class="ability-bottom-row" id="abilityBottomRow">
-        <div class="filter-bar-grid" id="bonusLeftGrid"></div>
-        <div class="filter-bar-grid" id="bonusRightGrid"></div>
+        <div class="filter-section-heading">Bonus Abilities</div>
+        <div class="bonus-note">Separate from the main Abilities above.</div>
+        <div class="ability-bottom-cols">
+          <div class="filter-bar-grid" id="bonusLeftGrid"></div>
+          <div class="filter-bar-grid" id="bonusRightGrid"></div>
+        </div>
       </div>
       <div class="filter-section-heading">Captures</div>
       <input type="text" class="filter-bar-search" id="captureFilterSearch" placeholder="Search captures…" autocomplete="off">
@@ -8103,7 +8113,8 @@ function setupMergedFilterBar(tokens){
     }
     matches.forEach(token => {
       const label = filterLabelFor(token);
-      const incomplete = kind === "ability" && !!INCOMPLETE_ABILITY_TOKENS[token];
+      // Greyed out only in "I Have This!"; "What Does This Unlock?" lets them be picked.
+      const incomplete = kind === "ability" && !!INCOMPLETE_ABILITY_TOKENS[token] && filterMode !== "unlocks";
       const notImplemented = (kind === "ability" && NOT_IMPLEMENTED_ABILITY_TOKENS[token]) || incomplete;
       const btn = document.createElement("button");
       btn.type = "button";
@@ -8189,6 +8200,7 @@ function setupMergedFilterBar(tokens){
     renderOptions("capture", captures, selectedCaptures, captureGridEl, captureSearchEl.value);
   }
 
+  window.__refreshFilterPanels = refreshOpenPanels;
   rowEl.addEventListener("click", (e) => {
     if(e.target === clearBtn) return;
     barEl.classList.toggle("open");
@@ -8338,6 +8350,9 @@ function setupFilterModeTabs(){
       filterMode = tab.dataset.mode;
       const fb = document.getElementById("filterBars"); if(fb) fb.dataset.filterMode = filterMode;
       tabs.forEach(t => t.classList.toggle("active", t === tab));
+      // Incomplete abilities are only pickable in "What Does This Unlock?".
+      if(filterMode !== "unlocks") Object.keys(INCOMPLETE_ABILITY_TOKENS).forEach(t => selectedAbilities.delete(t));
+      if(window.__refreshFilterPanels) window.__refreshFilterPanels();
       if(window.__drawFilterChips) window.__drawFilterChips();
       refreshImpliedTiles();
       updateFilterSummary();
