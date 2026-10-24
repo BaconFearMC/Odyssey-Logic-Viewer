@@ -3230,6 +3230,18 @@ function exprToScenarioDNF(expr, optionScenarios){
   const dnf = exprToDNF(expr);
   const topLevelCount = splitTopLevelOrBranches(expr);
   const raw = (optionScenarios || "").split(";").map(s => s.trim());
+  // SHORT LIST TOLERANCE: if option_scenarios has FEWER entries than the
+  // expression has branches, but its last two entries are identical (e.g.
+  // "2,3,4,5;3,4,5;3,4,5;…" for a 10-branch moon with only 9 entries — The
+  // Hole in the Desert), the missing entry is almost certainly one more copy
+  // of that repeated trailing value, so extend the run to line up 1:1.
+  // Anything less clear-cut (differing tail, a single entry, too many
+  // entries) is still treated as a data gap and left untagged.
+  if(optionScenarios && raw.length > 1 && raw.length < topLevelCount
+     && raw[raw.length - 1] === raw[raw.length - 2]){
+    const last = raw[raw.length - 1];
+    while(raw.length < topLevelCount) raw.push(last);
+  }
   // dnf.length can exceed topLevelCount when a nested AND itself contains an
   // OR that astToDNF expanded; in that case there's no clean 1:1 branch
   // mapping to trust, so scenario tags are skipped rather than misapplied.
