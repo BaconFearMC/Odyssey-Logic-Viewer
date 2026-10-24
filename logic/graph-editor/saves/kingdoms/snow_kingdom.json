@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Snow Kingdom",
-  "savedAt": "2026-10-24T04:29:03.385Z",
+  "savedAt": "2026-10-24T19:15:51.046Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-23T21:17:11.834Z",
+    "loadedAt": "2026-10-24T19:14:16.541Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -5510,7 +5510,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "SnowWorldGabuzouZone::start",
         "state_requirement_expr": "",
-        "requirement_expr": "LedgeGrab | (Vault & Dive & NeutralThrow) | (NeutralThrow & TripleJump & WallJump & Dive) | (UpThrow & Vault & SingleJump & Dive & SideFlip) | (UpThrow & SingleJump & Dive & CapReturnJump & WallJump) | (NeutralThrow & TripleJump & CapReturnJump & Vault & WallJump)",
+        "requirement_expr": "LedgeGrab | (Vault & Dive & NeutralThrow) | (NeutralThrow & TripleJump & WallJump & Dive) | (UpThrow & Vault & SingleJump & Dive & SideFlip) | (UpThrow & SingleJump & Dive & CapReturnJump & WallJump) | (NeutralThrow & CapReturnJump & Vault & WallJump)",
         "world_peace_token": "WorldPeace_Snow",
         "moon_rock_token": "MoonRockActive_Snow",
         "access_type": "primary",
@@ -7718,6 +7718,18 @@
         "can_start_with_seed": "false",
         "aliases": "Odyssey Travel; Odyssey; Globe; Kingdom Travel",
         "notes": "Handing in moons and flying the Odyssey (Bonus Abilities, opt-in). Without it Cappy catches on the globe but nothing happens, and only Return to Start leads home. Do not name it in requirements: MoonRando applies it to every kingdom the Odyssey opens (unlockKingdom)."
+      },
+      {
+        "token": "AnyThrow",
+        "token_type": "derived",
+        "display_name": "Any Throw",
+        "category": "CapThrow",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "true",
+        "can_start_with_seed": "false",
+        "aliases": "Any Cap Throw",
+        "notes": "Held while any one of Neutral, Up, Down or Spin Throw is unlocked."
       }
     ],
     "rooms": [
@@ -8567,6 +8579,10 @@
         "x": 689.5991182286589,
         "y": 127.54311550259119
       },
+      "SnowWorldTownStage::place::new_place_2": {
+        "x": 303.4374659124181,
+        "y": 1710.7158545926645
+      },
       "moon:SnowWorldHomeStage:769:2": {
         "x": 1296.0825220531578,
         "y": 915.4882595753365
@@ -8786,10 +8802,6 @@
       "moon:SnowWorldTownStage:1187:1087": {
         "x": 768,
         "y": 1522
-      },
-      "SnowWorldTownStage::place::new_place_2": {
-        "x": 303.4374659124181,
-        "y": 1710.7158545926645
       }
     }
   }
