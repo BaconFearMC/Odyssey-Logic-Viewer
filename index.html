@@ -2780,13 +2780,14 @@ const ALWAYS_UNLOCKED_TOKENS = {};
 // "Bonus Abilities" is added here on load. They are always part of the logic
 // now (no on/off switch) and are drawn on the bottom row of the Abilities panel.
 const BONUS_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true, HealthUp: true, CapReturnJump: true };
-// Bonus tiles that aren't finished: greyed out + labelled "Incomplete", can't
-// be picked, and stay Free in the logic so they never show as a requirement.
+// Bonus tiles that aren't finished: greyed out + labelled "Incomplete" in the
+// picker. Their requirements are still read from the logic and shown on moons.
 const INCOMPLETE_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true, HealthUp: true, CapReturnJump: true };
 function syncBonusFreeState(){
   Object.keys(BONUS_ABILITY_TOKENS).forEach(tok => {
-    if(INCOMPLETE_ABILITY_TOKENS[tok]) ALWAYS_UNLOCKED_TOKENS[tok] = true;
-    else delete ALWAYS_UNLOCKED_TOKENS[tok];
+    // Never Free: the data flags Jump / Cap Return Jump always_unlocked, which
+    // turned branches that need them (e.g. Hole in the Desert) into "Free".
+    delete ALWAYS_UNLOCKED_TOKENS[tok];
   });
 }
 // Raw file data per kingdom, kept so the logic can be rebuilt when the
@@ -2796,7 +2797,7 @@ const KINGDOM_SOURCES = {};
 function mergeTokensIntoManifest(logicTokens){
   (logicTokens || []).forEach(t => {
     if(t.token_type === "ability" && /bonus abilit/i.test(String(t.notes || ""))) BONUS_ABILITY_TOKENS[t.token] = true;
-    if(/^\s*cap return jump\s*$/i.test(String(t.display_name || ""))){
+    if(/cap\s*_?return/i.test(String(t.display_name || "")) || /cap\s*_?return/i.test(String(t.token || ""))){
       BONUS_ABILITY_TOKENS[t.token] = true;
       INCOMPLETE_ABILITY_TOKENS[t.token] = true;
     }
@@ -8114,7 +8115,9 @@ function setupMergedFilterBar(tokens){
     matches.forEach(token => {
       const label = filterLabelFor(token);
       // Greyed out only in "I Have This!"; "What Does This Unlock?" lets them be picked.
-      const incomplete = kind === "ability" && !!INCOMPLETE_ABILITY_TOKENS[token] && filterMode !== "unlocks";
+      // The "Incomplete" label always shows; the grey-out/lock only applies outside it.
+      const isIncomplete = kind === "ability" && !!INCOMPLETE_ABILITY_TOKENS[token];
+      const incomplete = isIncomplete && filterMode !== "unlocks";
       const notImplemented = (kind === "ability" && NOT_IMPLEMENTED_ABILITY_TOKENS[token]) || incomplete;
       const btn = document.createElement("button");
       btn.type = "button";
@@ -8149,12 +8152,12 @@ function setupMergedFilterBar(tokens){
         nameEl.textContent = label;
       }
       btn.appendChild(nameEl);
-      if(incomplete){
+      if(isIncomplete){
         const badge = document.createElement("span");
         badge.className = "filter-option-badge";
         badge.textContent = "Incomplete";
         btn.appendChild(badge);
-        btn.setAttribute("aria-disabled", "true");
+        if(incomplete) btn.setAttribute("aria-disabled", "true");
       }
       if(notImplemented){
         btn.title = incomplete ? "Incomplete" : "Not Implemented Yet";
