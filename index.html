@@ -2562,6 +2562,11 @@ let ICON_MANIFEST = {
   CappyFlower: { filenames:["AbilityCappyFlowers.png","AbilityCappyFlower.png","AbilityCappyFlowers_1.png","CappyFlowers.png","CappyFlower.png","Cappy_Flowers.png","Cappy_Flower.png","Cappy Flowers.png","Cappy Flower.png","cappy-flowers.png","cappy-flower.png","cappyflowers.png","cappyflower.png","AbilityCappyFlowers.PNG","AbilityCappyFlower.PNG","AbilityCappyFlowers_1.PNG","CappyFlowers.PNG","CappyFlower.PNG","Cappy_Flowers.PNG","Cappy_Flower.PNG","Cappy Flowers.PNG","Cappy Flower.PNG","cappy-flowers.PNG","cappy-flower.PNG","cappyflowers.PNG","cappyflower.PNG","AbilityCappyFlowers.webp","AbilityCappyFlower.webp","AbilityCappyFlowers_1.webp","CappyFlowers.webp","CappyFlower.webp","Cappy_Flowers.webp","Cappy_Flower.webp","Cappy Flowers.webp","Cappy Flower.webp","cappy-flowers.webp","cappy-flower.webp","cappyflowers.webp","cappyflower.webp","AbilityCappyFlowers.jpg","AbilityCappyFlower.jpg","AbilityCappyFlowers_1.jpg","CappyFlowers.jpg","CappyFlower.jpg","Cappy_Flowers.jpg","Cappy_Flower.jpg","Cappy Flowers.jpg","Cappy Flower.jpg","cappy-flowers.jpg","cappy-flower.jpg","cappyflowers.jpg","cappyflower.jpg","AbilityCappyFlowers.jpeg","AbilityCappyFlower.jpeg","AbilityCappyFlowers_1.jpeg","CappyFlowers.jpeg","CappyFlower.jpeg","Cappy_Flowers.jpeg","Cappy_Flower.jpeg","Cappy Flowers.jpeg","Cappy Flower.jpeg","cappy-flowers.jpeg","cappy-flower.jpeg","cappyflowers.jpeg","cappyflower.jpeg","AbilityCappyFlowers.gif","AbilityCappyFlower.gif","AbilityCappyFlowers_1.gif","CappyFlowers.gif","CappyFlower.gif","Cappy_Flowers.gif","Cappy_Flower.gif","Cappy Flowers.gif","Cappy Flower.gif","cappy-flowers.gif","cappy-flower.gif","cappyflowers.gif","cappyflower.gif","AbilityCappyFlowers.svg","AbilityCappyFlower.svg","AbilityCappyFlowers_1.svg","CappyFlowers.svg","CappyFlower.svg","Cappy_Flowers.svg","Cappy_Flower.svg","Cappy Flowers.svg","Cappy Flower.svg","cappy-flowers.svg","cappy-flower.svg","cappyflowers.svg","cappyflower.svg"], label:"Cappy Flowers", color:"#34406e", category:"Movement", tokenType:"ability" },
   Scarecrow: { filenames:["AbilityScarecrows.png","AbilityScarecrow.png","scarecrow.png"], label:"Scarecrows", color:"#34406e", category:"Movement", tokenType:"ability" },
   Notes: { filenames:["AbilityNotes.png","notes.png"], label:"Notes", color:"#34406e", category:"Movement", tokenType:"ability" },
+  // Bonus Ability \"Death\": no logicTokens row exists for it in the kingdom
+  // files, so it's seeded here (same as the entries above). Registered in
+  // BONUS_ABILITY_TOKENS below, so it's free/ignored until Bonus Abilities
+  // are switched on. If a real row ever appears this entry takes precedence.
+  RequiresDeath: { filenames:["AbilityDeath.png","AbilityRequiresDeath.png","death.png"], label:"Death", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
 
 // Movement/CapThrow ("ability") icon sets found in the wild are commonly
@@ -2592,6 +2597,7 @@ const ABILITY_FILENAME_OVERRIDES = {
   CappyFlower: "AbilityCappyFlowers",
   Scarecrow: "AbilityScarecrows",
   Notes: "AbilityNotes",
+  SingleJump: "AbilityJump",
 };
 
 // Tokens that live "behind" another filter tile: hidden from the main picker
@@ -2630,6 +2636,7 @@ Object.keys(ABILITY_SUBTOKENS).forEach(parent => ABILITY_SUBTOKENS[parent].forEa
 // which still use each token's own logicTokens display_name.
 const FILTER_LABEL_OVERRIDES = {
   Bike: "Scooter",
+  SingleJump: "Jump",
 };
 
 // Tokens that are real entries in logicTokens but should never appear as a
@@ -2785,7 +2792,12 @@ const ALWAYS_UNLOCKED_TOKENS = {};
 // Opt-in "Bonus Abilities" (Wallet, Paintings, Odyssey Travel, ...). Any
 // ability token whose logicTokens notes mention "Bonus Abilities" is added
 // here on load, so new ones land in the Bonus Abilities row automatically.
-const BONUS_ABILITY_TOKENS = {};
+// "Death" is the bonus tile for the RequiresDeath token (see ICON_MANIFEST).
+// "Jump" is the bonus tile for the SingleJump token: it's always_unlocked in
+// the data (base moveset), so it's pre-registered here rather than via a
+// "Bonus Abilities" note. Off = free everywhere (as before); On = a real,
+// filterable requirement like Wallet/Paintings/Odyssey Travel.
+const BONUS_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true };
 // Whether Bonus Abilities count in the logic. Off (default): every bonus token
 // is treated as Free, so it never shows as a requirement on any moon, node,
 // checkpoint or filter result. On: they behave like any other ability.
@@ -2877,7 +2889,7 @@ const ABILITY_DISPLAY_ORDER = [
   "NeutralThrow", "UpThrow", "DownThrow", "SpinThrow",
   "Vault", "Crouch", "Backflip", "LongJump", "Roll", "RollBoost",
   "GroundPound", "GroundPoundJump", "Dive",
-  "DoubleJump", "TripleJump", "SideFlip", "Spin", "WallJump",
+  "SingleJump", "DoubleJump", "TripleJump", "SideFlip", "Spin", "WallJump",
   "LedgeGrab", "Climb", "Swing",
   "MoonLowGravity", "Grab", "Swim", "Bike", "Jaxi",
   "RocketFlower", "NpcTalk", "Pipe2D", "TimerChallenge",
@@ -3125,7 +3137,6 @@ const SCENARIO_DATA_HIDDEN_MOONS = new Set([
   "What Shines Inside the Glass",
   "A Rumble Under the Arena Floor",
   "Island in the Poison Swamp",
-  "Poster Cleanup",
 ]);
 // Moons whose difficulty/tier should be forced to a specific value,
 // overriding whatever the CSV's difficulty column computed. Value must be
@@ -5949,8 +5960,8 @@ const ABILITY_PROGRESSION = {
   RollBoost: ["Crouch", "Roll"],
   GroundPoundJump: ["GroundPound"],
   Dive: ["GroundPound"],
-  DoubleJump: ["Jump"],
-  TripleJump: ["Jump", "DoubleJump"],
+  DoubleJump: ["SingleJump"],
+  TripleJump: ["SingleJump", "DoubleJump"],
 };
 function makeProgressionBadge(token){
   const chain = ABILITY_PROGRESSION[token];
@@ -5960,7 +5971,7 @@ function makeProgressionBadge(token){
   chain.forEach(pt => {
     const info = ICON_MANIFEST[pt];
     const names = info ? info.filenames.slice() : [];
-    if(pt === "Jump") names.push("AbilityJump.png");
+    if(pt === "Jump" || pt === "SingleJump") names.push("AbilityJump.png");
     const img = document.createElement("img");
     img.className = "prog-icon";
     img.alt = info ? info.label : pt;
@@ -7968,29 +7979,6 @@ function showSubPopup(parent, anchorBtn, selectedSet, onChange){
   }, 0);
 }
 
-// Greyed-out, not-yet-implemented "Jump" tile shown in the Bonus Abilities row.
-function buildJumpBonusTile(){
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "filter-option not-implemented";
-  btn.title = "Not Implemented Yet";
-  const iw = document.createElement("div");
-  iw.className = "filter-option-icon";
-  const img = document.createElement("img");
-  img.src = "icon/AbilityJump.png"; img.alt = "Jump";
-  img.onerror = function(){
-    const fb = document.createElement("div");
-    fb.className = "icon-fallback"; fb.textContent = "J";
-    img.replaceWith(fb);
-  };
-  iw.appendChild(img);
-  const nm = document.createElement("span");
-  nm.className = "filter-option-name"; nm.textContent = "Jump";
-  btn.append(iw, nm);
-  btn.addEventListener("click", (e) => { e.stopPropagation(); showNotImplementedToast(); });
-  return btn;
-}
-
 // Marks picker tiles that are only "owned" because a later move in their
 // progression chain is selected (I Have This! only).
 function refreshImpliedTiles(){
@@ -8030,16 +8018,13 @@ function setupMergedFilterBar(tokens){
     bonusStatusEl.innerHTML = BONUS_ENABLED
       ? "<b>On</b> — " + names + " now count as requirements in the logic."
       : "<b>Off</b> — " + names + " are ignored: they won't appear as requirements anywhere. Turn on to include them.";
-    if(!bonus.length) bonusStatusEl.innerHTML = "<b>Coming soon</b> — Jump isn't implemented yet.";
+    if(!bonus.length) bonusStatusEl.innerHTML = "<b>Unavailable</b> — no Bonus Abilities loaded.";
     bonusGridEl.hidden = false;
     if(bonus.length && BONUS_ENABLED){
       renderOptions("ability", bonus, selectedAbilities, bonusGridEl, abilitySearchEl.value);
     } else {
       bonusGridEl.innerHTML = "";
     }
-    const jq = (abilitySearchEl.value || "").trim().toLowerCase();
-    // Jump only appears once Bonus Abilities are enabled (and stays disabled).
-    if(BONUS_ENABLED && (!jq || "jump".includes(jq))) bonusGridEl.appendChild(buildJumpBonusTile());
   }
   const captureGridEl = document.getElementById("captureFilterGrid");
 
