@@ -4804,19 +4804,66 @@ function computeEntranceReqs(row, ownMoon, ws, nodeMap, kingdomName){
 // only one (or zero) viable inbound edge — that case is already handled
 // fine by the flat appendReachRequirement() path, so this only kicks in
 // once a genuine OR between named sources exists.
+// Inbound edges as the player can actually walk them: every edge INTO nodeId,
+// plus every bidirectional edge that leaves nodeId (reversed). Previously only
+// edges whose to_node_id === nodeId counted, so a node reachable only via the
+// reverse half of a bidirectional edge looked like it had no/one trivial entry.
+function directedInbound(data, nodeId){
+  const out = [];
+  (data.edges || []).forEach(e => {
+    if((e.requirement_expr || "").trim().toLowerCase() === "impossible") return;
+    if(e.to_node_id === nodeId && e.from_node_id !== nodeId) out.push({ e, src: e.from_node_id });
+    else if(e.from_node_id === nodeId && e.to_node_id !== nodeId && /^(true|1|yes|y)$/i.test(String(e.bidirectional).trim())) out.push({ e, src: e.to_node_id });
+  });
+  return out;
+}
+
+// What it costs to stand on a Custom Node (custom_place), walking back through
+// other Custom Nodes until a real anchor (stage start, checkpoint, painting,
+// pipe...) is hit. `seen` blocks cycles and the node being evaluated, so a
+// source that is only reachable *through the target* (e.g. an auto-generated
+// zone-start landmark whose sole link is a bidirectional edge to the checkpoint)
+// is an orphan -> null (contributes nothing) instead of a phantom "Free" entry.
+function customNodeReachBranches(data, nodeId, seen){
+  seen = new Set(seen); seen.add(nodeId);
+  let res = [];
+  directedInbound(data, nodeId).forEach(({ e, src }) => {
+    if(seen.has(src) || res.length > 300) return;
+    const sn = data.nodeMap[src];
+    let sb;
+    if(!sn || sn.node_type !== "custom_place") sb = [{ group: [], scenarios: null, tier: "casual" }];
+    else { sb = customNodeReachBranches(data, src, seen); if(!sb) return; }
+    res = res.concat(crossBranches(edgeBranches(e), sb));
+  });
+  return res.length ? res : null;
+}
+
+// Branches for one inbound edge, with the source's own reach cost folded in when
+// the source is a Custom Node. Returns null when the source is an unreachable orphan.
+function inboundEdgeBranches(data, nodeId, e, src){
+  const sn = data.nodeMap[src];
+  if(!sn || sn.node_type !== "custom_place") return { branches: edgeBranches(e), folded: false };
+  const sb = customNodeReachBranches(data, src, new Set([nodeId]));
+  if(!sb) return null;
+  return { branches: crossBranches(edgeBranches(e), sb), folded: true };
+}
+
 function computeNodeSourceReqs(kingdomName, nodeId){
   const data = KINGDOM_NODE_DATA[kingdomName];
   if(!data || !nodeId) return null;
-  const incoming = (data.edges || []).filter(e => e.to_node_id === nodeId);
-  const viable = incoming.filter(e => (e.requirement_expr || "").trim().toLowerCase() !== "impossible");
-  if(viable.length < 2) return null;
-  return viable.map(e => {
-    const srcNode = data.nodeMap[e.from_node_id];
-    const rawLabel = (srcNode && srcNode.display_name) || e.from_node_id;
+  const rows = [];
+  let anyFolded = false;
+  directedInbound(data, nodeId).forEach(({ e, src }) => {
+    const r = inboundEdgeBranches(data, nodeId, e, src);
+    if(!r) return;
+    if(r.folded) anyFolded = true;
+    const srcNode = data.nodeMap[src];
+    const rawLabel = (srcNode && srcNode.display_name) || src;
     const label = rawLabel.replace(/\s*\([^)]*\)\s*$/, "");
-    const summary = summarizeBranches(edgeBranches(e), kingdomName);
-    return Object.assign({ label: "From " + label }, summary);
+    rows.push(Object.assign({ label: "From " + label }, summarizeBranches(r.branches, kingdomName)));
   });
+  if(rows.length < 2 && !anyFolded) return null; // plain single-source case: flat reach path handles it
+  return rows.length ? rows : null;
 }
 
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
@@ -7298,20 +7345,22 @@ function nodeSourceLabel(n, fallback){
 function computeFormulaicSources(kingdomName, nodeId){
   const data = KINGDOM_NODE_DATA[kingdomName];
   if(!data || !nodeId) return [];
-  const viable = (data.edges || []).filter(e => e.to_node_id === nodeId && e.from_node_id !== nodeId
-    && (e.requirement_expr || "").trim().toLowerCase() !== "impossible");
-  const main = viable.filter(e => nodeSourceKind(data.nodeMap[e.from_node_id]) !== "other");
-  const use = main.length ? main : viable;
+  const viableAll = directedInbound(data, nodeId).map(({ e, src }) => {
+    const r = inboundEdgeBranches(data, nodeId, e, src);
+    return r ? { e, src, branches: r.branches } : null;
+  }).filter(Boolean);
+  const main = viableAll.filter(v => nodeSourceKind(data.nodeMap[v.src]) !== "other");
+  const use = main.length ? main : viableAll;
   const RANK = { start: 0, painting: 1, checkpoint: 2, other: 3 };
   const bySig = new Map();
-  use.forEach(e => {
-    const src = data.nodeMap[e.from_node_id];
-    const summary = summarizeBranches(edgeBranches(e), kingdomName);
+  use.forEach(v => {
+    const src = data.nodeMap[v.src];
+    const summary = summarizeBranches(v.branches, kingdomName);
     if(summary.impossible) return;
     const sig = entrySignatureFromReqEntry(summary);
     let row = bySig.get(sig);
     if(!row){ row = Object.assign({ labels: [], rank: 9 }, summary); bySig.set(sig, row); }
-    const lab = nodeSourceLabel(src, e.from_node_id);
+    const lab = nodeSourceLabel(src, v.src);
     if(!row.labels.includes(lab)) row.labels.push(lab);
     row.rank = Math.min(row.rank, RANK[nodeSourceKind(src)]);
   });
