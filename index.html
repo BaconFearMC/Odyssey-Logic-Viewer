@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityCapReturnJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2222,6 +2222,32 @@
     .cp-reqs-title{ font-size:19px; }
     .cp-reqs-head img{ width:34px; height:34px; }
   }
+
+  /* ---- Slimmer, flatter node strips/blocks (override) ---- */
+  .checkpoint-info.node-strip, .node-strip.ns-custom, .node-strip.ns-checkpoint, .node-strip.ns-subarea{
+    background:none; border:0; border-left:2px solid var(--ns-acc, var(--gold)); clip-path:none;
+    margin:0 0 6px; padding:1px 0 1px 8px; gap:8px;
+  }
+  .checkpoint-info.node-strip img{ width:22px; height:22px; border:0; clip-path:none; }
+  .node-strip .ns-text{ flex-direction:row; align-items:baseline; gap:6px; flex-wrap:wrap; }
+  .node-strip .ns-kind{ font-size:9.5px; }
+  .node-strip .ns-name{ font-size:12.5px; }
+  .node-strip .ns-hint{ font-size:10.5px; opacity:.7; }
+  .node-routes{ gap:4px; margin-bottom:0; }
+  .node-routes-head{ font-size:10.5px; letter-spacing:.04em; }
+  .node-routes-or{ font-size:9.5px; align-self:flex-start; margin-left:10px; }
+  .node-route, .node-route.nr-checkpoint{
+    background:none; border:0; border-left:2px solid var(--moonrock); clip-path:none; padding:0;
+  }
+  .node-route.nr-checkpoint{ border-left-color:var(--gold); }
+  .node-route .checkpoint-info.node-strip{ border-left:0; padding:0 0 0 8px; margin:0 0 4px; }
+  .node-route-body{ padding:0 0 2px 8px; gap:4px; }
+  .node-route-label{ display:none; }
+
+  /* ---- Bonus Abilities: full colour; the "Incomplete" badge stays ---- */
+  .filter-option.incomplete, .filter-option.not-implemented.incomplete{ opacity:1; cursor:pointer; }
+  .filter-option.not-implemented.incomplete .filter-option-icon{ filter:none; }
+  .filter-option.not-implemented.incomplete:hover{ background:var(--bg-chip); }
 </style>
 </head>
 <body>
@@ -6363,7 +6389,11 @@ function customNodeRoutesFor(moon){
     const data = KINGDOM_NODE_DATA[n.kingdom];
     if(!data || !data.reachBranches) return null;
     const crossed = crossBranches(own, branchesForNodeId(data, n.id));
-    out.push(Object.assign({ kind: n.kind }, summarizeBranches(crossed, n.kingdom)));
+    // "Glitched: Hidden" must apply here too: these routes are rebuilt from the
+    // moon's base lanes, so drop glitched-tier branches ourselves.
+    const shown = (typeof glitchMode !== "undefined" && glitchMode === "hide") ? crossed.filter(b => b.tier !== "glitched") : crossed;
+    if(!shown.length && crossed.length) out.push({ kind: n.kind, impossible: true, hidden: true });
+    else out.push(Object.assign({ kind: n.kind }, summarizeBranches(shown, n.kingdom)));
   }
   return out;
 }
@@ -6579,20 +6609,25 @@ function buildMoonCard(moon, opts){
   // Custom Nodes: pull each node's own requirements onto the moon. Every node
   // becomes a block (strip + what it takes to get the moon via that node);
   // moons with several nodes get an "any one works" header and OR dividers.
-  const routes = opts.noNodeRoutes ? null : customNodeRoutesFor(moon);
+  let routes = opts.noNodeRoutes ? null : customNodeRoutesFor(moon);
+  if(routes && routes.every(r => r.hidden)) routes = null; // only glitched routes exist -> fall back to the normal display
   const strips = routes ? Array.from(card.querySelectorAll(".node-strip:not(.ns-subarea)")) : [];
   if(routes && strips.length === routes.length){
     card.classList.add("has-node-routes");
     const wrap = document.createElement("div");
     wrap.className = "node-routes";
-    if(routes.length > 1){
+    routes.forEach((r, i) => { if(r.hidden && strips[i]) strips[i].remove(); });
+    const shownRoutes = routes.filter(r => !r.hidden);
+    if(shownRoutes.length > 1){
       const head = document.createElement("div");
       head.className = "node-routes-head";
-      head.textContent = "Reachable via " + routes.length + (routes.every(r => r.kind === "custom") ? " Custom Nodes" : " nodes") + " \u2014 any one of these works";
+      head.textContent = shownRoutes.length + (shownRoutes.every(r => r.kind === "custom") ? " Custom Nodes" : " nodes") + " \u2014 any one works";
       wrap.appendChild(head);
     }
+    let drawn = 0;
     routes.forEach((r, i) => {
-      if(i > 0){
+      if(r.hidden) return;
+      if(drawn++ > 0){
         const or = document.createElement("div");
         or.className = "node-routes-or";
         or.textContent = "OR";
@@ -6608,10 +6643,6 @@ function buildMoonCard(moon, opts){
       else if(hint) hint.textContent = "";
       const body = document.createElement("div");
       body.className = "node-route-body";
-      const lab = document.createElement("div");
-      lab.className = "node-route-label";
-      lab.textContent = r.kind === "checkpoint" ? "Needed for this Moon from this Checkpoint" : "Needed for this Moon via this node";
-      body.appendChild(lab);
       if(r.impossible){
         const t = document.createElement("span"); t.className = "impossible-tag"; t.textContent = "Impossible"; body.appendChild(t);
       } else if(r.free){
@@ -7243,12 +7274,15 @@ function laneHiddenCount(lane){
 // When EVERY route of a Moon/Node needs one of these, it's pulled out of the
 // individual chips and stated once on top: "This moon requires P-Switches.
 // Beyond this, it requires:" followed by each method without that token.
-const HOIST_TOKENS = ["PSwitch", "CappyFlower", "Scarecrow", "Notes"];
+const HOIST_TOKENS = ["PSwitch", "CappyFlower", "Scarecrow", "Notes", "NpcTalk"];
+// Needs at least this many total methods before a shared requirement is pulled out;
+// with only 1-2 methods the plain chips are clearer than a header.
+const HOIST_MIN_METHODS = 3;
 function hoistForms(tok){ return [tok].concat(typeof subTwinsOf === "function" ? subTwinsOf(tok) : []); }
 function hoistedTokensFor(tierLanes){
   const groups = [];
   (tierLanes || []).forEach(l => (l.groups || []).forEach(g => groups.push(g)));
-  if(groups.length === 0) return [];
+  if(groups.length < HOIST_MIN_METHODS) return [];
   return HOIST_TOKENS.filter(tok => {
     if(!ICON_MANIFEST[tok]) return false;
     const forms = hoistForms(tok);
