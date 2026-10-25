@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityCapReturnJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -699,6 +699,53 @@
     right:0;
     transform:none;
   }
+
+  /* ---- "Tracked from" strip (moon card) ---------------------------------
+     The node a moon is tracked from now sits on the card itself as a labeled
+     row instead of a small bottom-right icon. Custom Nodes get the purple
+     treatment so they read as a distinct requirement, not just a footnote. */
+  .moon-card:has(.node-strip){ padding-bottom:14px; }
+  .checkpoint-info.node-strip{
+    position:static; width:auto; height:auto;
+    display:flex; align-items:center; gap:10px;
+    margin:0 0 8px; padding:6px 10px 6px 6px;
+    background:var(--bg-chip); border:1px solid var(--border);
+    border-left:3px solid var(--ns-acc, var(--gold));
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 0);
+  }
+  .checkpoint-info.node-strip + .checkpoint-info.node-strip{ right:auto; }
+  .node-strip.ns-custom{ --ns-acc:var(--moonrock); background:var(--moonrock-bg); border-color:var(--moonrock-border); border-left-color:var(--moonrock); }
+  .node-strip.ns-checkpoint{ --ns-acc:var(--gold); }
+  .node-strip.ns-subarea{ --ns-acc:var(--subarea); background:var(--subarea-bg); border-color:var(--subarea-border); border-left-color:var(--subarea); }
+  .checkpoint-info.node-strip img{ width:30px; height:30px; flex:none; opacity:1; }
+  .node-strip .ns-text{ display:flex; flex-direction:column; min-width:0; flex:1; line-height:1.2; text-align:left; }
+  .node-strip .ns-kind{ font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--ns-acc); }
+  .node-strip .ns-name{ font-size:13px; color:var(--text); overflow-wrap:anywhere; }
+  .node-strip .ns-hint{ font-size:11px; color:var(--text-dim); white-space:nowrap; }
+  .checkpoint-info.node-strip:not(.info-static):hover{ filter:brightness(1.15); }
+  .checkpoint-info.node-strip:not(.info-static):hover .ns-hint{ color:var(--ns-acc); }
+  .checkpoint-info.node-strip.info-static img,
+  .checkpoint-info.node-strip.info-static:hover img{ opacity:.8; }
+  .checkpoint-info.node-strip .icon-tooltip{ display:none; }
+
+  /* ---- Custom Node routes on the moon ---------------------------------- */
+  .moon-card.has-node-routes .moon-base-req{ display:none; }
+  body.submit-mode .moon-card.has-node-routes[data-submittable="1"] .moon-base-req{ display:block; }
+  body.submit-mode .moon-card.has-node-routes[data-submittable="1"] .node-route-body,
+  body.submit-mode .moon-card.has-node-routes[data-submittable="1"] .node-routes-or,
+  body.submit-mode .moon-card.has-node-routes[data-submittable="1"] .node-routes-head{ display:none; }
+  .node-routes{ display:flex; flex-direction:column; gap:6px; margin-bottom:2px; }
+  .node-routes-head{ font-size:11.5px; color:var(--moonrock); letter-spacing:.02em; }
+  .node-routes-or{ align-self:center; font-size:10.5px; letter-spacing:.12em; color:var(--text-dim); }
+  .node-route{
+    background:var(--moonrock-bg); border:1px solid var(--moonrock-border);
+    border-left:3px solid var(--moonrock);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 0);
+  }
+  .node-route .checkpoint-info.node-strip{ margin:0; border:none; background:transparent; clip-path:none; padding:6px 10px 4px 8px; }
+  .node-route-body{ padding:2px 10px 10px 10px; display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+  .node-route-label{ font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim); }
+  .node-route-body .tier-stack, .node-route-body .options-collapsible{ width:100%; }
   .options-row{
     display:flex; align-items:center; gap:6px; flex-wrap:wrap;
     max-width:100%;
@@ -2095,6 +2142,86 @@
   /* Unrated routes can't take submissions */
   body.submit-mode .tier-lane.unrated .option-chip,
   body.submit-mode .tier-lane.unrated .free-tag{ outline:none !important; cursor:not-allowed !important; opacity:.5; }
+
+  .node-route.nr-checkpoint{ background:rgba(230,194,0,.07); border-color:var(--gold-light); border-left-color:var(--gold); }
+  .node-route.nr-checkpoint .ns-kind{ color:var(--gold); }
+  .node-routes-head{ color:var(--text-dim); }
+
+  /* =====================================================================
+     ACCESS POINTS REFRESH (final override layer)
+     Same data + click behaviour. Changes: quieter section header, kind label
+     becomes a small eyebrow ABOVE the name (was a pill fighting the title),
+     name band flattened, source rows lighter with an accent rule instead of
+     boxes-in-boxes, more breathing room between cards.
+     ===================================================================== */
+  .cp-reqs{ margin:52px 0 0; }
+  .cp-reqs-head{
+    display:flex; align-items:center; gap:12px;
+    padding:0 0 12px; margin:0 0 6px; background:none; border:0; border-bottom:2px solid var(--border);
+    filter:none;
+  }
+  .cp-reqs-head img{
+    width:40px; height:40px; padding:5px; flex:none;
+    background:var(--bg-chip); border:1px solid var(--border); border-bottom:3px solid var(--acc);
+  }
+  .cp-reqs-title{ font-size:22px; padding:0; margin:0; color:var(--text); }
+  .cp-reqs-title::after{ display:none; }
+  .cp-reqs-count{
+    margin-left:auto; font-size:12px; font-weight:700; padding:2px 10px; color:#1b1c1f;
+    background:var(--acc); border:0; letter-spacing:.04em;
+    clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px);
+  }
+  .cp-reqs-sub{ margin:10px 0 20px 0; font-size:13.5px; color:var(--text-dim); max-width:70ch; }
+  .cp-reqs-caption{ margin:22px 0 12px 0; color:var(--acc); font-size:11.5px; }
+  .cp-reqs-caption::after{ background:var(--border); }
+  #paintingReqs .cp-reqs-grid, #checkpointReqs .cp-reqs-grid, #subareaReqs .cp-reqs-grid, #customNodeReqs .cp-reqs-grid{ gap:16px; }
+
+  /* Card */
+  #paintingReqs .cp-req, #checkpointReqs .cp-req, #subareaReqs .cp-req, #customNodeReqs .cp-req,
+  #paintingReqs .cp-req.cp-req-come, #paintingReqs .cp-req.cp-req-go{
+    display:flex; flex-direction:column; gap:10px; padding:14px 18px 18px;
+    border:1px solid var(--border); border-top:3px solid var(--acc);
+  }
+  #paintingReqs .cp-req.cp-req-come{ --acc:var(--worldpeace); }
+  #paintingReqs .cp-req.cp-req-go{ --acc:var(--gold); }
+  .cp-req:hover{ border-color:#4a4b50; background:var(--bg-panel); }
+
+  /* Kind -> eyebrow above the name */
+  .cp-req .cp-req-kind{
+    order:-1; position:static; align-self:flex-start; padding:0; margin:0 0 -4px;
+    font-size:10.5px; letter-spacing:.12em; background:none; border:0; clip-path:none; color:var(--acc);
+  }
+  .cp-req .cp-req-kind::before{ content:""; display:inline-block; width:7px; height:7px; margin-right:7px; background:var(--acc); vertical-align:1px; }
+
+  /* Name: no tinted band, just a title with a hairline under it */
+  #paintingReqs .cp-req .cp-req-name, #checkpointReqs .cp-req .cp-req-name, #subareaReqs .cp-req .cp-req-name, #customNodeReqs .cp-req .cp-req-name,
+  #paintingReqs .cp-req.cp-req-come .cp-req-name, #paintingReqs .cp-req.cp-req-go .cp-req-name{
+    display:flex; align-items:center; gap:10px; margin:0; padding:0 0 10px; background:none;
+    border-bottom:1px solid var(--border); font-size:16px; line-height:1.25;
+  }
+  .cp-req-name img{ flex:none; width:26px; height:26px; }
+
+  /* Sources: accent rule, no nested box */
+  .cp-req-source{
+    background:none; border:0; border-left:2px solid color-mix(in srgb, var(--acc) 55%, transparent);
+    padding:2px 0 2px 12px; gap:8px;
+  }
+  .cp-req-source + .cp-req-source{ margin-top:2px; }
+  .cp-req-source-label{ font-size:12px; font-weight:600; color:var(--text-dim); }
+  .cp-req-source-label::before{ display:none; }
+
+  /* Free-to-reach rows: one tidy line */
+  #paintingReqs .cp-req.cp-req-compact, #checkpointReqs .cp-req.cp-req-compact, #customNodeReqs .cp-req.cp-req-compact{
+    flex-direction:row; align-items:center; padding:9px 14px; border-top-width:1px; border-left:3px solid var(--tier-casual);
+  }
+  .cp-req-compact .cp-req-name{ font-size:14px; }
+  .cp-req-compact .cp-req-source{ border:0; padding:0; }
+
+  @media (max-width:720px){
+    .cp-reqs{ margin-top:40px; }
+    .cp-reqs-title{ font-size:19px; }
+    .cp-reqs-head img{ width:34px; height:34px; }
+  }
 </style>
 </head>
 <body>
@@ -6215,7 +6342,55 @@ function buildMoonRequirements(moon, boxed, opts){
   return wrap;
 }
 
-function buildMoonCard(moon){
+// For every Custom Node a moon is tracked from (the primary one plus any
+// extras), works out what the moon ACTUALLY costs when you go through that
+// node: the node's own reach cost crossed with the moon's own requirement.
+// Returns null when this doesn't apply (no custom nodes, subarea/pyramid
+// moons that already have their own breakdown, or missing node data).
+function customNodeRoutesFor(moon){
+  if(moon._pyramid || moon.entranceReqs) return null;
+  const nodes = [];
+  // Same condition the card uses to draw the primary strip: a Custom Node
+  // always counts; a plain Checkpoint counts unless the moon is in a subarea.
+  if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && moon.checkpointNodeId
+     && (moon.checkpointType === "custom_place" || !moon.subarea))
+    nodes.push({ id: moon.checkpointNodeId, kingdom: moon.kingdom, kind: moon.checkpointType === "custom_place" ? "custom" : "checkpoint" });
+  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name)).forEach(x => nodes.push({ id: x.id, kingdom: x.kingdom || moon.kingdom, kind: "custom" }));
+  if(!nodes.length) return null;
+  const own = ownBranchesFromTierLanes(moon._baseTierLanes || moon.tierLanes);
+  const out = [];
+  for(const n of nodes){
+    const data = KINGDOM_NODE_DATA[n.kingdom];
+    if(!data || !data.reachBranches) return null;
+    const crossed = crossBranches(own, branchesForNodeId(data, n.id));
+    out.push(Object.assign({ kind: n.kind }, summarizeBranches(crossed, n.kingdom)));
+  }
+  return out;
+}
+
+// Fills a card's "tracked from" strip: icon + kind label (CUSTOM NODE /
+// CHECKPOINT / SUBAREA) + the node's name, plus a right-hand hint saying
+// whether clicking shows the node's route or it's already merged in above.
+function decorateNodeStrip(info, kind, kindLabel, name, merged){
+  info.classList.add("node-strip", "ns-" + kind);
+  const txt = document.createElement("span");
+  txt.className = "ns-text";
+  const k = document.createElement("span");
+  k.className = "ns-kind";
+  k.textContent = (kind === "subarea" ? "Inside · " : "Tracked from · ") + kindLabel;
+  const n = document.createElement("span");
+  n.className = "ns-name";
+  n.textContent = name;
+  txt.appendChild(k); txt.appendChild(n);
+  info.appendChild(txt);
+  const hint = document.createElement("span");
+  hint.className = "ns-hint";
+  hint.textContent = merged ? "route included below" : "View route ›";
+  info.appendChild(hint);
+}
+
+function buildMoonCard(moon, opts){
+  opts = opts || {};
   const card = document.createElement("div");
   card.className = "moon-card";
   card.dataset.moonName = moon.name;
@@ -6284,6 +6459,7 @@ function buildMoonCard(moon){
     tip.className = "icon-tooltip";
     tip.textContent = moon.subarea + (inert ? (merged ? " (included above)" : " (same as above)") : "");
     info.appendChild(tip);
+    decorateNodeStrip(info, "subarea", "Subarea", moon.subarea.replace(/\s*Subarea\s*$/i, ""), inert);
 
     if(!inert){
       // Clicking (or Enter/Space while focused) opens the node-inspect popup
@@ -6344,6 +6520,8 @@ function buildMoonCard(moon){
     tip.className = "icon-tooltip";
     tip.textContent = label + (merged ? " (included above)" : "");
     info.appendChild(tip);
+    decorateNodeStrip(info, moon.checkpointType === "custom_place" ? "custom" : "checkpoint",
+      moon.checkpointType === "custom_place" ? "Custom Node" : "Checkpoint", shortName, merged);
 
     if(!merged){
       // Clicking (or Enter/Space while focused) opens the node-inspect popup
@@ -6382,6 +6560,7 @@ function buildMoonCard(moon){
     xtip.className = "icon-tooltip";
     xtip.textContent = xlabel + (x.merged ? " (included above)" : "");
     xi.appendChild(xtip);
+    decorateNodeStrip(xi, "custom", "Custom Node", x.name, !!x.merged);
     if(!x.merged){
       const open = () => openNodeInfo({ kind: "custom_place", kingdom: x.kingdom, nodeId: x.id, fallbackName: x.name });
       xi.addEventListener("click", open);
@@ -6392,7 +6571,59 @@ function buildMoonCard(moon){
 
   // Subarea moons whose pipes differ show per-pipe rows INSTEAD of the single
   // requirement line (the rows already include the moon's own cost).
-  card.appendChild(buildMoonRequirements(moon, false));
+  const baseReq = document.createElement("div");
+  baseReq.className = "moon-base-req";
+  baseReq.appendChild(buildMoonRequirements(moon, false));
+  card.appendChild(baseReq);
+
+  // Custom Nodes: pull each node's own requirements onto the moon. Every node
+  // becomes a block (strip + what it takes to get the moon via that node);
+  // moons with several nodes get an "any one works" header and OR dividers.
+  const routes = opts.noNodeRoutes ? null : customNodeRoutesFor(moon);
+  const strips = routes ? Array.from(card.querySelectorAll(".node-strip:not(.ns-subarea)")) : [];
+  if(routes && strips.length === routes.length){
+    card.classList.add("has-node-routes");
+    const wrap = document.createElement("div");
+    wrap.className = "node-routes";
+    if(routes.length > 1){
+      const head = document.createElement("div");
+      head.className = "node-routes-head";
+      head.textContent = "Reachable via " + routes.length + (routes.every(r => r.kind === "custom") ? " Custom Nodes" : " nodes") + " \u2014 any one of these works";
+      wrap.appendChild(head);
+    }
+    routes.forEach((r, i) => {
+      if(i > 0){
+        const or = document.createElement("div");
+        or.className = "node-routes-or";
+        or.textContent = "OR";
+        wrap.appendChild(or);
+      }
+      const strip = strips[i];
+      const block = document.createElement("div");
+      block.className = "node-route nr-" + r.kind;
+      strip.parentNode.insertBefore(block, strip);
+      block.appendChild(strip);
+      const hint = strip.querySelector(".ns-hint");
+      if(hint && !strip.classList.contains("info-static")) hint.textContent = "Node details \u203a";
+      else if(hint) hint.textContent = "";
+      const body = document.createElement("div");
+      body.className = "node-route-body";
+      const lab = document.createElement("div");
+      lab.className = "node-route-label";
+      lab.textContent = r.kind === "checkpoint" ? "Needed for this Moon from this Checkpoint" : "Needed for this Moon via this node";
+      body.appendChild(lab);
+      if(r.impossible){
+        const t = document.createElement("span"); t.className = "impossible-tag"; t.textContent = "Impossible"; body.appendChild(t);
+      } else if(r.free){
+        const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; body.appendChild(t);
+      } else {
+        body.appendChild(renderReachTierLanes(r.lanes, false, "entrance"));
+      }
+      block.appendChild(body);
+      wrap.appendChild(block);
+    });
+    card.insertBefore(wrap, baseReq);
+  }
   return card;
 }
 
@@ -9596,7 +9827,7 @@ const VIDEO_SUBMIT = {
   }
   function buildSubmissionMoonCard(hit){
     const moon = hit.moon, slot = hit.slot;
-    const card = (moon.isCheckpointNode) ? nodeMiniCard(moon) : buildMoonCard(moon);
+    const card = (moon.isCheckpointNode) ? nodeMiniCard(moon) : buildMoonCard(moon, { noNodeRoutes: true });
     card.classList.add("sub-moon-card");
     // Show every route in full (no peek/expand arrows) and make the card read-only.
     card.querySelectorAll(".options-collapsible").forEach(c => { c.classList.remove("collapsed"); c.classList.add("expanded"); c.dataset.measured = "1"; });
