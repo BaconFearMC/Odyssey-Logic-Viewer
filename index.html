@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -6902,7 +6902,7 @@ function buildMovementOptions(moon, boxed){
 
     const hideNonFree = laneHasFilterFreeMethod(lane);
     lane.groups.forEach((andGroup, i)=>{
-      if(hideNonFree && exemptedDisplayGroup(andGroup).length > 0) return;
+      if(exemptHides(lane, andGroup)) return;
       // A branch can end up with no tokens either because it was already
       // free (Single Jump / "already in this kingdom" stripped out during
       // parsing) or because "Exempt!" mode just stripped out every token
@@ -7364,9 +7364,18 @@ function laneHasFilterFreeMethod(lane){
   if(selectedAbilities.size === 0 && selectedCaptures.size === 0) return false;
   return (lane.groups || []).some(g => g.length > 0 && exemptedDisplayGroup(g).length === 0);
 }
+// Does the filter hide THIS method? Only when another method of the lane has become
+// Free AND is valid everywhere this one is: a Free method that only holds in some
+// Scenarios (e.g. "Scenario 3-5") can't stand in for a method that covers other
+// Scenarios, so that method stays visible. An unrestricted Free method covers all.
+function exemptHides(lane, g){
+  if(!laneHasFilterFreeMethod(lane)) return false;
+  if(exemptedDisplayGroup(g).length === 0) return false;
+  return (lane.groups || []).some(f => f.length > 0 && exemptedDisplayGroup(f).length === 0
+    && (!f.scenarios || (!!g.scenarios && g.scenarios.every(n => f.scenarios.includes(n)))));
+}
 function laneHiddenCount(lane){
-  if(!laneHasFilterFreeMethod(lane)) return 0;
-  return lane.groups.filter(g => exemptedDisplayGroup(g).length > 0).length;
+  return (lane.groups || []).filter(g => exemptHides(lane, g)).length;
 }
 
 // ---- Shared requirement ("hoisted") ---------------------------------------
@@ -9021,7 +9030,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun){
     optsEl.className = "tier-options";
     const hideNonFree = laneHasFilterFreeMethod(lane);
     lane.groups.forEach((andGroup, i) => {
-      if(hideNonFree && exemptedDisplayGroup(andGroup).length > 0) return;
+      if(exemptHides(lane, andGroup)) return;
       const chip = document.createElement("div");
       const preHoistGroup = exemptedDisplayGroup(andGroup);
       const displayGroup = hoistSet.size ? preHoistGroup.filter(t => !hoistSet.has(t)) : preHoistGroup;
