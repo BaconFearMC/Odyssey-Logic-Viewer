@@ -3076,6 +3076,36 @@
         "source": "editor",
         "notes": "Reverse of edge_user_1011.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1161",
+        "kingdom": "Moon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "MoonWorldHomeStage::entrance::bbb::home_out",
+        "to_node_id": "MoonWorldHomeStage::checkpoint::obj127",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Underground Moon Caverns exit comes out at Ever-After Hill.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1162",
+        "kingdom": "Moon Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "MoonWorldHomeStage::checkpoint::obj127",
+        "to_node_id": "MoonWorldHomeStage::entrance::bbb::home_out",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "The caverns exit is one-way.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [

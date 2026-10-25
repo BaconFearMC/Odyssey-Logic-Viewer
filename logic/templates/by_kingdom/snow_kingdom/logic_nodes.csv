@@ -115,3 +115,5 @@ SnowWorldHomeStage::entrance::SnowUGEnt::home_in,Snow Kingdom,SnowWorldHomeStage
 SnowWorldTownStage::entrance::SnowUGEnt::sub_near,Snow Kingdom,SnowWorldTownStage,Shiveria Town,subarea,substage_entrance,EntranceDB,SnowUGEnt,sub_near,obj1064,Substage near side: SnowUGEnt,-950.000,-200.000,200.000,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,Story door SnowWorldHomeStage<->SnowWorldTownStage (vanilla unless Shuffle Story Loading Zones).,
 SnowWorldHomeStage::place::new_place_2,Snow Kingdom,SnowWorldHomeStage,Snow Kingdom,overworld,custom_place,editor,,,,Snow KFR,,,,,Human-authored logic place.,
 SnowWorldLobby000Stage::place::new_place_2,Snow Kingdom,SnowWorldLobby000Stage,Class A Lobby,subarea,custom_place,editor,,,,Dark Side Snow Hint Art,,,,,Human-authored logic place.,
+KillerRailCollisionExStage::place::new_place,Snow Kingdom,KillerRailCollisionExStage,Wintery Flower Road,subarea,custom_place,editor,,,,Looking Back on Flower Road Free,,,,,Human-authored logic place.,
+SnowWorldTownStage::place::new_place_2,Snow Kingdom,SnowWorldTownStage,Shiveria Town,subarea,custom_place,editor,,,,Snow Peach,,,,,Human-authored logic place.,

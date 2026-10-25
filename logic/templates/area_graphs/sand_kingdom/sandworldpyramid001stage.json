@@ -193,7 +193,7 @@
       "requirement_expr": "Killer | (Vault & Dive & NeutralThrow) | (Dive & WallJump & NeutralThrow) | (DownThrow & Dive & Vault & WallJump) | (UpThrow & Dive & Vault & WallJump)",
       "requirement_notes": "",
       "edge_type": "human_route",
-      "difficulty": "casual;advanced;advanced;advanced;advanced",
+      "difficulty": "casual;advanced;advanced;expert;advanced",
       "bidirectional": "true",
       "source": "editor",
       "notes": "Created in graph editor.",
@@ -201,10 +201,10 @@
       "status": ""
     },
     {
-      "edge_id": "edge_user_0779",
+      "edge_id": "edge_user_1054",
       "kingdom": "Sand Kingdom",
       "area_scope": "subarea",
-      "from_node_id": "SandWorldPyramid001Stage::place::new_place",
+      "from_node_id": "SandWorldPyramid001Stage::entrance::pyramid04::sub_near",
       "to_node_id": "SandWorldPyramid001Stage::place::new_place_2",
       "requirement_expr": "free",
       "requirement_notes": "",
@@ -262,7 +262,7 @@
       "shine_info_object_name": "\u5b9d\u7bb1",
       "shine_info_scenario_name": "\u3055\u304b\u3055\u30d4\u30e9\u30df\u30c3\u30c9\u306e \u304b\u304f\u3057\u90e8\u5c4b",
       "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-      "difficulty": "casual;advanced;advanced;expert;advanced;expert;expert;advanced",
+      "difficulty": "casual;advanced;advanced;expert;expert;expert;expert;advanced",
       "option_scenarios": "1,2,3,4,5"
     }
   ],

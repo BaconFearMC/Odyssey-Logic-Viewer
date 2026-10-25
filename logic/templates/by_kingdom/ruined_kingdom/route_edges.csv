@@ -10,6 +10,7 @@ edge_user_0611,Ruined Kingdom,subarea,DotTowerExStage::entrance::BossRaidWorldEx
 edge_user_0373,Ruined Kingdom,overworld,BossRaidWorldHomeStage::start,BossRaidWorldHomeStage::entrance::BossRaidWorldMoonEx02_Exit::home_out,impossible,,human_route,casual,false,editor,Created in graph editor.,,
 edge_user_0374,Ruined Kingdom,overworld,BossRaidWorldHomeStage::entrance::BossRaidWorldMoonEx02_Exit::home_out,BossRaidWorldHomeStage::start,free,,human_route,casual,false,editor,Reverse of edge_user_0373.,,
 edge_user_0711,Ruined Kingdom,overworld,BossRaidWorldHomeStage::entrance::BossRaidWorldMoonEx02_Enter::home_in,BossRaidWorldHomeStage::start,free,,human_route,casual,false,editor,Reverse of edge_user_0372.,"1,2,3,4,5",
-edge_user_0789,Ruined Kingdom,overworld,BossRaidWorldHomeStage::stage_change::Go::raw,BossRaidWorldHomeStage::start,free,,human_route,casual,true,editor,Created in graph editor.,,
+edge_user_0789,Ruined Kingdom,overworld,BossRaidWorldHomeStage::stage_change::Go::raw,BossRaidWorldHomeStage::start,Paintings,,human_route,casual,true,editor,Created in graph editor.,,
 edge_user_0790,Ruined Kingdom,overworld,BossRaidWorldHomeStage::place::new_place,BossRaidWorldHomeStage::stage_change::Come::raw,impossible,,human_route,casual,false,editor,Created in graph editor.,,
 edge_user_0791,Ruined Kingdom,overworld,BossRaidWorldHomeStage::stage_change::Come::raw,BossRaidWorldHomeStage::place::new_place,free,,human_route,casual,false,editor,Reverse of edge_user_0790.,,
+edge_user_1113,Ruined Kingdom,overworld,BossRaidWorldHomeStage::place::new_place,BossRaidWorldHomeStage::place::new_place_2,free,,human_route,casual,true,editor,Created in graph editor.,"3,4",

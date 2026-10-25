@@ -19,3 +19,4 @@ FukuwaraiKuriboStage::entrance::Fukuwarai::sub_near,Cloud Kingdom,FukuwaraiKurib
 CloudWorldHomeStage::stage_change::Start::raw,Cloud Kingdom,CloudWorldHomeStage,Cloud Kingdom,overworld,stage_change,StageData,Start,raw,obj454,Stage Change Start,-488.429,-1422.589,10011.136,1,Raw UnitConfigName=ChangeStageArea.,
 CloudWorldHomeStage::stage_change::Come::raw,Cloud Kingdom,CloudWorldHomeStage,Cloud Kingdom,overworld,stage_change,StageData,Come,raw,obj97050,Stage Change Come,0.000,0.000,0.000,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,Raw UnitConfigName=WorldWarpHole.,
 CloudWorldHomeStage::stage_change::Go::raw,Cloud Kingdom,CloudWorldHomeStage,Cloud Kingdom,overworld,stage_change,StageData,Go,raw,obj97051,Stage Change Go,0.000,0.000,0.000,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,Raw UnitConfigName=WorldWarpHole.,
+CloudWorldHomeStage::place::new_place,Cloud Kingdom,CloudWorldHomeStage,Cloud Kingdom,overworld,custom_place,editor,,,,Cloud Peach,,,,,Human-authored logic place.,

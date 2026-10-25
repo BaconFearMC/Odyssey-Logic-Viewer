@@ -232,7 +232,7 @@
       "bidirectional": "false",
       "source": "editor",
       "notes": "Reverse of edge_user_0357.",
-      "option_scenarios": "1,2,3,4,5",
+      "option_scenarios": "3,4,5",
       "status": ""
     },
     {
@@ -261,10 +261,10 @@
       "requirement_notes": "",
       "edge_type": "human_route",
       "difficulty": "casual",
-      "bidirectional": "true",
+      "bidirectional": "false",
       "source": "editor",
       "notes": "Created in graph editor.",
-      "option_scenarios": "",
+      "option_scenarios": "3,4,5",
       "status": ""
     },
     {
@@ -282,6 +282,22 @@
       "notes": "Reverse of edge_user_0029.",
       "option_scenarios": "",
       "status": ""
+    },
+    {
+      "edge_id": "edge_user_0650",
+      "kingdom": "Sand Kingdom",
+      "area_scope": "subarea",
+      "from_node_id": "SandWorldUnderground001Stage::entrance::Out::sub_far",
+      "to_node_id": "SandWorldUnderground001Stage::place::new_place",
+      "requirement_expr": "free",
+      "requirement_notes": "",
+      "edge_type": "human_route",
+      "difficulty": "casual",
+      "bidirectional": "false",
+      "source": "editor",
+      "notes": "Reverse of edge_user_0059.",
+      "option_scenarios": "1,2,3,4,5",
+      "status": ""
     }
   ],
   "moons": [
@@ -298,7 +314,7 @@
       "flags": "ShineFlag_Story | ShineFlag_Multi",
       "from_node_id": "SandWorldUnderground001Stage::place::new_place",
       "state_requirement_expr": "",
-      "requirement_expr": "(BossKnuckleHand & Killer) | Killer",
+      "requirement_expr": "BossKnuckleHand | SingleJump | (AnyThrow & CapReturnJump) | Gamane | (NeutralThrow & Vault) | (DownThrow & Vault) | Backflip | LongJump | SideFlip | Spin",
       "world_peace_token": "WorldPeace_Sand",
       "moon_rock_token": "MoonRockActive_Sand",
       "access_type": "primary",
@@ -329,8 +345,8 @@
       "shine_info_object_name": "\u30dc\u30b9\u30ca\u30c3\u30af\u30eb",
       "shine_info_scenario_name": "\u7802\u6f20\u306b\u3042\u3044\u305f \u5927\u304d\u306a\u7a74",
       "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-      "difficulty": "casual",
-      "option_scenarios": "1,2,3,4,5;3,4,5"
+      "difficulty": "casual;casual;casual;advanced;advanced;advanced;casual;casual;casual;casual",
+      "option_scenarios": "2,3,4,5;3,4,5;3,4,5;3,4,5;3,4,5;3,4,5;3,4,5;3,4,5;3,4,5"
     },
     {
       "moon_id": "SandWorldUnderground001Stage:244:887",
@@ -392,7 +408,7 @@
       "flags": "ShineFlag_None",
       "from_node_id": "SandWorldUnderground001Stage::place::new_place",
       "state_requirement_expr": "",
-      "requirement_expr": "free",
+      "requirement_expr": "Gamane | SingleJump | (AnyThrow & CapReturnJump) | Backflip | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault)",
       "world_peace_token": "WorldPeace_Sand",
       "moon_rock_token": "MoonRockActive_Sand",
       "access_type": "primary",

@@ -224,7 +224,7 @@
       "flags": "ShineFlag_None",
       "from_node_id": "ForestWorldWaterExStage::entrance::EX_Water::sub_near",
       "state_requirement_expr": "",
-      "requirement_expr": "(WallJump & Swim) | (Swim & Vault & NeutralThrow & Dive) | (Swim & Vault & LedgeGrab & NeutralThrow) | (UpThrow & Vault & SideFlip & Dive & Swim) | (UpThrow & Vault & SideFlip & LedgeGrab & Swim) | (UpThrow & Backflip & Vault & Dive & Swim) | (UpThrow & Backflip & Vault & LedgeGrab & Swim) | (UpThrow & GroundPoundJump & Vault & Dive & Swim) | (UpThrow & GroundPoundJump & Vault & LedgeGrab & Swim) | (UpThrow & Vault & Spin & Dive & Swim) | (UpThrow & Vault & Spin & LedgeGrab & Swim) | (UpThrow & TripleJump & Vault & Swim) | (NeutralThrow & Vault & WallJump & Dive)",
+      "requirement_expr": "(WallJump & Swim & CapReturnJump) | (Swim & Vault & NeutralThrow & Dive) | (Swim & Vault & LedgeGrab & NeutralThrow) | (UpThrow & Vault & SideFlip & Dive & Swim) | (UpThrow & Vault & SideFlip & LedgeGrab & Swim) | (UpThrow & Backflip & Vault & Dive & Swim) | (UpThrow & Backflip & Vault & LedgeGrab & Swim) | (UpThrow & GroundPoundJump & Vault & Dive & Swim) | (UpThrow & GroundPoundJump & Vault & LedgeGrab & Swim) | (UpThrow & Vault & Spin & Dive & Swim) | (UpThrow & Vault & Spin & LedgeGrab & Swim) | (UpThrow & TripleJump & Vault & Swim) | (NeutralThrow & Vault & WallJump & Dive) | (Backflip & WallJump & Swim) | (GroundPoundJump & SingleJump & WallJump & Swim) | (SideFlip & WallJump & Swim) | (Spin & WallJump & Swim) | (TripleJump & WallJump & Swim)",
       "world_peace_token": "WorldPeace_Wooded",
       "moon_rock_token": "MoonRockActive_Wooded",
       "access_type": "primary",
@@ -255,7 +255,7 @@
       "shine_info_object_name": "\u30b7\u30e3\u30a4\u30f3\u30102m\u7f6e\u304d\u3011",
       "shine_info_scenario_name": "\u4e0a\u4e0b\u6c34\u9053\u306e\u5929\u4e95\u3046\u3089",
       "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-      "difficulty": "casual;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert;expert",
+      "difficulty": "advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;expert;expert;casual;casual;casual;casual;casual",
       "option_scenarios": ""
     }
   ],

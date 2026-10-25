@@ -73,3 +73,5 @@ WaterfallWorldHomeStage::place::new_place_16,Cascade Kingdom,WaterfallWorldHomeS
 WaterfallWorldHomeStage::place::new_place_17,Cascade Kingdom,WaterfallWorldHomeStage,Cascade Kingdom,overworld,custom_place,editor,,,,"Cascade Kingdom Purples 44,45,46",,,,,Human-authored logic place.,
 Lift2DExStage::place::new_place,Cascade Kingdom,Lift2DExStage,8-Bit Chasm Lifts,subarea,custom_place,editor,,,,"Cascade Kingdom Purples 47,48,49,50",,,,,Human-authored logic place.,
 WaterfallWorldHomeStage::place::new_place_18,Cascade Kingdom,WaterfallWorldHomeStage,Cascade Kingdom,overworld,custom_place,editor,,,,Cascade KFR,,,,,Human-authored logic place.,
+WaterfallWorldHomeStage::place::new_place_19,Cascade Kingdom,WaterfallWorldHomeStage,Cascade Kingdom,overworld,custom_place,editor,,,,Cascade Peach,,,,,Human-authored logic place.,
+WaterfallWorldHomeStage::place::new_place_20,Cascade Kingdom,WaterfallWorldHomeStage,Cascade Kingdom,overworld,custom_place,editor,,,,Madame Broode Arena,,,,,Human-authored logic place.,

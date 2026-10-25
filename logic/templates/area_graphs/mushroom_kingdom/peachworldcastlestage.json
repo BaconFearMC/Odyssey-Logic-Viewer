@@ -217,7 +217,7 @@
       "flags": "ShineFlag_HintArt",
       "from_node_id": "PeachWorldCastleStage::entrance::PeachCastleGate::sub_near",
       "state_requirement_expr": "",
-      "requirement_expr": "KingdomAccess_Cap",
+      "requirement_expr": "(KingdomAccess_Cap & GroundPound)",
       "world_peace_token": "WorldPeace_Mushroom",
       "moon_rock_token": "MoonRockActive_Mushroom",
       "access_type": "primary",

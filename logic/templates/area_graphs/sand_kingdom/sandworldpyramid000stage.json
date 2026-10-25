@@ -140,9 +140,25 @@
       "requirement_notes": "",
       "edge_type": "human_route",
       "difficulty": "casual;advanced;expert;expert;expert;expert;expert",
-      "bidirectional": "true",
+      "bidirectional": "false",
       "source": "editor",
       "notes": "Created in graph editor.",
+      "option_scenarios": "",
+      "status": ""
+    },
+    {
+      "edge_id": "edge_user_1045",
+      "kingdom": "Sand Kingdom",
+      "area_scope": "subarea",
+      "from_node_id": "SandWorldPyramid000Stage::entrance::pyramid01::sub_far",
+      "to_node_id": "SandWorldPyramid000Stage::entrance::pyramid01::sub_near",
+      "requirement_expr": "impossible",
+      "requirement_notes": "",
+      "edge_type": "human_route",
+      "difficulty": "casual",
+      "bidirectional": "false",
+      "source": "editor",
+      "notes": "Reverse of edge_user_0776.",
       "option_scenarios": "",
       "status": ""
     }

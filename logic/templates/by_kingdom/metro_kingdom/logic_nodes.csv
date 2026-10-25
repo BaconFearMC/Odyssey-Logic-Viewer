@@ -187,3 +187,6 @@ CityWorldFactoryStage::entrance::under001enter::sub_far,Metro Kingdom,CityWorldF
 CityWorldHomeStage::place::new_place_9,Metro Kingdom,CityWorldHomeStage,Metro Kingdom,overworld,custom_place,editor,,,,Night Metro Multi Free,,,,,Human-authored logic place.,
 CityWorldHomeStage::place::new_place_10,Metro Kingdom,CityWorldHomeStage,Metro Kingdom,overworld,custom_place,editor,,,,Dark Side Hint Art - Metro,,,,,Human-authored logic place.,
 CityWorldHomeStage::place::new_place_12,Metro Kingdom,CityWorldHomeStage,Metro Kingdom,overworld,custom_place,editor,,,,Seaside Hint Art - Metro,,,,,Human-authored logic place.,
+CityWorldHomeStage::place::new_place_11,Metro Kingdom,CityWorldHomeStage,Metro Kingdom,overworld,custom_place,editor,,,,Inside an Iron Girder Free,,,,,Human-authored logic place.,
+PoleKillerExStage::place::new_place,Metro Kingdom,PoleKillerExStage,Bullet Billding,subarea,custom_place,editor,,,,One Man's Trash,,,,,Human-authored logic place.,
+CityWorldHomeStage::place::new_place_13,Metro Kingdom,CityWorldHomeStage,Metro Kingdom,overworld,custom_place,editor,,,,Metro Peach,,,,,Human-authored logic place.,

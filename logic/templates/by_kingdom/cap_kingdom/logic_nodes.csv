@@ -70,3 +70,4 @@ FrogSearchExStage::place::new_place,Cap Kingdom,FrogSearchExStage,Frog Pond,suba
 CapWorldHomeStage::stage_change::Come::raw,Cap Kingdom,CapWorldHomeStage,Cap Kingdom,overworld,stage_change,StageData,Come,raw,obj97000,Stage Change Come,0.000,0.000,0.000,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,Raw UnitConfigName=WorldWarpHole.,
 CapWorldHomeStage::stage_change::Go::raw,Cap Kingdom,CapWorldHomeStage,Cap Kingdom,overworld,stage_change,StageData,Go,raw,obj97001,Stage Change Go,0.000,0.000,0.000,0;1;2;3;4;5;6;7;8;9;10;11;12;13;14,Raw UnitConfigName=WorldWarpHole.,
 CapWorldHomeStage::place::new_place_12,Cap Kingdom,CapWorldHomeStage,Cap Kingdom,overworld,custom_place,editor,,,,Cap KFR,,,,,Human-authored logic place.,
+CapWorldHomeStage::place::new_place_13,Cap Kingdom,CapWorldHomeStage,Cap Kingdom,overworld,custom_place,editor,,,,Cap Peach,,,,,Human-authored logic place.,

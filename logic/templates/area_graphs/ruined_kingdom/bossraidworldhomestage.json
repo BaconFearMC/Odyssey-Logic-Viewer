@@ -260,6 +260,25 @@
       "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
       "notes": "Raw UnitConfigName=WorldWarpHole.",
       "status": ""
+    },
+    {
+      "node_id": "BossRaidWorldHomeStage::place::new_place_2",
+      "kingdom": "Ruined Kingdom",
+      "stage": "BossRaidWorldHomeStage",
+      "stage_display_name": "Ruined Kingdom",
+      "area_scope": "overworld",
+      "node_type": "custom_place",
+      "source": "editor",
+      "entrance_id": "",
+      "side": "",
+      "obj_id": "",
+      "display_name": "Ruined Peach",
+      "x": "",
+      "y": "",
+      "z": "",
+      "scenario_indices": "",
+      "notes": "Human-authored logic place.",
+      "status": ""
     }
   ],
   "edges": [
@@ -397,7 +416,7 @@
       "area_scope": "overworld",
       "from_node_id": "BossRaidWorldHomeStage::stage_change::Go::raw",
       "to_node_id": "BossRaidWorldHomeStage::start",
-      "requirement_expr": "free",
+      "requirement_expr": "Paintings",
       "requirement_notes": "",
       "edge_type": "human_route",
       "difficulty": "casual",
@@ -437,6 +456,22 @@
       "source": "editor",
       "notes": "Reverse of edge_user_0790.",
       "option_scenarios": "",
+      "status": ""
+    },
+    {
+      "edge_id": "edge_user_1113",
+      "kingdom": "Ruined Kingdom",
+      "area_scope": "overworld",
+      "from_node_id": "BossRaidWorldHomeStage::place::new_place",
+      "to_node_id": "BossRaidWorldHomeStage::place::new_place_2",
+      "requirement_expr": "free",
+      "requirement_notes": "",
+      "edge_type": "human_route",
+      "difficulty": "casual",
+      "bidirectional": "true",
+      "source": "editor",
+      "notes": "Created in graph editor.",
+      "option_scenarios": "3,4",
       "status": ""
     }
   ],
@@ -595,7 +630,7 @@
       "flags": "ShineFlag_Extra",
       "from_node_id": "BossRaidWorldHomeStage::start",
       "state_requirement_expr": "",
-      "requirement_expr": "(Backflip & LedgeGrab & GroundPound) | (Dive & GroundPound) | (WallJump & GroundPound) | (GroundPoundJump & GroundPound) | (SideFlip & LedgeGrab & GroundPound) | (Spin & LedgeGrab & GroundPound) | (TripleJump & GroundPound) | (UpThrow & Vault) | (NeutralThrow & Vault)",
+      "requirement_expr": "(Backflip & LedgeGrab & GroundPound) | (Dive & GroundPound) | (WallJump & GroundPound) | (GroundPoundJump & GroundPound) | (SideFlip & LedgeGrab & GroundPound) | (Spin & LedgeGrab & GroundPound) | (TripleJump & GroundPound) | (UpThrow & Vault) | (NeutralThrow & Vault) | (NeutralThrow & Backflip & GroundPound) | (NeutralThrow & SideFlip & GroundPound)",
       "world_peace_token": "WorldPeace_Ruined",
       "moon_rock_token": "MoonRockActive_Ruined",
       "access_type": "primary",
@@ -626,7 +661,7 @@
       "shine_info_object_name": "\u3053\u3053\u6398\u308c\u30dd\u30a4\u30f3\u30c8",
       "shine_info_scenario_name": "\u304f\u305a\u308c\u305f\u67f1\u306e\u4e0a\u306b",
       "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-      "difficulty": "casual",
+      "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;casual;expert;expert",
       "option_scenarios": ""
     },
     {
@@ -687,7 +722,7 @@
       "obj_id": "143",
       "uid": "1117",
       "flags": "ShineFlag_None",
-      "from_node_id": "BossRaidWorldHomeStage::place::new_place",
+      "from_node_id": "BossRaidWorldHomeStage::place::new_place_2",
       "state_requirement_expr": "",
       "requirement_expr": "(KingdomAccess_Mushroom & NpcTalk)",
       "world_peace_token": "WorldPeace_Ruined",

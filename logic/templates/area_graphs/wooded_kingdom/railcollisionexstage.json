@@ -288,7 +288,7 @@
       "flags": "ShineFlag_None",
       "from_node_id": "RailCollisionExStage::entrance::EX_RailCollision::sub_near",
       "state_requirement_expr": "",
-      "requirement_expr": "(PSwitch & WallJump & Dive) | (PSwitch & Backflip & WallJump & LedgeGrab) | (PSwitch & GroundPoundJump & WallJump & LedgeGrab) | (PSwitch & SideFlip & WallJump & LedgeGrab) | (PSwitch & TripleJump & WallJump & LedgeGrab) | (PSwitch & Vault & WallJump & NeutralThrow) | (PSwitch & Backflip & Vault & NeutralThrow) | (PSwitch & SideFlip & Vault & NeutralThrow) | (PSwitch & GroundPoundJump & Vault & NeutralThrow) | (PSwitch & Spin & Vault & NeutralThrow) | (PSwitch & TripleJump & Vault & NeutralThrow) | (PSwitch & Kuribo) | (PSwitch & NeutralThrow & Vault) | (PSwitch & UpThrow & Vault) | (PSwitch & WallJump & LedgeGrab & SpinThrow) | (PSwitch & DownThrow & WallJump & LedgeGrab) | (PSwitch & UpThrow & WallJump & LedgeGrab) | (PSwitch & NeutralThrow & WallJump)",
+      "requirement_expr": "(PSwitch & WallJump & Dive) | (PSwitch & Backflip & WallJump & LedgeGrab) | (PSwitch & GroundPoundJump & WallJump & LedgeGrab) | (PSwitch & SideFlip & WallJump & LedgeGrab) | (PSwitch & TripleJump & WallJump & LedgeGrab) | (PSwitch & Vault & WallJump & NeutralThrow) | (PSwitch & Backflip & Vault & NeutralThrow) | (PSwitch & SideFlip & Vault & NeutralThrow) | (PSwitch & GroundPoundJump & Vault & NeutralThrow) | (PSwitch & Spin & Vault & NeutralThrow) | (PSwitch & TripleJump & Vault & NeutralThrow) | (PSwitch & Kuribo) | (PSwitch & NeutralThrow & Vault) | (PSwitch & UpThrow & Vault) | (PSwitch & WallJump & LedgeGrab & SpinThrow) | (PSwitch & DownThrow & WallJump & LedgeGrab) | (PSwitch & UpThrow & WallJump & LedgeGrab) | (PSwitch & NeutralThrow & WallJump) | (NeutralThrow & Vault & Dive & SingleJump) | (NeutralThrow & GroundPound & RollBoost & Vault & Dive & SingleJump) | (NeutralThrow & TripleJump & Vault & Dive & CapReturnJump) | (DownThrow & UpThrow & Kuribo & TripleJump & Vault & Dive) | (LongJump & TripleJump & DownThrow & GroundPound & Vault & CapReturnJump & Kuribo & UpThrow)",
       "world_peace_token": "WorldPeace_Wooded",
       "moon_rock_token": "MoonRockActive_Wooded",
       "access_type": "primary",
@@ -319,7 +319,7 @@
       "shine_info_object_name": "\u30b7\u30e3\u30a4\u30f3",
       "shine_info_scenario_name": "\u30d5\u30e9\u30ef\u30fc\u30ed\u30fc\u30c9\u306e\u9ad8\u53f0\u306b",
       "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-      "difficulty": "advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;casual;expert;expert;expert;expert;expert;expert",
+      "difficulty": "advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;casual;expert;expert;expert;expert;expert;expert;expert;advanced;advanced;expert;expert",
       "option_scenarios": ""
     }
   ],

@@ -127,3 +127,7 @@ LavaWorldHomeStage::place::new_place_3,Luncheon Kingdom,LavaWorldHomeStage,Lunch
 LavaWorldHomeStage::place::new_place_8,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,Meat Multi Free,,,,,Human-authored logic place.,
 LavaWorldHomeStage::place::new_place_9,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,Surrounded By Tall Mountains Free,,,,,Human-authored logic place.,
 LavaWorldHomeStage::place::new_place_10,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,Luncheon KFR,,,,,Human-authored logic place.,
+LavaWorldHomeStage::place::new_place_11,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,Tall Tall Roof Free,,,,,Human-authored logic place.,
+LavaWorldHomeStage::place::new_place_12,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,iminluncheon Peach,,,,,Human-authored logic place.,
+LavaWorldHomeStage::place::new_place_13,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,Spinning Athletics Island,,,,,Human-authored logic place.,
+LavaWorldHomeStage::place::new_place_14,Luncheon Kingdom,LavaWorldHomeStage,Luncheon Kingdom,overworld,custom_place,editor,,,,Meat Plateau at Sea Level,,,,,Human-authored logic place.,

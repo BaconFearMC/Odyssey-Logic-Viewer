@@ -229,3 +229,5 @@ SandWorldPyramid001Stage::entrance::pyramid03::sub_near,Sand Kingdom,SandWorldPy
 SandWorldHomeStage::place::new_place_24,Sand Kingdom,SandWorldHomeStage,Sand Kingdom,overworld,custom_place,editor,,,,Tostarena Ruins Above Small 2D Wall,,,,,Human-authored logic place.,
 SandWorldHomeStage::place::new_place_25,Sand Kingdom,SandWorldHomeStage,Sand Kingdom,overworld,custom_place,editor,,,,On Top of the Stone Archway,,,,,Human-authored logic place.,
 SandWorldHomeStage::place::new_place_26,Sand Kingdom,SandWorldHomeStage,Sand Kingdom,overworld,custom_place,editor,,,,Sand KFR,,,,,Human-authored logic place.,
+SandWorldHomeStage::place::new_place_27,Sand Kingdom,SandWorldHomeStage,Sand Kingdom,overworld,custom_place,editor,,,,On the Leaning Pillar Free,,,,,Human-authored logic place.,
+SandWorldHomeStage::place::new_place_28,Sand Kingdom,SandWorldHomeStage,Sand Kingdom,overworld,custom_place,editor,,,,Sand Peach,,,,,Human-authored logic place.,

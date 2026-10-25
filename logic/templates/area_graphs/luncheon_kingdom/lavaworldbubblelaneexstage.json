@@ -120,10 +120,26 @@
       "requirement_expr": "Bubble | (Vault & Dive & NeutralThrow)",
       "requirement_notes": "",
       "edge_type": "human_route",
-      "difficulty": "casual",
-      "bidirectional": "true",
+      "difficulty": "casual;advanced",
+      "bidirectional": "false",
       "source": "editor",
       "notes": "Created in graph editor.",
+      "option_scenarios": "",
+      "status": ""
+    },
+    {
+      "edge_id": "edge_user_1030",
+      "kingdom": "Luncheon Kingdom",
+      "area_scope": "subarea",
+      "from_node_id": "LavaWorldBubbleLaneExStage::entrance::PechoBubbleExDokan::sub_far",
+      "to_node_id": "LavaWorldBubbleLaneExStage::entrance::PechoBubbleEx::sub_near",
+      "requirement_expr": "impossible",
+      "requirement_notes": "",
+      "edge_type": "human_route",
+      "difficulty": "casual",
+      "bidirectional": "false",
+      "source": "editor",
+      "notes": "Reverse of edge_user_0067.",
       "option_scenarios": "",
       "status": ""
     }
@@ -173,7 +189,7 @@
       "shine_info_object_name": "\u30b7\u30e3\u30a4\u30f3",
       "shine_info_scenario_name": "\u3068\u3093\u3067 \u6e21\u3063\u3066 \u30de\u30b0\u30de\u6c60",
       "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-      "difficulty": "casual",
+      "difficulty": "casual;advanced",
       "option_scenarios": ""
     },
     {

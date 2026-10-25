@@ -205,7 +205,7 @@
       "flags": "ShineFlag_Extra",
       "from_node_id": "BullRunExStage::entrance::BossRaidWorldMoonEx02_Exit::sub_far",
       "state_requirement_expr": "",
-      "requirement_expr": "free",
+      "requirement_expr": "Bull | NeutralThrow | DownThrow | SpinThrow | UpThrow",
       "world_peace_token": "WorldPeace_Ruined",
       "moon_rock_token": "MoonRockActive_Ruined",
       "access_type": "primary",
@@ -236,8 +236,8 @@
       "shine_info_object_name": "\u30b7\u30e3\u30a4\u30f3\u30102m\u7f6e\u304d\u3011",
       "shine_info_scenario_name": "\u8d70\u308a\u629c\u3051\uff01 \u30df\u30a4\u30e9\u8ecd\u56e3",
       "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-      "difficulty": "casual",
-      "option_scenarios": ""
+      "difficulty": "casual;advanced;advanced;advanced;advanced",
+      "option_scenarios": "1,2,3,4"
     }
   ],
   "anchors": [
