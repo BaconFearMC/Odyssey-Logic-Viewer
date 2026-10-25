@@ -4773,7 +4773,7 @@ function buildNodeReachIndex(nodes, edges){
       .map((b, i) => Object.assign({}, b, { tier: tiers[i] || "unrated", fromNodeId: e.from_node_id, edgeId: e.edge_id, origin: originLabelFor(e) }));
     reachBranches[e.to_node_id] = (reachBranches[e.to_node_id] || []).concat(taggedBranches);
   });
-  // CUSTOM NODES: the one-hop index above is wrong for them in two ways.
+  // CUSTOM NODES AND CHECKPOINTS: the one-hop index above is wrong for them in two ways.
   //  (a) it drops "free" edges, so a node entered for free from a checkpoint
   //      had no branch at all (-> bare "Free", source lost) and, worse, a node
   //      with a free edge AND a costly edge kept only the costly one;
@@ -4783,7 +4783,7 @@ function buildNodeReachIndex(nodes, edges){
   // keeping free edges, and tagging each branch with the named checkpoint it
   // starts from. Free routes are tagged even for a single source ("Free from
   // Round Tower"); costed routes follow the legacy rule (tag only when the node
-  // has 2+ sources). Other node types keep the legacy one-hop result.
+  // has 2+ sources). Other node types (subarea pipes etc.) keep the legacy one-hop result.
   const inboundOf = {};
   (edges || []).forEach(e => {
     if(!e.from_node_id || !e.to_node_id || e.from_node_id === e.to_node_id) return;
@@ -4824,7 +4824,10 @@ function buildNodeReachIndex(nodes, edges){
     return res.length ? pruneDominatedBranches(res) : null;
   };
   (nodes || []).forEach(n => {
-    if(n.node_type !== "custom_place") return;
+    // Checkpoints need the same treatment: a Checkpoint entered for free from
+    // another Checkpoint (e.g. Round Tower -> Moe-Eye Habitat) had no branch,
+    // so a moon tracked from it could never say where it is free from.
+    if(n.node_type !== "custom_place" && n.node_type !== "checkpoint") return;
     const r = customReach(n.node_id, new Set());
     if(r) reachBranches[n.node_id] = r;
   });
@@ -5810,11 +5813,11 @@ function applyNodeMergeRules(kingdomName){
       if(src) applyOverrideNodeToMoon(moon, r.node, src.kingdomName, src.data, /*replace=*/false, src.sameKingdom);
     });
 
-    // A free moon that no merge rule touched (tracked from a Custom Node by plain
+    // A free moon that no merge rule touched (tracked from a Custom Node/Checkpoint by plain
     // BFS) still needs to say WHERE it is free from.
     if(!moon._freeFrom && data && !moon.subarea && !moon.entranceReqs
        && (!moon.tierLanes || !moon.tierLanes.length)
-       && moon.checkpointType === "custom_place" && moon.checkpointNodeId){
+       && moon.checkpointNodeId){
       const sum = summarizeBranches(branchesForNodeId(data, moon.checkpointNodeId), kingdomName);
       if(sum.free && sum.freeFrom) moon._freeFrom = sum.freeFrom;
     }
@@ -6482,9 +6485,6 @@ function customNodeRoutesFor(moon){
     if(!shown.length && crossed.length) out.push({ kind: n.kind, impossible: true, hidden: true });
     else {
       const route = Object.assign({ kind: n.kind }, summarizeBranches(shown, n.kingdom));
-      // Tracked straight from a named Checkpoint and free once you are there:
-      // that IS "Free from <Checkpoint>" (the reach index only tags Custom Nodes).
-      if(route.free && !route.freeFrom && n.kind === "checkpoint" && n.name) route.freeFrom = [n.name];
       out.push(route);
     }
   }
