@@ -2248,6 +2248,18 @@
   .filter-option.incomplete, .filter-option.not-implemented.incomplete{ opacity:1; cursor:pointer; }
   .filter-option.not-implemented.incomplete .filter-option-icon{ filter:none; }
   .filter-option.not-implemented.incomplete:hover{ background:var(--bg-chip); }
+
+  /* ---- Access Point source strips (same look as moon node strips) ---- */
+  .ns-start{ --ns-acc:var(--worldpeace); }
+  .ns-painting{ --ns-acc:#d27fb8; }
+  .ns-other{ --ns-acc:var(--text-dim); }
+  .cp-req-source-head{ display:flex; flex-direction:column; gap:2px; margin-bottom:4px; }
+  .cp-req-source .checkpoint-info.node-strip{ border-left:0; padding:0; margin:0; }
+  .cp-req-source.src-custom{ border-left-color:var(--moonrock); }
+  .cp-req-source.src-checkpoint{ border-left-color:var(--gold); }
+  .cp-req-source.src-start{ border-left-color:var(--worldpeace); }
+  .cp-req-source.src-painting{ border-left-color:#d27fb8; }
+  .cp-req-source.src-other{ border-left-color:var(--border); }
 </style>
 </head>
 <body>
@@ -7671,6 +7683,60 @@ function getPaintingVariants(kingdomName){
   return out;
 }
 
+// Access Points: draws "where this is reached from" the same way moon cards draw
+// their tracked-from nodes -- a node strip (icon, kind, name; clickable when it is a
+// real Checkpoint/Custom Node) with the route's requirements underneath.
+function appendSourceHeader(wrap, label, kingdomName, prefix){
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  const parts = String(label || "").replace(/^From\s+/i, "").split(" / ").map(x => x.trim()).filter(Boolean);
+  if(!parts.length) return;
+  const KIND = {
+    custom:     { text: "Custom Node", icon: "icon/customnode.png" },
+    checkpoint: { text: "Checkpoint",  icon: "icon/infocheckpoint.png" },
+    painting:   { text: "Painting",    icon: "icon/painting-access.png" },
+    start:      { text: "Kingdom Start", icon: null },
+    other:      { text: "Source",      icon: null },
+  };
+  const head = document.createElement("div");
+  head.className = "cp-req-source-head";
+  let firstKind = null;
+  parts.forEach(name => {
+    let kind = "other", node = null;
+    if(name === "Kingdom Start") kind = "start";
+    else if(/^(Come|Go) Painting$/.test(name)) kind = "painting";
+    else if(data){
+      const want = cleanCheckpointName(name).toLowerCase();
+      node = (data.nodes || []).find(n => (n.node_type === "checkpoint" || n.node_type === "custom_place")
+        && cleanCheckpointName(n.display_name).toLowerCase() === want) || null;
+      if(node) kind = node.node_type === "custom_place" ? "custom" : "checkpoint";
+    }
+    if(!firstKind) firstKind = kind;
+    const info = document.createElement("span");
+    info.className = "checkpoint-info node-strip ns-" + kind;
+    if(KIND[kind].icon){
+      const img = document.createElement("img");
+      img.src = KIND[kind].icon; img.alt = ""; img.onerror = function(){ this.style.display = "none"; };
+      info.appendChild(img);
+    }
+    const txt = document.createElement("span"); txt.className = "ns-text";
+    const k = document.createElement("span"); k.className = "ns-kind";
+    k.textContent = (prefix ? prefix + " \u00b7 " : "") + "Reached from \u00b7 " + KIND[kind].text;
+    const n = document.createElement("span"); n.className = "ns-name"; n.textContent = name === "Kingdom Start" ? "Kingdom Start" : name;
+    txt.append(k, n); info.appendChild(txt);
+    if(node){
+      const hint = document.createElement("span"); hint.className = "ns-hint"; hint.textContent = "Node details \u203a";
+      info.appendChild(hint);
+      info.tabIndex = 0; info.setAttribute("role", "button");
+      const open = () => openNodeInfo({ kind: kind === "custom" ? "custom_place" : "checkpoint", kingdom: kingdomName, nodeId: node.node_id, fallbackName: name });
+      info.addEventListener("click", open);
+      info.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); open(); } });
+    } else info.classList.add("info-static");
+    head.appendChild(info);
+  });
+  wrap.classList.add("src-" + firstKind);
+  wrap.appendChild(head);
+}
+
 function renderPaintingReqs(kingdomName){
   const root = document.getElementById("paintingReqs");
   if(!root) return;
@@ -7722,12 +7788,7 @@ function renderPaintingReqs(kingdomName){
       p.variants.forEach(v => {
         const wrap = document.createElement("div");
         wrap.className = "cp-req-source";
-        if(v.sourceLabel){
-          const lab = document.createElement("div");
-          lab.className = "cp-req-source-label";
-          lab.textContent = v.sourceLabel + ":";
-          wrap.appendChild(lab);
-        }
+        if(v.sourceLabel) appendSourceHeader(wrap, v.sourceLabel, kingdomName);
         if(v.impossible){
           const tg = document.createElement("span"); tg.className = "impossible-tag"; tg.textContent = "Impossible"; wrap.appendChild(tg);
         } else wrap.appendChild(buildMovementOptions(v.moon, false));
@@ -7826,10 +7887,7 @@ function renderSubareaReqs(kingdomName){
     c.entries.forEach(e => {
       const wrap = document.createElement("div");
       wrap.className = "cp-req-source";
-      const lab = document.createElement("div");
-      lab.className = "cp-req-source-label";
-      lab.textContent = e.pipe + " · " + e.sourceLabel + ":";
-      wrap.appendChild(lab);
+      appendSourceHeader(wrap, e.sourceLabel, kingdomName, e.pipe);
       wrap.appendChild(buildMovementOptions(e.moon, false));
       card.appendChild(wrap);
     });
@@ -7926,12 +7984,7 @@ function renderCheckpointReqs(kingdomName, nodeType){
     cp.variants.forEach(v => {
       const wrap = document.createElement("div");
       wrap.className = "cp-req-source";
-      if(v.sourceLabel){
-        const lab = document.createElement("div");
-        lab.className = "cp-req-source-label";
-        lab.textContent = v.sourceLabel + ":";
-        wrap.appendChild(lab);
-      }
+      if(v.sourceLabel) appendSourceHeader(wrap, v.sourceLabel, kingdomName);
       wrap.appendChild(buildMovementOptions(v.moon, false));
       card.appendChild(wrap);
     });
@@ -8431,7 +8484,7 @@ function setupMergedFilterBar(tokens){
       // Greyed out only in "I Have This!"; "What Does This Unlock?" lets them be picked.
       // The "Incomplete" label always shows; the grey-out/lock only applies outside it.
       const isIncomplete = kind === "ability" && !!INCOMPLETE_ABILITY_TOKENS[token];
-      const incomplete = isIncomplete && filterMode !== "unlocks";
+      const incomplete = false; // Incomplete tiles are fully usable (incl. exemption); only the badge remains
       const notImplemented = (kind === "ability" && NOT_IMPLEMENTED_ABILITY_TOKENS[token]) || incomplete;
       const btn = document.createElement("button");
       btn.type = "button";
@@ -8668,7 +8721,7 @@ function setupFilterModeTabs(){
       const fb = document.getElementById("filterBars"); if(fb) fb.dataset.filterMode = filterMode;
       tabs.forEach(t => t.classList.toggle("active", t === tab));
       // Incomplete abilities are only pickable in "What Does This Unlock?".
-      if(filterMode !== "unlocks") Object.keys(INCOMPLETE_ABILITY_TOKENS).forEach(t => selectedAbilities.delete(t));
+      // (Incomplete abilities are now selectable in every mode.)
       if(window.__refreshFilterPanels) window.__refreshFilterPanels();
       if(window.__drawFilterChips) window.__drawFilterChips();
       refreshImpliedTiles();
