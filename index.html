@@ -822,6 +822,12 @@
   /* Difficulty is carried by the chip itself via a solid left accent bar
      (flat tint, no diagonal gradient wash) so a route reads at a glance
      even scrolled away from its tier-pill label. */
+  .exempt-note{
+    font-size:10px; font-style:italic; color:var(--text-dim, #8a8a8a);
+    padding:3px 8px; border:1px dashed var(--border, #555); border-radius:6px;
+    align-self:flex-start;
+  }
+  .tier-lane.subsidized{ opacity:0.75; }
   .tier-lane.casual .option-chip{
     border-color:var(--tier-casual-border);
     border-left-color:var(--tier-casual);
@@ -6902,7 +6908,7 @@ function buildMovementOptions(moon, boxed){
 
     const hideNonFree = laneHasFilterFreeMethod(lane);
     lane.groups.forEach((andGroup, i)=>{
-      if(exemptHides(lane, andGroup)) return;
+      if(exemptHides(lane, andGroup) || exemptSubsumedBy(moon.tierLanes, lane, andGroup)) return;
       // A branch can end up with no tokens either because it was already
       // free (Single Jump / "already in this kingdom" stripped out during
       // parsing) or because "Exempt!" mode just stripped out every token
@@ -6977,6 +6983,11 @@ function buildMovementOptions(moon, boxed){
       optsEl.appendChild(chip);
     });
 
+    const subNote = exemptSubsumedNote(moon.tierLanes, lane);
+    if(subNote){
+      optsEl.appendChild(subNote);
+      if(lane.groups.every(g => exemptHides(lane, g) || exemptSubsumedBy(moon.tierLanes, lane, g))) laneEl.classList.add("subsidized");
+    }
     laneEl.appendChild(optsEl);
     stack.appendChild(laneEl);
   });
@@ -6985,7 +6996,7 @@ function buildMovementOptions(moon, boxed){
   // the box collapses to a peek: the first option shown in full, a cropped
   // slice of the second under a fade, and an expand toggle pinned to the
   // box's own top-right corner.
-  const totalOptions = moon.tierLanes.reduce((sum, lane) => sum + lane.groups.length - laneHiddenCount(lane), 0);
+  const totalOptions = moon.tierLanes.reduce((sum, lane) => sum + lane.groups.length - exemptHiddenCount(moon.tierLanes, lane), 0);
   return wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions), hoisted, "moon");
 }
 
@@ -7374,8 +7385,47 @@ function exemptHides(lane, g){
   return (lane.groups || []).some(f => f.length > 0 && exemptedDisplayGroup(f).length === 0
     && (!f.scenarios || (!!g.scenarios && g.scenarios.every(n => f.scenarios.includes(n)))));
 }
-function laneHiddenCount(lane){
-  return (lane.groups || []).filter(g => exemptHides(lane, g)).length;
+// Going UP the logic levels: once an exemption turns a method at one level Free, the
+// harder levels (Casual -> Advanced, Expert; Advanced -> Expert; Expert never) have
+// nothing left to teach, so their methods are folded away. That only holds for a
+// method tracked from the same location (same origin) with the same Scenario data;
+// anything else stays visible. Returns the lower lane that covers `g`, or null.
+const EXEMPT_RANK = { unrated: 0, casual: 0, advanced: 1, expert: 2 };
+function sameScenarioData(a, b){
+  const x = a || null, y = b || null;
+  if(!x || !y) return !x && !y;
+  return x.length === y.length && x.every(n => y.includes(n));
+}
+function exemptSubsumedBy(lanes, lane, g){
+  const rank = EXEMPT_RANK[lane.tier];
+  if(rank === undefined || rank === 0 || !lanes) return null;
+  let best = null;
+  lanes.forEach(L => {
+    const r = EXEMPT_RANK[L.tier];
+    if(r === undefined || r >= rank) return;
+    const covers = (L.groups || []).some(f => f.length > 0 && exemptedDisplayGroup(f).length === 0
+      && (f.origin || null) === (g.origin || null) && sameScenarioData(f.scenarios, g.scenarios));
+    if(covers && (!best || r < EXEMPT_RANK[best.tier])) best = L;
+  });
+  return best;
+}
+function exemptHiddenCount(lanes, lane){
+  return (lane.groups || []).filter(g => exemptHides(lane, g) || exemptSubsumedBy(lanes, lane, g)).length;
+}
+// Shown in place of the folded methods so it is clear WHY they are gone.
+function exemptSubsumedNote(lanes, lane){
+  const by = new Set();
+  let n = 0;
+  (lane.groups || []).forEach(g => {
+    if(exemptHides(lane, g)) return;
+    const src = exemptSubsumedBy(lanes, lane, g);
+    if(src){ n++; by.add(src.label || TIER_LABEL[src.tier] || src.tier); }
+  });
+  if(!n) return null;
+  const note = document.createElement("div");
+  note.className = "exempt-note";
+  note.textContent = (n === 1 ? "1 method hidden" : n + " methods hidden") + " \u2014 " + Array.from(by).join(" / ") + " is Free with your exemptions";
+  return note;
 }
 
 // ---- Shared requirement ("hoisted") ---------------------------------------
@@ -9030,7 +9080,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun){
     optsEl.className = "tier-options";
     const hideNonFree = laneHasFilterFreeMethod(lane);
     lane.groups.forEach((andGroup, i) => {
-      if(exemptHides(lane, andGroup)) return;
+      if(exemptHides(lane, andGroup) || exemptSubsumedBy(tierLanes, lane, andGroup)) return;
       const chip = document.createElement("div");
       const preHoistGroup = exemptedDisplayGroup(andGroup);
       const displayGroup = hoistSet.size ? preHoistGroup.filter(t => !hoistSet.has(t)) : preHoistGroup;
@@ -9060,10 +9110,15 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun){
       optsEl.appendChild(chip);
     });
 
+    const subNote = exemptSubsumedNote(tierLanes, lane);
+    if(subNote){
+      optsEl.appendChild(subNote);
+      if(lane.groups.every(g => exemptHides(lane, g) || exemptSubsumedBy(tierLanes, lane, g))) laneEl.classList.add("subsidized");
+    }
     laneEl.appendChild(optsEl);
     stack.appendChild(laneEl);
   });
-  const totalOptions = tierLanes.reduce((sum, lane) => sum + lane.groups.length - laneHiddenCount(lane), 0);
+  const totalOptions = tierLanes.reduce((sum, lane) => sum + lane.groups.length - exemptHiddenCount(tierLanes, lane), 0);
   return wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse), hoisted, noun || "node");
 }
 
