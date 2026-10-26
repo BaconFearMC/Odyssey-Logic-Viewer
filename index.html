@@ -2967,6 +2967,30 @@ const BONUS_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true, HealthUp: 
 // Bonus tiles that aren't finished: greyed out + labelled "Incomplete" in the
 // picker. Their requirements are still read from the logic and shown on moons.
 const INCOMPLETE_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true, HealthUp: true, CapReturnJump: true };
+// Per-kingdom override: on these kingdoms' pages the listed groups no longer say
+// "Incomplete" (their logic there is considered finished). Edit this table to add
+// kingdoms or groups. Groups: "jump" = Jump + Cap Return Jump (always together),
+// "health" = Health Up, "death" = Death. Kingdom names match the pager exactly.
+const INCOMPLETE_GROUPS = {
+  jump:   ["SingleJump", "CapReturnJump"],
+  health: ["HealthUp"],
+  death:  ["RequiresDeath"]
+};
+const COMPLETE_ON_KINGDOM = {
+  "Cap Kingdom": ["jump", "health"]
+};
+function incompleteGroupOf(token){
+  for(const g in INCOMPLETE_GROUPS) if(INCOMPLETE_GROUPS[g].indexOf(token) >= 0) return g;
+  if(/cap\s*_?return/i.test(String(token))) return "jump";
+  return null;
+}
+// Does this token still carry the Incomplete badge on the kingdom page being viewed?
+function isTokenIncompleteHere(token){
+  if(!INCOMPLETE_ABILITY_TOKENS[token]) return false;
+  const done = COMPLETE_ON_KINGDOM[KINGDOM_ORDER[currentKingdomIndex]];
+  const grp = incompleteGroupOf(token);
+  return !(done && grp && done.indexOf(grp) >= 0);
+}
 function syncBonusFreeState(){
   Object.keys(BONUS_ABILITY_TOKENS).forEach(tok => {
     // Never Free: the data flags Jump / Cap Return Jump always_unlocked, which
@@ -8196,6 +8220,7 @@ function renderKingdom(name){
   }
 
   currentKingdomIndex = KINGDOM_ORDER.indexOf(name);
+  if(window.__refreshAbilityGrids) window.__refreshAbilityGrids();
   renderGrid();
 
   const nameEl = document.getElementById("pagerName");
@@ -8573,6 +8598,8 @@ function setupMergedFilterBar(tokens){
     [bonusLeftEl, bonusRightEl].forEach(el => el.querySelectorAll(".filter-bar-none").forEach(n => n.remove()));
     bonusRowEl.hidden = !bonusLeftEl.children.length && !bonusRightEl.children.length;
   }
+  // Kingdom pages can differ in which tiles are "Incomplete", so redraw on page change.
+  window.__refreshAbilityGrids = renderAbilityGrids;
   const captureGridEl = document.getElementById("captureFilterGrid");
 
   function renderChips(){
@@ -8661,7 +8688,7 @@ function setupMergedFilterBar(tokens){
       const label = filterLabelFor(token);
       // Greyed out only in "I Have This!"; "What Does This Unlock?" lets them be picked.
       // The "Incomplete" label always shows; the grey-out/lock only applies outside it.
-      const isIncomplete = kind === "ability" && !!INCOMPLETE_ABILITY_TOKENS[token];
+      const isIncomplete = kind === "ability" && isTokenIncompleteHere(token);
       const incomplete = false; // Incomplete tiles are fully usable (incl. exemption); only the badge remains
       const notImplemented = (kind === "ability" && NOT_IMPLEMENTED_ABILITY_TOKENS[token]) || incomplete;
       const btn = document.createElement("button");
