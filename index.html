@@ -139,6 +139,12 @@
     color:#fff;
   }
   #videoToggle.active{ background:var(--red); border-color:#a52530; color:#fff; }
+  #raiseToggle.active{ background:var(--red); border-color:#a52530; color:#fff; }
+  /* Submit Video button hidden for now (remove this rule to bring it back). The debug
+     "!" button drops into its slot. */
+  #submitToggle{ display:none !important; }
+  #debugToggle{ bottom:24px !important; }
+  #debugPanel{ bottom:68px !important; }
   #glitchToggle{ right:24px; top:66px; }
   #glitchToggle.active{
     background:var(--tier-glitched);
@@ -2320,6 +2326,13 @@
 
 
 
+
+<button class="corner-btn" id="raiseToggle" type="button" aria-label="Toggle folding harder logic levels when an exemption makes an easier level Free">
+  <span class="icon-svg" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>
+  </span>
+  <span id="raiseToggleLabel">Exempt Levels: Fold Up</span>
+</button>
 
 <button class="corner-btn" id="approveToggle" type="button" aria-label="Approve videos" style="display:none;"><span>Approve Videos</span></button>
 </div>
@@ -7396,7 +7409,11 @@ function sameScenarioData(a, b){
   if(!x || !y) return !x && !y;
   return x.length === y.length && x.every(n => y.includes(n));
 }
+// Option (Debug menu): Exempt! can fold the harder levels once an easier one is Free.
+let exemptRaiseLevels = true;
+try{ if(localStorage.getItem("exemptRaiseLevels") === "0") exemptRaiseLevels = false; }catch(e){}
 function exemptSubsumedBy(lanes, lane, g){
+  if(!exemptRaiseLevels) return null;
   const rank = EXEMPT_RANK[lane.tier];
   if(rank === undefined || rank === 0 || !lanes) return null;
   let best = null;
@@ -8253,6 +8270,21 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   document.getElementById("glitchToggleLabel").textContent = GLITCH_LABELS[glitchMode];
   renderGrid();
 });
+
+(function(){
+  const btn = document.getElementById("raiseToggle"), lbl = document.getElementById("raiseToggleLabel");
+  const sync = () => {
+    btn.classList.toggle("active", exemptRaiseLevels);
+    lbl.textContent = exemptRaiseLevels ? "Exempt Levels: Fold Up" : "Exempt Levels: Separate";
+  };
+  sync();
+  btn.addEventListener("click", () => {
+    exemptRaiseLevels = !exemptRaiseLevels;
+    try{ localStorage.setItem("exemptRaiseLevels", exemptRaiseLevels ? "1" : "0"); }catch(e){}
+    sync();
+    renderGrid();
+  });
+})();
 
 document.getElementById("videoToggle").addEventListener("click", () => {
   const idx = VIDEO_MODES.indexOf(videoMode);
