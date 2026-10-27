@@ -4833,32 +4833,56 @@ function buildNodeReachIndex(nodes, edges){
     if((e.requirement_expr || "").trim().toLowerCase() === "impossible") return;
     (inboundOf[e.to_node_id] = inboundOf[e.to_node_id] || []).push({ e, src: e.from_node_id });
     if(/^(true|1|yes|y)$/i.test(String(e.bidirectional).trim()))
-      (inboundOf[e.from_node_id] = inboundOf[e.from_node_id] || []).push({ e, src: e.to_node_id });
+      (inboundOf[e.from_node_id] = inboundOf[e.from_node_id] || []).push({ e, src: e.to_node_id, rev: true });
   });
   const nodeLabel = n => (n.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "").trim() || null;
   const customReach = (id, seen) => {
     seen = new Set(seen); seen.add(id);
-    const list = inboundOf[id] || [];
+    // A two-way route is walkable both ways into a Custom Node, but a Checkpoint is a warp
+    // point: only routes that really lead INTO it are charged (walking back out of one
+    // into a neighbouring checkpoint is not a requirement for reaching it).
+    const isAnchorDest = !!(_nodeById[id] && (_nodeById[id].node_type === "checkpoint" || _nodeById[id].node_type === "stage_start"));
+    const list = (inboundOf[id] || []).filter(x => !(x.rev && isAnchorDest));
     const tagAll = new Set(list.map(x => x.src)).size >= 2;
+    const destIsAnchor = !!(_nodeById[id] && (_nodeById[id].node_type === "checkpoint" || _nodeById[id].node_type === "stage_start"));
     let res = [];
     list.forEach(({ e, src }) => {
       if(seen.has(src) || res.length > 300) return;
       const sn = _nodeById[src];
-      let sb, label = null;
-      if(sn && sn.node_type === "custom_place"){
+      let sb, label = null, costedOnly = false;
+      if(sn && sn.node_type === "custom_place" && destIsAnchor){
+        // Checkpoint destination: one hop, like the legacy index. A Custom Node is not a place
+        // you can simply be, so its edges only ever contribute costed routes, never Free ones.
+        sb = [{ group: [], scenarios: null, tier: "casual", origin: null }];
+        costedOnly = true;
+        label = nodeLabel(sn);
+      } else if(sn && sn.node_type === "custom_place"){
         sb = customReach(src, seen);
         if(!sb) return;                       // orphan only reachable through the target
         label = nodeLabel(sn);                // fallback tag if no checkpoint upstream
-      } else {
+      } else if(!sn || sn.node_type === "checkpoint" || sn.node_type === "stage_start"){
+        // True origins: you can simply be standing at a Checkpoint or the stage start.
         sb = [{ group: [], scenarios: null, tier: "casual", origin: null }];
         if(sn && sn.node_type === "checkpoint") label = nodeLabel(sn);
+      } else {
+        // Any other node (home/substage entrances, stage changes, events) is NOT somewhere you
+        // can just be, so a Free route "from" it proves nothing (it is often circular: the
+        // only way to that entrance is FROM the target). Its costed routes keep their original
+        // one-hop meaning (the entrance's own cost is shown separately by the Subarea icon, so
+        // chasing it here would count it twice); Free ones are never conjured from it.
+        sb = [{ group: [], scenarios: null, tier: "casual", origin: null }];
+        costedOnly = true;
       }
       const eBr = edgeBranches(e);
       crossBranches(eBr, sb).forEach(b => {
+        if(costedOnly && b.group.length === 0) return;
         const origin = b.origin || ((tagAll || b.group.length === 0) ? label : null);
         res.push(Object.assign({}, b, { origin, fromNodeId: src, edgeId: e.edge_id }));
       });
     });
+    // A Checkpoint whose every inbound route is Free needs no reach line at all (plain Free,
+    // as before); Free routes only matter once there is a costed alternative beside them.
+    if(destIsAnchor && !res.some(b => b.group.length > 0)) return null;
     return res.length ? pruneDominatedBranches(res) : null;
   };
   (nodes || []).forEach(n => {
@@ -4975,6 +4999,11 @@ function summarizeBranches(branches, kingdomName){
     seenKeys.add(key);
     clean.push({ group, scenarios: b.scenarios, tier: b.tier, origin: b.origin || null });
   });
+  // Redundancy has to be judged AFTER the always-unlocked tokens are stripped: a route that
+  // is only "KingdomAccess_X" is really Free, so it makes every harder route from the same
+  // place pointless. (Pruning earlier, on the raw tokens, missed that.)
+  const kept = pruneDominatedBranches(clean);
+  clean.length = 0; kept.forEach(b => clean.push(b));
   const freeBr = clean.filter(b => b.group.length === 0 && !b.scenarios);
   if(freeBr.some(b => !b.origin)) return { free: true };
   if(freeBr.length){
