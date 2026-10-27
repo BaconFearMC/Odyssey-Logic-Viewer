@@ -4853,12 +4853,7 @@ function buildNodeReachIndex(nodes, edges){
         sb = [{ group: [], scenarios: null, tier: "casual", origin: null }];
         if(sn && sn.node_type === "checkpoint") label = nodeLabel(sn);
       }
-      const eReq = (e.requirement_expr || "").trim();
-      const eDnf = (!eReq || eReq.toLowerCase() === "free") ? [[]] : exprToDNF(eReq);
-      const eTiers = tiersForGroups(eDnf, e.difficulty);
-      const eBr = (!eReq || eReq.toLowerCase() === "free")
-        ? [{ group: [], scenarios: null, tier: "casual" }]
-        : exprToScenarioDNF(eReq, e.option_scenarios).map((b, i) => ({ group: b.group.slice(), scenarios: b.scenarios || null, tier: eTiers[i] || "unrated" }));
+      const eBr = edgeBranches(e);
       crossBranches(eBr, sb).forEach(b => {
         const origin = b.origin || ((tagAll || b.group.length === 0) ? label : null);
         res.push(Object.assign({}, b, { origin, fromNodeId: src, edgeId: e.edge_id }));
@@ -4925,7 +4920,9 @@ function crossBranches(A, B){
 
 function edgeBranches(e){
   const req = (e.requirement_expr || "").trim();
-  if(!req || req.toLowerCase() === "free") return [{ group: [], scenarios: null, tier: "casual" }];
+  // A Free edge can still be limited to some Scenarios (option_scenarios, e.g. "2,3,4"):
+  // it is only free THERE, so it must not read as free everywhere.
+  if(!req || req.toLowerCase() === "free") return [{ group: [], scenarios: parseScenarioList(e.option_scenarios), tier: "casual" }];
   const tiers = tiersForGroups(exprToDNF(req), e.difficulty);
   return exprToScenarioDNF(req, e.option_scenarios).map((b, i) => ({ group: b.group.slice(), scenarios: b.scenarios || null, tier: tiers[i] || "unrated" }));
 }
@@ -7434,8 +7431,8 @@ function sameScenarioData(a, b){
   return x.length === y.length && x.every(n => y.includes(n));
 }
 // Option (Debug menu): Exempt! can fold the harder levels once an easier one is Free.
-let exemptRaiseLevels = true;
-try{ if(localStorage.getItem("exemptRaiseLevels") === "0") exemptRaiseLevels = false; }catch(e){}
+let exemptRaiseLevels = false;   // default: levels stay separate
+try{ if(localStorage.getItem("exemptRaiseLevelsV2") === "1") exemptRaiseLevels = true; }catch(e){}
 function exemptSubsumedBy(lanes, lane, g){
   if(!exemptRaiseLevels) return null;
   const rank = EXEMPT_RANK[lane.tier];
@@ -8305,7 +8302,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   sync();
   btn.addEventListener("click", () => {
     exemptRaiseLevels = !exemptRaiseLevels;
-    try{ localStorage.setItem("exemptRaiseLevels", exemptRaiseLevels ? "1" : "0"); }catch(e){}
+    try{ localStorage.setItem("exemptRaiseLevelsV2", exemptRaiseLevels ? "1" : "0"); }catch(e){}
     sync();
     renderGrid();
   });
