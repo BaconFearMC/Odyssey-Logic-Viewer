@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityTripleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3246,7 +3246,10 @@ function sortedTokensForDisplay(tokens){
    ========================================================= */
 function tokenizeExpr(expr){
   const out = [];
-  const re = /\(|\)|\||&|[A-Za-z0-9_]+/g;
+  // "@<node_id>" (e.g. @SandWorldHomeStage::checkpoint::obj525) is a single
+  // node-reference token meaning "starting from that node"; it must not be split
+  // on its "::" separators, or the parser loses every branch after it.
+  const re = /\(|\)|\||&|@[^\s()&|]+|[A-Za-z0-9_]+/g;
   let m;
   while((m = re.exec(expr)) !== null) out.push(m[0]);
   return out;
@@ -3744,6 +3747,21 @@ function tiersForGroups(dnf, difficultyField){
   return raw.map(t => TIER_ORDER.includes(t) ? t : "unrated");
 }
 
+// Readable place name for an "@<node_id>" reference: the node's display name
+// minus the "(objNNN)" / "Checkpoint" decoration, looked up in this kingdom
+// first, then in any other loaded kingdom (cross-kingdom references).
+function nodeOriginLabel(nodeId, nodeMap){
+  let node = nodeMap && nodeMap[nodeId];
+  if(!node && typeof KINGDOM_NODE_DATA !== "undefined"){
+    Object.keys(KINGDOM_NODE_DATA).some(k => { const m = KINGDOM_NODE_DATA[k].nodeMap; if(m && m[nodeId]){ node = m[nodeId]; return true; } return false; });
+  }
+  const raw = node ? (node.display_name || "") : "";
+  const clean = raw.replace(/\s*\(obj\d+\)\s*$/i, "").replace(/\s*Checkpoint\s*$/i, "").trim();
+  if(clean) return clean;
+  const m = /^(\w+?)(?:HomeStage|Stage)?::\w+::(\w+)/.exec(nodeId);
+  return m ? m[1] + " " + m[2] : nodeId;
+}
+
 function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachExpr, customNodeReachBranches){
   // scenarios[i] = scenario-number array (or null = unrestricted) for
   // branch i, parallel to dnf/tiers. Populated from moonAccess's own
@@ -3893,6 +3911,16 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
 
   if(FORCE_FREE_MOONS.has(row.moon_name)){ dnf = []; tiers = []; scenarios = []; }
 
+  // "@<node_id>" tokens say a branch only applies when starting from that node.
+  // They aren't abilities/captures, so lift them out of the token list and
+  // show them as the branch's "From <place>" origin tag instead.
+  const originOf = g => {
+    const at = g.find(t => typeof t === "string" && t.charAt(0) === "@");
+    return at ? nodeOriginLabel(at.slice(1), nodeMap) : null;
+  };
+  const origins = dnf.map(originOf);
+  dnf = dnf.map(g => g.filter(t => !(typeof t === "string" && t.charAt(0) === "@")));
+
   const isFree = dnf.every(g => g.length === 0);
   const hintIdx = parseInt(row.shine_info_hint_idx, 10);
 
@@ -3905,9 +3933,9 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
   if(!isFree){
     TIER_ORDER.forEach(tierKey => {
       const groups = dnf
-        .map((group, i) => ({ group, scenarios: scenarios[i] }))
+        .map((group, i) => ({ group, scenarios: scenarios[i], origin: origins[i] || null }))
         .filter((_, i) => tiers[i] === tierKey)
-        .map(g => Object.assign(g.group, { scenarios: g.scenarios })); // group stays an array (existing renderers iterate it as tokens); scenarios tags along as a non-enumerable-safe extra property
+        .map(g => Object.assign(g.group, { scenarios: g.scenarios, origin: g.origin })); // group stays an array (existing renderers iterate it as tokens); scenarios tags along as a non-enumerable-safe extra property
       if(groups.length) tierLanes.push({ tier: tierKey, label: TIER_LABEL[tierKey], groups });
     });
   }
