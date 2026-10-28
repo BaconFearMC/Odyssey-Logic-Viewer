@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1330,13 +1330,20 @@
   .entrance-req-label{ font-size:12px; font-weight:600; opacity:.85; white-space:nowrap; }
   .impossible-tag{ font-size:12px; font-weight:700; color:#e5484d; }
   /* ---- Inverted Pyramid Logic block ---------------------------------- */
-  .pyramid-wrap{ display:flex; flex-direction:column; gap:8px; }
-  .pyramid-logic{ display:flex; flex-direction:column; gap:6px; padding:8px 10px 9px; background:rgba(230,194,0,.07); border:1px solid rgba(230,194,0,.28); border-left:3px solid var(--gold); }
-  .pyramid-logic.in-group{ margin:8px 10px 4px; }
-  .pyramid-logic-title{ font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:var(--gold); display:flex; align-items:baseline; gap:8px; }
-  .pyramid-logic-hint{ font-size:10.5px; font-weight:600; letter-spacing:0; text-transform:none; color:var(--text-dim); }
-  .pyramid-reqs .entrance-req-label{ min-width:0; }
-  .pyramid-own-label{ font-size:11.5px; font-weight:700; color:var(--text-dim); }
+  .pyramid-wrap{ display:flex; flex-direction:column; gap:4px; }
+  .pyramid-logic{ display:flex; flex-direction:column; gap:4px; padding:4px 8px 5px; background:rgba(230,194,0,.04); border-left:2px solid var(--gold); }
+  .pyramid-logic.in-group{ margin:6px 10px 2px; }
+  .pyramid-logic-title{ font-size:11px; font-weight:700; letter-spacing:.02em; color:var(--gold); display:flex; align-items:baseline; gap:6px; line-height:1.3; }
+  .pyramid-logic.collapsible .pyramid-logic-title{ cursor:pointer; user-select:none; }
+  .pyramid-logic.collapsible .pyramid-logic-title::before{ content:"\25BE"; font-size:10px; display:inline-block; width:10px; }
+  .pyramid-logic.collapsed .pyramid-logic-title::before{ content:"\25B8"; }
+  .pyramid-logic.collapsed .pyramid-reqs{ display:none; }
+  .pyramid-logic.collapsed{ padding-bottom:4px; }
+  .pyramid-logic-hint{ font-size:10px; font-weight:600; color:var(--text-dim); }
+  .pyramid-reqs{ gap:4px; }
+  .pyramid-reqs .entrance-req-row{ flex-direction:column; align-items:flex-start; gap:2px; }
+  .pyramid-reqs .entrance-req-label{ min-width:0; white-space:normal; font-size:10.5px; opacity:.7; }
+  .pyramid-own-label{ font-size:10.5px; font-weight:600; color:var(--text-dim); }
   .group-subarea-summary{ padding:8px 14px 10px; border-top:1px solid rgba(128,128,128,.25); }
   .group-subarea-title{ font-size:13px; font-weight:700; margin-bottom:2px; }
   .group-subarea-summary .entrance-reqs{ margin-top:4px; padding-top:0; border-top:none; }
@@ -3350,18 +3357,6 @@ const SCENARIO_DATA_HIDDEN_MOONS = new Set([
 // Moons whose difficulty/tier should be forced to a specific value,
 // overriding whatever the CSV's difficulty column computed. Value must be
 // one of: "casual", "advanced", "expert", "glitched", "unrated".
-// Moons whose requirement branches are set by hand: moon_name -> list of
-// { tier, tokens }. tokens: [] means Free on that tier.
-const MANUAL_MOON_BRANCHES = {
-  "Desert Gardening: Plaza Seed": [
-    { tier: "casual",   tokens: ["Grab"] },
-    { tier: "advanced", tokens: [] },
-  ],
-  "Desert Gardening: Ruins Seed": [
-    { tier: "casual", tokens: ["Grab"] },
-    { tier: "expert", tokens: [] },
-  ],
-};
 const LOGIC_LEVEL_OVERRIDES = {
   "Multi Moon Atop the Falls": "casual",
   "Chomp Through the Rocks": "casual",
@@ -3894,16 +3889,6 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
     if(TIER_ORDER.includes(overrideTier)){
       tiers = tiers.map(() => overrideTier);
     }
-  }
-
-  // MANUAL_MOON_BRANCHES: replaces a listed moon's whole requirement list with
-  // the exact branches given (tier + tokens; an empty token list = Free on
-  // that tier). Applied after the tier override so it always wins.
-  if(Object.prototype.hasOwnProperty.call(MANUAL_MOON_BRANCHES, row.moon_name)){
-    const manual = MANUAL_MOON_BRANCHES[row.moon_name];
-    dnf = manual.map(b => b.tokens.slice());
-    tiers = manual.map(b => b.tier);
-    scenarios = manual.map(() => null);
   }
 
   if(FORCE_FREE_MOONS.has(row.moon_name)){ dnf = []; tiers = []; scenarios = []; }
@@ -5034,7 +5019,20 @@ function summarizeBranches(branches, kingdomName){
   const kept = pruneDominatedBranches(clean);
   clean.length = 0; kept.forEach(b => clean.push(b));
   const freeBr = clean.filter(b => b.group.length === 0 && !b.scenarios);
-  if(freeBr.some(b => !b.origin)) return { free: true };
+  // A Free branch only makes the WHOLE moon plain "Free" when nothing costed is
+  // easier than it. "Grab (Casual) | KingdomAccess_Sand (Advanced)" is NOT Free:
+  // the second branch is Free only at Advanced, so Casual still needs Grab and
+  // the Free branch stays as a "Free" chip in its own tier lane. (Pruning above
+  // has already removed every costed branch that a Free branch of an equal or
+  // easier tier makes pointless, so anything left at an easier tier is a real,
+  // easier-tier route.) Unrated displays as Casual, so it ranks as Casual here.
+  const effRank = t => (t === "unrated" ? 0 : (TIER_RANK[t] || 0));
+  const plainFree = freeBr.filter(b => !b.origin);
+  if(plainFree.length){
+    const freeRank = Math.min(...plainFree.map(b => effRank(b.tier)));
+    const easierCosted = clean.some(b => b.group.length > 0 && effRank(b.tier) < freeRank);
+    if(!easierCosted) return { free: true };
+  }
   if(freeBr.length){
     // Every free route is scoped to a named start (e.g. "From Round Tower"). If nothing
     // else is left the thing is simply Free, but remember WHERE it is free from;
@@ -6508,17 +6506,19 @@ function withGlitchedLanesStripped(moon){
 
 
 // Inverted Pyramid block: its own labelled box, separate from the moon's own requirement.
-function buildPyramidBlock(moon){
+// startOpen: shared group-level block is open; per-moon blocks start collapsed to one line.
+function buildPyramidBlock(moon, startOpen){
   const py = moon._pyramid;
   const box = document.createElement("div");
-  box.className = "pyramid-logic";
+  box.className = "pyramid-logic collapsible" + (startOpen ? "" : " collapsed");
   const t = document.createElement("div");
   t.className = "pyramid-logic-title";
-  t.textContent = py.title;
+  t.appendChild(document.createTextNode(py.title));
   const hint = document.createElement("span");
   hint.className = "pyramid-logic-hint";
-  hint.textContent = py.rows.length > 1 ? "any one route" : "route";
+  hint.textContent = py.rows.length > 1 ? py.rows.length + " routes, any one" : "1 route";
   t.appendChild(hint);
+  t.addEventListener("click", (e) => { e.stopPropagation(); box.classList.toggle("collapsed"); });
   box.appendChild(t);
   const rows = renderEntranceReqs(py.rows, "entrance-reqs pyramid-reqs");
   rows.style.borderTop = "none"; rows.style.marginTop = "0"; rows.style.paddingTop = "0";
@@ -6544,14 +6544,9 @@ function buildMoonRequirements(moon, boxed, opts){
   if(py.ownLanes && py.ownLanes.length){
     const lab = document.createElement("div");
     lab.className = "pyramid-own-label";
-    lab.textContent = py.mode === "or" ? "Or, directly:" : "Then, at the Moon:";
+    lab.textContent = py.mode === "or" ? "Or directly:" : "Then:";
     wrap.appendChild(lab);
     wrap.appendChild(buildMovementOptions(Object.assign({}, moon, { tierLanes: py.ownLanes }), boxed));
-  } else if(opts.skipRoutes){
-    const n = document.createElement("div");
-    n.className = "pyramid-own-label";
-    n.textContent = "Only the Inverted Pyramid Logic above applies.";
-    wrap.appendChild(n);
   }
   return wrap;
 }
@@ -7232,7 +7227,7 @@ function buildCheckpointGroup(checkpointName, entry){
   const pyMoons = entry.moons.filter(m => m._pyramid);
   const sharedPyramid = pyMoons.length > 1 && pyMoons.every(m => m._pyramid.sig === pyMoons[0]._pyramid.sig);
   if(sharedPyramid){
-    const shared = buildPyramidBlock(pyMoons[0]);
+    const shared = buildPyramidBlock(pyMoons[0], true);
     shared.classList.add("in-group");
     body.appendChild(shared);
   }
