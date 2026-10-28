@@ -1048,6 +1048,10 @@
     margin-right:-9px;
   }
   .prog-icon:last-of-type, .prog-fallback:last-of-type{ margin-right:0; }
+  /* 2D Jump: display-only quality-of-life chip (NOT an ability/token). Blue so it never reads as a gold progression move. */
+  .prog-badge.twod-jump .prog-icon, .prog-badge.twod-jump .prog-fallback{ border-color:#3b82f6; }
+  .prog-badge.twod-jump .prog-fallback{ background:#1d4ed8; font-size:9px; }
+  .prog-badge.twod-jump .prog-arrow{ background:#3b82f6; color:#fff; border-color:#1b1b1b; }
   .prog-fallback{ font-size:12px; font-weight:700; color:#fff; background:#34406e; display:flex; align-items:center; justify-content:center; }
   .prog-arrow{
     position:absolute; bottom:-6px; right:-5px; z-index:4;
@@ -6353,6 +6357,7 @@ function appendAndGroupIcons(chip, andGroup){
   const visible = andGroup.filter(t => !covered.has(t));
   const tokens = sortedTokensForDisplay(visible.length ? visible : andGroup);
   const rows = balancedRowCounts(tokens.length, 3);
+  const needsTwoDJump = andGroup.indexOf("SingleJump") !== -1 && andGroup.indexOf("Pipe2D") !== -1;
   let idx = 0;
   rows.forEach(rowCount => {
     const rowEl = document.createElement("div");
@@ -6364,7 +6369,7 @@ function appendAndGroupIcons(chip, andGroup){
         plus.textContent = "+";
         rowEl.appendChild(plus);
       }
-      rowEl.appendChild(makeIcon(tokens[idx]));
+      rowEl.appendChild(makeIcon(tokens[idx], { twoDJump: needsTwoDJump && tokens[idx] === "SingleJump" }));
       idx++;
     }
     chip.appendChild(rowEl);
@@ -6414,7 +6419,31 @@ function makeProgressionBadge(token){
   return badge;
 }
 
-function makeIcon(token){
+// Display-only "2D Jump" chip: shown on the Jump icon when the same requirement
+// group also needs 2D (Enter 2D Pipes). 2D Jump is a quality-of-life feature,
+// not an ability, so it has no token, no filter tile and no logic effect.
+function makeTwoDJumpBadge(){
+  const badge = document.createElement("span");
+  badge.className = "prog-badge twod-jump";
+  const img = document.createElement("img");
+  img.className = "prog-icon";
+  img.alt = "2D Jump";
+  img.src = "icon/Ability2DJump.png";
+  img.onerror = function(){
+    const fb = document.createElement("span");
+    fb.className = "prog-fallback";
+    fb.textContent = "2D";
+    img.replaceWith(fb);
+  };
+  badge.appendChild(img);
+  const arrow = document.createElement("span");
+  arrow.className = "prog-arrow";
+  arrow.textContent = "\u25B2";
+  badge.appendChild(arrow);
+  return badge;
+}
+
+function makeIcon(token, opts){
   const info = ICON_MANIFEST[token];
   const label = info ? info.label : token;
 
@@ -6459,10 +6488,11 @@ function makeIcon(token){
 
   const progBadge = makeProgressionBadge(token);
   if(progBadge) wrap.appendChild(progBadge);
+  if(opts && opts.twoDJump) wrap.appendChild(makeTwoDJumpBadge());
 
   const tip = document.createElement("span");
   tip.className = "icon-tooltip";
-  tip.textContent = label;
+  tip.textContent = label + ((opts && opts.twoDJump) ? " (2D Jump)" : "");
   wrap.appendChild(tip);
 
   return wrap;
