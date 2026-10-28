@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDoubleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1700,6 +1700,7 @@
     transition:opacity .16s ease, transform .16s ease;
   }
   .filter-subpopup.show{ opacity:1; transform:none; }
+  .filter-option-iconbox{ position:relative; width:60px; height:60px; flex:0 0 auto; }
   .filter-option-icon{
     width:60px; height:60px;
     border:2px solid var(--border);
@@ -2772,9 +2773,14 @@ const ABILITY_FILENAME_OVERRIDES = {
 
 // Tokens that live "behind" another filter tile: hidden from the main picker
 // grid until the parent tile is clicked, then shown right beneath it.
-const ABILITY_SUBTOKENS = {
+// The four Timer Challenge requirements are now plain tiles in the main grid
+// (right after Enter 2D Pipes) instead of a pop-up, so no tile has a submenu.
+// ABILITY_SUBTOKEN_GROUPS still records which tokens they are so a data-defined
+// twin (same name, different key) is toggled along with them.
+const ABILITY_SUBTOKEN_GROUPS = {
   TimerChallenge: ["PSwitch", "CappyFlower", "Scarecrow", "Notes"],
 };
+const ABILITY_SUBTOKENS = {};
 // If the loaded logic data already defines its own token for one of these
 // (same display label, different key), that token is the real one: use it in
 // the pop-up and keep it out of the main grids so nothing shows twice.
@@ -2798,7 +2804,7 @@ function isSubTokenDuplicate(token){
     forms.has(_subNorm(sub)) || forms.has(_subNorm((ICON_MANIFEST[sub] || {}).label)));
 }
 const ABILITY_SUBTOKEN_PARENT = {};
-Object.keys(ABILITY_SUBTOKENS).forEach(parent => ABILITY_SUBTOKENS[parent].forEach(t => { ABILITY_SUBTOKEN_PARENT[t] = parent; }));
+Object.keys(ABILITY_SUBTOKEN_GROUPS).forEach(parent => ABILITY_SUBTOKEN_GROUPS[parent].forEach(t => { ABILITY_SUBTOKEN_PARENT[t] = parent; }));
 
 // Filter-panel DISPLAY LABEL overrides — renames how a token reads in the
 // Ability/Capture filter picker (and its chips/tooltips) without touching
@@ -3086,7 +3092,8 @@ const ABILITY_DISPLAY_ORDER = [
   "SingleJump", "DoubleJump", "TripleJump", "SideFlip", "Spin", "WallJump",
   "LedgeGrab", "Climb", "Swing",
   "MoonLowGravity", "Grab", "Swim", "Bike", "Jaxi",
-  "RocketFlower", "NpcTalk", "Pipe2D", "TimerChallenge",
+  "RocketFlower", "NpcTalk", "Pipe2D",
+  "PSwitch", "CappyFlower", "Scarecrow", "Notes", "TimerChallenge",
 ];
 const ABILITY_DISPLAY_ORDER_INDEX = {};
 ABILITY_DISPLAY_ORDER.forEach((token, i) => { ABILITY_DISPLAY_ORDER_INDEX[token] = i; });
@@ -3343,6 +3350,18 @@ const SCENARIO_DATA_HIDDEN_MOONS = new Set([
 // Moons whose difficulty/tier should be forced to a specific value,
 // overriding whatever the CSV's difficulty column computed. Value must be
 // one of: "casual", "advanced", "expert", "glitched", "unrated".
+// Moons whose requirement branches are set by hand: moon_name -> list of
+// { tier, tokens }. tokens: [] means Free on that tier.
+const MANUAL_MOON_BRANCHES = {
+  "Desert Gardening: Plaza Seed": [
+    { tier: "casual",   tokens: ["Grab"] },
+    { tier: "advanced", tokens: [] },
+  ],
+  "Desert Gardening: Ruins Seed": [
+    { tier: "casual", tokens: ["Grab"] },
+    { tier: "expert", tokens: [] },
+  ],
+};
 const LOGIC_LEVEL_OVERRIDES = {
   "Multi Moon Atop the Falls": "casual",
   "Chomp Through the Rocks": "casual",
@@ -3875,6 +3894,16 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
     if(TIER_ORDER.includes(overrideTier)){
       tiers = tiers.map(() => overrideTier);
     }
+  }
+
+  // MANUAL_MOON_BRANCHES: replaces a listed moon's whole requirement list with
+  // the exact branches given (tier + tokens; an empty token list = Free on
+  // that tier). Applied after the tier override so it always wins.
+  if(Object.prototype.hasOwnProperty.call(MANUAL_MOON_BRANCHES, row.moon_name)){
+    const manual = MANUAL_MOON_BRANCHES[row.moon_name];
+    dnf = manual.map(b => b.tokens.slice());
+    tiers = manual.map(b => b.tier);
+    scenarios = manual.map(() => null);
   }
 
   if(FORCE_FREE_MOONS.has(row.moon_name)){ dnf = []; tiers = []; scenarios = []; }
@@ -8699,8 +8728,8 @@ function setupMergedFilterBar(tokens){
     // the pop-up that opens from their parent tile (Timer Challenges).
     const matches = [];
     tokenList.forEach(token => {
-      if(isSubTokenDuplicate(token)) return; // only ever shown in the Timer Challenges pop-up
-
+      if(token === "TimerChallenge") return; // menu-only parent tile, replaced by its four tiles
+      if(isSubTokenDuplicate(token) && !ABILITY_SUBTOKEN_PARENT[token]) return; // data-defined twins stay hidden
       if(labelMatches(token)) matches.push(token);
     });
     if(matches.length === 0){
@@ -8726,14 +8755,20 @@ function setupMergedFilterBar(tokens){
       btn.className = "filter-option"
         + (kind === "ability" && !selectedSet.has(token) && impliedProgressiveTokens().has(token) ? " implied" : "")
         + (hasSubmenu ? " has-submenu" : "")
-        + (isSub ? " filter-suboption" : "")
         + ((selectedSet.has(token) || (kind === "ability" && subsSelected(token, selectedSet))) ? " selected" : "")
         + (notImplemented ? " not-implemented" : "")
         + (incomplete ? " incomplete" : "");
       const iconWrap = document.createElement("div");
       iconWrap.className = "filter-option-icon";
       iconWrap.appendChild(makeFilterIconEl(token, ""));
-      btn.appendChild(iconWrap);
+      // The icon box clips its corners, so the progression chip lives on a
+      // wrapper around it instead (same chip as on the moon cards).
+      const iconBox = document.createElement("div");
+      iconBox.className = "filter-option-iconbox";
+      iconBox.appendChild(iconWrap);
+      const progBadge = kind === "ability" ? makeProgressionBadge(token) : null;
+      if(progBadge) iconBox.appendChild(progBadge);
+      btn.appendChild(iconBox);
       const nameEl = document.createElement("span");
       nameEl.className = "filter-option-name";
       // Captures only: a name containing "(" may wrap to two lines, with the
@@ -8745,6 +8780,13 @@ function setupMergedFilterBar(tokens){
         const second = document.createElement("span");
         second.className = "filter-option-name-paren";
         second.textContent = label.slice(parenAt);
+        nameEl.appendChild(second);
+      } else if(kind === "ability" && token === "MoonLowGravity"){
+        nameEl.classList.add("two-line");
+        nameEl.appendChild(document.createTextNode("Moon Kingdom"));
+        const second = document.createElement("span");
+        second.className = "filter-option-name-paren";
+        second.textContent = "Low Gravity";
         nameEl.appendChild(second);
       } else {
         nameEl.textContent = label;
@@ -8775,8 +8817,9 @@ function setupMergedFilterBar(tokens){
             });
             return;
           }
-          if(selectedSet.has(token)) selectedSet.delete(token);
-          else selectedSet.add(token);
+          const group = (kind === "ability" && ABILITY_SUBTOKEN_PARENT[token]) ? [token, ...subTwinsOf(token)] : [token];
+          const turnOn = !selectedSet.has(token);
+          group.forEach(k => { if(turnOn) selectedSet.add(k); else selectedSet.delete(k); });
           btn.classList.toggle("selected", selectedSet.has(token));
           refreshImpliedTiles();
           renderChips();
