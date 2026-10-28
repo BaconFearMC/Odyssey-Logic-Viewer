@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Cap Kingdom",
-  "savedAt": "2026-10-27T01:11:58.562Z",
+  "savedAt": "2026-10-27T01:23:13.224Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-26T19:22:25.712Z",
+    "loadedAt": "2026-10-27T01:22:30.240Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -3256,6 +3256,36 @@
         "source": "editor",
         "notes": "Reverse of edge_user_1232.",
         "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1234",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::entrance::rollingstart::home_in",
+        "to_node_id": "CapWorldHomeStage::start",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1235",
+        "kingdom": "Cap Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "CapWorldHomeStage::start",
+        "to_node_id": "CapWorldHomeStage::entrance::rollingstart::home_in",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1234.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -4232,7 +4262,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
         "state_requirement_expr": "",
-        "requirement_expr": "(Scarecrow & SingleJump & AnyThrow) | (Scarecrow & SideFlip & AnyThrow) | (AnyThrow & Spin & Scarecrow) | (NeutralThrow & WallJump & Dive & KuriboWing & Scarecrow) | (DownThrow & WallJump & Dive & KuriboWing & Scarecrow) | (UpThrow & WallJump & Dive & KuriboWing & Scarecrow)",
+        "requirement_expr": "(Scarecrow & SingleJump & AnyThrow) | (Scarecrow & SideFlip & AnyThrow) | (AnyThrow & Spin & Scarecrow) | (NeutralThrow & WallJump & Dive & KuriboWing & Scarecrow) | (DownThrow & WallJump & Dive & KuriboWing & Scarecrow) | (UpThrow & WallJump & Dive & KuriboWing & Scarecrow) | (AnyThrow & Backflip & Scarecrow)",
         "world_peace_token": "WorldPeace_Cap",
         "moon_rock_token": "MoonRockActive_Cap",
         "access_type": "primary",
@@ -4263,7 +4293,7 @@
         "shine_info_object_name": "鍵付き宝箱",
         "shine_info_scenario_name": "帽子の国で チクタク・アスレチック ２",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-        "difficulty": "casual;expert;expert;expert;expert;expert",
+        "difficulty": "casual;expert;expert;expert;expert;expert;expert",
         "option_scenarios": "4",
         "__editor_id": "CapWorldHomeStage:2611:981"
       },
@@ -7630,6 +7660,22 @@
         "x": 350,
         "y": 853.8388625592416
       },
+      "RollingExStage::stage_change::rollinggoal::raw": {
+        "x": 120,
+        "y": 120
+      },
+      "RollingExStage::stage_change::rollingstart::raw": {
+        "x": 1608.9462671722897,
+        "y": 1100
+      },
+      "RollingExStage::entrance::rollinggoal::sub_far": {
+        "x": 350,
+        "y": 120
+      },
+      "RollingExStage::entrance::rollingstart::sub_near": {
+        "x": 1838.9462671722897,
+        "y": 1100
+      },
       "CapWorldHomeStage::checkpoint::obj2497": {
         "x": 807,
         "y": 690
@@ -7659,8 +7705,8 @@
         "y": 1589.508435634689
       },
       "CapWorldHomeStage::entrance::rollingstart::home_in": {
-        "x": 1452.6745814640324,
-        "y": 1084.4031409957522
+        "x": 1475.9838092369416,
+        "y": 1089.8418985668404
       },
       "CapWorldHomeStage::stage_change::CapWorldRacemanStart::raw": {
         "x": 1330,
@@ -7802,6 +7848,38 @@
         "x": 380.5194434870352,
         "y": 531.3996258269431
       },
+      "CapWorldHomeStage::place::new_place_14": {
+        "x": 382.69304892801017,
+        "y": 774.1999147299387
+      },
+      "CapWorldHomeStage::place::new_place_15": {
+        "x": 1449.0699194960077,
+        "y": 333.1198111309498
+      },
+      "CapWorldHomeStage::place::new_place_16": {
+        "x": 104.61339785500718,
+        "y": 854.6795198138045
+      },
+      "CapWorldHomeStage::place::new_place_17": {
+        "x": 1276.7261351599907,
+        "y": 673.3654387713697
+      },
+      "CapWorldHomeStage::place::new_place_18": {
+        "x": 194.21687253852642,
+        "y": 655.6470091791733
+      },
+      "CapWorldHomeStage::place::new_place_19": {
+        "x": 411.59216968101254,
+        "y": 414.285878431416
+      },
+      "CapWorldHomeStage::place::new_place_20": {
+        "x": 1145.0823692250679,
+        "y": 798.8778707118777
+      },
+      "RollingExStage::place::new_place": {
+        "x": 1098.8792504878202,
+        "y": 339.36835769077675
+      },
       "moon:PushBlockExStage:193:234": {
         "x": 643.4782608695652,
         "y": 853.8388625592416
@@ -7825,6 +7903,14 @@
       "moon:FrogSearchExStage:249:239": {
         "x": 1620,
         "y": 120
+      },
+      "moon:RollingExStage:11:950": {
+        "x": 146.87628641105215,
+        "y": 240
+      },
+      "moon:RollingExStage:4:951": {
+        "x": 1620,
+        "y": 331.91895528775177
       },
       "moon:CapWorldHomeStage:926:227": {
         "x": 862.4251820168248,
@@ -7917,62 +8003,6 @@
       "moon:CapWorldHomeStage:2975:1158": {
         "x": 1524.1944034379817,
         "y": 1574.6915329855985
-      },
-      "CapWorldHomeStage::place::new_place_14": {
-        "x": 382.69304892801017,
-        "y": 774.1999147299387
-      },
-      "CapWorldHomeStage::place::new_place_15": {
-        "x": 1449.0699194960077,
-        "y": 333.1198111309498
-      },
-      "CapWorldHomeStage::place::new_place_16": {
-        "x": 104.61339785500718,
-        "y": 854.6795198138045
-      },
-      "CapWorldHomeStage::place::new_place_17": {
-        "x": 1276.7261351599907,
-        "y": 673.3654387713697
-      },
-      "CapWorldHomeStage::place::new_place_18": {
-        "x": 194.21687253852642,
-        "y": 655.6470091791733
-      },
-      "CapWorldHomeStage::place::new_place_19": {
-        "x": 411.59216968101254,
-        "y": 414.285878431416
-      },
-      "CapWorldHomeStage::place::new_place_20": {
-        "x": 1145.0823692250679,
-        "y": 798.8778707118777
-      },
-      "RollingExStage::stage_change::rollinggoal::raw": {
-        "x": 120,
-        "y": 120
-      },
-      "RollingExStage::stage_change::rollingstart::raw": {
-        "x": 1608.9462671722897,
-        "y": 1100
-      },
-      "RollingExStage::entrance::rollinggoal::sub_far": {
-        "x": 350,
-        "y": 120
-      },
-      "RollingExStage::entrance::rollingstart::sub_near": {
-        "x": 1838.9462671722897,
-        "y": 1100
-      },
-      "moon:RollingExStage:11:950": {
-        "x": 146.87628641105215,
-        "y": 240
-      },
-      "moon:RollingExStage:4:951": {
-        "x": 1620,
-        "y": 331.91895528775177
-      },
-      "RollingExStage::place::new_place": {
-        "x": 1098.8792504878202,
-        "y": 339.36835769077675
       }
     }
   }
