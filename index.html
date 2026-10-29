@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityMoonGravity.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3458,9 +3458,17 @@ function exprToScenarioDNF(expr, optionScenarios){
   // "2,3,4,5;3,4,5;3,4,5;…" for a 10-branch moon with only 9 entries — The
   // Hole in the Desert), the missing entry is almost certainly one more copy
   // of that repeated trailing value, so extend the run to line up 1:1.
-  // Anything less clear-cut (differing tail, a single entry, too many
-  // entries) is still treated as a data gap and left untagged.
-  if(optionScenarios && raw.length > 1 && raw.length < topLevelCount
+  // SINGLE ENTRY: one list with no ";" on a multi-branch expression is how the
+  // data says "every branch uses these scenarios" (e.g. "Swing | (NeutralThrow
+  // & Dive)" with "1,2,3,4,5"), so it applies to all of them. Without this the
+  // branches lost their tags and a scenario-limited Free could no longer
+  // recognise a same-scenario costed route as redundant.
+  // Anything less clear-cut (differing tail, too many entries) is still
+  // treated as a data gap and left untagged.
+  if(optionScenarios && raw.length === 1 && raw[0] && topLevelCount > 1){
+    const only = raw[0];
+    while(raw.length < topLevelCount) raw.push(only);
+  } else if(optionScenarios && raw.length > 1 && raw.length < topLevelCount
      && raw[raw.length - 1] === raw[raw.length - 2]){
     const last = raw[raw.length - 1];
     while(raw.length < topLevelCount) raw.push(last);
@@ -3524,7 +3532,8 @@ function exprToScenarioDNF(expr, optionScenarios){
    ========================================================= */
 function buildCheckpointLookup(nodes, edges){
   const displayNameOf = {};
-  (nodes || []).forEach(n => { displayNameOf[n.node_id] = n.display_name; });
+  const nodeTypeOf = {};
+  (nodes || []).forEach(n => { displayNameOf[n.node_id] = n.display_name; nodeTypeOf[n.node_id] = n.node_type; });
 
   const adj = {};
   const addEdge = (from, to) => {
@@ -3585,6 +3594,20 @@ function buildCheckpointLookup(nodes, edges){
       queue.push(n.node_id);
     }
   });
+  // The kingdom's own (overworld) stage start is a place you simply ARE — you land
+  // there on entering — exactly like a Checkpoint, so it is its own source and is
+  // never relabeled by a Custom Node that merely has a Free edge INTO it (e.g.
+  // "Painting Access" -> start is just where a painting returns you; it is not a
+  // cost of standing at the start). buildNodeReachIndex already treats it as a true
+  // origin; this keeps tracking consistent with that. Subarea stage starts are left
+  // alone (they inherit the overworld source through their entrance link).
+  (nodes || []).forEach(n => {
+    if(n.node_type === "stage_start" && n.area_scope !== "subarea" && !(n.node_id in checkpointOf)){
+      checkpointOf[n.node_id] = n.node_id;
+      sourceType[n.node_id] = "checkpoint";
+      queue.push(n.node_id);
+    }
+  });
 
   let qi = 0;
   while(qi < queue.length){
@@ -3612,6 +3635,7 @@ function buildCheckpointLookup(nodes, edges){
   Object.keys(checkpointOf).forEach(nodeId => {
     const cpId = checkpointOf[nodeId];
     let name = displayNameOf[cpId] || cpId;
+    if(nodeTypeOf[cpId] === "stage_start") name = "Kingdom Start";
     // Strip the trailing "(objXXX)" the editor appends to checkpoint names.
     name = name.replace(/\s*\([^)]*\)\s*$/, "");
     // `id` is the source checkpoint/custom_place's own raw node_id (cpId,
@@ -6893,7 +6917,7 @@ function buildMoonCard(moon, opts){
         const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; body.appendChild(t);
         if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); body.appendChild(ot); }
       } else {
-        body.appendChild(renderReachTierLanes(r.lanes, false, "entrance"));
+        body.appendChild(renderReachTierLanes(r.lanes, false, "entrance", moon.name));
       }
       block.appendChild(body);
       wrap.appendChild(block);
@@ -7030,7 +7054,7 @@ function buildMovementOptions(moon, boxed){
   const stack = document.createElement("div");
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
   // Darker Side moons never use the shared "This moon requires X. Beyond this…" header.
-  const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(moon.tierLanes);
+  const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(moon.tierLanes, moon.name);
   const hoistSet = hoistedFormSet(hoisted);
 
   moon.tierLanes.forEach(lane => {
@@ -7586,9 +7610,23 @@ const HOIST_TOKENS = ["PSwitch", "CappyFlower", "Scarecrow", "Notes", "NpcTalk"]
 // with only 1-2 methods the plain chips are clearer than a header.
 const HOIST_MIN_METHODS = 3;
 function hoistForms(tok){ return [tok].concat(typeof subTwinsOf === "function" ? subTwinsOf(tok) : []); }
-function hoistedTokensFor(tierLanes){
+// "Found with <X> Art" moons always need Ground Pound plus access to a kingdom, so
+// both are always stated once in the header (even with only 1-2 routes).
+const ART_MOON_NAME = /^Found with .+ Art(\s+\d+)?$/i;
+function artMoonHoisted(groups){
+  if(!groups.length) return [];
+  const common = tok => groups.every(g => g.some(t => hoistForms(tok).indexOf(t) !== -1));
+  const out = [];
+  if(common("GroundPound")) out.push("GroundPound");
+  const kingdomToks = new Set();
+  groups.forEach(g => g.forEach(t => { if(KINGDOM_ACCESS_TOKEN_TO_KINGDOM[t]) kingdomToks.add(t); }));
+  kingdomToks.forEach(t => { if(common(t)) out.push(t); });
+  return out.filter(t => ICON_MANIFEST[t] && !(filterMode === "cando" && hoistForms(t).some(f => tokenIsSelected(f))));
+}
+function hoistedTokensFor(tierLanes, moonName){
   const groups = [];
   (tierLanes || []).forEach(l => (l.groups || []).forEach(g => groups.push(g)));
+  if(moonName && ART_MOON_NAME.test(moonName)) return artMoonHoisted(groups);
   if(groups.length < HOIST_MIN_METHODS) return [];
   return HOIST_TOKENS.filter(tok => {
     if(!ICON_MANIFEST[tok]) return false;
@@ -9237,10 +9275,10 @@ function buildTierLanesFromBranches(branches){
 // .tier-stack/.tier-lane/.tier-pill/.option-chip classes the moon cards
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
-function renderReachTierLanes(tierLanes, disableCollapse, noun){
+function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
   const stack = document.createElement("div");
   stack.className = "tier-stack";
-  const hoisted = hoistedTokensFor(tierLanes);
+  const hoisted = hoistedTokensFor(tierLanes, moonName);
   const hoistSet = hoistedFormSet(hoisted);
   tierLanes.forEach(lane => {
     const laneEl = document.createElement("div");
