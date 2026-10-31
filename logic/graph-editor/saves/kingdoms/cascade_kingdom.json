@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Cascade Kingdom",
-  "savedAt": "2026-10-24T03:30:38.448Z",
+  "savedAt": "2026-10-31T02:10:28.516Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-23T21:17:11.834Z",
+    "loadedAt": "2026-10-31T01:56:40.280Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -1532,6 +1532,294 @@
         "z": "",
         "scenario_indices": "",
         "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_21",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Nice Shot with Chain Chomps Area",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Chomp Through the Rocks Area",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "T-Rex Area",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Top of the Big Stump Ground Level",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_25",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Chomp Through the Rocks Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_26",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Behind the Waterfall Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_27",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "In the Water",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_28",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Treasure of the Waterfall Basin Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_29",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Above a High Cliff Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_30",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Sphynx Traveling to the Waterfall Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_31",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Treasure Under the Cliff Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WaterfallWorldHomeStage::place::new_place_32",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WaterfallWorldHomeStage",
+        "stage_display_name": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Caught Hopping at the Waterfall Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WindBlowExStage::place::new_place",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WindBlowExStage",
+        "stage_display_name": "Gusty Bridges",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Across the Gusty Bridges Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WindBlowExStage::place::new_place_2",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WindBlowExStage",
+        "stage_display_name": "Gusty Bridges",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Midway through Gusty Bridges",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "CapAppearExStage::place::new_place",
+        "kingdom": "Cascade Kingdom",
+        "stage": "CapAppearExStage",
+        "stage_display_name": "Mysterious Clouds",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Atop a Wall Among the Clouds Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
+      },
+      {
+        "node_id": "WanwanClashExStage::place::new_place",
+        "kingdom": "Cascade Kingdom",
+        "stage": "WanwanClashExStage",
+        "stage_display_name": "Nice Shots with Chain Chomps",
+        "area_scope": "subarea",
+        "node_type": "custom_place",
+        "source": "editor",
+        "entrance_id": "",
+        "side": "",
+        "obj_id": "",
+        "display_name": "Nice Shot with the Chain Chomp Free",
+        "x": "",
+        "y": "",
+        "z": "",
+        "scenario_indices": "",
+        "notes": "Human-authored logic place."
       }
     ],
     "routeEdges": [
@@ -1541,7 +1829,7 @@
         "area_scope": "subarea",
         "from_node_id": "Lift2DExStage::entrance::Lift2D::sub_near",
         "to_node_id": "Lift2DExStage::entrance::Lift2DExit::sub_far",
-        "requirement_expr": "Pipe2D",
+        "requirement_expr": "(Pipe2D & SingleJump)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "true",
@@ -1556,13 +1844,13 @@
         "area_scope": "subarea",
         "from_node_id": "WindBlowExStage::entrance::WindBlowExStart::sub_near",
         "to_node_id": "WindBlowExStage::entrance::WindBlowExGoal::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "(AnyThrow & SingleJump) | (AnyThrow & CapReturnJump) | (AnyThrow & Backflip) | (Dive & NeutralThrow) | (GroundPoundJump & UpThrow & Vault) | (AnyThrow & LongJump) | (SideFlip & AnyThrow) | (AnyThrow & Spin) | (NeutralThrow & Vault) | (NeutralThrow & WallJump & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced;expert;expert;casual;advanced;advanced;advanced;advanced",
         "option_scenarios": ""
       },
       {
@@ -1586,14 +1874,14 @@
         "area_scope": "subarea",
         "from_node_id": "CapAppearExStage::entrance::CapAppearExEnt::sub_near",
         "to_node_id": "CapAppearExStage::entrance::CapAppearExExit::sub_far",
-        "requirement_expr": "free",
+        "requirement_expr": "(NeutralThrow & SingleJump) | (SingleJump & AnyThrow) | (SpinThrow & SingleJump) | (NeutralThrow & CapReturnJump) | (AnyThrow & CapReturnJump) | (NeutralThrow & Backflip) | (SpinThrow & Backflip) | (DownThrow & Backflip) | (UpThrow & Backflip) | (NeutralThrow & WallJump & Dive) | (AnyThrow & LongJump & WallJump) | (NeutralThrow & SideFlip) | (SpinThrow & SideFlip) | (SideFlip & AnyThrow) | (AnyThrow & Spin) | (NeutralThrow & Vault) | (SpinThrow & WallJump & Dive)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;advanced;casual;casual;advanced;casual;casual;casual;advanced;expert;advanced;casual;casual;advanced;casual;casual;expert",
+        "option_scenarios": "1,2,3,4"
       },
       {
         "edge_id": "edge_user_0009",
@@ -1601,13 +1889,13 @@
         "area_scope": "subarea",
         "from_node_id": "WanwanClashExStage::entrance::WanwanExStart::sub_near",
         "to_node_id": "WanwanClashExStage::entrance::WanwanExGoal::sub_far",
-        "requirement_expr": "Wanwan",
+        "requirement_expr": "(Wanwan & SingleJump) | (Wanwan & CapReturnJump) | (Wanwan & Backflip) | (Wanwan & GroundPoundJump) | (Wanwan & LongJump) | (Wanwan & SideFlip) | (Wanwan & Spin) | (Wanwan & NeutralThrow & Vault) | (Wanwan & DownThrow & Vault)",
         "requirement_notes": "",
         "edge_type": "human_route",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;advanced;casual;casual;casual;casual;casual",
         "option_scenarios": ""
       },
       {
@@ -1646,14 +1934,14 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
-        "requirement_expr": "(WanwanBig & Pipe2D) | (TripleJump & Dive & WallJump & Backflip) | (Backflip & Vault & Dive & WallJump & NeutralThrow) | (SideFlip & Vault & Dive & WallJump & NeutralThrow) | (TripleJump & Vault & Dive & WallJump & NeutralThrow) | (GroundPoundJump & Vault & Dive & WallJump & NeutralThrow) | (TRex & Pipe2D) | Pipe2D | (TRex & ElectricWire)",
+        "requirement_expr": "(WanwanBig & Pipe2D & SingleJump) | (TripleJump & Dive & WallJump & Backflip) | (Backflip & Vault & Dive & WallJump & NeutralThrow) | (SideFlip & Vault & Dive & WallJump & NeutralThrow) | (TripleJump & Vault & Dive & WallJump & NeutralThrow) | (GroundPoundJump & Vault & Dive & WallJump & NeutralThrow) | (Pipe2D & SingleJump)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;casual;casual;casual",
+        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;casual",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": "1;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1;2,3,4;2,3,4"
+        "option_scenarios": "1;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;2,3,4"
       },
       {
         "edge_id": "edge_user_0170",
@@ -1661,7 +1949,7 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "to_node_id": "WaterfallWorldHomeStage::entrance::Lift2D::home_in",
-        "requirement_expr": "free",
+        "requirement_expr": "AnyThrow",
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
@@ -1676,10 +1964,10 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::entrance::Lift2DExit::home_out",
         "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | (AnyThrow & Dive) | (AnyThrow & LongJump) | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault) | (AnyThrow & WallJump & LedgeGrab)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;advanced;casual;casual;casual;casual;advanced;advanced",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
@@ -1699,96 +1987,6 @@
         "source": "editor",
         "notes": "Reverse of edge_user_0171.",
         "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0173",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "to_node_id": "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": "4,5,3,2"
-      },
-      {
-        "edge_id": "edge_user_0174",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::entrance::WanwanExGoal::home_out",
-        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0175",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "to_node_id": "WaterfallWorldHomeStage::entrance::WanwanExGoal::home_out",
-        "requirement_expr": "impossible",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0174.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_0176",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj3139",
-        "requirement_expr": "KingdomAccess_Cascade | NeutralThrow | Dive | (WallJump & NeutralThrow) | (NeutralThrow & LedgeGrab) | TripleJump | (Backflip & WallJump & LedgeGrab) | (DoubleJump & WallJump & LedgeGrab & NeutralThrow) | (GroundPoundJump & WallJump & LedgeGrab) | (LongJump & WallJump & NeutralThrow) | (LongJump & WallJump & UpThrow) | (LongJump & WallJump & DownThrow) | (SideFlip & WallJump & LedgeGrab) | Vault",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
-        "option_scenarios": "2,3,4,5,6,7;2,3,4,5,6,7,1",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor."
-      },
-      {
-        "edge_id": "edge_user_0177",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj2832",
-        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor."
-      },
-      {
-        "edge_id": "edge_user_0178",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj2832",
-        "requirement_expr": "impossible",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0177."
       },
       {
         "edge_id": "edge_user_0181",
@@ -1821,94 +2019,19 @@
         "notes": "Reverse of edge_user_0181."
       },
       {
-        "edge_id": "edge_user_0183",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj3139",
-        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "1,2,3,4,5,6,7",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0176."
-      },
-      {
         "edge_id": "edge_user_0187",
         "kingdom": "Cascade Kingdom",
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::start",
         "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump | Backflip | GroundPoundJump | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault) | (NeutralThrow & WallJump) | (UpThrow & WallJump)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced;casual;casual;casual;casual;casual;advanced;advanced",
         "option_scenarios": "2,3,4,5,6,7",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor."
-      },
-      {
-        "edge_id": "edge_user_0208",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj3139",
-        "to_node_id": "WaterfallWorldHomeStage::entrance::RexPoppunEx::home_in",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "2,3,4,5",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor."
-      },
-      {
-        "edge_id": "edge_user_0209",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "to_node_id": "WaterfallWorldHomeStage::entrance::WindBlowExStart::home_in",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "4,5",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor."
-      },
-      {
-        "edge_id": "edge_user_0004",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "to_node_id": "WaterfallWorldHomeStage::entrance::WindBlowExGoal::home_out",
-        "requirement_expr": "impossible",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor."
-      },
-      {
-        "edge_id": "edge_user_0210",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::entrance::WindBlowExGoal::home_out",
-        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0004."
       },
       {
         "edge_id": "edge_user_0002",
@@ -1931,11 +2054,11 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "to_node_id": "WaterfallWorldHomeStage::entrance::CapAppearExExit::home_out",
-        "requirement_expr": "impossible",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | (AnyThrow & Dive) | GroundPoundJump | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "",
+        "difficulty": "casual;casual;casual;advanced;advanced;casual;casual;casual;casual;casual",
+        "option_scenarios": "4",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor."
@@ -1950,25 +2073,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "option_scenarios": "4,5",
+        "option_scenarios": "4,5,3,2,1",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0001."
-      },
-      {
-        "edge_id": "edge_user_0003",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
-        "to_node_id": "WaterfallWorldHomeStage::event::MoonRockActive_Cascade",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "3,4,5",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor."
       },
       {
         "edge_id": "edge_user_0012",
@@ -1991,44 +2099,14 @@
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj597",
         "to_node_id": "WaterfallWorldHomeStage::place::new_place",
-        "requirement_expr": "Wanwan | SingleJump",
+        "requirement_expr": "(SingleJump & Wanwan) | (Backflip & Wanwan) | (GroundPoundJump & Wanwan) | (LongJump & Wanwan) | (AnyThrow & Wanwan) | (SideFlip & Wanwan) | (Spin & Wanwan) | (NeutralThrow & Vault & Wanwan) | (DownThrow & Vault & Wanwan) | (Roll & Wanwan)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual;glitched",
-        "option_scenarios": "1",
+        "difficulty": "casual;casual;advanced;casual;advanced;casual;casual;casual;casual;advanced",
+        "option_scenarios": "5,6,7,1",
         "bidirectional": "true",
         "source": "editor",
         "notes": "Created in graph editor."
-      },
-      {
-        "edge_id": "edge_user_0124",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "to_node_id": "WaterfallWorldHomeStage::place::new_place",
-        "requirement_expr": "Wanwan | TRex",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual;advanced",
-        "option_scenarios": "",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor."
-      },
-      {
-        "edge_id": "edge_user_0314",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::place::new_place",
-        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "option_scenarios": "",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0124."
       },
       {
         "edge_id": "edge_user_0722",
@@ -2043,21 +2121,6 @@
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0170.",
-        "option_scenarios": "1,2,3,4,5"
-      },
-      {
-        "edge_id": "edge_user_0723",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in",
-        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0173.",
         "option_scenarios": "1,2,3,4,5"
       },
       {
@@ -2076,49 +2139,19 @@
         "option_scenarios": "1,2,3,4,5"
       },
       {
-        "edge_id": "edge_user_0725",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::entrance::WindBlowExStart::home_in",
-        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_0209.",
-        "option_scenarios": "1,2,3,4,5"
-      },
-      {
         "edge_id": "edge_user_0732",
         "kingdom": "Cascade Kingdom",
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::start",
         "to_node_id": "WaterfallWorldHomeStage::place::new_place",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump | Backflip | GroundPoundJump | LongJump | AnyThrow | SideFlip | Spin | (UpThrow & Vault) | (NeutralThrow & Vault) | (DownThrow & Vault) | Roll",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
+        "difficulty": "casual;casual;advanced;casual;advanced;casual;casual;expert;casual;casual;advanced",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": "2,3,4"
-      },
-      {
-        "edge_id": "edge_user_0466",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
-        "to_node_id": "WaterfallWorldHomeStage::place::new_place_2",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": "3,4"
+        "option_scenarios": "2,3,4,5,6,7"
       },
       {
         "edge_id": "edge_user_0746",
@@ -2130,7 +2163,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2145,7 +2178,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2160,7 +2193,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2175,7 +2208,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2190,7 +2223,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2205,7 +2238,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2220,7 +2253,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2235,7 +2268,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2250,7 +2283,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;advanced",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2265,7 +2298,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2280,7 +2313,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "2,3,4"
@@ -2295,7 +2328,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2310,7 +2343,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2325,7 +2358,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": ""
@@ -2340,7 +2373,7 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "2,3,4"
@@ -2370,25 +2403,10 @@
         "requirement_notes": "",
         "edge_type": "human_route",
         "difficulty": "casual;expert",
-        "bidirectional": "true",
+        "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
         "option_scenarios": "2,3,4"
-      },
-      {
-        "edge_id": "edge_user_0467",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "to_node_id": "WaterfallWorldHomeStage::place::new_place_18",
-        "requirement_expr": "NpcTalk",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
       },
       {
         "edge_id": "edge_user_0799",
@@ -2421,49 +2439,19 @@
         "option_scenarios": "3,4"
       },
       {
-        "edge_id": "edge_user_1155",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "to_node_id": "WaterfallWorldHomeStage::place::new_place_20",
-        "requirement_expr": "TRex",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "advanced",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
-        "edge_id": "edge_user_1156",
-        "kingdom": "Cascade Kingdom",
-        "area_scope": "overworld",
-        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
-        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "advanced",
-        "bidirectional": "false",
-        "source": "editor",
-        "notes": "Reverse of edge_user_1155.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_1157",
         "kingdom": "Cascade Kingdom",
         "area_scope": "overworld",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
         "to_node_id": "WaterfallWorldHomeStage::place::new_place_20",
-        "requirement_expr": "free",
+        "requirement_expr": "KingdomAccess_Cascade | (Wanwan & SingleJump) | (Wanwan & CapReturnJump) | (Wanwan & Backflip) | (Wanwan & LongJump) | (Wanwan & SideFlip) | (Wanwan & Spin) | (NeutralThrow & Wanwan & Vault) | (DownThrow & Vault & Wanwan) | SingleJump | CapReturnJump | Backflip | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault)",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "casual",
+        "difficulty": "advanced;casual;casual;casual;casual;casual;casual;casual;casual;casual;casual;casual;casual;casual;casual;casual;casual",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Created in graph editor.",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4;1;1;1;1;1;1;1;1;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4"
       },
       {
         "edge_id": "edge_user_1158",
@@ -2479,6 +2467,1701 @@
         "source": "editor",
         "notes": "Reverse of edge_user_1157.",
         "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1236",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0732.",
+        "option_scenarios": "1;2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1237",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_3",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0746.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1238",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_4",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0747.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1239",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_5",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0748.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1240",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_6",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0749.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1241",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_7",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0750.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1242",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_8",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0751.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1243",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_9",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0752.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1244",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_10",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0753.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1245",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_11",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0754.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1246",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_12",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj3139",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0755.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1247",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_13",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0756.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1248",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_14",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0757.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1249",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_15",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0758.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1250",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_16",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0759.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1251",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_17",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0760.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1252",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_21",
+        "requirement_expr": "AnyThrow | (WallJump & Dive) | (GroundPoundJump & Dive) | LongJump | (Backflip & Dive) | (SingleJump & Dive) | (SideFlip & Dive) | Spin",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;advanced;casual;advanced;casual;casual;casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1253",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_21",
+        "to_node_id": "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in",
+        "requirement_expr": "SingleJump | (AnyThrow & SingleJump) | CapReturnJump | Backflip | (AnyThrow & Dive) | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;casual;casual;casual;advanced;advanced;casual;casual;casual;casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0173",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_21",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place",
+        "requirement_expr": "TRex",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0174",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_21",
+        "requirement_expr": "SingleJump | Backflip | GroundPoundJump | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault) | (NeutralThrow & WallJump) | (UpThrow & WallJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;advanced;casual;casual;casual;casual;casual;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0173.",
+        "option_scenarios": "2,3,4,5,6,7"
+      },
+      {
+        "edge_id": "edge_user_0175",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_21",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "AnyThrow | SingleJump | Backflip | Dive | LongJump | RollBoost | SideFlip | Spin | WallJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;advanced;casual;advanced;casual;casual;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1254",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_21",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | GroundPoundJump | SideFlip | Spin",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;advanced;casual;casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0175.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1255",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "(GroundPoundJump & Dive) | Wanwan | WanwanBig",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;casual;casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1256",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1255.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1257",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in",
+        "requirement_expr": "GroundPoundJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1258",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "GroundPoundJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1257.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1259",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_21",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "AnyThrow | (Backflip & Dive) | LongJump | (SideFlip & Dive) | Spin | (WallJump & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;casual;casual;casual;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1252.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1260",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "SingleJump | Backflip | GroundPoundJump | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault) | (NeutralThrow & WallJump) | (UpThrow & WallJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;advanced;casual;casual;casual;casual;casual;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5,6,7,1"
+      },
+      {
+        "edge_id": "edge_user_1261",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1260.",
+        "option_scenarios": "2,3,4,5,6,7"
+      },
+      {
+        "edge_id": "edge_user_0124",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_21",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1253.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1262",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "(GroundPoundJump & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1263",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "to_node_id": "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1262.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1264",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0187.",
+        "option_scenarios": "2,3,4,5,6,7,1"
+      },
+      {
+        "edge_id": "edge_user_1265",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | GroundPoundJump | (AnyThrow & LongJump) | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault) | (AnyThrow & WallJump & Dive) | (UpThrow & Vault) | Wanwan | WanwanBig",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;advanced;casual;casual;casual;casual;casual;advanced;advanced;casual;casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1266",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place",
+        "requirement_expr": "TRex",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1267",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1266.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1268",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1265.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1269",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::start",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_18",
+        "requirement_expr": "NpcTalk",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1270",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_18",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1269.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0177",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj2832",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0178",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj2832",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0177.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0183",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::stage_change::Go::raw",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0013.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1155",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "requirement_expr": "TRex",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1156",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1155.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1271",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1272",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1271.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1273",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "requirement_expr": "(TRex & Pipe2D & SingleJump) | (TRex & ElectricWire)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1;4"
+      },
+      {
+        "edge_id": "edge_user_1274",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1273.",
+        "option_scenarios": "1;3,4,2"
+      },
+      {
+        "edge_id": "edge_user_1275",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::entrance::WindBlowExStart::home_in",
+        "requirement_expr": "AnyThrow | Backflip | Dive | GroundPoundJump | LongJump | Roll | SideFlip | SingleJump | Spin | (NeutralThrow & Vault) | (DownThrow & Vault)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;casual;casual;casual;casual;advanced;casual;casual;casual;casual;casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0209",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::WindBlowExStart::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1275.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0210",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "to_node_id": "WaterfallWorldHomeStage::entrance::WindBlowExStart::home_in",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "4"
+      },
+      {
+        "edge_id": "edge_user_1276",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::WindBlowExStart::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0210.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1277",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "to_node_id": "WaterfallWorldHomeStage::entrance::CapAppearExEnt::home_in",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "4"
+      },
+      {
+        "edge_id": "edge_user_1278",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::CapAppearExEnt::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1277.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1279",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "requirement_expr": "KingdomAccess_Cascade | (NeutralThrow & CapReturnJump) | (Dive & AnyThrow & SingleJump) | (WallJump & AnyThrow & SingleJump) | (NeutralThrow & LedgeGrab & CapReturnJump) | TripleJump | (Backflip & WallJump & LedgeGrab & AnyThrow) | (GroundPoundJump & WallJump & LedgeGrab & AnyThrow) | (LongJump & WallJump & AnyThrow) | (SideFlip & WallJump & LedgeGrab & AnyThrow) | (Vault & NeutralThrow) | (CapReturnJump & Dive) | (WallJump & CapReturnJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;expert;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5,6,7;2,3,4,5,6,7,1;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1280",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1279.",
+        "option_scenarios": "2,3,4,5,6,7;2,3,4,5,6,7,1;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0176",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj3139",
+        "requirement_expr": "SingleJump | Backflip | GroundPoundJump | SideFlip | Spin | CapReturnJump | NeutralThrow | UpThrow | SpinThrow | DownThrow",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;advanced;casual;casual;casual;casual;casual;casual;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0467",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj3139",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0176.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1281",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "to_node_id": "WaterfallWorldHomeStage::entrance::RexPoppunEx::home_in",
+        "requirement_expr": "AnyThrow",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_0208",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::entrance::RexPoppunEx::home_in",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | (AnyThrow & Dive) | (LongJump & AnyThrow) | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault & LedgeGrab) | (DownThrow & Vault)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;advanced;casual;casual;casual;casual;casual;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1281.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1282",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj2832",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1283",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj2832",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1282.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_0466",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_2",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1284",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_2",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0466.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1285",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
+        "to_node_id": "WaterfallWorldHomeStage::event::MoonRockActive_Cascade",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1286",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::start",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "requirement_expr": "(ElectricWire & SingleJump & Climb) | (ElectricWire & Climb & CapReturnJump) | (ElectricWire & Backflip & Climb) | (ElectricWire & LongJump & Climb) | (ElectricWire & SideFlip & Climb) | (ElectricWire & Climb & Spin) | (NeutralThrow & ElectricWire & Vault & Climb) | (DownThrow & ElectricWire & Vault & Climb) | (ElectricWire & Climb) | (NeutralThrow & SingleJump & ElectricWire) | (ElectricWire & CapReturnJump & NeutralThrow) | (UpThrow & CapReturnJump & ElectricWire) | (UpThrow & SingleJump & ElectricWire) | (NeutralThrow & Backflip & ElectricWire) | (UpThrow & Backflip & ElectricWire) | (GroundPoundJump & NeutralThrow & ElectricWire) | (ElectricWire & GroundPoundJump & UpThrow) | (LongJump & ElectricWire & UpThrow) | (NeutralThrow & LongJump & ElectricWire) | (NeutralThrow & ElectricWire & SideFlip) | (UpThrow & ElectricWire & SideFlip) | (NeutralThrow & ElectricWire & Spin) | (UpThrow & Spin & ElectricWire) | (NeutralThrow & ElectricWire & Vault) | (DownThrow & UpThrow & ElectricWire & Vault) | (DownThrow & SpinThrow & TripleJump & ElectricWire) | (SpinThrow & ElectricWire & TripleJump & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;advanced;advanced;advanced;advanced;advanced;advanced;casual;casual;advanced;advanced;expert;advanced;advanced;advanced;advanced;advanced;casual;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "3,4"
+      },
+      {
+        "edge_id": "edge_user_1287",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1286.",
+        "option_scenarios": "3,4"
+      },
+      {
+        "edge_id": "edge_user_1288",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::event::MoonRockActive_Cascade",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1289",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::event::MoonRockActive_Cascade",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1288.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1290",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_25",
+        "requirement_expr": "(Wanwan & SingleJump) | (Wanwan & CapReturnJump) | (Wanwan & Backflip) | (Wanwan & GroundPoundJump) | (Wanwan & LongJump) | (Wanwan & Roll) | (Wanwan & SideFlip) | (Wanwan & Spin) | (NeutralThrow & Wanwan & Vault) | (DownThrow & Wanwan & Vault) | (WanwanBig & SingleJump) | (WanwanBig & CapReturnJump) | (WanwanBig & Backflip) | (WanwanBig & GroundPoundJump) | (WanwanBig & LongJump) | (WanwanBig & Roll) | (WanwanBig & SideFlip) | (WanwanBig & Spin) | (NeutralThrow & WanwanBig & Vault) | (DownThrow & WanwanBig & Vault) | (Wanwan & Dive & AnyThrow) | (NeutralThrow & Wanwan & WallJump) | (UpThrow & Wanwan & WallJump) | (DownThrow & Wanwan & WallJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;advanced;casual;casual;casual;casual;casual;casual;casual;casual;casual;advanced;casual;casual;casual;casual;casual;casual;advanced;advanced;advanced;expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1291",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_25",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1290.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1292",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_25",
+        "requirement_expr": "(TRex & SingleJump) | (TRex & CapReturnJump) | (AnyThrow & TRex & Dive) | (TRex & Backflip) | (TRex & GroundPoundJump) | (TRex & LongJump) | (TRex & Roll) | (TRex & SideFlip) | (TRex & Spin) | (NeutralThrow & TRex & Vault) | (DownThrow & Vault & TRex) | (NeutralThrow & Dive & TRex)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;expert;casual;advanced;casual;casual;casual;casual;casual;casual;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1293",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_25",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1292.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1294",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_25",
+        "requirement_expr": "(WanwanBig & MinHp2) | (Wanwan & MinHp2)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1295",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_25",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1294.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1296",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_26",
+        "requirement_expr": "(WanwanBig & Pipe2D & SingleJump) | (Pipe2D & SingleJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1;2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_1297",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_26",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1296.",
+        "option_scenarios": "1;2,3,4,5"
+      },
+      {
+        "edge_id": "edge_user_1298",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_26",
+        "requirement_expr": "(TRex & Pipe2D & SingleJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1"
+      },
+      {
+        "edge_id": "edge_user_1299",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_26",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1298.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1300",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::start",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_27",
+        "requirement_expr": "Swim",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1301",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_27",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_28",
+        "requirement_expr": "AnyThrow | (SingleJump & GroundPound) | (GroundPound & Backflip) | (SideFlip & GroundPound) | (Spin & GroundPound) | Roll | Dive",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;casual;casual;casual;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5;2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1302",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_28",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_27",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1301.",
+        "option_scenarios": "2,3,4,5;2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4;1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1303",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_28",
+        "requirement_expr": "(SingleJump & AnyThrow) | NeutralThrow | UpThrow | (Dive & AnyThrow) | (DownThrow & Spin & WallJump) | (SingleJump & Dive) | (Backflip & Dive) | (Dive & LongJump) | (Dive & Roll) | (SideFlip & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "glitched;advanced;advanced;advanced;expert;advanced;advanced;advanced;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4,5,1;2,3,4,5;2,3,4,5;2,3,4,5;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1304",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_28",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_22",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "glitched",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1303.",
+        "option_scenarios": "2,3,4,5,1;2,3,4,5;2,3,4,5;2,3,4,5;2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1305",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_29",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | GroundPoundJump | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault) | Dive | NeutralThrow",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;advanced;casual;casual;casual;casual;casual;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1306",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_29",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_24",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1305.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1307",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj2832",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_29",
+        "requirement_expr": "free",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1308",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_29",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj2832",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1307.",
+        "option_scenarios": "2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1309",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::start",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_30",
+        "requirement_expr": "(Fukankun & SingleJump) | (Fukankun & CapReturnJump) | (Fukankun & Backflip) | (Fukankun & Dive) | (Fukankun & GroundPoundJump) | (Fukankun & LongJump) | (Fukankun & SideFlip) | (Fukankun & Spin) | (NeutralThrow & Fukankun & Vault) | (DownThrow & Fukankun & Vault) | (NeutralThrow & WallJump & Fukankun) | (UpThrow & Fukankun & WallJump) | (DownThrow & Fukankun & WallJump) | (Fukankun & MinHp2) | (Fukankun & ElectricWire & Climb)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;advanced;advanced;casual;casual;casual;casual;casual;advanced;advanced;advanced;expert;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1310",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_30",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1309.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1311",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_30",
+        "requirement_expr": "(Fukankun & TRex)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1312",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_30",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1311.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1313",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_31",
+        "requirement_expr": "(AnyThrow & SingleJump) | CapReturnJump | (AnyThrow & Backflip) | (AnyThrow & GroundPoundJump) | (SideFlip & AnyThrow) | (Spin & AnyThrow) | (NeutralThrow & Vault) | (AnyThrow & WallJump & Dive) | (TripleJump & WallJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;advanced;casual;casual;advanced;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1314",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_31",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1313.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1315",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_31",
+        "requirement_expr": "AnyThrow | KingdomAccess_Cascade | SingleJump | Dive | WallJump",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced;expert;advanced;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1316",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_31",
+        "to_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1315.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1317",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::start",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_32",
+        "requirement_expr": "(KingdomAccess_Cascade & MinHp2) | SingleJump | CapReturnJump | Backflip | GroundPoundJump | Dive | LongJump | RollBoost | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault) | (WallJump & AnyThrow)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert;casual;casual;casual;advanced;advanced;casual;advanced;casual;casual;casual;casual;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1318",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_32",
+        "to_node_id": "WaterfallWorldHomeStage::start",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1317.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1319",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_32",
+        "requirement_expr": "TRex",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1320",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "overworld",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_32",
+        "to_node_id": "WaterfallWorldHomeStage::place::new_place_23",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1319.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1321",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "WindBlowExStage::entrance::WindBlowExStart::sub_near",
+        "to_node_id": "WindBlowExStage::place::new_place",
+        "requirement_expr": "(UpThrow & Vault & GroundPoundJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1322",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "WindBlowExStage::entrance::WindBlowExGoal::sub_far",
+        "to_node_id": "WindBlowExStage::place::new_place",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault) | (NeutralThrow & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1323",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "WindBlowExStage::place::new_place",
+        "to_node_id": "WindBlowExStage::entrance::WindBlowExStart::sub_near",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "expert",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1321.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1324",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "WindBlowExStage::entrance::WindBlowExStart::sub_near",
+        "to_node_id": "WindBlowExStage::place::new_place_2",
+        "requirement_expr": "(AnyThrow & SingleJump) | (AnyThrow & CapReturnJump) | (AnyThrow & Backflip) | (AnyThrow & Dive) | (GroundPoundJump & AnyThrow) | (AnyThrow & LongJump) | (SideFlip & AnyThrow) | (AnyThrow & Spin) | (NeutralThrow & Vault)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;casual;advanced;expert;advanced;casual;advanced;advanced;advanced",
+        "bidirectional": "true",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1325",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "CapAppearExStage::entrance::CapAppearExEnt::sub_near",
+        "to_node_id": "CapAppearExStage::place::new_place",
+        "requirement_expr": "(NeutralThrow & SingleJump) | (SingleJump & AnyThrow) | (SpinThrow & SingleJump) | (NeutralThrow & CapReturnJump) | (AnyThrow & CapReturnJump) | (NeutralThrow & Backflip) | (SpinThrow & Backflip) | (DownThrow & Backflip) | (UpThrow & Backflip) | (NeutralThrow & WallJump & Dive) | (AnyThrow & LongJump & WallJump) | (AnyThrow & LongJump & Dive) | (NeutralThrow & SideFlip) | (SpinThrow & SideFlip) | (AnyThrow & SideFlip) | (AnyThrow & Spin) | (NeutralThrow & Vault) | (SpinThrow & WallJump & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;casual;casual;advanced;casual;casual;casual;advanced;advanced;advanced;advanced;casual;casual;advanced;casual;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1326",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "CapAppearExStage::place::new_place",
+        "to_node_id": "CapAppearExStage::entrance::CapAppearExEnt::sub_near",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1325.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1327",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "CapAppearExStage::entrance::CapAppearExExit::sub_far",
+        "to_node_id": "CapAppearExStage::entrance::CapAppearExEnt::sub_near",
+        "requirement_expr": "(NeutralThrow & SingleJump) | (SingleJump & AnyThrow) | (SpinThrow & SingleJump) | (NeutralThrow & CapReturnJump) | (AnyThrow & CapReturnJump) | (NeutralThrow & Backflip) | (SpinThrow & Backflip) | (DownThrow & Backflip) | (UpThrow & Backflip) | (NeutralThrow & Dive) | (AnyThrow & LongJump) | (NeutralThrow & SideFlip) | (SpinThrow & SideFlip) | (SideFlip & AnyThrow) | (AnyThrow & Spin) | (NeutralThrow & Vault) | (SpinThrow & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;casual;casual;advanced;casual;casual;casual;advanced;advanced;advanced;casual;casual;advanced;casual;casual;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_0008.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1328",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "CapAppearExStage::entrance::CapAppearExExit::sub_far",
+        "to_node_id": "CapAppearExStage::place::new_place",
+        "requirement_expr": "(NeutralThrow & SingleJump) | (SingleJump & AnyThrow) | (SpinThrow & SingleJump) | (NeutralThrow & CapReturnJump) | (AnyThrow & CapReturnJump) | (NeutralThrow & Backflip) | (SpinThrow & Backflip) | (DownThrow & Backflip) | (UpThrow & Backflip) | (NeutralThrow & WallJump & Dive) | (AnyThrow & LongJump & WallJump) | (AnyThrow & LongJump & Dive) | (NeutralThrow & SideFlip) | (SpinThrow & SideFlip) | (AnyThrow & SideFlip) | (AnyThrow & Spin) | (NeutralThrow & Vault) | (SpinThrow & WallJump & Dive)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual;advanced;casual;casual;advanced;casual;casual;casual;advanced;advanced;advanced;advanced;casual;casual;advanced;casual;advanced;advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1329",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "CapAppearExStage::place::new_place",
+        "to_node_id": "CapAppearExStage::entrance::CapAppearExExit::sub_far",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1328.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1330",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "WanwanClashExStage::entrance::WanwanExStart::sub_near",
+        "to_node_id": "WanwanClashExStage::place::new_place",
+        "requirement_expr": "(Wanwan & GroundPoundJump)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": ""
+      },
+      {
+        "edge_id": "edge_user_1331",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "WanwanClashExStage::entrance::WanwanExGoal::sub_far",
+        "to_node_id": "WanwanClashExStage::place::new_place",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault)",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Created in graph editor.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1332",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "WanwanClashExStage::place::new_place",
+        "to_node_id": "WanwanClashExStage::entrance::WanwanExGoal::sub_far",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "casual",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1331.",
+        "option_scenarios": "1,2,3,4"
+      },
+      {
+        "edge_id": "edge_user_1333",
+        "kingdom": "Cascade Kingdom",
+        "area_scope": "subarea",
+        "from_node_id": "WanwanClashExStage::place::new_place",
+        "to_node_id": "WanwanClashExStage::entrance::WanwanExStart::sub_near",
+        "requirement_expr": "impossible",
+        "requirement_notes": "",
+        "edge_type": "human_route",
+        "difficulty": "advanced",
+        "bidirectional": "false",
+        "source": "editor",
+        "notes": "Reverse of edge_user_1330.",
+        "option_scenarios": ""
       }
     ],
     "moonAccess": [
@@ -2493,7 +4176,7 @@
         "obj_id": "1717",
         "uid": "204",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
         "state_requirement_expr": "",
         "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Cascade",
@@ -2589,9 +4272,9 @@
         "obj_id": "407",
         "uid": "206",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_25",
         "state_requirement_expr": "",
-        "requirement_expr": "Wanwan | TRex | WanwanBig",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2639,7 +4322,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj2832",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | (AnyThrow & Dive) | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2671,7 +4354,7 @@
         "shine_info_scenario_name": "ようこそ！ ダイナフォー！",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:1033:207",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;advanced;casual;casual;casual;casual;casual",
         "option_scenarios": ""
       },
       {
@@ -2685,9 +4368,9 @@
         "obj_id": "1526",
         "uid": "208",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | (AnyThrow & Dive) | GroundPoundJump | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault) | (NeutralThrow & WallJump)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2719,8 +4402,8 @@
         "shine_info_scenario_name": "浮島を渡って",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:1526:208",
-        "difficulty": "casual",
-        "option_scenarios": ""
+        "difficulty": "casual;casual;casual;advanced;advanced;casual;casual;casual;casual;advanced;advanced",
+        "option_scenarios": "2,3,4"
       },
       {
         "moon_id": "WaterfallWorldHomeStage:2467:209",
@@ -2781,7 +4464,7 @@
         "obj_id": "2490",
         "uid": "210",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj3139",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_29",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
@@ -2816,7 +4499,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:2490:210",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "2,3,4"
       },
       {
         "moon_id": "WaterfallWorldHomeStage:1119:211",
@@ -2829,7 +4512,7 @@
         "obj_id": "1119",
         "uid": "211",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::start",
         "state_requirement_expr": "",
         "requirement_expr": "(NpcTalk & Wallet)",
         "world_peace_token": "WorldPeace_Cascade",
@@ -2877,9 +4560,9 @@
         "obj_id": "124",
         "uid": "212",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_26",
         "state_requirement_expr": "",
-        "requirement_expr": "(WanwanBig & Pipe2D) | (TRex & Pipe2D) | Pipe2D",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -2925,7 +4608,7 @@
         "obj_id": "1027",
         "uid": "213",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::start",
         "state_requirement_expr": "",
         "requirement_expr": "(GroundPound & Swim)",
         "world_peace_token": "WorldPeace_Cascade",
@@ -2973,7 +4656,7 @@
         "obj_id": "1028",
         "uid": "214",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_31",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3007,7 +4690,7 @@
         "shine_info_scenario_name": "ガケ下で かがやく宝",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:1028:214",
-        "difficulty": "casual",
+        "difficulty": "advanced",
         "option_scenarios": ""
       },
       {
@@ -3023,7 +4706,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault) | KingdomAccess_Cascade",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3055,7 +4738,7 @@
         "shine_info_scenario_name": "岩のアーチを とび降りて",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:1029:215",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -3069,9 +4752,9 @@
         "obj_id": "1928",
         "uid": "216",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_28",
         "state_requirement_expr": "",
-        "requirement_expr": "Swim | SingleJump | NeutralThrow | UpThrow | Dive | (DownThrow & Spin & WallJump & CapReturnJump)",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3103,8 +4786,8 @@
         "shine_info_scenario_name": "滝つぼの宝箱",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:1928:216",
-        "difficulty": "casual;glitched;advanced;advanced;advanced;expert",
-        "option_scenarios": "2,3,4,5;2,3,4,5,1;2,3,4,5;2,3,4,5;2,3,4,5"
+        "difficulty": "casual",
+        "option_scenarios": "2,3,4,5;2,3,4,5,1;2,3,4,5;2,3,4,5;2,3,4,5;2,3,4;2,3,4"
       },
       {
         "moon_id": "WaterfallWorldHomeStage:2455:217",
@@ -3117,7 +4800,7 @@
         "obj_id": "2455",
         "uid": "217",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_32",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3167,7 +4850,7 @@
         "flags": "ShineFlag_Story | ShineFlag_Multi",
         "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
         "state_requirement_expr": "",
-        "requirement_expr": "BreedaWanwan | KingdomAccess_Cascade",
+        "requirement_expr": "(BreedaWanwan & SingleJump) | (BreedaWanwan & CapReturnJump) | (BreedaWanwan & Backflip) | (BreedaWanwan & LongJump) | (BreedaWanwan & SideFlip) | (BreedaWanwan & Spin) | (NeutralThrow & BreedaWanwan & Vault) | (DownThrow & BreedaWanwan & Vault) | SingleJump | CapReturnJump | Backflip | GroundPoundJump | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3199,8 +4882,8 @@
         "shine_info_scenario_name": "滝の上の グランドムーン",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:21:218",
-        "difficulty": "casual",
-        "option_scenarios": "1,2,3,4,5;2,3,4,5"
+        "difficulty": "casual;casual;casual;casual;casual;casual;casual;casual;casual;casual;casual;advanced;casual;casual;casual;casual;casual",
+        "option_scenarios": "1,5;1,5;1,5;1,5;1,5;1,5;1,5;1,5;5,2,4,3;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4;2,3,4"
       },
       {
         "moon_id": "Lift2DExStage:6784:221",
@@ -3215,7 +4898,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "Lift2DExStage::entrance::Lift2DExit::sub_far",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | (AnyThrow & Dive) | (AnyThrow & GroundPoundJump) | LongJump | SideFlip | Spin | (Vault & NeutralThrow) | (DownThrow & Vault)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3247,7 +4930,7 @@
         "shine_info_scenario_name": "谷間のリフトを越えて",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "Lift2DExStage:6784:221",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;advanced;advanced;casual;casual;casual;casual;casual",
         "option_scenarios": ""
       },
       {
@@ -3263,7 +4946,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "Lift2DExStage::entrance::Lift2D::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "Pipe2D",
+        "requirement_expr": "(Pipe2D & SingleJump)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3309,7 +4992,7 @@
         "obj_id": "304",
         "uid": "223",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "CapAppearExStage::entrance::CapAppearExEnt::sub_near",
+        "from_node_id": "CapAppearExStage::place::new_place",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3344,7 +5027,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CapAppearExStage:304:223",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4"
       },
       {
         "moon_id": "CapAppearExStage:342:224",
@@ -3357,9 +5040,9 @@
         "obj_id": "342",
         "uid": "224",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "CapAppearExStage::entrance::CapAppearExEnt::sub_near",
+        "from_node_id": "CapAppearExStage::entrance::CapAppearExExit::sub_far",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "SingleJump | CapReturnJump | Backflip | (Dive & AnyThrow) | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (Vault & DownThrow)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3391,7 +5074,7 @@
         "shine_info_scenario_name": "ふしぎな雲を 乗りついで",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "CapAppearExStage:342:224",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;expert;casual;casual;casual;casual;casual",
         "option_scenarios": ""
       },
       {
@@ -3405,7 +5088,7 @@
         "obj_id": "371",
         "uid": "225",
         "flags": "ShineFlag_None",
-        "from_node_id": "WanwanClashExStage::entrance::WanwanExGoal::sub_far",
+        "from_node_id": "WanwanClashExStage::place::new_place",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3440,7 +5123,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WanwanClashExStage:371:225",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4"
       },
       {
         "moon_id": "WanwanClashExStage:504:226",
@@ -3455,7 +5138,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WanwanClashExStage::entrance::WanwanExGoal::sub_far",
         "state_requirement_expr": "",
-        "requirement_expr": "Wanwan",
+        "requirement_expr": "(Wanwan & SingleJump) | (Wanwan & CapReturnJump) | (Wanwan & Backflip) | (Wanwan & LongJump) | (Wanwan & SideFlip) | (Wanwan & Spin) | (Wanwan & NeutralThrow & Vault) | (Wanwan & DownThrow & Vault)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3488,7 +5171,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WanwanClashExStage:504:226",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "1,2,3,4"
       },
       {
         "moon_id": "WaterfallWorldHomeStage:2618:669",
@@ -3501,9 +5184,9 @@
         "obj_id": "2618",
         "uid": "669",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::start",
         "state_requirement_expr": "",
-        "requirement_expr": "Scarecrow",
+        "requirement_expr": "(Scarecrow & SingleJump) | (Scarecrow & Backflip) | (Scarecrow & GroundPoundJump) | (Scarecrow & LongJump) | (Scarecrow & SideFlip) | (Scarecrow & Spin) | (Scarecrow & Dive)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3535,7 +5218,7 @@
         "shine_info_scenario_name": "滝の国で チクタク・アスレチック １",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:2618:669",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced;casual;casual;casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -3549,9 +5232,9 @@
         "obj_id": "2691",
         "uid": "670",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
         "state_requirement_expr": "",
-        "requirement_expr": "(TripleJump & Scarecrow) | (Backflip & Scarecrow) | (SideFlip & Scarecrow) | (Spin & Scarecrow) | (GroundPoundJump & Scarecrow) | (DoubleJump & Dive & Scarecrow) | (WallJump & Dive & Scarecrow)",
+        "requirement_expr": "(TripleJump & Scarecrow) | (Backflip & Scarecrow) | (SideFlip & Scarecrow) | (Spin & Scarecrow) | (GroundPoundJump & Scarecrow & SingleJump) | (DoubleJump & Dive & Scarecrow) | (WallJump & Dive & Scarecrow & SingleJump)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3597,7 +5280,7 @@
         "obj_id": "167",
         "uid": "673",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "WindBlowExStage::entrance::WindBlowExStart::sub_near",
+        "from_node_id": "WindBlowExStage::place::new_place",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3645,9 +5328,9 @@
         "obj_id": "299",
         "uid": "674",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "WindBlowExStage::entrance::WindBlowExStart::sub_near",
+        "from_node_id": "WindBlowExStage::place::new_place_2",
         "state_requirement_expr": "",
-        "requirement_expr": "NeutralThrow | DownThrow | SpinThrow | UpThrow",
+        "requirement_expr": "NeutralThrow | DownThrow | SpinThrow | (UpThrow & SingleJump) | (UpThrow & CapReturnJump) | (UpThrow & Backflip) | (UpThrow & WallJump & Dive) | (GroundPoundJump & UpThrow) | (LongJump & UpThrow) | (SideFlip & UpThrow) | (UpThrow & Spin) | (WallJump & UpThrow)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3679,7 +5362,7 @@
         "shine_info_scenario_name": "とんでけ 突風ブリッジ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WindBlowExStage:299:674",
-        "difficulty": "casual;casual;casual;advanced",
+        "difficulty": "casual;casual;casual;advanced;advanced;advanced;advanced;expert;advanced;advanced;advanced;advanced",
         "option_scenarios": ""
       },
       {
@@ -3695,7 +5378,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "WaterfallWorldHomeStage::place::new_place_18",
         "state_requirement_expr": "",
-        "requirement_expr": "LongJump | Roll | Spin | TripleJump | Dive | LedgeGrab | WallJump | (Vault & NeutralThrow) | KingdomAccess_Cascade | (UpThrow & Vault & SingleJump)",
+        "requirement_expr": "(LongJump & SingleJump) | (Roll & SingleJump) | Spin | TripleJump | (Dive & SingleJump) | (LedgeGrab & CapReturnJump) | (WallJump & CapReturnJump) | (Vault & NeutralThrow) | SingleJump | (UpThrow & Vault & SingleJump) | LongJump | (CapReturnJump & Roll) | (CapReturnJump & Dive)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3727,7 +5410,7 @@
         "shine_info_scenario_name": "滝の国 レギュラーカップ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:2741:708",
-        "difficulty": "casual;casual;casual;casual;casual;advanced;advanced;advanced;expert;advanced",
+        "difficulty": "casual;casual;casual;casual;casual;advanced;advanced;advanced;expert;advanced;advanced;casual;advanced",
         "option_scenarios": ""
       },
       {
@@ -3743,7 +5426,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "Pipe2D & Notes",
+        "requirement_expr": "(Pipe2D & Notes & SingleJump)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3776,7 +5459,7 @@
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:2778:770",
         "difficulty": "casual",
-        "option_scenarios": ""
+        "option_scenarios": "4"
       },
       {
         "moon_id": "WaterfallWorldHomeStage:2819:822",
@@ -3789,7 +5472,7 @@
         "obj_id": "2819",
         "uid": "822",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_23",
         "state_requirement_expr": "",
         "requirement_expr": "(TRex & GroundPound)",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3837,7 +5520,7 @@
         "obj_id": "2821",
         "uid": "823",
         "flags": "ShineFlag_Extra",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_23",
         "state_requirement_expr": "",
         "requirement_expr": "(TRex & GroundPound)",
         "world_peace_token": "WorldPeace_Cascade",
@@ -3887,7 +5570,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "AnyThrow",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3935,7 +5618,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "(AnyThrow & SingleJump) | CapReturnJump | (AnyThrow & Backflip) | (NeutralThrow & Dive) | (UpThrow & Dive) | (SpinThrow & Dive) | (NeutralThrow & GroundPoundJump) | (DownThrow & GroundPoundJump) | (AnyThrow & LongJump) | (AnyThrow & SideFlip) | (AnyThrow & Spin) | (NeutralThrow & Vault) | (WallJump & NeutralThrow) | (UpThrow & WallJump) | (SpinThrow & WallJump) | (DownThrow & WallJump)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -3967,7 +5650,7 @@
         "shine_info_scenario_name": "帽子を投げて とび移れ",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:2824:826",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;advanced;advanced;advanced;advanced;advanced;advanced;casual;advanced;advanced;expert;advanced;advanced;advanced;expert",
         "option_scenarios": ""
       },
       {
@@ -3981,7 +5664,7 @@
         "obj_id": "2898",
         "uid": "866",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_20",
         "state_requirement_expr": "",
         "requirement_expr": "NpcTalk",
         "world_peace_token": "WorldPeace_Cascade",
@@ -4031,7 +5714,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "WaterfallWorldHomeStage::place::new_place_18",
         "state_requirement_expr": "",
-        "requirement_expr": "LongJump | Roll | Spin | TripleJump | Dive | LedgeGrab | WallJump | (Vault & NeutralThrow) | (NeutralThrow & SingleJump & CapReturnJump) | (UpThrow & Vault & SingleJump)",
+        "requirement_expr": "(LongJump & SingleJump) | (Roll & SingleJump) | Spin | TripleJump | (Dive & SingleJump) | (LedgeGrab & CapReturnJump) | (WallJump & CapReturnJump) | (Vault & NeutralThrow) | (NeutralThrow & SingleJump & CapReturnJump) | (UpThrow & Vault & SingleJump)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -4077,7 +5760,7 @@
         "obj_id": "2423",
         "uid": "906",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::start",
         "state_requirement_expr": "",
         "requirement_expr": "(KingdomAccess_Sand & KingdomAccess_Metro & NpcTalk)",
         "world_peace_token": "WorldPeace_Cascade",
@@ -4125,7 +5808,7 @@
         "obj_id": "3110",
         "uid": "1004",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_22",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
@@ -4173,9 +5856,9 @@
         "obj_id": "3208",
         "uid": "1041",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::place::new_place_30",
         "state_requirement_expr": "",
-        "requirement_expr": "Fukankun",
+        "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -4271,7 +5954,7 @@
         "flags": "ShineFlag_None",
         "from_node_id": "TrexPoppunExStage::entrance::RexPoppunEx::sub_near",
         "state_requirement_expr": "",
-        "requirement_expr": "free",
+        "requirement_expr": "AnyThrow",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -4317,7 +6000,7 @@
         "obj_id": "3284",
         "uid": "1145",
         "flags": "ShineFlag_None",
-        "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj1724",
+        "from_node_id": "WaterfallWorldHomeStage::start",
         "state_requirement_expr": "",
         "requirement_expr": "free",
         "world_peace_token": "WorldPeace_Cascade",
@@ -4367,7 +6050,7 @@
         "flags": "ShineFlag_Extra",
         "from_node_id": "WaterfallWorldHomeStage::checkpoint::obj601",
         "state_requirement_expr": "",
-        "requirement_expr": "Wanwan",
+        "requirement_expr": "(Wanwan & SingleJump) | (Wanwan & CapReturnJump) | (Wanwan & Backflip) | (Wanwan & Dive) | (Wanwan & GroundPoundJump) | (Wanwan & LongJump) | (Wanwan & SideFlip) | (Wanwan & Spin) | (NeutralThrow & Wanwan & Vault) | (DownThrow & Wanwan & Vault) | (Wanwan & ElectricWire) | (Wanwan & AnyThrow)",
         "world_peace_token": "WorldPeace_Cascade",
         "moon_rock_token": "MoonRockActive_Cascade",
         "access_type": "primary",
@@ -4399,7 +6082,7 @@
         "shine_info_scenario_name": "くずれた化石の中から",
         "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
         "__editor_id": "WaterfallWorldHomeStage:3523:1167",
-        "difficulty": "casual",
+        "difficulty": "casual;casual;casual;advanced;advanced;casual;casual;casual;casual;casual;advanced;expert",
         "option_scenarios": ""
       }
     ],
@@ -6143,6 +7826,18 @@
         "can_start_with_seed": "false",
         "aliases": "Odyssey Travel; Odyssey; Globe; Kingdom Travel",
         "notes": "Handing in moons and flying the Odyssey (Bonus Abilities, opt-in). Without it Cappy catches on the globe but nothing happens, and only Return to Start leads home. Do not name it in requirements: MoonRando applies it to every kingdom the Odyssey opens (unlockKingdom)."
+      },
+      {
+        "token": "AnyThrow",
+        "token_type": "derived",
+        "display_name": "Any Throw",
+        "category": "CapThrow",
+        "prerequisite": "",
+        "always_unlocked": "true",
+        "requires_any_cap_throw": "true",
+        "can_start_with_seed": "false",
+        "aliases": "Any Cap Throw",
+        "notes": "Held while any one of Neutral, Up, Down or Spin Throw is unlocked."
       }
     ],
     "rooms": [
@@ -6338,12 +8033,12 @@
         "y": 120
       },
       "CapAppearExStage::entrance::CapAppearExEnt::sub_near": {
-        "x": 229.68748641869752,
-        "y": 621.8749959924025
+        "x": 163.6344678926437,
+        "y": 617.3195930334997
       },
       "CapAppearExStage::entrance::CapAppearExExit::sub_far": {
-        "x": 825.5208345251351,
-        "y": 604.3750040599843
+        "x": 946.238445274495,
+        "y": 602.097302580533
       },
       "Lift2DExStage::stage_change::Lift2D::raw": {
         "x": 120,
@@ -6386,64 +8081,64 @@
         "y": 665.3125045707566
       },
       "WanwanClashExStage::entrance::WanwanExStart::sub_near": {
-        "x": 389.0625003274181,
-        "y": 538.3366893705322
+        "x": 366.28560717466786,
+        "y": 643.1104303109869
       },
       "WaterfallWorldHomeStage::checkpoint::obj1724": {
-        "x": 830.5365853658536,
-        "y": 708.2926829268292
+        "x": 1228.9038077430857,
+        "y": 770.3334805691284
       },
       "WaterfallWorldHomeStage::checkpoint::obj2832": {
-        "x": 1679.9936825844286,
-        "y": 241.6535562142003
+        "x": 557.415319072385,
+        "y": 2169.3710674170975
       },
       "WaterfallWorldHomeStage::checkpoint::obj3139": {
-        "x": 1688.0438340238486,
-        "y": 74.65369648441026
+        "x": 859.5607375164088,
+        "y": 1761.747614537659
       },
       "WaterfallWorldHomeStage::checkpoint::obj597": {
-        "x": 1603.8679101517782,
-        "y": 1430.1572430295544
+        "x": 1497.7455608214211,
+        "y": 1639.1369096032151
       },
       "WaterfallWorldHomeStage::checkpoint::obj601": {
-        "x": 375.3783705515155,
-        "y": 1382.5081408070016
+        "x": 1836.603084558212,
+        "y": 940.0591051624702
       },
       "WaterfallWorldHomeStage::entrance::CapAppearExEnt::home_in": {
-        "x": 231.03464677469503,
-        "y": 356.82836176493515
+        "x": 1401.8041684637253,
+        "y": 943.481755516349
       },
       "WaterfallWorldHomeStage::entrance::CapAppearExExit::home_out": {
         "x": 1015.7986095770699,
         "y": 514.0213847299824
       },
       "WaterfallWorldHomeStage::entrance::Lift2D::home_in": {
-        "x": 463.1585365853658,
-        "y": 247.96341463414626
+        "x": 1757.862316593714,
+        "y": 574.2173168384647
       },
       "WaterfallWorldHomeStage::entrance::Lift2DExit::home_out": {
         "x": 1554.8853521718177,
         "y": 912.8228245191037
       },
       "WaterfallWorldHomeStage::entrance::RexPoppunEx::home_in": {
-        "x": 2018.2771858765518,
-        "y": 99.92753367966861
+        "x": 1341.8441075580317,
+        "y": 366.8846329786682
       },
       "WaterfallWorldHomeStage::entrance::WanwanExGoal::home_out": {
         "x": 561.1545814322637,
         "y": 364.09812338356426
       },
       "WaterfallWorldHomeStage::entrance::WanwanExStart::home_in": {
-        "x": 225.17073170731692,
-        "y": 251.0121951219511
+        "x": 882.4655761530029,
+        "y": 488.2319414501914
       },
       "WaterfallWorldHomeStage::entrance::WindBlowExGoal::home_out": {
         "x": 809.2013901512946,
         "y": 1362.985123228061
       },
       "WaterfallWorldHomeStage::entrance::WindBlowExStart::home_in": {
-        "x": 469.2560975609755,
-        "y": 355.3902439024389
+        "x": 1079.1794662911202,
+        "y": 1125.0997376807284
       },
       "WaterfallWorldHomeStage::stage_change::CapAppearExEnt::raw": {
         "x": 100,
@@ -6454,12 +8149,12 @@
         "y": 2728
       },
       "WaterfallWorldHomeStage::stage_change::Come::raw": {
-        "x": 2026.6336999412308,
-        "y": 347.594324573923
+        "x": 343.82416463494746,
+        "y": 2326.826813656633
       },
       "WaterfallWorldHomeStage::stage_change::Go::raw": {
-        "x": 1358.603642785663,
-        "y": 882.004243189718
+        "x": 1578.767850670998,
+        "y": 855.35280598814
       },
       "WaterfallWorldHomeStage::stage_change::Lift2D::raw": {
         "x": 510,
@@ -6498,12 +8193,12 @@
         "y": 2432
       },
       "WaterfallWorldHomeStage::start": {
-        "x": 1540.561338597074,
-        "y": 1068.212390740127
+        "x": 1836.0714181171631,
+        "y": 1762.0899542166894
       },
       "WaterfallWorldHomeStage::event::MoonRockActive_Cascade": {
-        "x": 146.41817362764664,
-        "y": 1070.3497116722501
+        "x": 668.851607797699,
+        "y": 423.46254492869446
       },
       "WindBlowExStage::stage_change::WindBlowExGoal::raw": {
         "x": 1620,
@@ -6514,232 +8209,300 @@
         "y": 1100
       },
       "WindBlowExStage::entrance::WindBlowExGoal::sub_far": {
-        "x": 1085.2163406519564,
-        "y": 552.6425031070901
+        "x": 1067.7540167058353,
+        "y": 541.2540362570877
       },
       "WindBlowExStage::entrance::WindBlowExStart::sub_near": {
         "x": 380.2631581795513,
         "y": 565.7894686566166
       },
       "WaterfallWorldHomeStage::place::new_place": {
-        "x": 1214.4374073037536,
-        "y": 1226.3540005118402
+        "x": 1565.4444289707696,
+        "y": 1370.1041208628417
       },
       "WaterfallWorldHomeStage::place::new_place_2": {
-        "x": 681.0064509114986,
-        "y": 1326.254391236338
+        "x": 432.8978548325123,
+        "y": 135.38380475660497
       },
       "WaterfallWorldHomeStage::place::new_place_3": {
-        "x": 556.5738778738839,
-        "y": 1956.5897031832128
+        "x": 615.7179975141596,
+        "y": 2568.6629826355183
       },
       "WaterfallWorldHomeStage::place::new_place_4": {
-        "x": 797.6095965424194,
-        "y": 1955.0835711614322
+        "x": 851.53476674256,
+        "y": 2556.370044848265
       },
       "WaterfallWorldHomeStage::place::new_place_5": {
-        "x": 1034.6612636931388,
-        "y": 1959.5537839011195
+        "x": 1086.1367475848808,
+        "y": 2575.3199867759836
       },
       "WaterfallWorldHomeStage::place::new_place_6": {
-        "x": 1271.7130645862303,
-        "y": 1960.039744509433
+        "x": 1313.3437486625826,
+        "y": 2571.0296854443286
       },
       "WaterfallWorldHomeStage::place::new_place_7": {
-        "x": 1513.66535288205,
-        "y": 1959.6014656928792
+        "x": 1537.0479493921093,
+        "y": 2567.548497485733
       },
       "WaterfallWorldHomeStage::place::new_place_8": {
-        "x": 677.0119930356449,
-        "y": 2095.5457797476065
+        "x": 718.2752776540914,
+        "y": 2677.359297557926
       },
       "WaterfallWorldHomeStage::place::new_place_9": {
-        "x": 914.0637939287365,
-        "y": 2090.0557633859753
+        "x": 951.2008676160918,
+        "y": 2673.2447582967125
       },
       "WaterfallWorldHomeStage::place::new_place_10": {
-        "x": 1160.9276850687315,
-        "y": 2088.8868053819124
+        "x": 1181.5594742913968,
+        "y": 2678.9530388812977
       },
       "WaterfallWorldHomeStage::place::new_place_11": {
-        "x": 1404.2267433201664,
-        "y": 2089.237068610817
+        "x": 1406.9776975210025,
+        "y": 2671.0505864211364
       },
       "WaterfallWorldHomeStage::place::new_place_12": {
-        "x": 1653.7115573780786,
-        "y": 2085.4639099261594
+        "x": 1646.8343922461515,
+        "y": 2685.158262758308
       },
       "WaterfallWorldHomeStage::place::new_place_13": {
-        "x": 551.7525620167909,
-        "y": 2207.422518776741
+        "x": 597.1422779364914,
+        "y": 2789.23603658706
       },
       "WaterfallWorldHomeStage::place::new_place_14": {
-        "x": 795.0514818379738,
-        "y": 2203.649429307209
+        "x": 825.3113903934021,
+        "y": 2784.0875434738314
       },
       "WaterfallWorldHomeStage::place::new_place_15": {
-        "x": 1036.2886214872494,
-        "y": 2212.247366944751
+        "x": 1045.9167408200126,
+        "y": 2798.1871691428823
       },
       "WaterfallWorldHomeStage::place::new_place_16": {
-        "x": 1285.773158684658,
-        "y": 2210.5360576471257
+        "x": 1269.2677273065258,
+        "y": 2796.475933301978
       },
       "WaterfallWorldHomeStage::place::new_place_17": {
-        "x": 1539.3813946561331,
-        "y": 2208.8246099192493
+        "x": 1491.2407979923175,
+        "y": 2803.0171278064463
       },
       "Lift2DExStage::place::new_place": {
         "x": 1169.6099828354577,
         "y": 897.9799110116674
       },
       "WaterfallWorldHomeStage::place::new_place_18": {
-        "x": 780.4640299513208,
-        "y": 429.40052142478737
+        "x": 2281.5167178501583,
+        "y": 1659.0087600654203
+      },
+      "WaterfallWorldHomeStage::place::new_place_19": {
+        "x": 2073.8201174921905,
+        "y": 828.1099015313952
+      },
+      "WaterfallWorldHomeStage::place::new_place_20": {
+        "x": 373.6349746870825,
+        "y": 316.8292552631957
+      },
+      "WaterfallWorldHomeStage::place::new_place_21": {
+        "x": 804.345092192011,
+        "y": 727.2299356192567
+      },
+      "WaterfallWorldHomeStage::place::new_place_22": {
+        "x": 850.6860208368439,
+        "y": 1243.2399803313422
+      },
+      "WaterfallWorldHomeStage::place::new_place_23": {
+        "x": 468.81518292810233,
+        "y": 1358.174134888729
+      },
+      "WaterfallWorldHomeStage::place::new_place_24": {
+        "x": 564.2155598011773,
+        "y": 1761.4303958249338
+      },
+      "WaterfallWorldHomeStage::place::new_place_25": {
+        "x": 618.7509849881347,
+        "y": 1131.52634879716
+      },
+      "WaterfallWorldHomeStage::place::new_place_26": {
+        "x": 1841.3228072776421,
+        "y": 1129.7460190982251
+      },
+      "WaterfallWorldHomeStage::place::new_place_27": {
+        "x": 1233.334247408416,
+        "y": 1813.2818513426446
+      },
+      "WaterfallWorldHomeStage::place::new_place_28": {
+        "x": 1115.7010121179856,
+        "y": 1585.9287289534295
+      },
+      "WaterfallWorldHomeStage::place::new_place_29": {
+        "x": 315.4632208552939,
+        "y": 1751.9915573964379
+      },
+      "WaterfallWorldHomeStage::place::new_place_30": {
+        "x": 2115.9486127272035,
+        "y": 1592.2533050577174
+      },
+      "WaterfallWorldHomeStage::place::new_place_31": {
+        "x": 1433.2399144903507,
+        "y": 553.937790298959
+      },
+      "WaterfallWorldHomeStage::place::new_place_32": {
+        "x": 2182.4540848623146,
+        "y": 1826.6256856451594
+      },
+      "WindBlowExStage::place::new_place": {
+        "x": 785.7930439516265,
+        "y": 637.1189342705519
+      },
+      "WindBlowExStage::place::new_place_2": {
+        "x": 772.8861229644081,
+        "y": 405.31780251343366
+      },
+      "CapAppearExStage::place::new_place": {
+        "x": 557.2647434401254,
+        "y": 409.34992164854066
       },
       "moon:WaterfallWorldHomeStage:1717:204": {
-        "x": 83.30343007915553,
-        "y": 1437.0923482849603
+        "x": 145.3442713179948,
+        "y": 511.3780189741343
       },
       "moon:WaterfallWorldHomeStage:214:205": {
-        "x": 1233.1984958285389,
-        "y": 1462.874300086265
+        "x": 1357.5361628375426,
+        "y": 1443.9989602852513
       },
       "moon:WaterfallWorldHomeStage:407:206": {
-        "x": 984.5859273928837,
-        "y": 1376.2806382825427
+        "x": 608.4735343429152,
+        "y": 1016.9163416098069
       },
       "moon:WaterfallWorldHomeStage:1033:207": {
-        "x": 2034.7822022520206,
-        "y": 213.93333636525108
+        "x": 249.45376784631355,
+        "y": 2165.690918906389
       },
       "moon:WaterfallWorldHomeStage:1526:208": {
-        "x": 100,
-        "y": 1332
+        "x": 90.897226800492,
+        "y": 312.9209626091347
       },
       "moon:WaterfallWorldHomeStage:2467:209": {
-        "x": 442.0991118615924,
-        "y": 1101.8018826904286
+        "x": 2136.2040468050236,
+        "y": 702.0301312780666
       },
       "moon:WaterfallWorldHomeStage:2490:210": {
-        "x": 2021.9985970213686,
-        "y": 0
+        "x": 398.551851573145,
+        "y": 1631.0205514090403
       },
       "moon:WaterfallWorldHomeStage:1119:211": {
-        "x": 46.51734115196223,
-        "y": 662.88329925543
+        "x": 1766.7583231706203,
+        "y": 1992.1324290121934
       },
       "moon:WaterfallWorldHomeStage:124:212": {
-        "x": 1719.2022978862242,
-        "y": 899.3319225043363
+        "x": 2093.481265638149,
+        "y": 1156.5762926362177
       },
       "moon:WaterfallWorldHomeStage:1027:213": {
-        "x": 358.6882161415622,
-        "y": 936.2269529668197
+        "x": 1575.9577568276882,
+        "y": 1797.2558946989084
       },
       "moon:WaterfallWorldHomeStage:1028:214": {
-        "x": 314.6097210789287,
-        "y": 729.6188525374735
+        "x": 1637.9179077397257,
+        "y": 377.55018722443845
       },
       "moon:WaterfallWorldHomeStage:1029:215": {
-        "x": 115.67441860465112,
-        "y": 1211.5813953488373
+        "x": 2127.951652979023,
+        "y": 1041.0261281032165
       },
       "moon:WaterfallWorldHomeStage:1928:216": {
-        "x": 1749.3147916943672,
-        "y": 779.9631314826992
+        "x": 928.6660443324605,
+        "y": 1608.6510455274772
       },
       "moon:WaterfallWorldHomeStage:2455:217": {
-        "x": 331.67900477462877,
-        "y": 643.6507074335275
+        "x": 2545.1204996610177,
+        "y": 1904.424801384954
       },
       "moon:WaterfallWorldHomeStage:21:218": {
-        "x": 892.915861340831,
-        "y": 1575.8240296771546
+        "x": 697.929359371017,
+        "y": 167.3103006532329
       },
       "moon:Lift2DExStage:6784:221": {
         "x": 1160.4596740939235,
         "y": 574.3428430859235
       },
       "moon:Lift2DExStage:6019:222": {
-        "x": 734.7520856460969,
-        "y": 616.427368356759
+        "x": 714.0243184020834,
+        "y": 593.8972451623017
       },
       "moon:CapAppearExStage:304:223": {
-        "x": 554.3750036408892,
-        "y": 759.2769352119271
+        "x": 562.7264405746956,
+        "y": 274.12891237680014
       },
       "moon:CapAppearExStage:342:224": {
-        "x": 507.708335716937,
-        "y": 480.9283500306467
+        "x": 559.3361007603199,
+        "y": 739.0665670387432
       },
       "moon:WanwanClashExStage:371:225": {
-        "x": 790.1013466889176,
-        "y": 480.49395039490787
+        "x": 792.379048168369,
+        "y": 293.7233819403761
       },
       "moon:WanwanClashExStage:504:226": {
-        "x": 1109.0624957173713,
-        "y": 603.1249958352419
+        "x": 1183.467032271741,
+        "y": 643.3641723868587
       },
       "moon:WaterfallWorldHomeStage:2618:669": {
-        "x": 310.49245798731874,
-        "y": 476.6154871682909
+        "x": 1933.2260953787445,
+        "y": 2070.327708173813
       },
       "moon:WaterfallWorldHomeStage:2691:670": {
-        "x": 490.3588813334006,
-        "y": 1787.2577150121633
+        "x": 160.4223727542404,
+        "y": 197.2825906461588
       },
       "moon:WindBlowExStage:167:673": {
-        "x": 737.5025635955996,
-        "y": 728.5476035762924
+        "x": 794.4447762038478,
+        "y": 798.3968182662683
       },
       "moon:WindBlowExStage:299:674": {
-        "x": 712.921892291911,
-        "y": 431.5384636810545
+        "x": 800.9925566284797,
+        "y": 254.6378471184272
       },
       "moon:WaterfallWorldHomeStage:2741:708": {
-        "x": 1118.9364861746128,
-        "y": 231.48809584326213
+        "x": 2556.84378325805,
+        "y": 1737.5116359847268
       },
       "moon:WaterfallWorldHomeStage:2778:770": {
-        "x": 47.72957342818427,
-        "y": 774.0585480692955
+        "x": 1101.885081510461,
+        "y": 497.57946355283775
       },
       "moon:WaterfallWorldHomeStage:2819:822": {
-        "x": 1809.3995381814898,
-        "y": 540.3473702492278
+        "x": 275.77738970115786,
+        "y": 1322.9759536755143
       },
       "moon:WaterfallWorldHomeStage:2821:823": {
-        "x": 1810.117322004796,
-        "y": 654.8512346548879
+        "x": 340.75643006176733,
+        "y": 1497.189467103654
       },
       "moon:WaterfallWorldHomeStage:2823:825": {
-        "x": 100,
-        "y": 1656
+        "x": 2182.4247300776656,
+        "y": 929.7646921982345
       },
       "moon:WaterfallWorldHomeStage:2824:826": {
-        "x": 84.69444536045154,
-        "y": 575.1308550907127
+        "x": 1632.7958682179294,
+        "y": 747.7858972048158
       },
       "moon:WaterfallWorldHomeStage:2898:866": {
-        "x": 100,
-        "y": 1548
+        "x": 820.8831724097416,
+        "y": 272.91471249927866
       },
       "moon:WaterfallWorldHomeStage:2947:894": {
-        "x": 821.2053280334636,
-        "y": 177.55803627364756
+        "x": 2496.5528024859555,
+        "y": 1556.7794649472628
       },
       "moon:WaterfallWorldHomeStage:2423:906": {
-        "x": 31.304997569027137,
-        "y": 899.0301696563372
+        "x": 1920.4665081257297,
+        "y": 1560.60593145761
       },
       "moon:WaterfallWorldHomeStage:3110:1004": {
-        "x": 320.40630172443457,
-        "y": 562.0230468044078
+        "x": 729.4480782273376,
+        "y": 1397.4879732435122
       },
       "moon:WaterfallWorldHomeStage:3208:1041": {
-        "x": 327.19528303692783,
-        "y": 811.4421195704194
+        "x": 2286.422926003995,
+        "y": 1456.5870820533078
       },
       "moon:TrexPoppunExStage:169:1115": {
         "x": 823.5714285714286,
@@ -6750,20 +8513,16 @@
         "y": 174.68750045838533
       },
       "moon:WaterfallWorldHomeStage:3284:1145": {
-        "x": 94.25510653368315,
-        "y": 460.52430269732184
+        "x": 2057.283474011582,
+        "y": 1954.9095577330975
       },
       "moon:WaterfallWorldHomeStage:3523:1167": {
-        "x": 100.45382585751975,
-        "y": 1860.395778364116
+        "x": 1920.1685266631875,
+        "y": 744.9093394072935
       },
-      "WaterfallWorldHomeStage::place::new_place_19": {
-        "x": 389.775464521589,
-        "y": 1238.0884559391206
-      },
-      "WaterfallWorldHomeStage::place::new_place_20": {
-        "x": 634.7307578127128,
-        "y": 1448.0093693533208
+      "WanwanClashExStage::place::new_place": {
+        "x": 679.5007677794466,
+        "y": 448.070684610196
       }
     }
   }

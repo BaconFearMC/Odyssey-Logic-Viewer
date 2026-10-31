@@ -2,10 +2,10 @@
   "app": "smo-randomizer-logic-editor",
   "schemaVersion": 3,
   "kingdom": "Sand Kingdom",
-  "savedAt": "2026-10-24T16:32:59.165Z",
+  "savedAt": "2026-10-29T18:34:41.836Z",
   "workspace": {
     "schemaVersion": 3,
-    "loadedAt": "2026-10-24T16:08:32.691Z",
+    "loadedAt": "2026-10-29T18:25:21.899Z",
     "csvHeaders": {
       "logicNodes": [
         "node_id",
@@ -4544,10 +4544,10 @@
         "area_scope": "subarea",
         "from_node_id": "MeganeLiftExStage::entrance::meganelift02::sub_far",
         "to_node_id": "MeganeLiftExStage::entrance::meganelift01::sub_near",
-        "requirement_expr": "free",
+        "requirement_expr": "CapReturnJump",
         "requirement_notes": "",
         "edge_type": "human_route",
-        "difficulty": "expert",
+        "difficulty": "glitched",
         "bidirectional": "false",
         "source": "editor",
         "notes": "Reverse of edge_user_0024.",
