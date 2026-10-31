@@ -2287,6 +2287,173 @@
   .cp-req-source.src-start{ border-left-color:var(--worldpeace); }
   .cp-req-source.src-painting{ border-left-color:#d27fb8; }
   .cp-req-source.src-other{ border-left-color:var(--border); }
+
+  /* =====================================================================
+     MINOR UI REFRESH (final override layer — CSS only, no markup/JS changes)
+     Same palette, same chamfered "game panel" identity. Adds: depth in the
+     page backdrop, calmer shadows, clearer hover/focus states, consistent
+     gold accents, tidier scrollbars, and a bit more breathing room.
+     ===================================================================== */
+  :root{
+    --bg: #17181b;
+    --bg-panel: #212226;
+    --bg-chip: #2a2b30;
+    --border: #34353b;
+    --border-hi: #4a4b53;
+    --text: #e4e4e6;
+    --text-dim: #9d9da6;
+    --ink: rgba(0,0,0,0.42);
+    --ease: cubic-bezier(.2,.8,.25,1);
+  }
+  html{ scroll-behavior:smooth; color-scheme:dark; }
+  ::selection{ background:rgba(230,194,0,.35); color:#fff; }
+  body{
+    background-color:var(--bg);
+    background-image:
+      radial-gradient(1200px 520px at 50% -140px, rgba(230,194,0,0.07), transparent 70%),
+      radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size:auto, 26px 26px;
+    background-attachment:fixed;
+    line-height:1.4;
+  }
+
+  /* Focus: visible for keyboard users only */
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+  .option-chip:focus-visible, .checkpoint-info:focus-visible, .filter-option:focus-visible{
+    outline:2px solid var(--gold); outline-offset:2px;
+  }
+  button:focus:not(:focus-visible){ outline:none; }
+
+  /* Scrollbars */
+  *{ scrollbar-width:thin; scrollbar-color:var(--border-hi) transparent; }
+  *::-webkit-scrollbar{ width:10px; height:10px; }
+  *::-webkit-scrollbar-track{ background:transparent; }
+  *::-webkit-scrollbar-thumb{ background:var(--border-hi); border:2px solid var(--bg-panel); border-radius:6px; }
+  *::-webkit-scrollbar-thumb:hover{ background:#5d5e68; }
+
+  /* Title plate: warmer gold, a touch more presence */
+  h1{
+    padding:13px 34px; letter-spacing:0.06em;
+    background:linear-gradient(180deg, #26272c 0%, var(--bg-panel) 100%);
+    text-shadow:0 1px 0 rgba(0,0,0,.45);
+  }
+  h1 .icon-svg{ filter:drop-shadow(0 0 6px rgba(230,194,0,.45)); }
+  .subtitle{ margin:12px 0 22px; }
+
+  /* Corner / HUD buttons: gold on hover, tactile press */
+  .corner-btn{
+    background:linear-gradient(180deg, #26272c, var(--bg-panel));
+    transition:background .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease), transform .1s var(--ease), filter .15s var(--ease);
+  }
+  .corner-btn:hover{ border-color:var(--gold); color:var(--gold); }
+  .corner-btn:active{ border-bottom-width:2px; }
+  #unmarkedToggle.active:hover, #debugToggle.active:hover, #videoToggle.active:hover, #raiseToggle.active:hover,
+  #debugToggle[aria-expanded="true"]:hover{ color:#fff; border-color:#ff7a88; }
+  #viewModeToggle.active:hover, #filterMoonsToggle.active:hover{ color:#1b1c1f; border-color:#ffe14d; }
+  #filterMoonsPanel{ background:var(--bg-panel); border-color:var(--border-hi); }
+  #filterMoonsPanel label{ padding:3px 2px; border-radius:2px; transition:color .12s ease; }
+  #filterMoonsPanel label:hover{ color:var(--gold); }
+
+  /* Kingdom pager */
+  .kingdom-pager{
+    background:linear-gradient(180deg, #25262b, var(--bg-panel));
+    border-color:var(--border-hi);
+    padding:16px 22px;
+  }
+  .pager-name{ font-size:20px; letter-spacing:0.06em; text-shadow:0 1px 0 rgba(0,0,0,.4); }
+  .pager-arrow{ transition:transform .15s var(--ease), background .15s var(--ease), border-color .15s var(--ease); }
+  #pagerPrev:hover{ background:var(--gold); border-color:#8a7500; color:#1b1c1f; }
+  .pager-dot{ transition:transform .15s var(--ease), background .15s var(--ease), box-shadow .15s var(--ease); }
+  .pager-dot.active{ box-shadow:0 0 8px rgba(230,194,0,.65); }
+
+  /* Scope slider */
+  #scopeSlider{ border-color:var(--border-hi); background:#1d1e22; }
+  #scopeSlider .scope-thumb{ transition:transform .25s var(--ease), background .25s ease; }
+
+  /* Filter bars + mode tabs */
+  .filter-bar{ background:var(--bg-panel); border-color:var(--border-hi); }
+  .filter-bar-row{ transition:background .12s ease; }
+  .filter-bar-search{ background:#1a1b1e; transition:border-color .12s ease, box-shadow .12s ease; }
+  .filter-bar-search:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(230,194,0,.15); }
+  .filter-mode-tab{ transition:background .15s var(--ease), border-color .15s var(--ease), opacity .15s ease, transform .1s ease; }
+  .filter-mode-tab:not(.active):hover{ opacity:.9; border-color:var(--border-hi); }
+  .filter-mode-tab:active{ transform:translateY(1px); }
+  .filter-option{ border-radius:4px; transition:background .12s ease, transform .12s var(--ease); }
+  .filter-option:hover{ transform:translateY(-2px); }
+  .filter-option-icon{ transition:border-color .12s ease, box-shadow .12s ease; }
+  .filter-option:hover .filter-option-icon{ border-color:var(--border-hi); }
+  .filter-option.selected:hover .filter-option-icon{ border-color:var(--gold); }
+  .filter-section-heading{ letter-spacing:0.1em; }
+  .filter-summary{ background:var(--mode-bg, var(--bg-chip)); }
+  .filter-preset{ transition:background .12s ease, border-color .12s ease, color .12s ease, transform .1s ease; }
+  .filter-preset:active{ transform:translateY(1px); }
+  .filter-sel-pill{ transition:background .12s ease, border-color .12s ease; }
+
+  /* Moon cards: gold rail gets a soft highlight, border warms on hover */
+  .moon-card{
+    background:linear-gradient(180deg, #25262b 0, var(--bg-panel) 56px);
+    border-color:var(--border);
+    transition:transform .18s var(--ease), filter .18s var(--ease), border-color .18s var(--ease);
+  }
+  .moon-card:hover{ border-color:#4e4a2e; border-top-color:var(--gold); }
+  .moon-name{ font-size:14.5px; line-height:1.35; letter-spacing:.01em; margin-bottom:10px; }
+  .badge{ transition:transform .12s var(--ease); }
+  .badge:hover{ transform:scale(1.1); }
+
+  /* Requirement chips and tier pills */
+  .option-chip, .free-chip{ transition:transform .14s var(--ease), box-shadow .14s var(--ease), border-color .14s ease, background .14s ease; }
+  .option-chip{ box-shadow:0 1px 0 rgba(0,0,0,.35); }
+  .option-chip:hover, .free-chip:hover{ transform:translateY(-1px); box-shadow:0 3px 0 rgba(0,0,0,.35); }
+  .tier-pill{ letter-spacing:0.07em; font-size:10px; }
+  .scenario-tag, .origin-tag{ border-radius:2px; }
+
+  /* Collapsible expand button */
+  .options-expand-btn{ transition:transform .15s var(--ease), background .15s var(--ease), color .15s var(--ease); }
+
+  /* Checkpoint view groups + moon panels */
+  .checkpoint-group{ transition:border-color .15s ease; }
+  .checkpoint-group:hover{ border-color:var(--border-hi); border-left-color:var(--gold); }
+  .checkpoint-group.loading-zone:hover{ border-left-color:#3fae6a; }
+  .checkpoint-group-header, .moon-panel-header{ transition:background .12s ease, border-color .12s ease; }
+  .moon-panel-header{ border-radius:0; }
+  .moon-panel.open > .moon-panel-header{ border-left-color:var(--gold); background:rgba(230,194,0,.06); }
+
+  /* Access Points cards */
+  .cp-req{ transition:transform .15s var(--ease), filter .15s var(--ease), border-color .15s ease; }
+  .cp-reqs-title{ letter-spacing:.04em; }
+
+  /* Search + node + video modals: slightly softer entrance, clearer rows */
+  .search-overlay, .node-overlay, .video-overlay, .vs-overlay{ animation:rfOverlayIn .16s ease both; }
+  @keyframes rfOverlayIn{ from{ opacity:0; } to{ opacity:1; } }
+  .search-modal, .node-modal{ border-color:var(--gold); }
+  .search-result{ transition:background .12s ease, transform .12s var(--ease), border-color .12s ease; }
+  #searchInput:focus-visible{ outline:none; }
+  .search-input-row:focus-within{ background:rgba(230,194,0,0.08); }
+  .video-info-box, .video-stage{ border-radius:0; }
+  .nothing-yet-toast, .not-implemented-toast{ background:var(--bg-panel); border-color:var(--border-hi); }
+
+  /* Submit-mode forms */
+  .vs-modal{ background:var(--bg-panel); }
+  .vs-field select:focus, .vs-field input[type=text]:focus, .vs-field textarea:focus, .op-login .vs-field input:focus{
+    outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(230,194,0,.15);
+  }
+  .vs-btn{ transition:filter .12s ease, transform .1s ease; }
+  .vs-btn:not(:disabled):hover{ filter:brightness(1.1); }
+  .vs-btn:not(:disabled):active{ transform:translateY(1px); }
+  .vs-tab, .vs-tierbtn, .vs-result, .vs-ownerbtn{ transition:background .12s ease, border-color .12s ease, color .12s ease; }
+
+  /* Narrow screens */
+  @media (max-width:640px){
+    .kingdom-pager{ padding:12px 14px; gap:10px; }
+    .pager-name{ font-size:17px; }
+    .moon-name{ font-size:14px; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    *, *::before, *::after{ transition-duration:.01ms !important; }
+    .search-overlay, .node-overlay, .video-overlay, .vs-overlay{ animation:none; }
+  }
 </style>
 </head>
 <body>
