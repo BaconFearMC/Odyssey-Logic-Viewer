@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2477,6 +2477,24 @@
   .cycle-8{ animation-name:cycle8; }
   @keyframes cycle4{ 0%{opacity:1} 21%{opacity:1} 25%{opacity:0} 96%{opacity:0} 100%{opacity:1} }
   @keyframes cycle8{ 0%{opacity:1} 10%{opacity:1} 12.5%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
+  .icon-wrap.any-badged > .icon-tooltip{ display:none; }
+  .prog-badge.pink{ pointer-events:auto; }
+  .any-pop{
+    position:fixed; z-index:400; pointer-events:none; min-width:230px; max-width:calc(100vw - 16px);
+    background:var(--bg-panel); border:2px solid var(--any-pop-acc, var(--gold)); padding:10px 12px 8px;
+    box-shadow:3px 4px 0 rgba(0,0,0,.45); text-align:left;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+    animation:rfOverlayIn .12s ease both;
+  }
+  .any-pop.pop-throw{ --any-pop-acc:#ff6fb5; }
+  .any-pop.pop-grounded{ --any-pop-acc:#5cc8ff; }
+  .any-pop-title{ font-size:11.5px; letter-spacing:.04em; color:var(--any-pop-acc); margin:0 0 8px; text-transform:uppercase; }
+  .any-pop-row{ display:flex; align-items:center; gap:10px; padding:3px 4px; border-left:3px solid transparent; }
+  .any-pop-row.on{ background:var(--gold-light); border-left-color:var(--gold); }
+  .any-pop-icons{ display:inline-flex; align-items:center; gap:3px; flex:0 0 auto; min-width:68px; }
+  .any-pop .icon-wrap, .any-pop .icon, .any-pop .icon-fallback{ width:30px; height:30px; font-size:11px; }
+  .any-pop .prog-badge, .any-pop .icon-tooltip{ display:none; }
+  .any-pop-name{ font-size:12.5px; color:var(--text); white-space:nowrap; }
   .prog-icon.prog-any{ position:relative; overflow:hidden; padding:0; }
   .prog-icon.prog-any .cycle-frame{ clip-path:none; border-radius:4px; }
   .prog-badge.pink .prog-icon{ border-color:#ff6fb5; }
@@ -6710,7 +6728,8 @@ function makeProgressionBadge(token){
     if(pt === ANY_THROW_TOKEN){
       const holder = document.createElement("span");
       holder.className = "prog-icon prog-any";
-      holder.title = "Any Cap Throw";
+      holder.tabIndex = 0;
+      attachAnyPop(holder, ANY_THROW_TOKEN);
       buildCycleFrames(holder, ANY_THROW_MEMBERS.map(m => [m]), ANY_THROW_CYCLE_SECONDS, "cycle-4");
       badge.appendChild(holder);
       badge.classList.add("pink");
@@ -6764,6 +6783,55 @@ function makeTwoDJumpBadge(){
   badge.appendChild(arrow);
   return badge;
 }
+
+// Hover list for the two merged "Any ..." icons: shows every applicable option.
+let anyPopEl = null;
+function hideAnyPop(){ if(anyPopEl){ anyPopEl.remove(); anyPopEl = null; } }
+function showAnyPop(anchor, token){
+  hideAnyPop();
+  const isThrow = token === ANY_THROW_TOKEN;
+  const options = isThrow ? ANY_THROW_MEMBERS.map(m => [m]) : GH_METHODS;
+  const el = document.createElement("div");
+  el.className = "any-pop " + (isThrow ? "pop-throw" : "pop-grounded");
+  const title = document.createElement("div");
+  title.className = "any-pop-title";
+  title.textContent = (isThrow ? "Any Cap Throw" : "Any Grounded Height") + " \u2014 any one of:";
+  el.appendChild(title);
+  options.forEach(toks => {
+    const keys = toks.map(t => ICON_MANIFEST[t] ? t : (Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t));
+    const row = document.createElement("div");
+    row.className = "any-pop-row" + (keys.every(k => tokenIsSelected(k)) ? " on" : "");
+    const icons = document.createElement("span");
+    icons.className = "any-pop-icons";
+    keys.forEach((k, i) => {
+      if(i){ const plus = document.createElement("span"); plus.className = "and-plus"; plus.textContent = "+"; icons.appendChild(plus); }
+      icons.appendChild(makeIcon(k));
+    });
+    const name = document.createElement("span");
+    name.className = "any-pop-name";
+    name.textContent = keys.map(k => filterLabelFor(k)).join(" + ");
+    row.appendChild(icons);
+    row.appendChild(name);
+    el.appendChild(row);
+  });
+  el.style.visibility = "hidden";
+  document.body.appendChild(el);
+  const r = anchor.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight;
+  let top = r.top - h - 10;
+  if(top < 8) top = r.bottom + 10;
+  const left = Math.max(8, Math.min(window.innerWidth - w - 8, r.left + r.width / 2 - w / 2));
+  el.style.top = top + "px";
+  el.style.left = left + "px";
+  el.style.visibility = "";
+  anyPopEl = el;
+}
+function attachAnyPop(el, token){
+  el.addEventListener("mouseenter", () => showAnyPop(el, token));
+  el.addEventListener("focus", () => showAnyPop(el, token));
+  el.addEventListener("mouseleave", hideAnyPop);
+  el.addEventListener("blur", hideAnyPop);
+}
+window.addEventListener("scroll", hideAnyPop, true);
 
 // Cross-fading icon frames on a shared wall-clock (every instance stays in
 // step). `frames` = list of token lists; two tokens render as an overlapped pair.
@@ -6857,13 +6925,7 @@ function makeIcon(token, opts){
   const tip = document.createElement("span");
   tip.className = "icon-tooltip";
   tip.textContent = label + ((opts && opts.twoDJump) ? " (2D Jump)" : "");
-  if(token === ANY_THROW_TOKEN){
-    tip.className += " wide";
-    tip.textContent = "Any Cap Throw \u2014 Neutral, Up, Spin or Down Throw";
-  } else if(token === GH_TOKEN){
-    tip.className += " wide";
-    tip.textContent = "Any Grounded Height \u2014 Jump, Cap Return Jump, Backflip, Spin, Side Flip, Long Jump, Neutral Throw + Vault or Down Throw + Vault";
-  }
+  if(token === ANY_THROW_TOKEN || token === GH_TOKEN) attachAnyPop(wrap, token);
   wrap.appendChild(tip);
 
   return wrap;
