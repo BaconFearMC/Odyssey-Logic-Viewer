@@ -2449,6 +2449,21 @@
     .moon-name{ font-size:14px; }
   }
 
+  /* "Any Cap Throw": four throw icons cross-fading in a loop */
+  .icon-wrap.any-throw{ position:relative; }
+  .icon-wrap.any-throw .any-throw-frame{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    animation-name:anyThrowCycle; animation-timing-function:linear; animation-iteration-count:infinite;
+    animation-fill-mode:both;
+  }
+  @keyframes anyThrowCycle{
+    0%{ opacity:1; } 21%{ opacity:1; } 25%{ opacity:0; } 96%{ opacity:0; } 100%{ opacity:1; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .icon-wrap.any-throw .any-throw-frame{ animation:none; opacity:0; }
+    .icon-wrap.any-throw .any-throw-frame.first{ opacity:1; }
+  }
+
   @media (prefers-reduced-motion:reduce){
     html{ scroll-behavior:auto; }
     *, *::before, *::after{ transition-duration:.01ms !important; }
@@ -2919,6 +2934,11 @@ let ICON_MANIFEST = {
   // Incomplete bonus tiles with no logicTokens row yet (shown greyed out).
   HealthUp: { filenames:["AbilityHealthUp.png","AbilityHealth.png","healthup.png"], label:"Health Up", color:"#34406e", category:"Movement", tokenType:"ability" },
   CapReturnJump: { filenames:["AbilityCapReturnJump.png","AbilityCapReturn.png","capreturnjump.png"], label:"Cap Return Jump", color:"#34406e", category:"Movement", tokenType:"ability" },
+  // "Any Cap Throw": a requirement satisfied by ANY of the four Cap throws.
+  // Recognized as an Ability (so it sorts/groups with them on cards) but it is
+  // never a filter tile of its own — see ANY_THROW_* below. Its icon cycles
+  // through the four throws (see makeIcon).
+  AnyThrow: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
 
 // Movement/CapThrow ("ability") icon sets found in the wild are commonly
@@ -3005,7 +3025,17 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Turnip: true,
   Nut: true,
   Seed: true,
+  AnyThrow: true, // never its own filter tile — it answers to the four Cap throws below
 };
+
+// "Any Cap Throw" token: satisfied by any one of these four throws, in the
+// order its icon cycles through them.
+const ANY_THROW_TOKEN = "AnyThrow";
+const ANY_THROW_MEMBERS = ["NeutralThrow", "UpThrow", "SpinThrow", "DownThrow"];
+const ANY_THROW_CYCLE_SECONDS = 6; // whole loop (1.5s per throw)
+function anyThrowSelected(){
+  return ANY_THROW_MEMBERS.some(t => selectedAbilities.has(t));
+}
 
 // The other half of the Turnip/Nut/Seed -> "Grab" fold above: hiding them
 // from the picker only stops the *player* from selecting "Turnip" directly.
@@ -3208,7 +3238,7 @@ function mergeTokensIntoManifest(logicTokens){
     // every moon that actually requires it. These Movement Ability dial
     // tokens (FORCE_ABILITY_FILTER_TOKENS) are real requirements and must
     // never be marked always-unlocked from the source data.
-    if(truthy && !FORCE_ABILITY_FILTER_TOKENS[t.token]) ALWAYS_UNLOCKED_TOKENS[t.token] = true;
+    if(truthy && !FORCE_ABILITY_FILTER_TOKENS[t.token] && t.token !== ANY_THROW_TOKEN) ALWAYS_UNLOCKED_TOKENS[t.token] = true;
     if (ICON_MANIFEST[t.token]) return; // don't clobber an already-known token
     const color = (CATEGORY_STYLE[t.category] || {}).color || "#34406e";
     const squashed = squash(t.display_name);
@@ -6646,6 +6676,39 @@ function makeTwoDJumpBadge(){
   return badge;
 }
 
+// Fills an icon-wrap with the four Cap-throw icons, cross-fading through them
+// (Neutral, Up, Spin, Down) on a shared wall-clock so every "Any Cap Throw"
+// icon on the page stays in step. Pure CSS animation; no timers.
+function buildAnyThrowFrames(wrap){
+  const step = ANY_THROW_CYCLE_SECONDS / ANY_THROW_MEMBERS.length;
+  const phase = (Date.now() / 1000) % ANY_THROW_CYCLE_SECONDS;
+  ANY_THROW_MEMBERS.forEach((member, i) => {
+    const mInfo = ICON_MANIFEST[member];
+    const names = mInfo && mInfo.filenames && mInfo.filenames.length ? mInfo.filenames : ["Ability" + member + ".png"];
+    const label = mInfo ? mInfo.label : member;
+    const k = (((phase - i * step) % ANY_THROW_CYCLE_SECONDS) + ANY_THROW_CYCLE_SECONDS) % ANY_THROW_CYCLE_SECONDS;
+    const frame = document.createElement("img");
+    frame.className = "icon any-throw-frame" + (i === 0 ? " first" : "");
+    frame.alt = label;
+    frame.style.animationDuration = ANY_THROW_CYCLE_SECONDS + "s";
+    frame.style.animationDelay = (-k).toFixed(3) + "s";
+    let attempt = 0;
+    frame.src = "icon/" + names[0];
+    frame.onerror = function(){
+      attempt++;
+      if(attempt < names.length){ frame.src = "icon/" + names[attempt]; return; }
+      const fb = document.createElement("div");
+      fb.className = "icon-fallback any-throw-frame" + (i === 0 ? " first" : "");
+      fb.style.setProperty("--icon-color", (mInfo && mInfo.color) || "#34406e");
+      fb.style.animationDuration = frame.style.animationDuration;
+      fb.style.animationDelay = frame.style.animationDelay;
+      fb.textContent = initialsFor(label);
+      frame.replaceWith(fb);
+    };
+    wrap.appendChild(frame);
+  });
+}
+
 function makeIcon(token, opts){
   const info = ICON_MANIFEST[token];
   const label = info ? info.label : token;
@@ -6667,6 +6730,9 @@ function makeIcon(token, opts){
     d.className = "icon-fallback";
     d.textContent = "?";
     wrap.appendChild(d);
+  } else if(token === ANY_THROW_TOKEN){
+    wrap.classList.add("any-throw");
+    buildAnyThrowFrames(wrap);
   } else {
     const img = document.createElement("img");
     img.className = "icon";
@@ -7641,7 +7707,10 @@ function requireAllActive(){
 function groupHasAllTokens(group, tokens){
   const set = new Set();
   group.forEach(t => { set.add(t); if(ABILITY_FILTER_FOLD_TOKENS[t]) set.add(ABILITY_FILTER_FOLD_TOKENS[t]); });
-  return tokens.every(t => set.has(t));
+  const missing = tokens.filter(t => !set.has(t));
+  if(!missing.length) return true;
+  // "Any Cap Throw" can stand in for exactly ONE missing Cap throw.
+  return set.has(ANY_THROW_TOKEN) && missing.length === 1 && ANY_THROW_MEMBERS.indexOf(missing[0]) !== -1;
 }
 
 function moonTokens(moon){
@@ -7653,6 +7722,8 @@ function moonTokens(moon){
     // option the player actually sees in the picker (see
     // ABILITY_FILTER_FOLD_TOKENS).
     if(ABILITY_FILTER_FOLD_TOKENS[tok]) set.add(ABILITY_FILTER_FOLD_TOKENS[tok]);
+    // "Any Cap Throw" counts as using each of the four Cap throws.
+    if(tok === ANY_THROW_TOKEN) ANY_THROW_MEMBERS.forEach(m => set.add(m));
   }));
   return set;
 }
@@ -7670,6 +7741,7 @@ function impliedProgressiveTokens(){
 function tokenIsSelected(tok){
   if(selectedAbilities.has(tok) || selectedCaptures.has(tok)) return true;
   if(filterMode === "cando" && impliedProgressiveTokens().has(tok)) return true;
+  if(tok === ANY_THROW_TOKEN && anyThrowSelected()) return true;
   const folded = ABILITY_FILTER_FOLD_TOKENS[tok];
   if(folded && (selectedAbilities.has(folded) || selectedCaptures.has(folded))) return true;
   return false;
@@ -8525,7 +8597,8 @@ function applyFilterMatchHighlight(){
     // ring gold when "Grab" is the active filter, since that's the
     // option the player actually selected to reach it.
     const foldedTok = ABILITY_FILTER_FOLD_TOKENS[tok] || tok;
-    if(selectedAbilities.has(tok) || selectedCaptures.has(tok)
+    if((tok === ANY_THROW_TOKEN && anyThrowSelected())
+      || selectedAbilities.has(tok) || selectedCaptures.has(tok)
       || selectedAbilities.has(foldedTok) || selectedCaptures.has(foldedTok)){
       el.classList.add("filter-match");
     }
