@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityTripleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2449,19 +2449,41 @@
     .moon-name{ font-size:14px; }
   }
 
-  /* "Any Cap Throw": four throw icons cross-fading in a loop */
-  .icon-wrap.any-throw{ position:relative; }
-  .icon-wrap.any-throw .any-throw-frame{
-    position:absolute; top:0; left:0; width:100%; height:100%;
-    animation-name:anyThrowCycle; animation-timing-function:linear; animation-iteration-count:infinite;
-    animation-fill-mode:both;
+  /* Cycling "Any ..." icons: Any Cap Throw (pink) + Any Grounded Height (blue) */
+  .icon-wrap.any-throw{ --any-acc:#ff6fb5; }
+  .icon-wrap.any-grounded{ --any-acc:#5cc8ff; }
+  .icon-wrap.any-badged{ position:relative; }
+  .icon-wrap.any-badged::before{
+    content:""; position:absolute; inset:-3px; z-index:0; background:var(--any-acc);
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
   }
-  @keyframes anyThrowCycle{
-    0%{ opacity:1; } 21%{ opacity:1; } 25%{ opacity:0; } 96%{ opacity:0; } 100%{ opacity:1; }
+  .icon-wrap.any-badged.filter-match::before{ background:var(--gold); }
+  .icon-wrap.any-badged::after{
+    content:"ANY"; position:absolute; left:50%; bottom:-7px; transform:translateX(-50%); z-index:3;
+    font-size:8.5px; font-weight:800; letter-spacing:.1em; line-height:1; padding:2px 6px;
+    color:#1b1c1f; background:var(--any-acc); pointer-events:none;
+    clip-path:polygon(3px 0,100% 0,100% calc(100% - 3px),calc(100% - 3px) 100%,0 100%,0 3px);
   }
+  .hoist-token .icon-wrap.any-badged::after, .hoist-token .icon-wrap.any-badged::before{ display:none; }
+  .cycle-frame{
+    position:absolute; inset:0; z-index:1; display:block; background:var(--bg-panel);
+    animation-timing-function:linear; animation-iteration-count:infinite; animation-fill-mode:both;
+    clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  }
+  .cycle-frame > .icon, .cycle-frame > .icon-fallback{ position:absolute; width:100%; height:100%; top:0; left:0; clip-path:none; border:0; }
+  .cycle-frame.pair > :first-child{ width:64%; height:64%; top:0; left:0; z-index:1; }
+  .cycle-frame.pair > :last-child{ width:64%; height:64%; top:auto; left:auto; right:0; bottom:0; z-index:2; box-shadow:-1px -1px 0 var(--bg-panel); }
+  .cycle-4{ animation-name:cycle4; }
+  .cycle-8{ animation-name:cycle8; }
+  @keyframes cycle4{ 0%{opacity:1} 21%{opacity:1} 25%{opacity:0} 96%{opacity:0} 100%{opacity:1} }
+  @keyframes cycle8{ 0%{opacity:1} 10%{opacity:1} 12.5%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
+  .prog-icon.prog-any{ position:relative; overflow:hidden; padding:0; }
+  .prog-icon.prog-any .cycle-frame{ clip-path:none; border-radius:4px; }
+  .prog-badge.pink .prog-icon{ border-color:#ff6fb5; }
+  .prog-badge.pink .prog-arrow{ background:#ff6fb5; }
   @media (prefers-reduced-motion:reduce){
-    .icon-wrap.any-throw .any-throw-frame{ animation:none; opacity:0; }
-    .icon-wrap.any-throw .any-throw-frame.first{ opacity:1; }
+    .cycle-frame{ animation:none; opacity:0; }
+    .cycle-frame.first{ opacity:1; }
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -2939,6 +2961,8 @@ let ICON_MANIFEST = {
   // never a filter tile of its own — see ANY_THROW_* below. Its icon cycles
   // through the four throws (see makeIcon).
   AnyThrow: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw", color:"#34406e", category:"Movement", tokenType:"ability" },
+  // Display-only merge of every grounded-height method (see GH_* below).
+  GroundedHeight: { filenames:["AbilityJump.png"], label:"Any Grounded Height", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
 
 // Movement/CapThrow ("ability") icon sets found in the wild are commonly
@@ -3025,6 +3049,7 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Turnip: true,
   Nut: true,
   Seed: true,
+  GroundedHeight: true, // display-only merge; never a filter tile
   AnyThrow: true, // never its own filter tile — it answers to the four Cap throws below
 };
 
@@ -3035,6 +3060,57 @@ const ANY_THROW_MEMBERS = ["NeutralThrow", "UpThrow", "SpinThrow", "DownThrow"];
 const ANY_THROW_CYCLE_SECONDS = 6; // whole loop (1.5s per throw)
 function anyThrowSelected(){
   return ANY_THROW_MEMBERS.some(t => selectedAbilities.has(t));
+}
+
+// "Any Grounded Height": when ALL of these methods sit in ONE logic level of a
+// moon (and the kingdom's Jump / Cap Return Jump are not Incomplete), they are
+// shown as a single merged chip. Each entry is one method (an AND-group).
+const GH_TOKEN = "GroundedHeight";
+const GH_METHODS = [
+  ["SingleJump"], ["CapReturnJump"], ["Backflip"], ["Spin"], ["SideFlip"], ["LongJump"],
+  ["NeutralThrow", "Vault"], ["DownThrow", "Vault"],
+];
+const GH_ALL_TOKENS = Array.from(new Set(GH_METHODS.reduce((a, m) => a.concat(m), [])));
+function ghTokenKey(t){ return /cap\s*_?return/i.test(String(t)) ? "CapReturnJump" : t; }
+// True when picking things in the filters satisfies at least one merged method.
+function ghSatisfied(){
+  return GH_METHODS.some(m => m.every(t => tokenIsSelected(t) || (t === "CapReturnJump" && Object.keys(ICON_MANIFEST).some(k => ghTokenKey(k) === "CapReturnJump" && tokenIsSelected(k)))));
+}
+// Any selected filter item that is part of the merge (for the highlight ring).
+function ghAnySelected(){
+  return GH_ALL_TOKENS.some(t => selectedAbilities.has(t))
+    || Object.keys(ICON_MANIFEST).some(k => ghTokenKey(k) === "CapReturnJump" && selectedAbilities.has(k));
+}
+function ghKingdomActive(kingdomName){
+  const k = kingdomName || KINGDOM_ORDER[currentKingdomIndex];
+  return !isTokenIncompleteOn("SingleJump", k) && !isTokenIncompleteOn("CapReturnJump", k);
+}
+function ghSpecIndex(group){
+  const keys = group.map(ghTokenKey);
+  return GH_METHODS.findIndex(m => m.length === keys.length && m.every(t => keys.indexOf(t) !== -1));
+}
+// Returns a copy of `tierLanes` where, in any lane holding all 8 methods
+// (same scenarios + origin), they are replaced by one merged group.
+function withGroundedMerge(tierLanes, kingdomName){
+  if(!tierLanes || submitMode || !ghKingdomActive(kingdomName)) return tierLanes;
+  let changed = false;
+  const out = tierLanes.map(lane => {
+    const hits = {}; // spec index -> [group positions]
+    lane.groups.forEach((g, i) => { const si = ghSpecIndex(g); if(si >= 0) (hits[si] = hits[si] || []).push(i); });
+    if(Object.keys(hits).length !== GH_METHODS.length) return lane;
+    const all = [].concat(...Object.values(hits));
+    const first = lane.groups[all[0]];
+    const same = all.every(i => sameScenarioData(lane.groups[i].scenarios, first.scenarios) && (lane.groups[i].origin || null) === (first.origin || null));
+    if(!same) return lane;
+    const slots = all.map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
+    const merged = Object.assign([GH_TOKEN], { scenarios: first.scenarios || null, origin: first.origin || null, slot: slots[0], mergedSlots: slots });
+    const at = Math.min(...all);
+    const groups = [];
+    lane.groups.forEach((g, i) => { if(i === at) groups.push(merged); else if(all.indexOf(i) === -1) groups.push(g); });
+    changed = true;
+    return Object.assign({}, lane, { groups });
+  });
+  return changed ? out : tierLanes;
 }
 
 // The other half of the Turnip/Nut/Seed -> "Grab" fold above: hiding them
@@ -3204,8 +3280,11 @@ function incompleteGroupOf(token){
 }
 // Does this token still carry the Incomplete badge on the kingdom page being viewed?
 function isTokenIncompleteHere(token){
+  return isTokenIncompleteOn(token, KINGDOM_ORDER[currentKingdomIndex]);
+}
+function isTokenIncompleteOn(token, kingdomName){
   if(!INCOMPLETE_ABILITY_TOKENS[token]) return false;
-  const done = COMPLETE_ON_KINGDOM[KINGDOM_ORDER[currentKingdomIndex]];
+  const done = COMPLETE_ON_KINGDOM[kingdomName];
   const grp = incompleteGroupOf(token);
   return !(done && grp && done.indexOf(grp) >= 0);
 }
@@ -6620,6 +6699,7 @@ const ABILITY_PROGRESSION = {
   Dive: ["GroundPound"],
   DoubleJump: ["SingleJump"],
   TripleJump: ["SingleJump", "DoubleJump"],
+  CapReturnJump: ["AnyThrow"],
 };
 function makeProgressionBadge(token){
   const chain = ABILITY_PROGRESSION[token];
@@ -6627,6 +6707,15 @@ function makeProgressionBadge(token){
   const badge = document.createElement("span");
   badge.className = "prog-badge";
   chain.forEach(pt => {
+    if(pt === ANY_THROW_TOKEN){
+      const holder = document.createElement("span");
+      holder.className = "prog-icon prog-any";
+      holder.title = "Any Cap Throw";
+      buildCycleFrames(holder, ANY_THROW_MEMBERS.map(m => [m]), ANY_THROW_CYCLE_SECONDS, "cycle-4");
+      badge.appendChild(holder);
+      badge.classList.add("pink");
+      return;
+    }
     const info = ICON_MANIFEST[pt];
     const names = info ? info.filenames.slice() : [];
     if(pt === "Jump" || pt === "SingleJump") names.push("AbilityJump.png");
@@ -6676,36 +6765,39 @@ function makeTwoDJumpBadge(){
   return badge;
 }
 
-// Fills an icon-wrap with the four Cap-throw icons, cross-fading through them
-// (Neutral, Up, Spin, Down) on a shared wall-clock so every "Any Cap Throw"
-// icon on the page stays in step. Pure CSS animation; no timers.
-function buildAnyThrowFrames(wrap){
-  const step = ANY_THROW_CYCLE_SECONDS / ANY_THROW_MEMBERS.length;
-  const phase = (Date.now() / 1000) % ANY_THROW_CYCLE_SECONDS;
-  ANY_THROW_MEMBERS.forEach((member, i) => {
-    const mInfo = ICON_MANIFEST[member];
-    const names = mInfo && mInfo.filenames && mInfo.filenames.length ? mInfo.filenames : ["Ability" + member + ".png"];
-    const label = mInfo ? mInfo.label : member;
-    const k = (((phase - i * step) % ANY_THROW_CYCLE_SECONDS) + ANY_THROW_CYCLE_SECONDS) % ANY_THROW_CYCLE_SECONDS;
-    const frame = document.createElement("img");
-    frame.className = "icon any-throw-frame" + (i === 0 ? " first" : "");
-    frame.alt = label;
-    frame.style.animationDuration = ANY_THROW_CYCLE_SECONDS + "s";
-    frame.style.animationDelay = (-k).toFixed(3) + "s";
-    let attempt = 0;
-    frame.src = "icon/" + names[0];
-    frame.onerror = function(){
-      attempt++;
-      if(attempt < names.length){ frame.src = "icon/" + names[attempt]; return; }
-      const fb = document.createElement("div");
-      fb.className = "icon-fallback any-throw-frame" + (i === 0 ? " first" : "");
-      fb.style.setProperty("--icon-color", (mInfo && mInfo.color) || "#34406e");
-      fb.style.animationDuration = frame.style.animationDuration;
-      fb.style.animationDelay = frame.style.animationDelay;
-      fb.textContent = initialsFor(label);
-      frame.replaceWith(fb);
-    };
-    wrap.appendChild(frame);
+// Cross-fading icon frames on a shared wall-clock (every instance stays in
+// step). `frames` = list of token lists; two tokens render as an overlapped pair.
+function buildCycleFrames(wrap, frames, seconds, cls){
+  const step = seconds / frames.length;
+  const phase = (Date.now() / 1000) % seconds;
+  frames.forEach((toks, i) => {
+    const k = (((phase - i * step) % seconds) + seconds) % seconds;
+    const fr = document.createElement("span");
+    fr.className = "cycle-frame " + cls + (toks.length > 1 ? " pair" : "") + (i === 0 ? " first" : "");
+    fr.style.animationDuration = seconds + "s";
+    fr.style.animationDelay = (-k).toFixed(3) + "s";
+    toks.forEach(t => {
+      const tk = ICON_MANIFEST[t] ? t : Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t;
+      const mInfo = ICON_MANIFEST[tk];
+      const names = mInfo && mInfo.filenames && mInfo.filenames.length ? mInfo.filenames : ["Ability" + t + ".png"];
+      const label = mInfo ? mInfo.label : t;
+      const img = document.createElement("img");
+      img.className = "icon";
+      img.alt = label;
+      let attempt = 0;
+      img.src = "icon/" + names[0];
+      img.onerror = function(){
+        attempt++;
+        if(attempt < names.length){ img.src = "icon/" + names[attempt]; return; }
+        const fb = document.createElement("div");
+        fb.className = "icon-fallback";
+        fb.style.setProperty("--icon-color", (mInfo && mInfo.color) || "#34406e");
+        fb.textContent = initialsFor(label);
+        img.replaceWith(fb);
+      };
+      fr.appendChild(img);
+    });
+    wrap.appendChild(fr);
   });
 }
 
@@ -6731,8 +6823,11 @@ function makeIcon(token, opts){
     d.textContent = "?";
     wrap.appendChild(d);
   } else if(token === ANY_THROW_TOKEN){
-    wrap.classList.add("any-throw");
-    buildAnyThrowFrames(wrap);
+    wrap.classList.add("any-badged", "any-throw");
+    buildCycleFrames(wrap, ANY_THROW_MEMBERS.map(m => [m]), ANY_THROW_CYCLE_SECONDS, "cycle-4");
+  } else if(token === GH_TOKEN){
+    wrap.classList.add("any-badged", "any-grounded");
+    buildCycleFrames(wrap, GH_METHODS, 10, "cycle-8");
   } else {
     const img = document.createElement("img");
     img.className = "icon";
@@ -6762,6 +6857,13 @@ function makeIcon(token, opts){
   const tip = document.createElement("span");
   tip.className = "icon-tooltip";
   tip.textContent = label + ((opts && opts.twoDJump) ? " (2D Jump)" : "");
+  if(token === ANY_THROW_TOKEN){
+    tip.className += " wide";
+    tip.textContent = "Any Cap Throw \u2014 Neutral, Up, Spin or Down Throw";
+  } else if(token === GH_TOKEN){
+    tip.className += " wide";
+    tip.textContent = "Any Grounded Height \u2014 Jump, Cap Return Jump, Backflip, Spin, Side Flip, Long Jump, Neutral Throw + Vault or Down Throw + Vault";
+  }
   wrap.appendChild(tip);
 
   return wrap;
@@ -7299,10 +7401,11 @@ function buildMovementOptions(moon, boxed){
   const stack = document.createElement("div");
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
   // Darker Side moons never use the shared "This moon requires X. Beyond this…" header.
-  const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(moon.tierLanes, moon.name);
+  const mLanes = withGroundedMerge(moon.tierLanes, moon.kingdom);
+  const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(mLanes, moon.name);
   const hoistSet = hoistedFormSet(hoisted);
 
-  moon.tierLanes.forEach(lane => {
+  mLanes.forEach(lane => {
     const laneEl = document.createElement("div");
     laneEl.className = "tier-lane " + lane.tier;
 
@@ -7322,7 +7425,7 @@ function buildMovementOptions(moon, boxed){
 
     const hideNonFree = laneHasFilterFreeMethod(lane);
     lane.groups.forEach((andGroup, i)=>{
-      if(exemptHides(lane, andGroup) || exemptSubsumedBy(moon.tierLanes, lane, andGroup)) return;
+      if(exemptHides(lane, andGroup) || exemptSubsumedBy(mLanes, lane, andGroup)) return;
       // A branch can end up with no tokens either because it was already
       // free (Single Jump / "already in this kingdom" stripped out during
       // parsing) or because "Exempt!" mode just stripped out every token
@@ -7336,7 +7439,7 @@ function buildMovementOptions(moon, boxed){
         chip.textContent = (hoistSet.size && preHoistGroup.length > 0) ? "Nothing else" : "Free";
         chip.dataset.slot = slotOf(andGroup, i);
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
-        attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i));
+        attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
         if(andGroup.origin){
           const otag = document.createElement("span");
           otag.className = "origin-tag";
@@ -7370,7 +7473,7 @@ function buildMovementOptions(moon, boxed){
       chip.className = "option-chip";
       chip.dataset.slot = slotOf(andGroup, i);
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
-      attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i));
+      attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
       appendAndGroupIcons(chip, displayGroup);
       // Scenario Data: this branch's own scenario restriction (option b —
       // each branch gets its own independent tag, never merged into a
@@ -7397,10 +7500,10 @@ function buildMovementOptions(moon, boxed){
       optsEl.appendChild(chip);
     });
 
-    const subNote = exemptSubsumedNote(moon.tierLanes, lane);
+    const subNote = exemptSubsumedNote(mLanes, lane);
     if(subNote){
       optsEl.appendChild(subNote);
-      if(lane.groups.every(g => exemptHides(lane, g) || exemptSubsumedBy(moon.tierLanes, lane, g))) laneEl.classList.add("subsidized");
+      if(lane.groups.every(g => exemptHides(lane, g) || exemptSubsumedBy(mLanes, lane, g))) laneEl.classList.add("subsidized");
     }
     laneEl.appendChild(optsEl);
     stack.appendChild(laneEl);
@@ -7410,7 +7513,7 @@ function buildMovementOptions(moon, boxed){
   // the box collapses to a peek: the first option shown in full, a cropped
   // slice of the second under a fade, and an expand toggle pinned to the
   // box's own top-right corner.
-  const totalOptions = moon.tierLanes.reduce((sum, lane) => sum + lane.groups.length - exemptHiddenCount(moon.tierLanes, lane), 0);
+  const totalOptions = mLanes.reduce((sum, lane) => sum + lane.groups.length - exemptHiddenCount(mLanes, lane), 0);
   return wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions), hoisted, "moon");
 }
 
@@ -7742,6 +7845,7 @@ function tokenIsSelected(tok){
   if(selectedAbilities.has(tok) || selectedCaptures.has(tok)) return true;
   if(filterMode === "cando" && impliedProgressiveTokens().has(tok)) return true;
   if(tok === ANY_THROW_TOKEN && anyThrowSelected()) return true;
+  if(tok === GH_TOKEN) return ghSatisfied();
   const folded = ABILITY_FILTER_FOLD_TOKENS[tok];
   if(folded && (selectedAbilities.has(folded) || selectedCaptures.has(folded))) return true;
   return false;
@@ -8597,7 +8701,7 @@ function applyFilterMatchHighlight(){
     // ring gold when "Grab" is the active filter, since that's the
     // option the player actually selected to reach it.
     const foldedTok = ABILITY_FILTER_FOLD_TOKENS[tok] || tok;
-    if((tok === ANY_THROW_TOKEN && anyThrowSelected())
+    if((tok === ANY_THROW_TOKEN && anyThrowSelected()) || (tok === GH_TOKEN && ghAnySelected())
       || selectedAbilities.has(tok) || selectedCaptures.has(tok)
       || selectedAbilities.has(foldedTok) || selectedCaptures.has(foldedTok)){
       el.classList.add("filter-match");
@@ -9535,6 +9639,7 @@ function buildTierLanesFromBranches(branches){
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
 function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
+  tierLanes = withGroundedMerge(tierLanes);
   const stack = document.createElement("div");
   stack.className = "tier-stack";
   const hoisted = hoistedTokensFor(tierLanes, moonName);
@@ -9752,8 +9857,11 @@ function logicVideoExists(baseName){
 }
 
 // Adds a small play-icon badge to the top-right of a node if it has a clip.
-function attachVideoBadge(nodeEl, moon, tierKey, indexInTier){
-  logicVideoExists(videoAutoName(moon.name, tierKey, indexInTier)).then(found => {
+function attachVideoBadge(nodeEl, moon, tierKey, indexInTier, slots){
+  const probe = slots && slots.length > 1
+    ? Promise.all(slots.map(sl => logicVideoExists(videoAutoName(moon.name, tierKey, sl)))).then(r => r.some(Boolean))
+    : logicVideoExists(videoAutoName(moon.name, tierKey, indexInTier));
+  probe.then(found => {
     if(!found || nodeEl.querySelector(":scope > .has-video-badge")) return;
     nodeEl.classList.add("has-video");
     const badge = document.createElement("span");
@@ -9776,16 +9884,22 @@ function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier){
     });
     return;
   }
-  const baseName = videoAutoName(moon.name, tierKey, indexInTier);
   const myToken = ++videoCheckToken;
-  findLogicVideo(baseName, (mediaEl) => {
-    if(myToken !== videoCheckToken) return; // superseded by a newer click
-    if(mediaEl){
-      openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl);
-    } else {
-      showNothingYetToast();
-    }
-  });
+  const slots = (andGroup && andGroup.mergedSlots) ? andGroup.mergedSlots.slice() : [indexInTier];
+  const tryNext = () => {
+    const baseName = videoAutoName(moon.name, tierKey, slots.shift());
+    findLogicVideo(baseName, (mediaEl) => {
+      if(myToken !== videoCheckToken) return; // superseded by a newer click
+      if(mediaEl){
+        openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl);
+      } else if(slots.length){
+        tryNext(); // merged chip: try the next member's clip
+      } else {
+        showNothingYetToast();
+      }
+    });
+  };
+  tryNext();
 }
 
 // Tries assets/logicvideos/<baseName>.mp4, then .webp, then gives up.
@@ -10121,6 +10235,7 @@ const VIDEO_SUBMIT = {
   function setSubmitMode(on){
     submitMode = on; document.body.classList.toggle("submit-mode", on);
     $("submitToggle").classList.toggle("active", on); if(!on) closeSubmit();
+    try{ renderGrid(); }catch(e){}
   }
   $("submitToggle").addEventListener("click", () => setSubmitMode(!submitMode));
   $("submitBarExit").addEventListener("click", () => setSubmitMode(false));
