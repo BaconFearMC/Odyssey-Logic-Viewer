@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityTripleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -143,8 +143,10 @@
   /* Submit Video button hidden for now (remove this rule to bring it back). The debug
      "!" button drops into its slot. */
   #submitToggle{ display:none !important; }
-  #debugToggle{ bottom:24px !important; }
-  #debugPanel{ bottom:68px !important; }
+  #debugToggle{ display:none !important; }
+  #debugPanel{ display:flex !important; left:24px !important; bottom:24px !important; z-index:21; }
+  #videoToggle, #raiseToggle{ display:none !important; }
+  #unmarkedToggle .btn-ic, #glitchToggle .btn-ic{ width:20px; height:20px; object-fit:contain; display:inline-block; }
   #glitchToggle{ right:24px; top:66px; }
   #glitchToggle.active{
     background:var(--tier-glitched);
@@ -2450,7 +2452,8 @@
   }
 
   /* Cycling "Any ..." icons: Any Cap Throw (pink) + Any Grounded Height (blue) */
-  .icon-wrap.any-throw{ --any-acc:#ff6fb5; }
+  .icon-wrap.any-throw{ --any-acc:#27408f; }
+  .icon-wrap.any-throw::after{ color:#fff; }
   .icon-wrap.any-grounded{ --any-acc:#5cc8ff; }
   .icon-wrap.any-badged{ position:relative; }
   .icon-wrap.any-badged::before{
@@ -2509,6 +2512,47 @@
     *, *::before, *::after{ transition-duration:.01ms !important; }
     .search-overlay, .node-overlay, .video-overlay, .vs-overlay{ animation:none; }
   }
+  .exempt-levels{ display:flex; gap:8px; flex-wrap:wrap; width:100%; }
+  .exempt-opt{ flex:1 1 240px; display:flex; flex-direction:column; gap:4px; text-align:left; cursor:pointer;
+    background:var(--bg-chip); border:2px solid var(--border); border-bottom-width:3px; padding:9px 12px;
+    color:var(--text-dim); font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; }
+  .exempt-opt:hover{ background:rgba(255,255,255,0.05); }
+  .exempt-opt.active{ background:var(--gold-light); border-color:var(--gold); }
+  .exempt-opt-title{ font-size:13.5px; color:var(--text-dim); }
+  .exempt-opt.active .exempt-opt-title{ color:var(--gold); }
+  .exempt-opt-desc{ font-size:11.5px; color:var(--text); }
+  .exempt-opt-ex{ font-size:11px; color:var(--text-dim); line-height:1.4; }
+  .exempt-opt-ex b{ color:var(--gold); font-weight:400; }
+
+  /* Ability info button (bottom right) + popup */
+  #infoBtn{ position:fixed; right:24px; bottom:24px; left:auto; top:auto; margin:0; padding:7px 10px; z-index:21; }
+  #infoOverlay{ position:fixed; inset:0; background:rgba(0,0,0,0.72); display:none; align-items:center; justify-content:center; z-index:1200; }
+  #infoOverlay.open{ display:flex; }
+  .info-modal{ position:relative; width:75vw; height:75vh; max-width:1100px; overflow-y:auto; text-align:left;
+    background:var(--bg-panel); border:2px solid var(--gold); padding:24px 30px 30px; box-shadow:var(--shadow-hover);
+    clip-path:polygon(var(--cut-md) 0,100% 0,100% calc(100% - var(--cut-md)),calc(100% - var(--cut-md)) 100%,0 100%,0 var(--cut-md)); }
+  .info-modal h2{ margin:0 0 4px; font-size:22px; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); font-weight:400; }
+  .info-modal .info-sub{ margin:0 0 20px; color:var(--text-dim); font-size:12.5px; }
+  .info-close{ position:absolute; top:10px; right:14px; background:none; border:none; color:var(--text-dim); font-size:28px; cursor:pointer; line-height:1; }
+  .info-close:hover{ color:var(--gold); }
+  .info-row{ display:flex; gap:22px; align-items:flex-start; padding:18px 0; border-top:2px dashed var(--border); }
+  .info-row:first-of-type{ border-top:none; }
+  .info-ic{ flex:0 0 auto; width:72px; height:72px; background:var(--bg-chip); border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; font-size:34px; }
+  .info-ic img{ width:100%; height:100%; object-fit:contain; }
+  .info-txt{ flex:1 1 auto; min-width:0; font-size:14px; line-height:1.55; color:var(--text); }
+  .info-txt h3{ margin:0 0 6px; font-size:17px; color:var(--gold); font-weight:400; letter-spacing:.04em; }
+  .info-wip{ color:var(--tier-advanced); }
+  .info-kingdoms{ display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0; }
+  .info-kingdom{ display:flex; align-items:center; gap:8px; background:var(--bg-chip); border:2px solid var(--border); padding:4px 12px 4px 6px; }
+  .info-kingdom span.kic{ width:32px; height:32px; display:inline-flex; }
+  .info-kingdom img, .info-kingdom .icon-fallback{ width:32px; height:32px; object-fit:contain; }
+  .info-list{ list-style:none; margin:8px 0 0; padding:0; counter-reset:n; }
+  .info-list > li{ counter-increment:n; position:relative; padding:6px 0 6px 34px; }
+  .info-list > li::before{ content:counter(n); position:absolute; left:0; top:6px; width:24px; height:24px; background:var(--gold); color:#1b1c1f; text-align:center; line-height:24px; font-size:13px; }
+  .info-list ul{ list-style:none; margin:6px 0 2px; padding:0 0 0 4px; border-left:3px solid var(--border); }
+  .info-list ul li{ padding:3px 0 3px 12px; color:var(--text); }
+  .info-list ul ul li{ color:var(--text-dim); font-size:13px; padding-left:14px; }
+  @media (max-width:700px){ .info-modal{ width:94vw; height:85vh; padding:20px 16px; } .info-row{ gap:12px; } .info-ic{ width:52px; height:52px; } }
 </style>
 </head>
 <body>
@@ -2540,18 +2584,14 @@
 </div>
 
 <div id="debugPanel" role="menu" aria-label="Debug options">
-<button class="corner-btn" id="unmarkedToggle" type="button" aria-label="Show only unmarked logic moons">
-  <span class="icon-svg" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0Z"/></svg>
-  </span>
-  <span>UNMARKED (Bug Fixing)</span>
+<button class="corner-btn" id="unmarkedToggle" type="button" aria-label="NO LOGIC? - show only unmarked logic moons">
+  <img class="btn-ic" src="icon/AbilityDeath.png" alt="" onerror="this.style.display='none'">
+  <span>NO LOGIC?</span>
 </button>
 
-<button class="corner-btn active" id="glitchToggle" type="button" aria-label="Cycle Glitched logic filter">
-  <span class="icon-svg" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v4M15 3v4M4 11h16M6 11v6a2 2 0 0 0 2 2h1M18 11v6a2 2 0 0 1-2 2h-1M10 19h4"/></svg>
-  </span>
-  <span id="glitchToggleLabel">Glitched: Hidden</span>
+<button class="corner-btn active" id="glitchToggle" type="button" aria-label="Cycle Glitch Bible filter">
+  <img class="btn-ic" src="icon/AbilitySideFlip.png" alt="" onerror="this.style.display='none'">
+  <span id="glitchToggleLabel">Glitch Bible [WIP]: Hidden</span>
 </button>
 
 <button class="corner-btn" id="videoToggle" type="button" aria-label="Cycle video filter: All, Has Video, Has No Video">
@@ -2564,14 +2604,21 @@
 
 
 
-<button class="corner-btn" id="raiseToggle" type="button" aria-label="Toggle folding harder logic levels when an exemption makes an easier level Free">
-  <span class="icon-svg" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>
-  </span>
-  <span id="raiseToggleLabel">Exempt Levels: Fold Up</span>
-</button>
+<button id="raiseToggle" type="button" hidden aria-hidden="true"><span id="raiseToggleLabel"></span></button>
 
 <button class="corner-btn" id="approveToggle" type="button" aria-label="Approve videos" style="display:none;"><span>Approve Videos</span></button>
+</div>
+
+<button class="corner-btn" id="infoBtn" type="button" aria-label="Ability info" aria-haspopup="dialog">
+  <span class="icon-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.2h.01"/></svg></span>
+</button>
+<div id="infoOverlay" aria-hidden="true">
+  <div class="info-modal" role="dialog" aria-label="Ability info">
+    <button type="button" class="info-close" id="infoClose" aria-label="Close">&times;</button>
+    <h2>Ability Info</h2>
+    <p class="info-sub">Things worth knowing about the Bonus Abilities.</p>
+    <div id="infoBody"></div>
+  </div>
 </div>
 
 <button class="corner-btn" id="seeExample" type="button"><span>See an Example</span></button>
@@ -2663,6 +2710,19 @@
       <button type="button" class="filter-bar-clear" id="tokenFilterClear" aria-label="Clear Ability/Capture filter" style="display:none;">&times;</button>
     </div>
     <div class="filter-bar-panel" id="tokenFilterPanel">
+      <div class="filter-section-heading">Exempt Levels</div>
+      <div class="exempt-levels" id="exemptLevels" role="radiogroup" aria-label="Exempt Levels mode">
+        <button type="button" class="exempt-opt" data-fold="0" role="radio">
+          <span class="exempt-opt-title">Separate</span>
+          <span class="exempt-opt-desc">Each logic level stays on its own.</span>
+          <span class="exempt-opt-ex"><b>Example:</b> a moon has Casual: <i>Backflip</i> and Advanced: <i>Dive + Cap Throw</i>. You exempt Backflip &rarr; Casual reads <i>Free</i>, but the Advanced route is still listed below it.</span>
+        </button>
+        <button type="button" class="exempt-opt" data-fold="1" role="radio">
+          <span class="exempt-opt-title">Fold Up</span>
+          <span class="exempt-opt-desc">Harder levels fold away once an easier one is Free.</span>
+          <span class="exempt-opt-ex"><b>Example:</b> same moon, same exemption &rarr; Casual is <i>Free</i>, so the Advanced and Expert routes are hidden with a note, since you'd never need them.</span>
+        </button>
+      </div>
       <div class="filter-section-heading">Abilities</div>
       <input type="text" class="filter-bar-search" id="abilityFilterSearch" placeholder="Search abilities…" autocomplete="off">
       <div class="filter-bar-grid" id="abilityFilterGrid"></div>
@@ -7767,7 +7827,7 @@ let unmarkedMode = false;
 // moons) -> "all" (everything) -> back to "hide". Same reset-on-navigate
 // rule as unmarkedMode.
 const GLITCH_MODES = ["all", "hide", "only"];
-const GLITCH_LABELS = { all: "Glitched: All", hide: "Glitched: Hidden", only: "Glitched: Only" };
+const GLITCH_LABELS = { all: "Glitch Bible [WIP]: All", hide: "Glitch Bible [WIP]: Hidden", only: "Glitch Bible [WIP]: Only" };
 let glitchMode = "hide";
 
 // Video filter (debug menu): "all" -> "has" (only routes that have a clip) -> "none"
@@ -8867,19 +8927,71 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   renderGrid();
 });
 
+// ---- Exempt Levels (lives in the Filters panel) ----
 (function(){
-  const btn = document.getElementById("raiseToggle"), lbl = document.getElementById("raiseToggleLabel");
-  const sync = () => {
-    btn.classList.toggle("active", exemptRaiseLevels);
-    lbl.textContent = exemptRaiseLevels ? "Exempt Levels: Fold Up" : "Exempt Levels: Separate";
-  };
-  sync();
-  btn.addEventListener("click", () => {
-    exemptRaiseLevels = !exemptRaiseLevels;
-    try{ localStorage.setItem("exemptRaiseLevelsV2", exemptRaiseLevels ? "1" : "0"); }catch(e){}
-    sync();
-    renderGrid();
+  const wrap = document.getElementById("exemptLevels");
+  if(!wrap) return;
+  const sync = () => wrap.querySelectorAll(".exempt-opt").forEach(b => {
+    const on = (b.dataset.fold === "1") === exemptRaiseLevels;
+    b.classList.toggle("active", on); b.setAttribute("aria-checked", on ? "true" : "false");
   });
+  sync();
+  wrap.addEventListener("click", e => {
+    const b = e.target.closest(".exempt-opt"); if(!b) return;
+    exemptRaiseLevels = b.dataset.fold === "1";
+    try{ localStorage.setItem("exemptRaiseLevelsV2", exemptRaiseLevels ? "1" : "0"); }catch(err){}
+    sync(); renderGrid();
+  });
+})();
+
+// ---- Ability info popup (bottom right) ----
+(function(){
+  const btn = document.getElementById("infoBtn"), ov = document.getElementById("infoOverlay"), body = document.getElementById("infoBody");
+  if(!btn || !ov) return;
+  const row = (iconEl, html) => {
+    const r = document.createElement("div"); r.className = "info-row";
+    const ic = document.createElement("div"); ic.className = "info-ic"; ic.appendChild(iconEl);
+    const tx = document.createElement("div"); tx.className = "info-txt"; tx.innerHTML = html;
+    r.appendChild(ic); r.appendChild(tx); return r;
+  };
+  function build(){
+    body.innerHTML = "";
+    // Jump
+    const jumpIc = makeFilterIconEl("SingleJump", "");
+    const jr = row(jumpIc, '<h3>Jump</h3><div><span class="info-wip">Logic is a Work in Progress!</span> Currently the only Kingdoms with completed Jump Logic are:</div><div class="info-kingdoms" id="infoJumpK"></div>');
+    body.appendChild(jr);
+    const kEl = jr.querySelector("#infoJumpK");
+    const done = Object.keys(COMPLETE_ON_KINGDOM).filter(k => COMPLETE_ON_KINGDOM[k].indexOf("jump") >= 0);
+    done.sort((a, b) => KINGDOM_ORDER.indexOf(a) - KINGDOM_ORDER.indexOf(b));
+    done.forEach(k => {
+      const d = document.createElement("div"); d.className = "info-kingdom";
+      const ic = makeKingdomIcon(k, "kic"); d.appendChild(ic);
+      const t = document.createElement("span"); t.textContent = k; d.appendChild(t);
+      kEl.appendChild(d);
+    });
+    // Odyssey Travel
+    const tok = Object.keys(ICON_MANIFEST).find(t => /odyssey/i.test(filterLabelFor(t)));
+    let oic;
+    if(tok) oic = makeFilterIconEl(tok, "");
+    else { oic = document.createElement("span"); oic.textContent = "\ud83d\ude80"; }
+    body.appendChild(row(oic,
+      '<h3>Odyssey Travel</h3>' +
+      '<div>It isn\u2019t represented in the Logic itself, but the game knows about it:</div>' +
+      '<ol class="info-list">' +
+        '<li>Odyssey Travel locks travel to the next (and prior) Kingdom until the Ability is grabbed.' +
+          '<ul><li>The next Kingdom is only accessible with the Ability.' +
+            '<ul><li>This could mean the 2nd Kingdom in order is \u201cgiven\u201d to you via a Loading Zone, so it can be reached earlier.</li></ul>' +
+          '</li></ul>' +
+        '</li>' +
+        '<li>This Ability <b>IS</b> required to complete the run.</li>' +
+        '<li>\u201cReturn to Start\u201d is always unlocked and can be used at any point.</li>' +
+      '</ol>'));
+  }
+  const setOpen = o => { if(o) build(); ov.classList.toggle("open", o); ov.setAttribute("aria-hidden", o ? "false" : "true"); };
+  btn.addEventListener("click", () => setOpen(true));
+  document.getElementById("infoClose").addEventListener("click", () => setOpen(false));
+  ov.addEventListener("click", e => { if(e.target === ov) setOpen(false); });
+  document.addEventListener("keydown", e => { if(e.key === "Escape") setOpen(false); });
 })();
 
 document.getElementById("videoToggle").addEventListener("click", () => {
@@ -9154,12 +9266,12 @@ function setupMergedFilterBar(tokens){
   const mainAbilities = () => abilities.filter(t => !BONUS_ABILITY_TOKENS[t]);
   const bonusAbilities = () => abilities.filter(t => BONUS_ABILITY_TOKENS[t]);
   const BONUS_LEFT_ORDER = [/^(single )?jump$/, /cap return/, /wallet/, /painting/, /odyssey/];
-  const BONUS_RIGHT_ORDER = [/death/, /health/];
+  const BONUS_RIGHT_ORDER = [/wallet/, /painting/, /death/, /health/];
   const rankBy = (list, t) => { const l = filterLabelFor(t).toLowerCase(); const i = list.findIndex(re => re.test(l)); return i < 0 ? list.length : i; };
   // Draws the main Abilities grid plus the bottom row (left / right groups).
   function renderAbilityGrids(){
     renderOptions("ability", mainAbilities(), selectedAbilities, abilityGridEl, abilitySearchEl.value);
-    const bonus = bonusAbilities();
+    const bonus = bonusAbilities().filter(t => !/odyssey/.test(filterLabelFor(t).toLowerCase())); // Odyssey Travel: info popup only
     const right = bonus.filter(t => BONUS_RIGHT_ORDER.some(re => re.test(filterLabelFor(t).toLowerCase())))
       .sort((a, b) => rankBy(BONUS_RIGHT_ORDER, a) - rankBy(BONUS_RIGHT_ORDER, b));
     const left = bonus.filter(t => right.indexOf(t) < 0)
