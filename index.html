@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1987,22 +1987,22 @@
   .hoist-wrap{ width:100%; display:flex; flex-direction:column; gap:3px; }
   .hoist-head{
     display:flex; flex-direction:column; align-items:flex-start; gap:3px;
-    align-self:center; width:fit-content; max-width:100%;
-    padding:4px 14px 5px 10px;
-    background:rgba(230,194,0,0.06);
-    border-top:2px solid var(--gold);
+    align-self:flex-start; width:fit-content; max-width:100%;
+    padding:5px 14px 6px 10px;
+    background:#0f3a46;
+    border-top:2px solid #2fb4c9; border-left:3px solid #2fb4c9;
     text-align:left;
   }
-  .hoist-lead{ color:var(--text-dim); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; line-height:1.1; }
+  .hoist-lead{ color:#8fd6e3; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; line-height:1.1; }
   .hoist-list{ display:flex; flex-direction:column; gap:5px; margin:1px 0; }
   .hoist-token{ display:flex; align-items:center; gap:9px; }
-  .hoist-token-name{ color:var(--gold); font-size:14px; font-weight:600; white-space:nowrap; line-height:1.1; }
+  .hoist-token-name{ color:#e3f9fd; font-size:14px; font-weight:600; white-space:nowrap; line-height:1.1; }
   /* The wrapper has to shrink with the icon, or each icon keeps a 48px-wide gutter. */
   .hoist-token .icon-wrap{ width:38px; height:38px; flex:0 0 auto; }
   .hoist-token .icon{ width:38px; height:38px; clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
   .hoist-token .icon-fallback{ width:38px; height:38px; font-size:13px; }
   .hoist-token .prog-badge{ top:-10px; right:-10px; transform:scale(.8); transform-origin:top right; }
-  .hoist-then{ font-size:11px; color:var(--text-dim); letter-spacing:0.02em; line-height:1.1; }
+  .hoist-then{ font-size:11px; color:#8fd6e3; letter-spacing:0.02em; line-height:1.1; }
 
   /* ---- Filter presets ---------------------------------------------------- */
   .filter-presets{ flex:0 0 auto; display:flex; gap:8px; align-items:center; margin-left:auto; }
@@ -2486,8 +2486,8 @@
     .moon-name{ font-size:14px; }
   }
 
-  /* Cycling "Any ..." icons: Any Cap Throw (pink) + Any Grounded Height (blue) */
-  .icon-wrap.any-throw{ --any-acc:#27408f; }
+  /* Cycling "Any ..." icons: Any Cap Throw (burgundy red) + Any Grounded Height (blue) */
+  .icon-wrap.any-throw{ --any-acc:#d11a3a; }
   .icon-wrap.any-throw::after{ color:#fff; }
   .icon-wrap.any-grounded{ --any-acc:#5cc8ff; }
   .icon-wrap.any-badged{ position:relative; }
@@ -2524,7 +2524,7 @@
     clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
     animation:rfOverlayIn .12s ease both;
   }
-  .any-pop.pop-throw{ --any-pop-acc:#ff6fb5; }
+  .any-pop.pop-throw{ --any-pop-acc:#d11a3a; }
   .any-pop.pop-grounded{ --any-pop-acc:#5cc8ff; }
   .any-pop-title{ font-size:11.5px; letter-spacing:.04em; color:var(--any-pop-acc); margin:0 0 8px; text-transform:uppercase; }
   .any-pop-row{ display:flex; align-items:center; gap:10px; padding:3px 4px; border-left:3px solid transparent; }
@@ -2535,8 +2535,8 @@
   .any-pop-name{ font-size:12.5px; color:var(--text); white-space:nowrap; }
   .prog-icon.prog-any{ position:relative; overflow:hidden; padding:0; }
   .prog-icon.prog-any .cycle-frame{ clip-path:none; border-radius:4px; }
-  .prog-badge.pink .prog-icon{ border-color:#ff6fb5; }
-  .prog-badge.pink .prog-arrow{ background:#ff6fb5; }
+  .prog-badge.pink .prog-icon{ border-color:#d11a3a; }
+  .prog-badge.pink .prog-arrow{ background:#d11a3a; }
   @media (prefers-reduced-motion:reduce){
     .cycle-frame{ animation:none; opacity:0; }
     .cycle-frame.first{ opacity:1; }
@@ -8199,7 +8199,7 @@ function exemptSubsumedNote(lanes, lane){
 // When EVERY route of a Moon/Node needs one of these, it's pulled out of the
 // individual chips and stated once on top: "This moon requires P-Switches.
 // Beyond this, it requires:" followed by each method without that token.
-const HOIST_TOKENS = ["PSwitch", "CappyFlower", "Scarecrow", "Notes", "NpcTalk", "Pipe2D"];
+const HOIST_TOKENS = ["PSwitch", "CappyFlower", "Scarecrow", "Notes", "NpcTalk", "Pipe2D", "GroundPound"];
 // Needs at least this many total methods before a shared requirement is pulled out;
 // with only 1-2 methods the plain chips are clearer than a header.
 const HOIST_MIN_METHODS = 3;
