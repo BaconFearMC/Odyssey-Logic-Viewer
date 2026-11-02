@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityNeutralThrow.png">
+<link rel="icon" href="icon/Ability2DJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -8230,13 +8230,19 @@ function hoistedTokensFor(tierLanes, moonName){
   if(moonName && PEACH_MOON_NAME.test(moonName))
     return PEACH_MOON_HOISTED.filter(t => ICON_MANIFEST[t] && !(filterMode === "cando" && hoistForms(t).some(f => tokenIsSelected(f))));
   if(groups.length < HOIST_MIN_METHODS) return [];
-  return HOIST_TOKENS.filter(tok => {
+  const out = HOIST_TOKENS.filter(tok => {
     if(!ICON_MANIFEST[tok]) return false;
     const forms = hoistForms(tok);
     // Already marked as "I Have This!" -> it's stripped by the filter instead.
     if(filterMode === "cando" && forms.some(f => tokenIsSelected(f))) return false;
     return groups.every(g => g.some(t => forms.indexOf(t) !== -1));
   });
+  // Jump is only stated up top together with 2D Pipes (it then reads as the 2D Jump).
+  if(out.indexOf("Pipe2D") !== -1 && ICON_MANIFEST.SingleJump && !(filterMode === "cando" && tokenIsSelected("SingleJump"))
+     && groups.every(g => g.indexOf("SingleJump") !== -1)){
+    out.push("SingleJump");
+  }
+  return out;
 }
 function hoistedFormSet(hoisted){
   const set = new Set();
@@ -8261,7 +8267,7 @@ function buildHoistHeader(hoisted, noun){
     }
     const pill = document.createElement("span");
     pill.className = "hoist-token";
-    pill.appendChild(makeIcon(tok));
+    pill.appendChild(makeIcon(tok, { twoDJump: tok === "SingleJump" && hoisted.indexOf("Pipe2D") !== -1 }));
     const nm = document.createElement("span");
     nm.className = "hoist-token-name";
     nm.textContent = (ICON_MANIFEST[tok] || {}).label || tok;
