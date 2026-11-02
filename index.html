@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -146,7 +146,40 @@
   #debugToggle{ display:none !important; }
   #debugPanel{ display:flex !important; left:24px !important; bottom:24px !important; z-index:21; }
   #videoToggle, #raiseToggle{ display:none !important; }
-  #unmarkedToggle .btn-ic, #glitchToggle .btn-ic{ width:20px; height:20px; object-fit:contain; display:inline-block; }
+  #debugPanel{ gap:12px !important; }
+  .dbg-item{ position:relative; display:block; }
+  #debugPanel .dbg-item .corner-btn{ width:56px; height:56px; padding:0; justify-content:center; font-size:0; }
+  .btn-ic{ width:34px; height:34px; object-fit:contain; display:block; }
+  .dbg-tip{
+    position:absolute; left:calc(100% + 12px); bottom:0; width:270px; z-index:30;
+    display:flex; flex-direction:column; gap:4px; text-align:left;
+    background:var(--bg-panel); border:2px solid var(--gold); padding:9px 12px; box-shadow:3px 4px 0 var(--ink);
+    font-size:12px; line-height:1.4; color:var(--text);
+    opacity:0; visibility:hidden; transform:translateX(-6px); pointer-events:none;
+    transition:opacity .14s ease, transform .14s ease, visibility .14s;
+  }
+  .dbg-tip b{ color:var(--gold); font-weight:400; font-size:14px; letter-spacing:.04em; text-transform:uppercase; }
+  .dbg-tip em{ font-style:normal; color:var(--text-dim); font-size:11px; }
+  .dbg-tip em span{ color:var(--text); }
+  .dbg-item:hover .dbg-tip, .dbg-item:focus-within .dbg-tip{ opacity:1; visibility:visible; transform:none; }
+
+  /* Filter toggle + slide-in wrapper */
+  #filterToggle{ left:24px; top:66px; }
+  #filterToggle.active{ background:var(--gold); border-color:#8a7500; color:#1b1c1f; }
+  #filterToggle.active:hover{ color:#1b1c1f; border-color:#ffe14d; }
+  #filterToggle.has-filters::after{ content:""; width:8px; height:8px; background:var(--red); border-radius:50%; margin-left:2px; }
+  #filterWrap{ display:grid; grid-template-rows:0fr; width:100%; max-width:1400px; opacity:0; transform:translateY(-14px);
+    transition:grid-template-rows .38s cubic-bezier(.2,.8,.2,1), opacity .28s ease, transform .38s cubic-bezier(.2,.8,.2,1); pointer-events:none; }
+  #filterWrap.open{ grid-template-rows:1fr; opacity:1; transform:none; pointer-events:auto; }
+  #filterWrapInner{ min-height:0; overflow:hidden; }
+  #filterWrap.open.settled #filterWrapInner{ overflow:visible; }
+  #filterWrap:not(.open) #filterBars{ visibility:hidden; }
+  @media (prefers-reduced-motion:reduce){ #filterWrap, .dbg-tip{ transition:none; } }
+  /* icons: let the wrapper fill the tile so tall art can't spill out */
+  .filter-option-icon > div, .filter-bar-chip > div, .info-ic > div{ width:100%; height:100%; }
+  .filter-option-icon img, .filter-bar-chip img, .info-ic img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .info-ic{ overflow:hidden; }
+  .info-ic img{ object-fit:contain; }
   #glitchToggle{ right:24px; top:66px; }
   #glitchToggle.active{
     background:var(--tier-glitched);
@@ -1943,6 +1976,7 @@
     #filterMoonsToggle{ top:58px; right:12px; }
     #filterMoonsPanel{ top:100px; right:12px; }
     #searchToggle{ top:16px; left:12px; }
+    #filterToggle{ top:58px; left:12px; }
     #glitchToggle{ top:58px; right:12px; }
   }
 
@@ -2542,7 +2576,7 @@
   .info-txt{ flex:1 1 auto; min-width:0; font-size:14px; line-height:1.55; color:var(--text); }
   .info-txt h3{ margin:0 0 6px; font-size:17px; color:var(--gold); font-weight:400; letter-spacing:.04em; }
   .info-wip{ color:var(--tier-advanced); }
-  .info-kingdoms{ display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0; }
+  .info-kingdoms{ display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin:10px 0 0; }
   .info-kingdom{ display:flex; align-items:center; gap:8px; background:var(--bg-chip); border:2px solid var(--border); padding:4px 12px 4px 6px; }
   .info-kingdom span.kic{ width:32px; height:32px; display:inline-flex; }
   .info-kingdom img, .info-kingdom .icon-fallback{ width:32px; height:32px; object-fit:contain; }
@@ -2553,6 +2587,9 @@
   .info-list ul li{ padding:3px 0 3px 12px; color:var(--text); }
   .info-list ul ul li{ color:var(--text-dim); font-size:13px; padding-left:14px; }
   @media (max-width:700px){ .info-modal{ width:94vw; height:85vh; padding:20px 16px; } .info-row{ gap:12px; } .info-ic{ width:52px; height:52px; } }
+  .hp-badge .hp-num{ width:24px; height:24px; box-sizing:border-box; display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--gold); border-radius:6px; background:#1b1b1b; color:var(--gold); font-size:14px; line-height:1; }
+  .hoist-token .hp-badge{ top:-5px; right:-5px; transform:scale(.8); transform-origin:top right; }
 </style>
 </head>
 <body>
@@ -2562,6 +2599,11 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
   </span>
   <span>Search</span>
+</button>
+
+<button class="corner-btn" id="filterToggle" type="button" aria-expanded="false" aria-controls="filterWrap" aria-label="Show or hide filters">
+  <span class="icon-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg></span>
+  <span>Filter</span>
 </button>
 
 <button class="corner-btn" id="viewModeToggle" type="button" aria-label="Switch between moon view and checkpoint view">
@@ -2584,28 +2626,28 @@
 </div>
 
 <div id="debugPanel" role="menu" aria-label="Debug options">
-<button class="corner-btn" id="unmarkedToggle" type="button" aria-label="NO LOGIC? - show only unmarked logic moons">
-  <img class="btn-ic" src="icon/AbilityDeath.png" alt="" onerror="this.style.display='none'">
-  <span>NO LOGIC?</span>
-</button>
+<div class="dbg-item">
+  <button class="corner-btn" id="unmarkedToggle" type="button" aria-label="NO LOGIC? - show only unmarked logic moons">
+    <img class="btn-ic" src="icon/AbilityDeath.png" alt="" onerror="this.style.display='none'">
+  </button>
+  <div class="dbg-tip" role="tooltip">
+    <b>NO LOGIC?</b>
+    <span>Bug-fixing view. Shows only moons whose routes haven&rsquo;t been given a difficulty yet (unmarked logic), so they can be found and fixed.</span>
+    <em>Currently: <span id="unmarkedState">Off</span> &middot; click to toggle</em>
+  </div>
+</div>
+<div class="dbg-item">
+  <button class="corner-btn active" id="glitchToggle" type="button" aria-label="Cycle Glitch Bible filter">
+    <img class="btn-ic" src="icon/AbilitySideFlip.png" alt="" onerror="this.style.display='none'">
+  </button>
+  <div class="dbg-tip" role="tooltip">
+    <b>Glitch Bible [WIP]</b>
+    <span>Glitched / out-of-bounds routes. Cycles Hidden &rarr; All &rarr; Only: hide them, mix them in, or show only moons that have a glitched route.</span>
+    <em>Currently: <span id="glitchToggleLabel">Glitch Bible [WIP]: Hidden</span> &middot; click to cycle</em>
+  </div>
+</div>
 
-<button class="corner-btn active" id="glitchToggle" type="button" aria-label="Cycle Glitch Bible filter">
-  <img class="btn-ic" src="icon/AbilitySideFlip.png" alt="" onerror="this.style.display='none'">
-  <span id="glitchToggleLabel">Glitch Bible [WIP]: Hidden</span>
-</button>
-
-<button class="corner-btn" id="videoToggle" type="button" aria-label="Cycle video filter: All, Has Video, Has No Video">
-  <span class="icon-svg" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8Z"/></svg>
-  </span>
-  <span id="videoToggleLabel">Video: All</span>
-</button>
-
-
-
-
-<button id="raiseToggle" type="button" hidden aria-hidden="true"><span id="raiseToggleLabel"></span></button>
-
+<button id="videoToggle" type="button" hidden aria-hidden="true"><span id="videoToggleLabel">Video: All</span></button>
 <button class="corner-btn" id="approveToggle" type="button" aria-label="Approve videos" style="display:none;"><span>Approve Videos</span></button>
 </div>
 
@@ -2682,6 +2724,7 @@
 
 <div id="loadStatus" class="load-status"></div>
 
+<div id="filterWrap"><div id="filterWrapInner">
 <div class="filter-bars" id="filterBars">
   <div class="filter-mode-tabs" id="filterModeTabs">
     <button type="button" class="filter-mode-tab active" id="filterModeCanDo" data-mode="cando">
@@ -2741,6 +2784,8 @@
   </div>
   <div class="filter-summary" id="filterSummary" style="display:none;"></div>
 </div>
+
+</div></div>
 
 <div id="scopeSlider" role="radiogroup" aria-label="Show moons, access points, or both" data-scope="all">
   <span class="scope-thumb" aria-hidden="true"></span>
@@ -3124,6 +3169,7 @@ const FILTER_LABEL_OVERRIDES = {
 // ALWAYS_UNLOCKED_TOKENS), or because they've been folded into a different,
 // more general option per request (Turnip/Nut/Seed all fold into "Grab").
 const ABILITY_FILTER_EXCLUDE_TOKENS = {
+  MinHp1: true, MinHp2: true, MinHp3: true, MinHp4: true, MinHp5: true, // folded into Health Up
   Turnip: true,
   Nut: true,
   Seed: true,
@@ -3200,6 +3246,7 @@ function withGroundedMerge(tierLanes, kingdomName){
 // each folded token to the filter option it's supposed to answer for, so
 // moonTokens()/applyFilterMatchHighlight() can treat them as equivalent.
 const ABILITY_FILTER_FOLD_TOKENS = {
+  MinHp1: "HealthUp", MinHp2: "HealthUp", MinHp3: "HealthUp", MinHp4: "HealthUp", MinHp5: "HealthUp",
   Turnip: "Grab",
   Nut: "Grab",
   Seed: "Grab",
@@ -3338,13 +3385,23 @@ const BONUS_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true, HealthUp: 
 // Bonus tiles that aren't finished: greyed out + labelled "Incomplete" in the
 // picker. Their requirements are still read from the logic and shown on moons.
 const INCOMPLETE_ABILITY_TOKENS = { SingleJump: true, RequiresDeath: true, HealthUp: true, CapReturnJump: true };
+// MinHp1..MinHp5: "needs N or more Health". Same Health icon for all; the amount is shown as a
+// chip on the moon cards. They are Bonus Abilities, follow Health Up's Incomplete state, and
+// fold into the single Health Up filter tile (never tiles of their own).
+const MINHP_RE = /^MinHp([1-5])$/;
+for(let n = 1; n <= 5; n++){
+  const tk = "MinHp" + n;
+  BONUS_ABILITY_TOKENS[tk] = true;
+  INCOMPLETE_ABILITY_TOKENS[tk] = true;
+  ICON_MANIFEST[tk] = { filenames: ICON_MANIFEST.HealthUp.filenames.slice(), label: "Health", color: "#34406e", category: "Movement", tokenType: "ability" };
+}
 // Per-kingdom override: on these kingdoms' pages the listed groups no longer say
 // "Incomplete" (their logic there is considered finished). Edit this table to add
 // kingdoms or groups. Groups: "jump" = Jump + Cap Return Jump (always together),
 // "health" = Health Up, "death" = Death. Kingdom names match the pager exactly.
 const INCOMPLETE_GROUPS = {
   jump:   ["SingleJump", "CapReturnJump"],
-  health: ["HealthUp"],
+  health: ["HealthUp","MinHp1","MinHp2","MinHp3","MinHp4","MinHp5"],
   death:  ["RequiresDeath"]
 };
 const COMPLETE_ON_KINGDOM = {
@@ -3384,6 +3441,7 @@ function mergeTokensIntoManifest(logicTokens){
       BONUS_ABILITY_TOKENS[t.token] = true;
       INCOMPLETE_ABILITY_TOKENS[t.token] = true;
     }
+    if(MINHP_RE.test(String(t.token))){ BONUS_ABILITY_TOKENS[t.token] = true; INCOMPLETE_ABILITY_TOKENS[t.token] = true; return; }
     const truthy = t.always_unlocked === true || t.always_unlocked === 1 ||
       /^(true|1|yes)$/i.test(String(t.always_unlocked).trim());
     // Jaxi / Bike / RocketFlower are "override prop" captures: the raw
@@ -6981,10 +7039,19 @@ function makeIcon(token, opts){
   const progBadge = makeProgressionBadge(token);
   if(progBadge) wrap.appendChild(progBadge);
   if(opts && opts.twoDJump) wrap.appendChild(makeTwoDJumpBadge());
+  const hpMatch = MINHP_RE.exec(String(token));
+  if(hpMatch){
+    const hb = document.createElement("span");
+    hb.className = "prog-badge hp-badge";
+    const num = document.createElement("span");
+    num.className = "hp-num"; num.textContent = hpMatch[1];
+    hb.appendChild(num); wrap.appendChild(hb);
+  }
 
   const tip = document.createElement("span");
   tip.className = "icon-tooltip";
-  tip.textContent = label + ((opts && opts.twoDJump) ? " (2D Jump)" : "");
+  tip.textContent = hpMatch ? ("Requires " + hpMatch[1] + " Health") : (label + ((opts && opts.twoDJump) ? " (2D Jump)" : ""));
+  if(hpMatch) wrap.setAttribute("aria-label", "Requires " + hpMatch[1] + " Health");
   if(token === ANY_THROW_TOKEN || token === GH_TOKEN) attachAnyPop(wrap, token);
   wrap.appendChild(tip);
 
@@ -8926,6 +8993,32 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   document.getElementById("glitchToggleLabel").textContent = GLITCH_LABELS[glitchMode];
   renderGrid();
 });
+
+// ---- Filter toggle (slides the Filters section in/out) + hover-tip state ----
+(function(){
+  const btn = document.getElementById("filterToggle"), wrap = document.getElementById("filterWrap");
+  if(!btn || !wrap) return;
+  const set = open => {
+    wrap.classList.toggle("open", open);
+    if(!open) wrap.classList.remove("settled");
+    btn.classList.toggle("active", open);
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  };
+  wrap.addEventListener("transitionend", e => { if(e.target === wrap && e.propertyName === "grid-template-rows" && wrap.classList.contains("open")) wrap.classList.add("settled"); });
+  btn.addEventListener("click", () => set(!wrap.classList.contains("open")));
+  // red dot on the button while a filter selection is showing
+  const sum = document.getElementById("filterSummary");
+  if(sum){
+    const sync = () => btn.classList.toggle("has-filters", sum.style.display !== "none" && sum.textContent.trim() !== "");
+    new MutationObserver(sync).observe(sum, { attributes:true, childList:true, characterData:true, subtree:true });
+    sync();
+  }
+  const un = document.getElementById("unmarkedToggle"), us = document.getElementById("unmarkedState");
+  if(un && us){
+    const sy = () => { us.textContent = un.classList.contains("active") ? "On" : "Off"; };
+    new MutationObserver(sy).observe(un, { attributes:true, attributeFilter:["class"] }); sy();
+  }
+})();
 
 // ---- Exempt Levels (lives in the Filters panel) ----
 (function(){
