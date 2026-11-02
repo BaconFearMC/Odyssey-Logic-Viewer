@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityNeutralThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -6822,7 +6822,7 @@ function balancedRowCounts(total, max){
 // between icons within the same row. Replaces the old single nowrap
 // line, so a chip with 4+ requirements stays fully visible — wrapping
 // into a compact, centered block — rather than scrolling or overflowing.
-function appendAndGroupIcons(chip, andGroup){
+function appendAndGroupIcons(chip, andGroup, extra){
   // A move that is only shown as a progression icon on a later move in the
   // same group (Ground Pound on Ground Pound Jump, ...) isn't listed twice.
   const covered = new Set();
@@ -6830,7 +6830,7 @@ function appendAndGroupIcons(chip, andGroup){
   const visible = andGroup.filter(t => !covered.has(t));
   const tokens = sortedTokensForDisplay(visible.length ? visible : andGroup);
   const rows = balancedRowCounts(tokens.length, 3);
-  const needsTwoDJump = andGroup.indexOf("SingleJump") !== -1 && andGroup.indexOf("Pipe2D") !== -1;
+  const needsTwoDJump = andGroup.indexOf("SingleJump") !== -1 && (andGroup.indexOf("Pipe2D") !== -1 || !!(extra && extra.hoistedPipe2D));
   let idx = 0;
   rows.forEach(rowCount => {
     const rowEl = document.createElement("div");
@@ -7714,7 +7714,7 @@ function buildMovementOptions(moon, boxed){
       chip.dataset.slot = slotOf(andGroup, i);
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
       attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
-      appendAndGroupIcons(chip, displayGroup);
+      appendAndGroupIcons(chip, displayGroup, { hoistedPipe2D: hoistSet.has("Pipe2D") });
       // Scenario Data: this branch's own scenario restriction (option b —
       // each branch gets its own independent tag, never merged into a
       // combined sentence with sibling branches). andGroup.scenarios is
@@ -8200,7 +8200,7 @@ function exemptSubsumedNote(lanes, lane){
 // When EVERY route of a Moon/Node needs one of these, it's pulled out of the
 // individual chips and stated once on top: "This moon requires P-Switches.
 // Beyond this, it requires:" followed by each method without that token.
-const HOIST_TOKENS = ["PSwitch", "CappyFlower", "Scarecrow", "Notes", "NpcTalk"];
+const HOIST_TOKENS = ["PSwitch", "CappyFlower", "Scarecrow", "Notes", "NpcTalk", "Pipe2D"];
 // Needs at least this many total methods before a shared requirement is pulled out;
 // with only 1-2 methods the plain chips are clearer than a header.
 const HOIST_MIN_METHODS = 3;
@@ -9990,7 +9990,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
         chip.textContent = (hoistSet.size && preHoistGroup.length > 0) ? "Nothing else" : "Free";
       } else {
         chip.className = "option-chip";
-        appendAndGroupIcons(chip, displayGroup);
+        appendAndGroupIcons(chip, displayGroup, { hoistedPipe2D: hoistSet.has("Pipe2D") });
       }
       const scenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
       if(scenarioLabel){
