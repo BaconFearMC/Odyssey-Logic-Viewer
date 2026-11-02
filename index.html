@@ -1984,26 +1984,25 @@
 
   /* ---- Shared requirement header ("This moon requires X. Beyond this…") --
      Original boxed look, scaled down. */
-  .hoist-wrap{ width:100%; display:flex; flex-direction:column; gap:4px; }
+  .hoist-wrap{ width:100%; display:flex; flex-direction:column; gap:3px; }
   .hoist-head{
-    display:flex; flex-direction:column; align-items:center; gap:2px;
-    padding:4px 8px 5px;
+    display:flex; flex-direction:column; align-items:flex-start; gap:3px;
+    align-self:center; width:fit-content; max-width:100%;
+    padding:4px 14px 5px 10px;
     background:rgba(230,194,0,0.06);
     border-top:2px solid var(--gold);
-    text-align:center;
+    text-align:left;
   }
-  .hoist-line{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:3px 7px; font-size:11px; line-height:1.2; color:var(--text); }
-  /* Lead text gets its own centered line so the icons below sit as one tidy row. */
-  .hoist-lead{ color:var(--text); flex:0 0 100%; text-align:center; }
-  .hoist-and{ color:var(--text-dim); }
-  .hoist-token{ display:inline-flex; align-items:center; gap:4px; }
-  .hoist-token-name{ color:var(--gold); font-size:11px; font-weight:600; white-space:nowrap; }
+  .hoist-lead{ color:var(--text-dim); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; line-height:1.1; }
+  .hoist-list{ display:flex; flex-direction:column; gap:5px; margin:1px 0; }
+  .hoist-token{ display:flex; align-items:center; gap:9px; }
+  .hoist-token-name{ color:var(--gold); font-size:14px; font-weight:600; white-space:nowrap; line-height:1.1; }
   /* The wrapper has to shrink with the icon, or each icon keeps a 48px-wide gutter. */
-  .hoist-token .icon-wrap{ width:22px; height:22px; }
-  .hoist-token .icon{ width:22px; height:22px; clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px); }
-  .hoist-token .icon-fallback{ width:22px; height:22px; font-size:9px; }
-  .hoist-token .prog-badge{ top:-8px; right:-8px; transform:scale(.8); transform-origin:top right; }
-  .hoist-then{ font-size:10px; color:var(--text-dim); letter-spacing:0.02em; line-height:1.2; }
+  .hoist-token .icon-wrap{ width:38px; height:38px; flex:0 0 auto; }
+  .hoist-token .icon{ width:38px; height:38px; clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
+  .hoist-token .icon-fallback{ width:38px; height:38px; font-size:13px; }
+  .hoist-token .prog-badge{ top:-10px; right:-10px; transform:scale(.8); transform-origin:top right; }
+  .hoist-then{ font-size:11px; color:var(--text-dim); letter-spacing:0.02em; line-height:1.1; }
 
   /* ---- Filter presets ---------------------------------------------------- */
   .filter-presets{ flex:0 0 auto; display:flex; gap:8px; align-items:center; margin-left:auto; }
@@ -8252,32 +8251,27 @@ function hoistedFormSet(hoisted){
 function buildHoistHeader(hoisted, noun){
   const head = document.createElement("div");
   head.className = "hoist-head";
-  const line = document.createElement("div");
-  line.className = "hoist-line";
-  const lead = document.createElement("span");
+  const lead = document.createElement("div");
   lead.className = "hoist-lead";
-  lead.textContent = "This " + noun + " requires";
-  line.appendChild(lead);
-  hoisted.forEach((tok, i) => {
-    if(i > 0){
-      const and = document.createElement("span");
-      and.className = "hoist-and";
-      and.textContent = i === hoisted.length - 1 ? "and" : ",";
-      line.appendChild(and);
-    }
-    const pill = document.createElement("span");
+  lead.textContent = "Besides";
+  head.appendChild(lead);
+  const list = document.createElement("div");
+  list.className = "hoist-list";
+  const with2D = hoisted.indexOf("Pipe2D") !== -1;
+  hoisted.forEach(tok => {
+    const pill = document.createElement("div");
     pill.className = "hoist-token";
-    pill.appendChild(makeIcon(tok, { twoDJump: tok === "SingleJump" && hoisted.indexOf("Pipe2D") !== -1 }));
+    pill.appendChild(makeIcon(tok));
     const nm = document.createElement("span");
     nm.className = "hoist-token-name";
-    nm.textContent = (ICON_MANIFEST[tok] || {}).label || tok;
+    nm.textContent = (tok === "SingleJump" && with2D) ? "Jump (2D)" : ((ICON_MANIFEST[tok] || {}).label || tok);
     pill.appendChild(nm);
-    line.appendChild(pill);
+    list.appendChild(pill);
   });
-  head.appendChild(line);
+  head.appendChild(list);
   const then = document.createElement("div");
   then.className = "hoist-then";
-  then.textContent = "Beyond this, it requires:";
+  then.textContent = "This needs...";
   head.appendChild(then);
   return head;
 }
