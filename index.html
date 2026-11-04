@@ -2499,6 +2499,16 @@
   @keyframes nrOutUp{ to{ transform:translateY(130%); opacity:0; } }
   @media (max-width:900px){ #navRail{ right:6px; } .nr-node .nr-name{ display:none; } .nr-readout{ right:20px; } }
   @media (prefers-reduced-motion:reduce){ .nr-puck, .nr-line, #navRail *{ animation:none !important; transition:none !important; } }
+
+  html.videos-off #videoToggle, html.videos-off .has-video-badge{ display:none !important; }
+  html.videos-off .option-chip, html.videos-off .free-tag{ cursor:default; }
+  /* Checkpoint cards: let text wrap instead of cramming onto one line */
+  .cp-reqs-grid-compact{ grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); }
+  .cp-req.cp-req-compact{ flex-wrap:wrap; align-items:flex-start; row-gap:8px; }
+  .cp-req-compact .cp-req-name{ flex:1 1 150px; min-width:0; white-space:normal; overflow-wrap:break-word; }
+  .cp-req-compact .cp-req-name span{ white-space:normal; overflow-wrap:break-word; }
+  .cp-req-compact .cp-req-source{ flex:1 1 auto; min-width:0; max-width:100%; }
+  .cp-req .cp-req-name, .cp-req .cp-req-name span{ white-space:normal; }
 </style>
 </head>
 <body>
@@ -2758,6 +2768,12 @@
 
 
 <script>
+/* ============ MASTER VIDEO SWITCH ============
+   0 = videos OFF: no probing for assets/logicvideos/*, no "has video" badges,
+       no video popups / "Nothing yet..." toasts, Video filter button hidden.
+   1 = videos ON (restore after the revamp). */
+const VIDEOS_ENABLED = 0;
+if(!VIDEOS_ENABLED) document.documentElement.classList.add("videos-off");
 /* =========================================================
    PLACEHOLDER STYLING — color shown behind the item's initials
    until real art exists in /icon/. Keyed by category. No emoji
@@ -10118,6 +10134,7 @@ function _probeRun(){
   }
 }
 function logicVideoExists(baseName){
+  if(!VIDEOS_ENABLED) return Promise.resolve(false);
   if(videoExistsCache.has(baseName)) return videoExistsCache.get(baseName);
   const p = new Promise(resolve0 => { _probeQueue.push(done => {
    let fin = false; const resolve = v => { if(fin) return; fin = true; done(); resolve0(v); };
@@ -10168,6 +10185,7 @@ function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier){
     });
     return;
   }
+  if(!VIDEOS_ENABLED) return;
   const myToken = ++videoCheckToken;
   const slots = (andGroup && andGroup.mergedSlots) ? andGroup.mergedSlots.slice() : [indexInTier];
   const tryNext = () => {
@@ -10192,6 +10210,7 @@ function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier){
 // front so a hit can be dropped straight into the stage with no second
 // network round trip.
 function findLogicVideo(baseName, onSettled){
+  if(!VIDEOS_ENABLED){ onSettled(null); return; }
   let settled = false;
   const video = document.createElement("video");
   video.className = "logic-video";
