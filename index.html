@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -7147,8 +7147,8 @@ function makeIcon(token, opts){
 
   const tip = document.createElement("span");
   tip.className = "icon-tooltip";
-  tip.textContent = hpMatch ? ("Requires " + hpMatch[1] + " Health") : (label + ((opts && opts.twoDJump) ? " (2D Jump)" : ""));
-  if(hpMatch) wrap.setAttribute("aria-label", "Requires " + hpMatch[1] + " Health");
+  tip.textContent = hpMatch ? ("Requires 1 Damage; Needs " + hpMatch[1] + " or More Total Health") : (label + ((opts && opts.twoDJump) ? " (2D Jump)" : ""));
+  if(hpMatch) wrap.setAttribute("aria-label", "Requires 1 Damage; Needs " + hpMatch[1] + " or More Total Health");
   if(token === ANY_THROW_TOKEN || token === GH_TOKEN) attachAnyPop(wrap, token);
   wrap.appendChild(tip);
 
