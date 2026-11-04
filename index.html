@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityTripleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3248,18 +3248,41 @@ function withGroundedMerge(tierLanes, kingdomName){
   if(!tierLanes || submitMode || !ghKingdomActive(kingdomName)) return tierLanes;
   let changed = false;
   const out = tierLanes.map(lane => {
-    const hits = {}; // spec index -> [group positions]
-    lane.groups.forEach((g, i) => { const si = ghSpecIndex(g); if(si >= 0) (hits[si] = hits[si] || []).push(i); });
-    if(Object.keys(hits).length !== GH_METHODS.length) return lane;
-    const all = [].concat(...Object.values(hits));
-    const first = lane.groups[all[0]];
-    const same = all.every(i => sameScenarioData(lane.groups[i].scenarios, first.scenarios) && (lane.groups[i].origin || null) === (first.origin || null));
-    if(!same) return lane;
-    const slots = all.map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
-    const merged = Object.assign([GH_TOKEN], { scenarios: first.scenarios || null, origin: first.origin || null, slot: slots[0], mergedSlots: slots });
-    const at = Math.min(...all);
+    // Every way a group can be "one Grounded Height method + extra tokens".
+    const clusters = {}; // key (extras|scenarios|origin) -> { extras, byMethod:{specIdx:[pos]} }
+    lane.groups.forEach((g, pos) => {
+      const keys = g.map(ghTokenKey);
+      GH_METHODS.forEach((m, si) => {
+        if(!m.every(t => keys.indexOf(t) !== -1)) return;
+        const extras = g.filter((t, k) => m.indexOf(keys[k]) === -1);
+        const key = extras.slice().sort().join("+") + "|" + (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || "");
+        const c = clusters[key] || (clusters[key] = { extras, byMethod: {} });
+        (c.byMethod[si] = c.byMethod[si] || []).push(pos);
+      });
+    });
+    const used = new Set(), merges = [];
+    Object.keys(clusters).sort((a, b) => clusters[a].extras.length - clusters[b].extras.length).forEach(key => {
+      const c = clusters[key];
+      const picked = {};
+      GH_METHODS.forEach((m, si) => {
+        const pos = (c.byMethod[si] || []).filter(x => !used.has(x));
+        if(pos.length) picked[si] = pos;
+      });
+      if(Object.keys(picked).length !== GH_METHODS.length) return;
+      const all = [].concat(...Object.values(picked));
+      all.forEach(x => used.add(x));
+      merges.push({ all, extras: c.extras, first: lane.groups[all[0]] });
+    });
+    if(!merges.length) return lane;
+    const at = {}, drop = new Set();
+    merges.forEach(mg => {
+      const slots = mg.all.map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
+      const merged = Object.assign([GH_TOKEN].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots });
+      at[Math.min(...mg.all)] = merged;
+      mg.all.forEach(i => drop.add(i));
+    });
     const groups = [];
-    lane.groups.forEach((g, i) => { if(i === at) groups.push(merged); else if(all.indexOf(i) === -1) groups.push(g); });
+    lane.groups.forEach((g, i) => { if(at[i]) groups.push(at[i]); else if(!drop.has(i)) groups.push(g); });
     changed = true;
     return Object.assign({}, lane, { groups });
   });
