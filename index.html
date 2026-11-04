@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDoubleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -207,68 +207,9 @@
 
 
   /* ---- Checkpoint Requirements (bottom of each kingdom) ---------------- */
-  .cp-reqs{ width:100%; max-width:1400px; margin:34px 0 40px; text-align:left; }
-  .cp-reqs-head{ display:flex; align-items:center; gap:10px; margin:0 0 4px; }
-  .cp-reqs-head img{ width:26px; height:26px; object-fit:contain; }
-  .cp-reqs-title{ margin:0; font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:20px; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; }
-  .cp-reqs-sub{ margin:0 0 14px; font-size:12.5px; color:var(--text-dim); }
-  .cp-reqs-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(380px, 1fr)); gap:16px; align-items:start; }
-  .cp-req{ background:var(--bg-panel); border:2px solid var(--border); border-left:4px solid var(--gold); padding:12px 14px 14px; min-width:0; display:flex; flex-direction:column; gap:8px; }
-  .cp-req-name{ padding-bottom:8px; border-bottom:1px solid rgba(128,128,128,.35); margin:0; font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:15px; color:var(--text); display:flex; align-items:center; gap:8px; }
-  .cp-req-name img{ width:20px; height:20px; object-fit:contain; flex:0 0 auto; }
-  .cp-req-source{ display:flex; flex-direction:column; gap:5px; }
-  .cp-req-source + .cp-req-source{ padding-top:8px; border-top:1px dashed rgba(128,128,128,.35); }
-  .cp-req-source{ background:rgba(128,128,128,.07); padding:8px 10px; }
-  .cp-req-source + .cp-req-source{ border-top:none; padding-top:8px; }
-  .cp-req-source-label{ font-size:11px; font-weight:800; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; }
-  /* Painting Access Requirements: Come (left) + Go (right), sits above Checkpoint Requirements. */
-  #paintingReqs{ margin-bottom:0; }
-  #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr 1fr; }
-  #paintingReqs .cp-req{ border-left-color:#8a4f78; }
-  .cp-req-empty{ font-size:12.5px; color:var(--text-dim); font-style:italic; }
-
-  /* ---- Checkpoint / Painting card refresh --------------------------------
-     Same data and click behaviour; just a tidier card: tinted title band, cut corners,
-     pill source labels, hover lift, and a compact one-line card for "Free" Checkpoints. */
-  .cp-reqs-title{ position:relative; padding-bottom:3px; }
-  .cp-reqs-title::after{ content:""; position:absolute; left:0; bottom:-2px; width:100%; height:2px; background:linear-gradient(90deg, var(--gold), transparent); }
-  .cp-reqs-count{ font-size:11px; color:var(--text-dim); background:var(--bg-chip); border:1px solid var(--border); padding:1px 8px; letter-spacing:.3px; align-self:center; }
-  .cp-reqs-sub{ margin-top:8px; }
-  .cp-req{
-    gap:10px; padding:12px 14px 14px;
-    clip-path: polygon(0 0, calc(100% - var(--cut-md)) 0, 100% var(--cut-md), 100% 100%, 0 100%);
-    transition: border-color .12s ease, background .12s ease;
-  }
-  .cp-req:hover{ border-color:#4a4b50; background:#26272b; }
-  .cp-req-name{
-    margin:-12px -14px 0; padding:10px 14px; border-bottom:1px solid var(--border);
-    background:rgba(255,255,255,.035); font-size:15px; letter-spacing:.2px;
-  }
-  .cp-req-name img{ width:22px; height:22px; padding:2px; background:rgba(0,0,0,.28); border:1px solid var(--border); border-radius:50%; }
-  .cp-req-source{ background:rgba(255,255,255,.03); border-left:2px solid var(--panel-line); padding:8px 10px; gap:6px; }
-  .cp-req-source-label{
-    align-self:flex-start; font-size:10.5px; padding:1px 8px; letter-spacing:.6px;
-    color:var(--gold); background:var(--gold-light); border:1px solid rgba(230,194,0,.25);
-  }
-  /* Free Checkpoints: still one card each, just collapsed to a single compact line. */
-  .cp-reqs-grid-compact{ grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px; margin-top:14px; }
-  .cp-req.cp-req-compact{ flex-direction:row; align-items:center; justify-content:space-between; gap:10px; padding:7px 12px; border-left-color:var(--tier-casual); }
-  .cp-req-compact .cp-req-name{ margin:0; padding:0; border:0; background:none; font-size:13.5px; min-width:0; }
-  .cp-req-compact .cp-req-name span{ overflow-wrap:anywhere; }
-  .cp-req-compact .cp-req-name img{ width:18px; height:18px; }
-  .cp-req-compact .cp-req-source{ background:none; border:0; padding:0; flex:0 0 auto; }
-  .cp-req-compact .options-row{ margin:0; }
-  /* Paintings: Come = teal accent, Go = gold accent. */
-  #paintingReqs .cp-req.cp-req-come{ border-left-color:var(--worldpeace); }
-  #paintingReqs .cp-req.cp-req-come .cp-req-name{ background:var(--worldpeace-bg); }
-  #paintingReqs .cp-req.cp-req-go{ border-left-color:var(--gold); }
-  #paintingReqs .cp-req.cp-req-go .cp-req-name{ background:rgba(230,194,0,.10); }
-  .cp-req-empty{ padding:6px 2px; }
-  @media (max-width:720px){ #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr; } }
   /* Custom Node Requirements: separate section, only visible while in Submit Video mode. */
   #customNodeReqs{ display:none; }
   body.submit-mode #customNodeReqs:not(.empty){ display:block; }
-  #customNodeReqs .cp-req{ border-left-color:var(--moonrock); }
   body.submit-mode .cp-req .option-chip,
   body.submit-mode .cp-req .free-tag{ outline:2px dashed var(--gold); outline-offset:2px; cursor:copy; }
   body.submit-mode .cp-req .has-video,
@@ -2069,84 +2010,6 @@
   .filter-summary{ font-size:14px; padding:12px 16px; border:2px solid var(--mode-accent); border-left-width:6px; background:var(--mode-bg); color:var(--text); }
   @media (max-width:640px){ .filter-sel-caption{ font-size:11.5px; } }
 
-  /* ===== Moons / Access Points scope slider ===== */
-  #scopeSlider{
-    position:relative; z-index:2; margin:0 auto 20px;
-    width:340px; max-width:100%; display:grid; grid-template-columns:repeat(3,1fr);
-    background:var(--bg-panel); border:2px solid var(--border); border-bottom-width:3px;
-    padding:3px; filter:drop-shadow(2px 3px 0 var(--ink)); isolation:isolate;
-  }
-  #scopeSlider button{
-    position:relative; z-index:1; background:none; border:0; padding:7px 4px; cursor:pointer;
-    font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:12px; font-weight:700;
-    letter-spacing:.4px; text-transform:uppercase; color:var(--text-dim); white-space:nowrap;
-    transition:color .15s ease;
-  }
-  #scopeSlider button[aria-checked="true"]{ color:#1b1c1f; }
-  #scopeSlider button:not([aria-checked="true"]):hover{ color:var(--text); }
-  #scopeSlider .scope-thumb{
-    position:absolute; z-index:0; top:3px; bottom:3px; left:3px; width:calc((100% - 6px) / 3);
-    background:var(--text-dim); transition:transform .2s ease, background .2s ease;
-    clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px);
-  }
-  #scopeSlider[data-scope="moons"] .scope-thumb{ transform:translateX(0); background:var(--gold); }
-  #scopeSlider[data-scope="all"] .scope-thumb{ transform:translateX(100%); background:#c9c9c9; }
-  #scopeSlider[data-scope="access"] .scope-thumb{ transform:translateX(200%); background:var(--worldpeace); }
-  @media (max-width:640px){
-    #scopeSlider{ width:100%; }
-    #scopeSlider button{ font-size:9.5px; padding:6px 2px; letter-spacing:.2px; }
-  }
-
-  /* ===== Access Points (Paintings / Checkpoints / Subarea Entrances) =====
-     Same card language as the moon grid (top rail, hard drop shadow, same grid
-     size) but each kind carries its own accent colour + a kind pill. */
-  #paintingReqs{ --acc:#d27fb8; }
-  #checkpointReqs{ --acc:var(--worldpeace); }
-  #subareaReqs{ --acc:var(--subarea); }
-  #customNodeReqs{ --acc:var(--moonrock); }
-  .cp-reqs{ margin:30px 0 8px; }
-  .cp-reqs-head{
-    padding:8px 14px; margin:0 0 10px; background:var(--bg-panel);
-    border:2px solid var(--border); border-left:6px solid var(--acc);
-    filter:drop-shadow(2px 3px 0 var(--ink));
-  }
-  .cp-reqs-head img{ width:30px; height:30px; }
-  .cp-reqs-title{ color:var(--acc); font-size:18px; }
-  .cp-reqs-title::after{ background:linear-gradient(90deg, var(--acc), transparent); }
-  .cp-reqs-count{ margin-left:auto; color:var(--acc); border-color:var(--acc); }
-  .cp-reqs-sub{ margin:0 0 16px 2px; }
-  #paintingReqs .cp-reqs-grid, #checkpointReqs .cp-reqs-grid, #subareaReqs .cp-reqs-grid, #customNodeReqs .cp-reqs-grid{
-    grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px;
-  }
-  #paintingReqs .cp-reqs-grid-compact, #checkpointReqs .cp-reqs-grid-compact, #customNodeReqs .cp-reqs-grid-compact{
-    grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px;
-  }
-  #paintingReqs .cp-req, #checkpointReqs .cp-req, #subareaReqs .cp-req, #customNodeReqs .cp-req,
-  #paintingReqs .cp-req.cp-req-come, #paintingReqs .cp-req.cp-req-go{
-    position:relative; clip-path:none; background:var(--bg-panel);
-    border:2px solid var(--border); border-top:3px solid var(--acc);
-    padding:14px 16px; gap:8px; filter:drop-shadow(2px 3px 0 var(--ink));
-    transition:transform .15s ease, filter .15s ease;
-  }
-  .cp-req:hover{ background:var(--bg-panel); transform:translateY(-2px); filter:drop-shadow(2px 5px 0 var(--ink)); }
-  #paintingReqs .cp-req .cp-req-name, #checkpointReqs .cp-req .cp-req-name, #subareaReqs .cp-req .cp-req-name, #customNodeReqs .cp-req .cp-req-name{
-    margin:0; padding:0 92px 8px 0; background:none; font-size:14px; font-weight:600; line-height:1.3;
-    border-bottom:1px solid var(--border);
-  }
-  .cp-req-name img{ background:var(--bg-chip); }
-  .cp-req-kind{
-    position:absolute; top:12px; right:12px; padding:2px 8px; font-size:10px; font-weight:700;
-    letter-spacing:.6px; text-transform:uppercase; color:var(--acc); background:var(--bg-chip);
-    border:1px solid var(--acc);
-    clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px);
-  }
-  .cp-req-compact .cp-req-kind{ display:none; }
-  #paintingReqs .cp-req.cp-req-compact, #checkpointReqs .cp-req.cp-req-compact, #customNodeReqs .cp-req.cp-req-compact{
-    padding:8px 12px; border-top-width:2px;
-  }
-  #paintingReqs .cp-req.cp-req-compact .cp-req-name, #checkpointReqs .cp-req.cp-req-compact .cp-req-name{ padding:0; border:0; }
-  .cp-req-source{ border-left:3px solid var(--acc); }
-  .cp-req-source-label{ color:var(--acc); background:var(--bg-chip); border-color:var(--acc); }
   body.submit-mode .cp-req.cp-req-static .option-chip,
   body.submit-mode .cp-req.cp-req-static .free-tag{ outline:none; cursor:pointer; }
 
@@ -2172,36 +2035,6 @@
   .filter-option.implied .filter-option-name{ color:var(--gold); }
   .filter-option.implied .filter-option-name::after{ content:" \u2713"; }
 
-  /* ===== Access Points readability pass ===== */
-  .cp-reqs{ margin:44px 0 0; padding-top:0; }
-  .cp-reqs-head{ padding:12px 18px; gap:12px; }
-  .cp-reqs-title{ font-size:21px; padding-bottom:4px; }
-  .cp-reqs-count{ font-size:13px; padding:2px 11px; }
-  .cp-reqs-sub{ font-size:13.5px; line-height:1.4; margin:0 0 18px 4px; }
-  .cp-reqs-caption{
-    margin:18px 0 10px 4px; font-size:12px; font-weight:700; letter-spacing:1px;
-    text-transform:uppercase; color:var(--text-dim); display:flex; align-items:center; gap:10px;
-  }
-  .cp-reqs-caption::after{ content:""; flex:1; height:1px; background:var(--border); }
-  #paintingReqs .cp-reqs-grid, #checkpointReqs .cp-reqs-grid, #subareaReqs .cp-reqs-grid, #customNodeReqs .cp-reqs-grid{ gap:18px; }
-  #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr 1fr; } /* Come + Go: half the row each */
-  @media (max-width:720px){ #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr; } }
-  #paintingReqs .cp-req, #checkpointReqs .cp-req, #subareaReqs .cp-req, #customNodeReqs .cp-req,
-  #paintingReqs .cp-req.cp-req-come, #paintingReqs .cp-req.cp-req-go{ padding:16px 18px 18px; gap:12px; }
-  #paintingReqs .cp-req .cp-req-name, #checkpointReqs .cp-req .cp-req-name, #subareaReqs .cp-req .cp-req-name, #customNodeReqs .cp-req .cp-req-name{
-    font-size:16px; padding-bottom:10px;
-  }
-  .cp-req-name img{ width:26px; height:26px; }
-  .cp-req-kind{ font-size:10.5px; top:14px; right:14px; }
-  .cp-req-source{ background:rgba(255,255,255,.035); padding:10px 12px 12px; gap:8px; }
-  .cp-req-source-label{
-    align-self:stretch; background:none; border:0; padding:0; font-size:12.5px; font-weight:600;
-    letter-spacing:.2px; text-transform:none; color:var(--text);
-  }
-  .cp-req-source-label::before{ content:""; display:inline-block; width:7px; height:7px; margin-right:7px; background:var(--acc); vertical-align:1px; }
-  #paintingReqs .cp-req.cp-req-compact, #checkpointReqs .cp-req.cp-req-compact, #customNodeReqs .cp-req.cp-req-compact{ padding:10px 14px; }
-  .cp-req-compact .cp-req-name{ font-size:14.5px; }
-  .cp-req-empty{ font-size:13.5px; }
 
   /* Unrated routes can't take submissions */
   body.submit-mode .tier-lane.unrated .option-chip,
@@ -2210,82 +2043,6 @@
   .node-route.nr-checkpoint{ background:rgba(230,194,0,.07); border-color:var(--gold-light); border-left-color:var(--gold); }
   .node-route.nr-checkpoint .ns-kind{ color:var(--gold); }
   .node-routes-head{ color:var(--text-dim); }
-
-  /* =====================================================================
-     ACCESS POINTS REFRESH (final override layer)
-     Same data + click behaviour. Changes: quieter section header, kind label
-     becomes a small eyebrow ABOVE the name (was a pill fighting the title),
-     name band flattened, source rows lighter with an accent rule instead of
-     boxes-in-boxes, more breathing room between cards.
-     ===================================================================== */
-  .cp-reqs{ margin:52px 0 0; }
-  .cp-reqs-head{
-    display:flex; align-items:center; gap:12px;
-    padding:0 0 12px; margin:0 0 6px; background:none; border:0; border-bottom:2px solid var(--border);
-    filter:none;
-  }
-  .cp-reqs-head img{
-    width:40px; height:40px; padding:5px; flex:none;
-    background:var(--bg-chip); border:1px solid var(--border); border-bottom:3px solid var(--acc);
-  }
-  .cp-reqs-title{ font-size:22px; padding:0; margin:0; color:var(--text); }
-  .cp-reqs-title::after{ display:none; }
-  .cp-reqs-count{
-    margin-left:auto; font-size:12px; font-weight:700; padding:2px 10px; color:#1b1c1f;
-    background:var(--acc); border:0; letter-spacing:.04em;
-    clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px);
-  }
-  .cp-reqs-sub{ margin:10px 0 20px 0; font-size:13.5px; color:var(--text-dim); max-width:70ch; }
-  .cp-reqs-caption{ margin:22px 0 12px 0; color:var(--acc); font-size:11.5px; }
-  .cp-reqs-caption::after{ background:var(--border); }
-  #paintingReqs .cp-reqs-grid, #checkpointReqs .cp-reqs-grid, #subareaReqs .cp-reqs-grid, #customNodeReqs .cp-reqs-grid{ gap:16px; }
-
-  /* Card */
-  #paintingReqs .cp-req, #checkpointReqs .cp-req, #subareaReqs .cp-req, #customNodeReqs .cp-req,
-  #paintingReqs .cp-req.cp-req-come, #paintingReqs .cp-req.cp-req-go{
-    display:flex; flex-direction:column; gap:10px; padding:14px 18px 18px;
-    border:1px solid var(--border); border-top:3px solid var(--acc);
-  }
-  #paintingReqs .cp-req.cp-req-come{ --acc:var(--worldpeace); }
-  #paintingReqs .cp-req.cp-req-go{ --acc:var(--gold); }
-  .cp-req:hover{ border-color:#4a4b50; background:var(--bg-panel); }
-
-  /* Kind -> eyebrow above the name */
-  .cp-req .cp-req-kind{
-    order:-1; position:static; align-self:flex-start; padding:0; margin:0 0 -4px;
-    font-size:10.5px; letter-spacing:.12em; background:none; border:0; clip-path:none; color:var(--acc);
-  }
-  .cp-req .cp-req-kind::before{ content:""; display:inline-block; width:7px; height:7px; margin-right:7px; background:var(--acc); vertical-align:1px; }
-
-  /* Name: no tinted band, just a title with a hairline under it */
-  #paintingReqs .cp-req .cp-req-name, #checkpointReqs .cp-req .cp-req-name, #subareaReqs .cp-req .cp-req-name, #customNodeReqs .cp-req .cp-req-name,
-  #paintingReqs .cp-req.cp-req-come .cp-req-name, #paintingReqs .cp-req.cp-req-go .cp-req-name{
-    display:flex; align-items:center; gap:10px; margin:0; padding:0 0 10px; background:none;
-    border-bottom:1px solid var(--border); font-size:16px; line-height:1.25;
-  }
-  .cp-req-name img{ flex:none; width:26px; height:26px; }
-
-  /* Sources: accent rule, no nested box */
-  .cp-req-source{
-    background:none; border:0; border-left:2px solid color-mix(in srgb, var(--acc) 55%, transparent);
-    padding:2px 0 2px 12px; gap:8px;
-  }
-  .cp-req-source + .cp-req-source{ margin-top:2px; }
-  .cp-req-source-label{ font-size:12px; font-weight:600; color:var(--text-dim); }
-  .cp-req-source-label::before{ display:none; }
-
-  /* Free-to-reach rows: one tidy line */
-  #paintingReqs .cp-req.cp-req-compact, #checkpointReqs .cp-req.cp-req-compact, #customNodeReqs .cp-req.cp-req-compact{
-    flex-direction:row; align-items:center; padding:9px 14px; border-top-width:1px; border-left:3px solid var(--tier-casual);
-  }
-  .cp-req-compact .cp-req-name{ font-size:14px; }
-  .cp-req-compact .cp-req-source{ border:0; padding:0; }
-
-  @media (max-width:720px){
-    .cp-reqs{ margin-top:40px; }
-    .cp-reqs-title{ font-size:19px; }
-    .cp-reqs-head img{ width:34px; height:34px; }
-  }
 
   /* ---- Slimmer, flatter node strips/blocks (override) ---- */
   .checkpoint-info.node-strip, .node-strip.ns-custom, .node-strip.ns-checkpoint, .node-strip.ns-subarea{
@@ -2403,10 +2160,6 @@
   .pager-dot{ transition:transform .15s var(--ease), background .15s var(--ease), box-shadow .15s var(--ease); }
   .pager-dot.active{ box-shadow:0 0 8px rgba(230,194,0,.65); }
 
-  /* Scope slider */
-  #scopeSlider{ border-color:var(--border-hi); background:#1d1e22; }
-  #scopeSlider .scope-thumb{ transition:transform .25s var(--ease), background .25s ease; }
-
   /* Filter bars + mode tabs */
   .filter-bar{ background:var(--bg-panel); border-color:var(--border-hi); }
   .filter-bar-row{ transition:background .12s ease; }
@@ -2454,10 +2207,6 @@
   .checkpoint-group-header, .moon-panel-header{ transition:background .12s ease, border-color .12s ease; }
   .moon-panel-header{ border-radius:0; }
   .moon-panel.open > .moon-panel-header{ border-left-color:var(--gold); background:rgba(230,194,0,.06); }
-
-  /* Access Points cards */
-  .cp-req{ transition:transform .15s var(--ease), filter .15s var(--ease), border-color .15s ease; }
-  .cp-reqs-title{ letter-spacing:.04em; }
 
   /* Search + node + video modals: slightly softer entrance, clearer rows */
   .search-overlay, .node-overlay, .video-overlay, .vs-overlay{ animation:rfOverlayIn .16s ease both; }
@@ -2619,6 +2368,137 @@
   .cp-reqs .option-chip-row{ gap:2px; }
   .cp-reqs .and-plus{ font-size:10px; margin:0; }
   .cp-reqs .tier-options{ flex-direction:row; flex-wrap:wrap; }
+
+  /* =====================================================================
+     ACCESS POINTS — single consolidated style (replaces four stacked layers)
+     Same card skeleton as .moon-card (2px frame, hard drop-shadow, gradient
+     face, same grid) but flipped: the accent is a LEFT spine + notched
+     corner instead of a gold top rail, with a tinted title plate.
+     ===================================================================== */
+  #paintingReqs{ --acc:#d27fb8; }
+  #checkpointReqs{ --acc:var(--worldpeace); }
+  #subareaReqs{ --acc:var(--subarea); }
+  #customNodeReqs{ --acc:var(--moonrock); }
+  .cp-reqs{ width:100%; max-width:1400px; margin:46px 0 0; text-align:left; scroll-margin-top:24px; }
+  .cp-reqs-head{
+    display:flex; align-items:center; gap:12px; margin:0 0 8px; padding:10px 14px 10px 10px;
+    background:linear-gradient(90deg, color-mix(in srgb, var(--acc) 16%, var(--bg-panel)), var(--bg-panel) 70%);
+    border:2px solid var(--border); border-left:6px solid var(--acc);
+    filter:drop-shadow(2px 3px 0 var(--ink));
+  }
+  .cp-reqs-head img{ width:34px; height:34px; padding:4px; flex:none; object-fit:contain; background:var(--bg-chip); border:1px solid var(--border); }
+  .cp-reqs-title{ margin:0; font-size:20px; letter-spacing:.04em; text-transform:uppercase; color:var(--text); }
+  .cp-reqs-count{
+    margin-left:auto; font-size:12px; font-weight:700; padding:2px 10px; color:#1b1c1f; background:var(--acc); letter-spacing:.04em;
+    clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px);
+  }
+  .cp-reqs-sub{ margin:0 0 16px 4px; font-size:13px; line-height:1.4; color:var(--text-dim); max-width:72ch; }
+  .cp-reqs-caption{ margin:20px 0 10px 4px; display:flex; align-items:center; gap:10px; font-size:11.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--acc); }
+  .cp-reqs-caption::after{ content:""; flex:1; height:1px; background:var(--border); }
+  .cp-reqs-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:14px; align-items:start; }
+  .cp-reqs-grid-compact{ grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px; }
+  #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr 1fr; }
+  @media (max-width:720px){ #paintingReqs .cp-reqs-grid{ grid-template-columns:1fr; } .cp-reqs{ margin-top:36px; } .cp-reqs-title{ font-size:17px; } }
+
+  .cp-req{
+    position:relative; min-width:0; display:flex; flex-direction:column; gap:10px; text-align:left;
+    padding:14px 16px 16px 18px;
+    background:linear-gradient(180deg, color-mix(in srgb, var(--acc) 7%, #25262b) 0, var(--bg-panel) 64px);
+    border:2px solid var(--border); border-left:5px solid var(--acc);
+    filter:drop-shadow(2px 3px 0 var(--ink));
+    transition:transform .18s var(--ease, ease), filter .18s var(--ease, ease), border-color .18s ease;
+  }
+  /* notched top-right corner — the "ticket" cue that tells it apart from a moon card */
+  .cp-req::after{
+    content:""; position:absolute; top:-2px; right:-2px; width:18px; height:18px; pointer-events:none;
+    background:linear-gradient(225deg, var(--bg) 0 50%, var(--acc) 50% 100%);
+  }
+  .cp-req:hover{ transform:translateY(-2px); filter:drop-shadow(2px 5px 0 var(--ink)); border-color:#4a4b50; border-left-color:var(--acc); }
+  #paintingReqs .cp-req-come{ --acc:var(--worldpeace); }
+  #paintingReqs .cp-req-go{ --acc:var(--gold); }
+
+  .cp-req .cp-req-kind{
+    order:-1; position:static; align-self:flex-start; margin:0 0 -4px; padding:0; background:none; border:0; clip-path:none;
+    font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--acc);
+  }
+  .cp-req .cp-req-kind::before{ content:""; display:inline-block; width:7px; height:7px; margin-right:7px; background:var(--acc); transform:rotate(45deg); vertical-align:1px; }
+  .cp-req .cp-req-name{
+    display:flex; align-items:center; gap:10px; margin:0; padding:0 22px 10px 0; border-bottom:1px solid var(--border);
+    font-size:14.5px; font-weight:600; line-height:1.3; letter-spacing:.01em; color:var(--text);
+  }
+  .cp-req .cp-req-name img{ flex:none; width:28px; height:28px; padding:3px; object-fit:contain; background:var(--bg-chip); border:1px solid var(--border); border-bottom:2px solid var(--acc); }
+  .cp-req .cp-req-name span{ min-width:0; overflow-wrap:anywhere; }
+
+  .cp-req-source{ display:flex; flex-direction:column; gap:6px; min-width:0; padding:2px 0 2px 12px; background:none; border:0; border-left:2px solid color-mix(in srgb, var(--acc) 55%, transparent); }
+  .cp-req-source + .cp-req-source{ margin-top:4px; padding-top:8px; border-top:1px dashed var(--border); }
+  .cp-req-source-label{ font-size:12px; font-weight:600; color:var(--text-dim); background:none; border:0; padding:0; text-transform:none; letter-spacing:0; }
+  .cp-req-empty{ padding:4px 2px; font-size:13px; font-style:italic; color:var(--text-dim); }
+
+  /* "Free to reach": one tidy line */
+  .cp-req.cp-req-compact{ flex-direction:row; align-items:center; justify-content:space-between; gap:10px; padding:9px 14px 9px 16px; border-left-color:var(--tier-casual); }
+  .cp-req.cp-req-compact::after{ display:none; }
+  .cp-req-compact .cp-req-kind{ display:none; }
+  .cp-req-compact .cp-req-name{ padding:0; border:0; font-size:14px; }
+  .cp-req-compact .cp-req-name img{ width:22px; height:22px; }
+  .cp-req-compact .cp-req-source{ flex:0 0 auto; padding:0; border:0; margin:0; }
+  .cp-req-compact .options-row{ margin:0; }
+
+  /* =====================================================================
+     SCROLLBAR HIDDEN (page only — modals/panels keep their thin bars)
+     ===================================================================== */
+  html{ scrollbar-width:none; -ms-overflow-style:none; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar{ display:none; width:0; height:0; }
+
+  /* =====================================================================
+     NAV RAIL — animated sidebar. Click Moons / Access Points to glide there;
+     the puck rides the track with the page and reads out the moon range.
+     ===================================================================== */
+  #navRail{
+    position:fixed; right:14px; top:50%; transform:translateY(-50%); z-index:18;
+    height:min(62vh, 440px); width:92px; display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end;
+    user-select:none; -webkit-user-select:none;
+    opacity:0; pointer-events:none; transition:opacity .3s ease;
+  }
+  #navRail.ready{ opacity:1; pointer-events:auto; }
+  .nr-node{
+    position:relative; z-index:2; display:flex; align-items:center; gap:9px; margin:0; padding:0; background:none; border:0; cursor:pointer;
+    font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim);
+    transition:color .2s ease, transform .15s ease;
+  }
+  .nr-node[hidden]{ display:none; }
+  .nr-node .nr-name{ background:var(--bg-panel); border:2px solid var(--border); border-bottom-width:3px; padding:4px 9px; filter:drop-shadow(2px 3px 0 var(--ink)); transition:background .2s ease, border-color .2s ease, color .2s ease, transform .15s ease; }
+  .nr-node .nr-dot{ width:14px; height:14px; flex:none; background:var(--bg-panel); border:3px solid var(--border); transform:rotate(45deg); transition:background .25s ease, border-color .25s ease, transform .25s ease; }
+  .nr-node:hover .nr-name{ transform:translateX(-3px); color:var(--text); }
+  .nr-node:active{ transform:scale(.96); }
+  .nr-node[data-target="moons"]{ --nc:var(--gold); }
+  .nr-node[data-target="access"]{ --nc:var(--worldpeace); }
+  .nr-node.active{ color:var(--nc); }
+  .nr-node.active .nr-name{ border-color:var(--nc); background:color-mix(in srgb, var(--nc) 14%, var(--bg-panel)); }
+  .nr-node.active .nr-dot{ background:var(--nc); border-color:var(--nc); transform:rotate(225deg) scale(1.15); }
+  .nr-track{ position:absolute; right:6px; top:7px; bottom:7px; width:2px; background:var(--border); z-index:0; }
+  .nr-fill{ position:absolute; left:0; top:0; width:100%; height:0; background:linear-gradient(180deg, var(--gold), var(--worldpeace)); }
+  .nr-puck{ position:absolute; right:-6px; top:0; width:14px; height:14px; margin-top:-7px; z-index:3; transition:top .18s ease-out; }
+  .nr-puck::before{ content:""; position:absolute; inset:0; background:#f4f1e6; border:2px solid #1b1c1f; transform:rotate(45deg); box-shadow:0 0 10px rgba(230,194,0,.6); }
+  #navRail.gliding .nr-puck{ transition:none; }
+  #navRail.gliding .nr-puck::before{ animation:nrPulse .5s ease-in-out infinite alternate; }
+  @keyframes nrPulse{ from{ box-shadow:0 0 6px rgba(230,194,0,.5); transform:rotate(45deg) scale(1); } to{ box-shadow:0 0 18px rgba(79,214,176,.95); transform:rotate(45deg) scale(1.3); } }
+  .nr-readout{
+    position:absolute; right:22px; top:50%; transform:translateY(-50%); display:grid; overflow:hidden; white-space:nowrap; height:28px; align-items:center;
+    background:#121316; border:2px solid var(--border-hi, #44454b); border-left:4px solid var(--gold); padding:0 11px; filter:drop-shadow(2px 3px 0 var(--ink));
+    font-size:12px; letter-spacing:.06em; color:var(--text); transition:border-left-color .3s ease;
+  }
+  #navRail[data-zone="access"] .nr-readout{ border-left-color:var(--worldpeace); }
+  .nr-line{ grid-area:1/1; display:block; }
+  .nr-line.in-down{ animation:nrInDown .28s cubic-bezier(.2,.8,.2,1) both; }
+  .nr-line.in-up{ animation:nrInUp .28s cubic-bezier(.2,.8,.2,1) both; }
+  .nr-line.out-down{ animation:nrOutDown .28s ease both; }
+  .nr-line.out-up{ animation:nrOutUp .28s ease both; }
+  @keyframes nrInDown{ from{ transform:translateY(130%); opacity:0; } to{ transform:none; opacity:1; } }
+  @keyframes nrInUp{ from{ transform:translateY(-130%); opacity:0; } to{ transform:none; opacity:1; } }
+  @keyframes nrOutDown{ to{ transform:translateY(-130%); opacity:0; } }
+  @keyframes nrOutUp{ to{ transform:translateY(130%); opacity:0; } }
+  @media (max-width:900px){ #navRail{ right:6px; } .nr-node .nr-name{ display:none; } .nr-readout{ right:20px; } }
+  @media (prefers-reduced-motion:reduce){ .nr-puck, .nr-line, #navRail *{ animation:none !important; transition:none !important; } }
 </style>
 </head>
 <body>
@@ -2816,12 +2696,11 @@
 
 </div></div>
 
-<div id="scopeSlider" role="radiogroup" aria-label="Show moons, access points, or both" data-scope="all">
-  <span class="scope-thumb" aria-hidden="true"></span>
-  <button type="button" role="radio" data-scope="moons" aria-checked="false">Moons</button>
-  <button type="button" role="radio" data-scope="all" aria-checked="true">Both</button>
-  <button type="button" role="radio" data-scope="access" aria-checked="false">Access Points</button>
-</div>
+<nav id="navRail" aria-label="Jump to section">
+  <div class="nr-track"><div class="nr-fill" id="nrFill"></div><div class="nr-puck" id="nrPuck"><div class="nr-readout" id="nrReadout"><span class="nr-line">Moons 1–4</span></div></div></div>
+  <button type="button" class="nr-node active" data-target="moons"><span class="nr-name">Moons</span><span class="nr-dot"></span></button>
+  <button type="button" class="nr-node" data-target="access"><span class="nr-name">Access Points</span><span class="nr-dot"></span></button>
+</nav>
 
 <div class="kingdom-pager" id="kingdomPager">
   <button class="pager-arrow" id="pagerPrev" aria-label="Previous kingdom"><img class="icon-svg" src="icon/ui-chevron-left.png" alt="" onerror="this.outerHTML='&lt;span&gt;&amp;larr;&lt;/span&gt;'"></button>
@@ -8335,7 +8214,7 @@ function wrapWithHoistHeader(body, hoisted, noun){
 // anything else is Overworld. Checkpoints/Custom Nodes/Paintings follow Overworld.
 const moonFilters = { overworld:true, subarea:true, moonrock:true };
 // Moons / Access Points scope: "moons" | "all" | "access"
-let viewScope = "all";
+let viewScope = "all"; // tab switcher removed: moons + access points always shown together
 (function(){
   const sl = document.getElementById("scopeSlider");
   if(!sl) return;
@@ -11279,6 +11158,105 @@ async function init(){
 }
 
 init();
+</script>
+<script>
+/* Nav rail: animated scroll sidebar (Moons <-> Access Points) with live "Moons 5–8" readout */
+(function(){
+  const rail = document.getElementById("navRail"); if(!rail) return;
+  const puck = document.getElementById("nrPuck"), fill = document.getElementById("nrFill"), ro = document.getElementById("nrReadout");
+  const nodes = {}; rail.querySelectorAll(".nr-node").forEach(b => nodes[b.dataset.target] = b);
+  const ACCESS_IDS = ["paintingReqs","checkpointReqs","subareaReqs","customNodeReqs"];
+  const ACCESS_NAMES = { paintingReqs:"Paintings", checkpointReqs:"Checkpoints", subareaReqs:"Subareas", customNodeReqs:"Custom Nodes" };
+  const CHUNK = 4;
+  let A = 0, B = 1, lastY = window.scrollY, curText = "", gliding = false, raf = 0;
+
+  const shown = el => el && el.offsetHeight > 0 && getComputedStyle(el).display !== "none";
+  const moonsEl = () => [document.getElementById("grid"), document.getElementById("checkpointGroups")].find(shown) || null;
+  const accessEls = () => ACCESS_IDS.map(id => document.getElementById(id)).filter(el => shown(el) && el.children.length);
+  const absTop = el => el.getBoundingClientRect().top + window.scrollY;
+  const maxY = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+  function measure(){
+    const m = moonsEl(), a = accessEls();
+    nodes.moons.hidden = !m; nodes.access.hidden = !a.length;
+    rail.classList.toggle("ready", !!(m || a.length));
+    const my = m ? Math.max(0, absTop(m) - 20) : 0;
+    const ay = a.length ? Math.min(maxY(), Math.max(0, absTop(a[0]) - 20)) : maxY();
+    A = my; B = Math.max(ay, my + 1);
+    return { m, a };
+  }
+  function setReadout(txt, dir){
+    if(txt === curText) return; curText = txt;
+    const old = ro.querySelector(".nr-line:not([class*='out-'])");
+    const n = document.createElement("span"); n.className = "nr-line in-" + dir; n.textContent = txt; ro.appendChild(n);
+    if(old){ old.classList.remove("in-down","in-up"); old.classList.add("out-" + dir); setTimeout(() => old.remove(), 320); }
+  }
+  function update(){
+    raf = 0;
+    const { m, a } = measure();
+    const y = window.scrollY, dir = y >= lastY ? "down" : "up"; lastY = y;
+    const t = Math.min(1, Math.max(0, (y - A) / (B - A)));
+    const h = puck.parentElement.clientHeight;
+    puck.style.top = (t * h) + "px"; fill.style.height = (t * h) + "px";
+    // which zone are we in?
+    const probe = y + window.innerHeight * 0.4;
+    const inAccess = a.length && (probe >= absTop(a[0]) - 10 || y >= B - 2);
+    rail.dataset.zone = inAccess ? "access" : "moons";
+    nodes.moons.classList.toggle("active", !inAccess);
+    nodes.access.classList.toggle("active", !!inAccess);
+    let txt;
+    if(inAccess){
+      let cur = a[0]; a.forEach(el => { if(absTop(el) - 10 <= probe) cur = el; });
+      txt = "Access \u00b7 " + ACCESS_NAMES[cur.id];
+    } else {
+      const g = document.getElementById("grid");
+      const cards = g && shown(g) ? Array.from(g.children).filter(c => c.classList.contains("moon-card")) : [];
+      if(!cards.length) txt = "Moons";
+      else {
+        let idx = cards.findIndex(c => c.getBoundingClientRect().bottom > 90);
+        if(idx < 0) idx = cards.length - 1;
+        const lo = Math.floor(idx / CHUNK) * CHUNK, hi = Math.min(cards.length, lo + CHUNK);
+        txt = hi - lo === 1 ? "Moon " + (lo + 1) : "Moons " + (lo + 1) + "\u2013" + hi;
+      }
+    }
+    setReadout(txt, dir);
+  }
+  const queue = () => { if(!raf) raf = requestAnimationFrame(update); };
+  addEventListener("scroll", queue, { passive:true });
+  addEventListener("resize", queue);
+
+  const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  function glideTo(y){
+    y = Math.min(maxY(), Math.max(0, y));
+    const from = window.scrollY, dist = y - from;
+    if(Math.abs(dist) < 2) return;
+    const dur = Math.min(1100, 380 + Math.abs(dist) * 0.35), t0 = performance.now();
+    gliding = true; rail.classList.add("gliding");
+    const stop = () => { gliding = false; };
+    addEventListener("wheel", stop, { once:true, passive:true }); addEventListener("touchstart", stop, { once:true, passive:true });
+    (function step(now){
+      if(!gliding){ rail.classList.remove("gliding"); return; }
+      const p = Math.min(1, (now - t0) / dur);
+      window.scrollTo(0, from + dist * ease(p));
+      if(p < 1) requestAnimationFrame(step); else { gliding = false; rail.classList.remove("gliding"); queue(); }
+    })(t0);
+  }
+  rail.addEventListener("click", e => {
+    const b = e.target.closest(".nr-node"); if(!b) return;
+    const { m, a } = measure();
+    if(b.dataset.target === "moons") glideTo(m ? absTop(m) - 20 : 0);
+    else if(a.length) glideTo(absTop(a[0]) - 20);
+  });
+
+  // re-measure whenever the kingdom/filters re-render
+  if(typeof renderGrid === "function"){
+    const orig = renderGrid;
+    window.renderGrid = renderGrid = function(){ const r = orig.apply(this, arguments); setTimeout(queue, 0); return r; };
+  }
+  new MutationObserver(queue).observe(document.body, { childList:true, subtree:true });
+  window.__navRefresh = update;
+  queue();
+})();
 </script>
 </body>
 </html>
