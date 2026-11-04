@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDoubleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3899,13 +3899,13 @@ function parseScenarioList(str){
   // this branch is active in every scenario).
   const trimmed = (str || "").trim();
   if(!trimmed) return null;
-  return trimmed.split(",").map(s => parseInt(s.trim(), 10)).filter(n => !Number.isNaN(n));
+  return Array.from(new Set(trimmed.split(",").map(s => parseInt(s.trim(), 10)).filter(n => !Number.isNaN(n)))).sort((x, y) => x - y);
 }
 function scenarioListLabel(list){
   if(!list || !list.length) return null;
   // Render a contiguous run as "N-M", otherwise comma-join. Sorted first
   // since source data is already ascending but this stays correct either way.
-  const sorted = [...list].sort((a,b) => a-b);
+  const sorted = Array.from(new Set(list)).sort((a,b) => a-b);
   const isRun = sorted.every((v,i) => i===0 || v === sorted[i-1]+1);
   if(isRun && sorted.length > 1) return `Scenario ${sorted[0]}-${sorted[sorted.length-1]}`;
   if(sorted.length === 1) return `Scenario ${sorted[0]}`;
