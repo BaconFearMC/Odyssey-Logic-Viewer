@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2613,6 +2613,12 @@
     100%{ transform:translate(var(--bx),var(--by)) rotate(14deg) scale(.7); opacity:0; z-index:2; }
   }
   @media (prefers-reduced-motion:reduce){ .prog-badge.prog-cycle .prog-icon{ animation:none; } .prog-badge.prog-cycle .pc-b{ display:none; } }
+  /* Access Points: tighter chips so 5-6 icons sit on one line */
+  .cp-reqs .option-chip{ padding:4px 6px; }
+  .cp-reqs .icon-wrap, .cp-reqs .icon, .cp-reqs .icon-fallback{ width:42px; height:42px; }
+  .cp-reqs .option-chip-row{ gap:2px; }
+  .cp-reqs .and-plus{ font-size:10px; margin:0; }
+  .cp-reqs .tier-options{ flex-direction:row; flex-wrap:wrap; }
 </style>
 </head>
 <body>
@@ -5352,7 +5358,15 @@ function buildNodeReachIndex(nodes, edges){
     const raw = (n.display_name || "").replace(/^Home (?:entrance|return):\s*/i, "").trim();
     return raw ? raw.charAt(0).toUpperCase() + raw.slice(1) + " Entrance" : null;
   };
+  const _crMemo = {};
   const customReach = (id, seen) => {
+    if(Object.prototype.hasOwnProperty.call(_crMemo, id)) return _crMemo[id];
+    if(seen && seen.size > 5){ return null; } // depth cap: deeper chains only add redundant routes
+    const r = customReachRaw(id, seen);
+    _crMemo[id] = r;
+    return r;
+  };
+  const customReachRaw = (id, seen) => {
     seen = new Set(seen); seen.add(id);
     // A two-way route is walkable both ways into a Custom Node, but a Checkpoint is a warp
     // point: only routes that really lead INTO it are charged (walking back out of one
@@ -5363,7 +5377,7 @@ function buildNodeReachIndex(nodes, edges){
     const destIsAnchor = !!(_nodeById[id] && (_nodeById[id].node_type === "checkpoint" || _nodeById[id].node_type === "stage_start"));
     let res = [];
     list.forEach(({ e, src }) => {
-      if(seen.has(src) || res.length > 300) return;
+      if(seen.has(src) || res.length > 60) return;
       const sn = _nodeById[src];
       let sb, label = null, costedOnly = false;
       if(sn && sn.node_type === "custom_place" && destIsAnchor){
@@ -5486,7 +5500,7 @@ function reachWithinStage(nodeMap, edges, stage, fromId, toId){
   const seen = new Set([fromId]);
   reachWithinStage.lastWhy = null;
   (function dfs(cur, acc, depth){
-    if(depth > 8 || result.length > 200) return;
+    if(depth > 6 || result.length > 60) return;
     if(cur === toId){ result = result.concat(acc); return; }
     (adj[cur] || []).forEach(({ to, e }) => {
       if(seen.has(to)) return;
@@ -5655,10 +5669,18 @@ function directedInbound(data, nodeId){
 // zone-start landmark whose sole link is a bidirectional edge to the checkpoint)
 // is an orphan -> null (contributes nothing) instead of a phantom "Free" entry.
 function customNodeReachBranches(data, nodeId, seen){
+  data._cnrMemo = data._cnrMemo || {};
+  if(Object.prototype.hasOwnProperty.call(data._cnrMemo, nodeId)) return data._cnrMemo[nodeId];
+  if(seen && seen.size > 5) return null;
+  const out = customNodeReachBranchesRaw(data, nodeId, seen);
+  data._cnrMemo[nodeId] = out;
+  return out;
+}
+function customNodeReachBranchesRaw(data, nodeId, seen){
   seen = new Set(seen); seen.add(nodeId);
   let res = [];
   directedInbound(data, nodeId).forEach(({ e, src }) => {
-    if(seen.has(src) || res.length > 300) return;
+    if(seen.has(src) || res.length > 60) return;
     const sn = data.nodeMap[src];
     let sb;
     if(!sn || sn.node_type !== "custom_place") sb = [{ group: [], scenarios: null, tier: "casual" }];
@@ -5693,7 +5715,8 @@ function computeNodeSourceReqs(kingdomName, nodeId){
     rows.push(Object.assign({ label: "From " + label }, summarizeBranches(r.branches, kingdomName)));
   });
   if(rows.length < 2 && !anyFolded) return null; // plain single-source case: flat reach path handles it
-  return rows.length ? rows : null;
+  const trimmed = dropDominatedSourceRows(rows.filter(r => !r.impossible));
+  return trimmed.length ? trimmed : (rows.length ? rows : null);
 }
 
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
@@ -6821,6 +6844,7 @@ function balancedRowCounts(total, max){
 // between icons within the same row. Replaces the old single nowrap
 // line, so a chip with 4+ requirements stays fully visible — wrapping
 // into a compact, centered block — rather than scrolling or overflowing.
+let ICON_ROW_MAX = 3; // icons per row inside a requirement chip (Access Point cards widen this)
 function appendAndGroupIcons(chip, andGroup, extra){
   // A move that is only shown as a progression icon on a later move in the
   // same group (Ground Pound on Ground Pound Jump, ...) isn't listed twice.
@@ -6828,7 +6852,7 @@ function appendAndGroupIcons(chip, andGroup, extra){
   andGroup.forEach(t => (ABILITY_PROGRESSION[t] || []).forEach(pt => covered.add(pt)));
   const visible = andGroup.filter(t => !covered.has(t));
   const tokens = sortedTokensForDisplay(visible.length ? visible : andGroup);
-  const rows = balancedRowCounts(tokens.length, 3);
+  const rows = balancedRowCounts(tokens.length, ICON_ROW_MAX);
   const needsTwoDJump = andGroup.indexOf("SingleJump") !== -1 && (andGroup.indexOf("Pipe2D") !== -1 || !!(extra && extra.hoistedPipe2D));
   let idx = 0;
   rows.forEach(rowCount => {
@@ -8554,6 +8578,23 @@ function nodeSourceLabel(n, fallback){
   if(nodeSourceKind(n) === "painting") return (/^come$/i.test(n.entrance_id) ? "Come" : "Go") + " Painting";
   return cleanCheckpointName(n.display_name) || fallback;
 }
+// A source row is only applicable if no other source reaches the same place at an equal-or-easier
+// cost (same tokens or fewer, same-or-easier tier, covering the same scenarios). Pointless rows are
+// dropped and their source names are folded into the row that makes them redundant.
+function rowBranchesForDominance(r){
+  if(r.free) return [{ group: [], scenarios: null, tier: "casual" }];
+  const out = [];
+  (r.lanes || []).forEach(l => l.groups.forEach(g => out.push({ group: g.slice(), scenarios: g.scenarios || null, tier: l.tier === "unrated" ? "casual" : l.tier })));
+  return out;
+}
+function dropDominatedSourceRows(rows){
+  if(rows.length < 2) return rows;
+  const br = rows.map(rowBranchesForDominance);
+  const dominates = (a, b) => br[b].length > 0 && br[b].every(bb => br[a].some(aa => pyramidDominates(aa, bb)));
+  const keep = rows.map((r, j) => !rows.some((o, i) => i !== j && dominates(i, j) && (!dominates(j, i) || i < j)));
+  const out = rows.filter((r, i) => keep[i]);
+  return out.length ? out : rows;
+}
 function computeFormulaicSources(kingdomName, nodeId){
   const data = KINGDOM_NODE_DATA[kingdomName];
   if(!data || !nodeId) return [];
@@ -8576,7 +8617,7 @@ function computeFormulaicSources(kingdomName, nodeId){
     if(!row.labels.includes(lab)) row.labels.push(lab);
     row.rank = Math.min(row.rank, RANK[nodeSourceKind(src)]);
   });
-  const rows = Array.from(bySig.values());
+  let rows = dropDominatedSourceRows(Array.from(bySig.values()));
   rows.forEach(r => {
     const rk = l => l === "Kingdom Start" ? 0 : /Painting$/.test(l) ? 1 : 2;
     r.labels.sort((a, b) => rk(a) - rk(b) || a.localeCompare(b));
@@ -8673,6 +8714,10 @@ function appendSourceHeader(wrap, label, kingdomName, prefix){
 }
 
 function renderPaintingReqs(kingdomName){
+  const __prevRow = ICON_ROW_MAX; ICON_ROW_MAX = 6;
+  try{ return renderPaintingReqs_impl(kingdomName); } finally { ICON_ROW_MAX = __prevRow; }
+}
+function renderPaintingReqs_impl(kingdomName){
   const root = document.getElementById("paintingReqs");
   if(!root) return;
   root.innerHTML = "";
@@ -8778,6 +8823,10 @@ function getSubareaEntranceCards(kingdomName){
 }
 
 function renderSubareaReqs(kingdomName){
+  const __prevRow = ICON_ROW_MAX; ICON_ROW_MAX = 6;
+  try{ return renderSubareaReqs_impl(kingdomName); } finally { ICON_ROW_MAX = __prevRow; }
+}
+function renderSubareaReqs_impl(kingdomName){
   const root = document.getElementById("subareaReqs");
   if(!root) return;
   root.innerHTML = "";
@@ -8833,6 +8882,10 @@ function renderSubareaReqs(kingdomName){
 }
 
 function renderCheckpointReqs(kingdomName, nodeType){
+  const __prevRow = ICON_ROW_MAX; ICON_ROW_MAX = 6;
+  try{ return renderCheckpointReqs_impl(kingdomName, nodeType); } finally { ICON_ROW_MAX = __prevRow; }
+}
+function renderCheckpointReqs_impl(kingdomName, nodeType){
   nodeType = nodeType || "checkpoint";
   const isCustom = nodeType === "custom_place";
   const root = document.getElementById(isCustom ? "customNodeReqs" : "checkpointReqs");
@@ -10155,9 +10208,19 @@ let nothingYetTimer = null;
 const videoExistsCache = new Map();
 
 // Quietly checks whether assets/logicvideos/<baseName>.mp4 (or .webp) exists.
+const _probeQueue = []; let _probeActive = 0;
+function _probeRun(){
+  while(_probeActive < 4 && _probeQueue.length){
+    const job = _probeQueue.shift(); _probeActive++;
+    job(() => { _probeActive--; _probeRun(); });
+  }
+}
 function logicVideoExists(baseName){
   if(videoExistsCache.has(baseName)) return videoExistsCache.get(baseName);
-  const p = new Promise(resolve => {
+  const p = new Promise(resolve0 => { _probeQueue.push(done => {
+   let fin = false; const resolve = v => { if(fin) return; fin = true; done(); resolve0(v); };
+   setTimeout(() => resolve(false), 6000); // never let a stuck probe hold a slot
+   (function(resolve){
     const v = document.createElement("video");
     v.preload = "metadata";
     v.muted = true;
@@ -10169,7 +10232,8 @@ function logicVideoExists(baseName){
       img.src = "assets/logicvideos/" + baseName + ".webp";
     }, { once: true });
     v.src = "assets/logicvideos/" + baseName + ".mp4";
-  });
+   })(resolve);
+  }); _probeRun(); });
   videoExistsCache.set(baseName, p);
   return p;
 }
