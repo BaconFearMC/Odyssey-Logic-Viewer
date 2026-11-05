@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -4058,22 +4058,35 @@ const SUBAREA_EXEMPTIONS = [
   "Snow Kingdom: Class A Lobby",
 ];
 const SUBAREA_CTX = {}; // kingdom -> { homeStage, subStages:Set, exemptStages:Set }
-// Any node whose name/notes/id says "From Substage" is always a subarea node.
-const _FROM_SUBSTAGE_RE = /from[\s_\-:]*sub[\s_\-]*stage/i;
+// A "substage node" is any pipe/door endpoint into a subarea: the data's own type/side flags, OR
+// wording like "From Substage", "Substage near side: CapAppearExEnt", "sub_far", "substage_entrance".
+const _SUBSTAGE_TEXT_RE = /sub[\s_\-]*stage|\bsub[\s_\-]*(?:near|far)\b/i;
 function isFromSubstage(n){
   if(!n) return false;
-  return [n.display_name, n.stage_display_name, n.notes, n.node_id, n.entrance_id, n.label, n.name]
-    .some(v => v != null && _FROM_SUBSTAGE_RE.test(String(v)));
+  if(n.node_type === "substage_entrance" || n.side === "sub_near" || n.side === "sub_far") return true;
+  return [n.display_name, n.stage_display_name, n.notes, n.node_id, n.entrance_id, n.label, n.name, n.source_label]
+    .some(v => v != null && _SUBSTAGE_TEXT_RE.test(String(v)));
 }
 function _saNorm(x){ return String(x == null ? "" : x).toLowerCase().replace(/[^a-z0-9|]+/g, " ").trim(); }
-function buildSubareaContext(kingdomName, nodes){
-  nodes = nodes || [];
+function buildSubareaContext(kingdomName, nodes, edges){
+  nodes = nodes || []; edges = edges || [];
   const counts = {};
   nodes.forEach(n => { if(n.node_type === "home_entrance" && n.stage) counts[n.stage] = (counts[n.stage] || 0) + 1; });
   if(!Object.keys(counts).length) nodes.forEach(n => { if(n.stage && n.area_scope !== "subarea") counts[n.stage] = (counts[n.stage] || 0) + 1; });
   const homeStage = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0] || null;
   const subStages = new Set(nodes.filter(n => n.node_type === "substage_entrance" && n.stage && n.stage !== homeStage).map(n => n.stage));
-  nodes.forEach(n => { if(n.stage && n.stage !== homeStage && isFromSubstage(n)) subStages.add(n.stage); });
+  // Every way a subarea can be marked, so none are missed:
+  const byId = {}; nodes.forEach(n => { if(n.node_id != null) byId[n.node_id] = n; });
+  const addStage = n => { if(n && n.stage && n.stage !== homeStage) subStages.add(n.stage); };
+  nodes.forEach(n => { if(isFromSubstage(n)) addStage(n); });                       // (a) the entrance/"From Substage" node itself
+  nodes.forEach(n => { if(n.area_scope === "subarea") addStage(n); });              // (b) explicit data flag
+  const entIds = new Set(nodes.filter(isFromSubstage).map(n => n.entrance_id).filter(Boolean));
+  nodes.forEach(n => { if(n.entrance_id && entIds.has(n.entrance_id)) addStage(n); }); // (c) both ends of a substage pipe
+  edges.forEach(e => {                                                              // (d) anything a substage pipe leads into
+    const a = byId[e.from_node_id], b = byId[e.to_node_id]; if(!a || !b) return;
+    if(isFromSubstage(a)) addStage(b);
+    if(isFromSubstage(b) && /^(true|1|yes|y)$/i.test(String(e.bidirectional).trim())) addStage(a);
+  });
   const byEnt = {};
   nodes.forEach(n => { if(n.entrance_id && (n.node_type === "home_entrance" || n.node_type === "substage_entrance")) (byEnt[n.entrance_id] = byEnt[n.entrance_id] || []).push(n); });
   const rules = [];
@@ -4104,13 +4117,33 @@ function buildSubareaContext(kingdomName, nodes){
   console.log(`[${kingdomName}] subarea ctx: home="${homeStage}", exempt stages: [${[...exemptStages].join(", ")}]` + (promoted.size ? `, fallback-detected subareas: [${[...promoted].join(", ")}]` : ""));
   if(unmatched.length) console.log(`[${kingdomName}] exemption rules with no match here: ${unmatched.join(" | ")}`);
 }
+function inSubareaStage(n, ctx){
+  if(!n) return false;
+  if(n.area_scope === "subarea") return true;
+  return !!(ctx && n.stage && ctx.subStages && ctx.subStages.has(n.stage) && n.stage !== ctx.homeStage && !(ctx.exemptStages && ctx.exemptStages.has(n.stage)));
+}
 // -> { name, stage } when `node` is in a (non-exempt) subarea, else null.
 function subareaInfoFor(node, kingdomName){
   if(!node) return null;
   const ctx = SUBAREA_CTX[kingdomName] || {};
   const stage = node.stage;
   if(stage && ctx.exemptStages && ctx.exemptStages.has(stage)) return null;
-  if(node.area_scope === "subarea" || isFromSubstage(node) || (stage && ctx.subStages && ctx.subStages.has(stage) && stage !== ctx.homeStage)){
+  // "From Substage ..." routes: if any inbound source is a substage entrance sitting in a
+  // non-home, non-exempt stage, this node is inside that subarea (covers nodes whose own
+  // stage/area_scope flag is missing or wrong).
+  try{
+    const data = KINGDOM_NODE_DATA[kingdomName], id = node.node_id;
+    if(data && id && data.nodeMap && typeof directedInbound === "function"){
+      for(const { src } of directedInbound(data, id)){
+        const sn = data.nodeMap[src];
+        if(sn && (sn.node_type === "substage_entrance" || isFromSubstage(sn)) && sn.stage
+           && sn.stage !== ctx.homeStage && !(ctx.exemptStages && ctx.exemptStages.has(sn.stage))){
+          return { name: sn.stage_display_name || sn.stage, stage: sn.stage };
+        }
+      }
+    }
+  }catch(e){}
+  if(node.area_scope === "subarea" || (!stage && isFromSubstage(node)) || (stage && ctx.subStages && ctx.subStages.has(stage) && stage !== ctx.homeStage)){
     return { name: node.stage_display_name || stage, stage };
   }
   return null;
@@ -5724,7 +5757,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
   const { reachExprs: nodeReachExpr, reachBranches: nodeReachBranches } = buildNodeReachIndex(ws.logicNodes || [], ws.routeEdges || []);
 
-  buildSubareaContext(kingdomName, ws.logicNodes || []);
+  buildSubareaContext(kingdomName, ws.logicNodes || [], ws.routeEdges || []);
   const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => {
     // A moon shows ONLY its own requirement. The cost of reaching its
     // checkpoint/custom node/subarea pipe is node info and lives in the
@@ -5747,7 +5780,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   // reach requirements, and for a subarea, walk every substage_entrance
   // node that shares its stage. Always overwritten wholesale on reload,
   // same as KINGDOMS above, so it can never point at stale nodes.
-  KINGDOM_NODE_DATA[kingdomName] = { nodeMap, nodes: ws.logicNodes || [], edges: ws.routeEdges || [], reachBranches: nodeReachBranches };
+  KINGDOM_NODE_DATA[kingdomName] = { subCtx: SUBAREA_CTX[kingdomName], nodeMap, nodes: ws.logicNodes || [], edges: ws.routeEdges || [], reachBranches: nodeReachBranches };
 
   // Re-apply any user-defined Moon+Node merge rules now that this
   // kingdom's moons AND node data are both in place (checkpoint/custom
@@ -6062,7 +6095,7 @@ function findNamedNodeId(data, nodeName){
 function findSubareaByName(data, nodeName){
   if(!data) return null;
   const target = normalizeMergeName(nodeName);
-  const match = (data.nodes || []).find(n => (n.area_scope === "subarea" || isFromSubstage(n)) && normalizeMergeName(n.stage_display_name) === target);
+  const match = (data.nodes || []).find(n => inSubareaStage(n, data.subCtx) && normalizeMergeName(n.stage_display_name) === target);
   return match ? match.stage : null;
 }
 
@@ -6677,7 +6710,7 @@ window.listOverrideNodes = function(kingdomAlias){
     .filter(n => !/purples/i.test(n.display_name || ""))
     .map(n => (n.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "")))];
   const subareas = [...new Set((data.nodes || [])
-    .filter(n => n.area_scope === "subarea" || isFromSubstage(n))
+    .filter(n => inSubareaStage(n, data.subCtx))
     .map(n => n.stage_display_name))];
   console.log(`${name} — Checkpoints/Custom Nodes (${checkpoints.length}):`, checkpoints);
   console.log(`${name} — Subareas (${subareas.length}):`, subareas);
