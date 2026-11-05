@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -4058,6 +4058,13 @@ const SUBAREA_EXEMPTIONS = [
   "Snow Kingdom: Class A Lobby",
 ];
 const SUBAREA_CTX = {}; // kingdom -> { homeStage, subStages:Set, exemptStages:Set }
+// Any node whose name/notes/id says "From Substage" is always a subarea node.
+const _FROM_SUBSTAGE_RE = /from[\s_\-:]*sub[\s_\-]*stage/i;
+function isFromSubstage(n){
+  if(!n) return false;
+  return [n.display_name, n.stage_display_name, n.notes, n.node_id, n.entrance_id, n.label, n.name]
+    .some(v => v != null && _FROM_SUBSTAGE_RE.test(String(v)));
+}
 function _saNorm(x){ return String(x == null ? "" : x).toLowerCase().replace(/[^a-z0-9|]+/g, " ").trim(); }
 function buildSubareaContext(kingdomName, nodes){
   nodes = nodes || [];
@@ -4066,6 +4073,7 @@ function buildSubareaContext(kingdomName, nodes){
   if(!Object.keys(counts).length) nodes.forEach(n => { if(n.stage && n.area_scope !== "subarea") counts[n.stage] = (counts[n.stage] || 0) + 1; });
   const homeStage = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0] || null;
   const subStages = new Set(nodes.filter(n => n.node_type === "substage_entrance" && n.stage && n.stage !== homeStage).map(n => n.stage));
+  nodes.forEach(n => { if(n.stage && n.stage !== homeStage && isFromSubstage(n)) subStages.add(n.stage); });
   const byEnt = {};
   nodes.forEach(n => { if(n.entrance_id && (n.node_type === "home_entrance" || n.node_type === "substage_entrance")) (byEnt[n.entrance_id] = byEnt[n.entrance_id] || []).push(n); });
   const rules = [];
@@ -4102,7 +4110,7 @@ function subareaInfoFor(node, kingdomName){
   const ctx = SUBAREA_CTX[kingdomName] || {};
   const stage = node.stage;
   if(stage && ctx.exemptStages && ctx.exemptStages.has(stage)) return null;
-  if(node.area_scope === "subarea" || (stage && ctx.subStages && ctx.subStages.has(stage) && stage !== ctx.homeStage)){
+  if(node.area_scope === "subarea" || isFromSubstage(node) || (stage && ctx.subStages && ctx.subStages.has(stage) && stage !== ctx.homeStage)){
     return { name: node.stage_display_name || stage, stage };
   }
   return null;
@@ -6054,7 +6062,7 @@ function findNamedNodeId(data, nodeName){
 function findSubareaByName(data, nodeName){
   if(!data) return null;
   const target = normalizeMergeName(nodeName);
-  const match = (data.nodes || []).find(n => n.area_scope === "subarea" && normalizeMergeName(n.stage_display_name) === target);
+  const match = (data.nodes || []).find(n => (n.area_scope === "subarea" || isFromSubstage(n)) && normalizeMergeName(n.stage_display_name) === target);
   return match ? match.stage : null;
 }
 
@@ -6669,7 +6677,7 @@ window.listOverrideNodes = function(kingdomAlias){
     .filter(n => !/purples/i.test(n.display_name || ""))
     .map(n => (n.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "")))];
   const subareas = [...new Set((data.nodes || [])
-    .filter(n => n.area_scope === "subarea")
+    .filter(n => n.area_scope === "subarea" || isFromSubstage(n))
     .map(n => n.stage_display_name))];
   console.log(`${name} — Checkpoints/Custom Nodes (${checkpoints.length}):`, checkpoints);
   console.log(`${name} — Subareas (${subareas.length}):`, subareas);
