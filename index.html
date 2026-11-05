@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -7256,6 +7256,19 @@ function customNodeRoutesFor(moon){
 // Fills a card's "tracked from" strip: icon + kind label (CUSTOM NODE /
 // CHECKPOINT / SUBAREA) + the node's name, plus a right-hand hint saying
 // whether clicking shows the node's route or it's already merged in above.
+// A Custom Node that is just "<Moon Name> Free" is shown as plain "<Moon Name>" (the "Free" is
+// bookkeeping). Other Free-suffixed nodes (e.g. "Bullet Bill Side Path Free") keep their name.
+function nodeShownName(name, moonName){
+  const raw = String(name == null ? "" : name);
+  if(!moonName || !/\s*free\s*$/i.test(raw)) return raw;
+  const norm = x => String(x).toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]/g, "").replace(/^the(?=.)/, "");
+  const target = norm(moonName);
+  const base = raw.replace(/\s*free\s*$/i, "").trim();              // "<Moon> Free"
+  if(base && norm(base) === target) return base;
+  const noMoon = base.replace(/\s*moon\s*$/i, "").trim();           // "<Moon> Moon Free"
+  if(noMoon && norm(noMoon) === target) return noMoon;
+  return raw;
+}
 function decorateNodeStrip(info, kind, kindLabel, name, merged){
   info.classList.add("node-strip", "ns-" + kind);
   const txt = document.createElement("span");
@@ -7369,7 +7382,7 @@ function buildMoonCard(moon, opts){
     // Strip a trailing "Checkpoint" word for the tooltip text per request
     // (e.g. "Stone Bridge Checkpoint" -> "Stone Bridge"), independent of
     // the "(objXXX)" suffix already stripped when the lookup was built.
-    const shortName = moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "");
+    const shortName = nodeShownName(moon.checkpoint.replace(/\s*Checkpoint\s*$/i, ""), moon.name);
     const label = "Tracked from: " + shortName;
 
     const info = document.createElement("span");
@@ -7428,7 +7441,7 @@ function buildMoonCard(moon, opts){
   (moon._extraNodes || []).filter(x => !/purples/i.test(x.name)).forEach(x => {
     const xi = document.createElement("span");
     xi.className = "checkpoint-info";
-    const xlabel = "Tracked from: " + x.name;
+    const xlabel = "Tracked from: " + nodeShownName(x.name, moon.name);
     if(x.merged){
       xi.classList.add("info-static");
       xi.setAttribute("aria-label", xlabel + " — requirements already included above");
@@ -7445,7 +7458,7 @@ function buildMoonCard(moon, opts){
     xtip.className = "icon-tooltip";
     xtip.textContent = xlabel + (x.merged ? " (included above)" : "");
     xi.appendChild(xtip);
-    decorateNodeStrip(xi, "custom", "Custom Node", x.name, !!x.merged);
+    decorateNodeStrip(xi, "custom", "Custom Node", nodeShownName(x.name, moon.name), !!x.merged);
     if(!x.merged){
       const open = () => openNodeInfo({ kind: "custom_place", kingdom: x.kingdom, nodeId: x.id, fallbackName: x.name });
       xi.addEventListener("click", open);
