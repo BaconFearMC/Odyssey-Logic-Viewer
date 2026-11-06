@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityTripleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2260,6 +2260,7 @@
   .cycle-frame > .icon, .cycle-frame > .icon-fallback{ position:absolute; width:100%; height:100%; top:0; left:0; clip-path:none; border:0; }
   .cycle-frame.pair > :first-child{ width:64%; height:64%; top:0; left:0; z-index:1; }
   .cycle-frame.pair > :last-child{ width:64%; height:64%; top:auto; left:auto; right:0; bottom:0; z-index:2; box-shadow:-1px -1px 0 var(--bg-panel); }
+  .cycle-frame.static{ animation:none; opacity:1; }
   .cycle-4{ animation-name:cycle4; }
   .cycle-8{ animation-name:cycle8; }
   @keyframes cycle4{ 0%{opacity:1} 21%{opacity:1} 25%{opacity:0} 96%{opacity:0} 100%{opacity:1} }
@@ -2510,7 +2511,16 @@
   .cp-req-compact .cp-req-source{ flex:1 1 auto; min-width:0; max-width:100%; }
   .cp-req .cp-req-name, .cp-req .cp-req-name span{ white-space:normal; }
   .gh-star{ color:var(--gold); font-weight:bold; margin-left:2px; align-self:flex-start; }
-  .gh-star-note{ flex-basis:100%; font-size:11px; line-height:1.25; color:var(--text-dim); margin-top:3px; }
+  .gh-star-note{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px; margin-top:3px; font-size:10px; color:var(--text-dim); }
+  .gh-star-mark{ color:var(--gold); font-weight:bold; font-size:13px; }
+  .gh-star-word{ letter-spacing:.04em; }
+  .gh-star-icons{ display:inline-flex; align-items:center; gap:2px; }
+  .gh-star-icons .and-plus{ font-size:10px; }
+  .gh-star-note .icon-wrap{ width:26px; height:26px; }
+  .gh-star-note .icon-wrap > .icon, .gh-star-note .icon-wrap > .icon-fallback{ width:100%; height:100%; font-size:9px; }
+  .gh-star-note .icon-wrap.any-badged::after{ font-size:5.5px; padding:1px 3px; bottom:-4px; }
+  .gh-star-note .icon-wrap.any-badged::before{ inset:-2px; }
+  .gh-star-note .prog-badge{ display:none; }
 </style>
 </head>
 <body>
@@ -2770,12 +2780,38 @@
 
 
 <script>
+
+/* =========================================================
+   SETTINGS — every 0/1 switch lives here. Edit the number, reload.
+   ========================================================= */
+
 /* ============ MASTER VIDEO SWITCH ============
    0 = videos OFF: no probing for assets/logicvideos/*, no "has video" badges,
        no video popups / "Nothing yet..." toasts, Video filter button hidden.
    1 = videos ON (restore after the revamp). */
 const VIDEOS_ENABLED = 0;
 if(!VIDEOS_ENABLED) document.documentElement.classList.add("videos-off");
+
+
+/* ============ ANY-ICON ANIMATION ============
+   0 = "Any Grounded Height" and "Any Cap Throw" icons are STATIC: they show the Single Jump /
+       Neutral Throw icon (blue / red frame, "ANY" label). Hovering still lists every option.
+   1 = they cycle through every option like a gif (old behavior). */
+const ANIMATED_ANY_ICONS = 0;
+
+// >>> 0 = a "<Moon> Free" node's own reach cost is crossed into the moon like any other node
+//     (a moon is only "Free" if getting to the node is genuinely free).
+//     1 = old behavior: a moon sitting on a Free node always reads plain "Free".
+const FREE_NODE_SKIPS_REACH_COST = 0;
+
+// >>> QUICK TOGGLE: 1 = Pyramid-specific moon logic ON, 0 = OFF (moons use their normal requirements)
+const PYRAMID_LOGIC_ENABLED = 1;
+
+// >>> QUICK TOGGLE: 1 = clicking/opening the "Top of the Pyramid" node also lists the Lower + Upper Interior
+//     requirements (separate from PYRAMID_LOGIC_ENABLED), 0 = off.
+const TOP_PYRAMID_INTERIORS_ENABLED = 1;
+/* ============ END SETTINGS ============ */
+
 /* =========================================================
    PLACEHOLDER STYLING — color shown behind the item's initials
    until real art exists in /icon/. Keyed by category. No emoji
@@ -6327,10 +6363,7 @@ function applyOverrideNodeToMoon(moon, nodeName, kingdomName, data, replace, sam
 // always starts from a snapshot of the moon's real, computed-from-data
 // requirement (taken once, the first time this runs for that moon) rather
 // than compounding a merge on top of a previous merge.
-// >>> 0 = a "<Moon> Free" node's own reach cost is crossed into the moon like any other node
-//     (a moon is only "Free" if getting to the node is genuinely free).
-//     1 = old behavior: a moon sitting on a Free node always reads plain "Free".
-const FREE_NODE_SKIPS_REACH_COST = 0;
+
 function applyNodeMergeRules(kingdomName){
   const moons = KINGDOMS[kingdomName];
   if(!moons) return;
@@ -6553,8 +6586,7 @@ function applyNodeMergeRules(kingdomName){
    own requirement; mode "or" = routes are an alternative to the moon's own
    requirement (own one is hidden when the routes already cover it).
    ========================================================= */
-// >>> QUICK TOGGLE: 1 = Pyramid-specific moon logic ON, 0 = OFF (moons use their normal requirements)
-const PYRAMID_LOGIC_ENABLED = 1;
+
 const PYRAMID_LOGIC = {
   kingdom: "Sand Kingdom",
   title: "Inverted Pyramid Logic",
@@ -6678,9 +6710,7 @@ function pyramidRouteLabel(via){
   return "Other route";
 }
 
-// >>> QUICK TOGGLE: 1 = clicking/opening the "Top of the Pyramid" node also lists the Lower + Upper Interior
-//     requirements (separate from PYRAMID_LOGIC_ENABLED), 0 = off.
-const TOP_PYRAMID_INTERIORS_ENABLED = 1;
+
 function buildTopPyramidInteriors(kingdomName){
   const cfg = PYRAMID_LOGIC;
   if(!TOP_PYRAMID_INTERIORS_ENABLED || kingdomName !== cfg.kingdom) return null;
@@ -6907,6 +6937,16 @@ let ICON_ROW_MAX = 3; // icons per row inside a requirement chip (Access Point c
 function appendGhStar(chip, andGroup){
   if(!andGroup || !andGroup.ghStar || !andGroup.ghStar.length) return;
   const lab = toks => toks.map(t => (typeof filterLabelFor === "function" ? filterLabelFor(t) : t) || t).join(" + ");
+  const iconKey = t => ICON_MANIFEST[t] ? t : (Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t);
+  const iconRow = toks => {
+    const r = document.createElement("span");
+    r.className = "gh-star-icons";
+    toks.forEach((t, i) => {
+      if(i){ const plus = document.createElement("span"); plus.className = "and-plus"; plus.textContent = "+"; r.appendChild(plus); }
+      r.appendChild(makeIcon(iconKey(t)));
+    });
+    return r;
+  };
   const star = document.createElement("span");
   star.className = "gh-star";
   star.textContent = "*";
@@ -6914,7 +6954,23 @@ function appendGhStar(chip, andGroup){
   if(first && first.parentNode) first.parentNode.insertBefore(star, first.nextSibling); else chip.appendChild(star);
   const note = document.createElement("span");
   note.className = "gh-star-note";
-  note.textContent = "* " + andGroup.ghStar.map(n => lab(n.method) + " also needs " + n.needs.map(lab).join(" or ")).join("; ");
+  const mark = document.createElement("span");
+  mark.className = "gh-star-mark";
+  mark.textContent = "*";
+  note.appendChild(mark);
+  const spoken = [];
+  andGroup.ghStar.forEach((n, ni) => {
+    if(ni){ const sep = document.createElement("span"); sep.className = "gh-star-word"; sep.textContent = ";"; note.appendChild(sep); }
+    note.appendChild(iconRow(n.method));
+    const w = document.createElement("span"); w.className = "gh-star-word"; w.textContent = "needs"; note.appendChild(w);
+    n.needs.forEach((alt, ai) => {
+      if(ai){ const o = document.createElement("span"); o.className = "gh-star-word"; o.textContent = "or"; note.appendChild(o); }
+      note.appendChild(iconRow(alt));
+    });
+    spoken.push(lab(n.method) + " also needs " + n.needs.map(lab).join(" or "));
+  });
+  note.title = "* " + spoken.join("; ");
+  note.setAttribute("aria-label", "* " + spoken.join("; "));
   chip.appendChild(note);
 }
 function appendAndGroupIcons(chip, andGroup, extra){
@@ -7100,14 +7156,19 @@ window.addEventListener("scroll", hideAnyPop, true);
 // Cross-fading icon frames on a shared wall-clock (every instance stays in
 // step). `frames` = list of token lists; two tokens render as an overlapped pair.
 function buildCycleFrames(wrap, frames, seconds, cls){
+  const isStatic = !ANIMATED_ANY_ICONS;
+  if(isStatic) frames = [frames[0]]; // first option only: Single Jump / Neutral Throw
   const step = seconds / frames.length;
   const phase = (Date.now() / 1000) % seconds;
   frames.forEach((toks, i) => {
     const k = (((phase - i * step) % seconds) + seconds) % seconds;
     const fr = document.createElement("span");
     fr.className = "cycle-frame " + cls + (toks.length > 1 ? " pair" : "") + (i === 0 ? " first" : "");
-    fr.style.animationDuration = seconds + "s";
-    fr.style.animationDelay = (-k).toFixed(3) + "s";
+    if(isStatic){ fr.classList.add("static"); fr.style.animation = "none"; fr.style.opacity = "1"; }
+    else {
+      fr.style.animationDuration = seconds + "s";
+      fr.style.animationDelay = (-k).toFixed(3) + "s";
+    }
     toks.forEach(t => {
       const tk = ICON_MANIFEST[t] ? t : Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t;
       const mInfo = ICON_MANIFEST[tk];
