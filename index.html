@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2509,6 +2509,8 @@
   .cp-req-compact .cp-req-name span{ white-space:normal; overflow-wrap:break-word; }
   .cp-req-compact .cp-req-source{ flex:1 1 auto; min-width:0; max-width:100%; }
   .cp-req .cp-req-name, .cp-req .cp-req-name span{ white-space:normal; }
+  .gh-star{ color:var(--gold); font-weight:bold; margin-left:2px; align-self:flex-start; }
+  .gh-star-note{ flex-basis:100%; font-size:11px; line-height:1.25; color:var(--text-dim); margin-top:3px; }
 </style>
 </head>
 <body>
@@ -3168,11 +3170,46 @@ function withGroundedMerge(tierLanes, kingdomName){
       all.forEach(x => used.add(x));
       merges.push({ all, extras: c.extras, first: lane.groups[all[0]] });
     });
+    // Fallback "*" merge: every method is present in a cluster, but a few of them need
+    // something EXTRA (typically Long Jump + Any Throw). Merge anyway, flagged with a star.
+    Object.keys(clusters).sort((a, b) => clusters[a].extras.length - clusters[b].extras.length).forEach(key => {
+      const c = clusters[key];
+      const kq = key.split("|"), scKey = kq[1], orKey = kq[2];
+      const picked = {};
+      GH_METHODS.forEach((m, si) => {
+        const pos = (c.byMethod[si] || []).filter(x => !used.has(x));
+        if(pos.length) picked[si] = pos;
+      });
+      const missing = GH_METHODS.map((m, si) => si).filter(si => !picked[si]);
+      if(!Object.keys(picked).length || missing.length === 0 || missing.length > 3 || Object.keys(picked).length < 4) return;
+      const sameWhere = k2 => { const q = k2.split("|"); return q[1] === scKey && q[2] === orKey; };
+      const notes = [], extraPos = [];
+      for(const si of missing){
+        const alts = [], poss = [];
+        Object.keys(clusters).forEach(k2 => {
+          if(k2 === key || !sameWhere(k2)) return;
+          const c2 = clusters[k2];
+          if(!c.extras.every(t => c2.extras.indexOf(t) !== -1)) return;
+          const add = c2.extras.filter(t => c.extras.indexOf(t) === -1);
+          (c2.byMethod[si] || []).filter(x => !used.has(x)).forEach(x => { poss.push(x); alts.push(add); });
+        });
+        if(!poss.length) return;
+        const flat = Array.from(new Set([].concat(...alts)));
+        const anyThrow = alts.length > 1 && alts.every(a => a.length === 1) && ANY_THROW_MEMBERS.every(t => flat.indexOf(t) !== -1);
+        const needs = anyThrow ? [[ANY_THROW_TOKEN]] : Array.from(new Set(alts.map(a => a.join("+")))).map(x => x.split("+"));
+        notes.push({ method: GH_METHODS[si].slice(), needs });
+        extraPos.push(...poss);
+      }
+      if(notes.length !== missing.length) return;
+      const all = [].concat(...Object.values(picked)).concat(extraPos);
+      all.forEach(x => used.add(x));
+      merges.push({ all, extras: c.extras, first: lane.groups[all[0]], star: notes });
+    });
     if(!merges.length) return lane;
     const at = {}, drop = new Set();
     merges.forEach(mg => {
       const slots = mg.all.map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
-      const merged = Object.assign([GH_TOKEN].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots });
+      const merged = Object.assign([GH_TOKEN].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null });
       at[Math.min(...mg.all)] = merged;
       mg.all.forEach(i => drop.add(i));
     });
@@ -4325,8 +4362,18 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
   // (chips render with no "Scenario X" pill) for a listed moon, as if
   // option_scenarios were empty for it. Add a moon_name string to hide it:
   //   "Some Moon Name",
+  // Which scenarios does this moon exist in at all? Read straight off the row's
+  // option_scenarios (exprToScenarioDNF drops the tags of a Free moon, so the
+  // tagged branches can't be trusted for that). Any untagged entry = every scenario.
+  let existScenarios = null;
+  {
+    const ents = String(row.option_scenarios || "").split(";").map(x => parseScenarioList(x));
+    if(ents.length && ents.every(l => l && l.length))
+      existScenarios = Array.from(new Set([].concat(...ents))).sort((a, b) => a - b);
+  }
   if(SCENARIO_DATA_HIDDEN_MOONS.has(row.moon_name)){
     scenarios = scenarios.map(() => null);
+    existScenarios = null;
   }
   // LOGIC_LEVEL_OVERRIDES: forces every branch of a listed moon to the
   // given tier, overriding whatever tiersForGroups computed from the CSV's
@@ -4386,6 +4433,7 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
     checkpointType,
     checkpointNodeId,
     fromNodeId: row.from_node_id,
+    existScenarios,
     badges,
     hintIdx: Number.isNaN(hintIdx) ? null : hintIdx,
   };
@@ -5606,7 +5654,7 @@ function computeEntranceReqs(row, ownMoon, ws, nodeMap, kingdomName){
       if(q.every(v => Number.isFinite(v)) && Math.hypot(place[0]-q[0], place[1]-q[1], place[2]-q[2]) <= PIPE_PROXIMITY) atPipe = true;
     });
     if(atPipe) reach = (reach || []).concat([{ group: [], scenarios: null, tier: "casual" }]);
-    const summary = summarizeBranches(reach ? crossBranches(reach, own) : null, kingdomName);
+    const summary = summarizeBranches(reach ? scopeBranchesToMoon(crossBranches(reach, own), ownMoon) : null, kingdomName);
     if(!reach) console.info(`[${kingdomName}] "${row.moon_name}": Impossible from ${pipeLabel(en, entrances)} (${en.node_id}) -> ${row.from_node_id}: ${reachWithinStage.lastWhy}`);
     return Object.assign({ label: pipeLabel(en, entrances) }, summary);
   });
@@ -5677,7 +5725,7 @@ function inboundEdgeBranches(data, nodeId, e, src){
   return { branches: crossBranches(edgeBranches(e), sb), folded: true };
 }
 
-function computeNodeSourceReqs(kingdomName, nodeId){
+function computeNodeSourceReqs(kingdomName, nodeId, scopeMoon){
   const data = KINGDOM_NODE_DATA[kingdomName];
   if(!data || !nodeId) return null;
   const rows = [];
@@ -5689,7 +5737,7 @@ function computeNodeSourceReqs(kingdomName, nodeId){
     const srcNode = data.nodeMap[src];
     const rawLabel = (srcNode && srcNode.display_name) || src;
     const label = rawLabel.replace(/\s*\([^)]*\)\s*$/, "");
-    rows.push(Object.assign({ label: "From " + label }, summarizeBranches(r.branches, kingdomName)));
+    rows.push(Object.assign({ label: "From " + label }, summarizeBranches(scopeBranchesToMoon(r.branches, scopeMoon), kingdomName)));
   });
   if(rows.length < 2 && !anyFolded) return null; // plain single-source case: flat reach path handles it
   const trimmed = dropDominatedSourceRows(rows.filter(r => !r.impossible));
@@ -5699,7 +5747,7 @@ function computeNodeSourceReqs(kingdomName, nodeId){
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
 // disableCollapse is forwarded straight through to renderReachTierLanes/
 // wrapOptionsIfCollapsible — see the note there.
-function renderEntranceReqs(list, className, disableCollapse){
+function renderEntranceReqs(list, className, disableCollapse, moonName){
   const wrap = document.createElement("div");
   wrap.className = className || "entrance-reqs";
   list.forEach(r => {
@@ -5715,7 +5763,7 @@ function renderEntranceReqs(list, className, disableCollapse){
       const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; row.appendChild(t);
       if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); row.appendChild(ot); }
     } else {
-      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance"));
+      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName));
     }
     wrap.appendChild(row);
   });
@@ -6030,6 +6078,22 @@ function resolveOverrideSource(moon, rule, ownKingdomName){
 // Flattens a moon's tierLanes into the flat branch shape ({group,
 // scenarios, tier}) that crossBranches/summarizeBranches expect — the
 // same shape computeEntranceReqs builds for "own" moon cost.
+// A moon that only exists in some Scenarios (e.g. 2-4) must not show node/checkpoint
+// routes that only work in Scenarios it isn't in. Drops branches with no overlap, trims
+// the rest to the moon's scenarios, and un-tags a branch that covers all of them
+// (nothing left to distinguish it).
+function scopeBranchesToMoon(br, moon){
+  const ex = moon && moon.existScenarios;
+  if(!ex || !ex.length || !br) return br;
+  const out = [];
+  br.forEach(b => {
+    if(!b.scenarios){ out.push(b); return; }
+    const sc = b.scenarios.filter(n => ex.includes(n));
+    if(!sc.length) return;
+    out.push(Object.assign({}, b, { scenarios: ex.every(n => sc.includes(n)) ? null : sc }));
+  });
+  return out;
+}
 function ownBranchesFromTierLanes(tierLanes){
   return (tierLanes && tierLanes.length)
     ? tierLanes.reduce((acc, lane) => acc.concat(lane.groups.map(g => ({ group: g.slice(), scenarios: g.scenarios || null, tier: lane.tier, origin: g.origin || null }))), [])
@@ -6072,7 +6136,8 @@ function pruneDominatedBranches(br){
 }
 
 function applyMergedBranchesToMoon(moon, branches, kingdomName){
-  const clean = summarizeBranches(pruneDominatedBranches(branches), kingdomName);
+  const scoped = scopeBranchesToMoon(branches, moon);
+  const clean = summarizeBranches(pruneDominatedBranches(scoped && scoped.length ? scoped : branches), kingdomName);
   if(clean.impossible){
     console.warn(`[merge] "${moon.name}": merging this node produced no viable route — leaving its requirement unchanged.`);
     return false;
@@ -6837,6 +6902,21 @@ function balancedRowCounts(total, max){
 // line, so a chip with 4+ requirements stays fully visible — wrapping
 // into a compact, centered block — rather than scrolling or overflowing.
 let ICON_ROW_MAX = 3; // icons per row inside a requirement chip (Access Point cards widen this)
+// "Any Grounded Height*": one or more of the merged methods needs something extra
+// (e.g. Long Jump also needs Any Throw). Adds the star + a plain-language note to the chip.
+function appendGhStar(chip, andGroup){
+  if(!andGroup || !andGroup.ghStar || !andGroup.ghStar.length) return;
+  const lab = toks => toks.map(t => (typeof filterLabelFor === "function" ? filterLabelFor(t) : t) || t).join(" + ");
+  const star = document.createElement("span");
+  star.className = "gh-star";
+  star.textContent = "*";
+  const first = chip.querySelector(".icon-wrap.any-grounded");
+  if(first && first.parentNode) first.parentNode.insertBefore(star, first.nextSibling); else chip.appendChild(star);
+  const note = document.createElement("span");
+  note.className = "gh-star-note";
+  note.textContent = "* " + andGroup.ghStar.map(n => lab(n.method) + " also needs " + n.needs.map(lab).join(" or ")).join("; ");
+  chip.appendChild(note);
+}
 function appendAndGroupIcons(chip, andGroup, extra){
   // A move that is only shown as a progression icon on a later move in the
   // same group (Ground Pound on Ground Pound Jump, ...) isn't listed twice.
@@ -7255,13 +7335,25 @@ function customNodeRoutesFor(moon){
   for(const n of nodes){
     const data = KINGDOM_NODE_DATA[n.kingdom];
     if(!data || !data.reachBranches) return null;
-    const crossed = crossBranches(own, branchesForNodeId(data, n.id));
+    const crossed = scopeBranchesToMoon(crossBranches(own, branchesForNodeId(data, n.id)), moon);
     // "Glitched: Hidden" must apply here too: these routes are rebuilt from the
     // moon's base lanes, so drop glitched-tier branches ourselves.
     const shown = (typeof glitchMode !== "undefined" && glitchMode === "hide") ? crossed.filter(b => b.tier !== "glitched") : crossed;
     if(!shown.length && crossed.length) out.push({ kind: n.kind, impossible: true, hidden: true });
     else {
       const route = Object.assign({ kind: n.kind }, summarizeBranches(shown, n.kingdom));
+      // Several ways INTO the node (e.g. from the Stone Bridge vs. from anywhere via the
+      // Odyssey): split them into one labelled row per source so it is clear which is which.
+      if(!route.impossible){
+        const pruned = pruneDominatedBranches(shown);
+        const keys = Array.from(new Set(pruned.map(b => b.origin || "")));
+        if(keys.length >= 2){
+          keys.sort((a, b) => (a === "" ? -1 : b === "" ? 1 : a.localeCompare(b)));
+          route.rows = keys.map(k => Object.assign(
+            { label: k ? "From " + k : "From anywhere (Odyssey)" },
+            summarizeBranches(pruned.filter(b => (b.origin || "") === k).map(b => Object.assign({}, b, { origin: null })), n.kingdom)));
+        }
+      }
       out.push(route);
     }
   }
@@ -7444,6 +7536,7 @@ function buildMoonCard(moon, opts){
         kingdom: moon.kingdom,
         nodeId: moon.checkpointNodeId,
         fallbackName: shortName,
+        existScenarios: moon.existScenarios,
       });
       info.addEventListener("click", openThisCheckpoint);
       info.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openThisCheckpoint(); } });
@@ -7475,7 +7568,7 @@ function buildMoonCard(moon, opts){
     xi.appendChild(xtip);
     decorateNodeStrip(xi, "custom", "Custom Node", nodeShownName(x.name, moon.name), !!x.merged);
     if(!x.merged){
-      const open = () => openNodeInfo({ kind: "custom_place", kingdom: x.kingdom, nodeId: x.id, fallbackName: x.name });
+      const open = () => openNodeInfo({ kind: "custom_place", kingdom: x.kingdom, nodeId: x.id, fallbackName: x.name, existScenarios: moon.existScenarios });
       xi.addEventListener("click", open);
       xi.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); open(); } });
     }
@@ -7528,6 +7621,8 @@ function buildMoonCard(moon, opts){
       body.className = "node-route-body";
       if(r.impossible){
         const t = document.createElement("span"); t.className = "impossible-tag"; t.textContent = "Impossible"; body.appendChild(t);
+      } else if(r.rows){
+        body.appendChild(renderEntranceReqs(r.rows, "entrance-reqs", false, moon.name));
       } else if(r.free){
         const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; body.appendChild(t);
         if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); body.appendChild(ot); }
@@ -7743,6 +7838,7 @@ function buildMovementOptions(moon, boxed){
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
       attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
       appendAndGroupIcons(chip, displayGroup, { hoistedPipe2D: hoistSet.has("Pipe2D") });
+      appendGhStar(chip, andGroup);
       // Scenario Data: this branch's own scenario restriction (option b —
       // each branch gets its own independent tag, never merged into a
       // combined sentence with sibling branches). andGroup.scenarios is
@@ -10049,6 +10145,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
       } else {
         chip.className = "option-chip";
         appendAndGroupIcons(chip, displayGroup, { hoistedPipe2D: hoistSet.has("Pipe2D") });
+      appendGhStar(chip, andGroup);
       }
       const scenarioLabel = andGroup.scenarios ? scenarioListLabel(andGroup.scenarios) : null;
       if(scenarioLabel){
@@ -10109,7 +10206,7 @@ function entranceSideLabel(node){
 
 // { kind: "subarea" | "checkpoint" | "custom_place", kingdom, stage?,
 //   subareaName?, nodeId?, fallbackName? }
-function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName, entranceReqs, moonName }){
+function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName, entranceReqs, moonName, existScenarios }){
   const data = KINGDOM_NODE_DATA[kingdom];
   nodeModalBody.innerHTML = "";
 
@@ -10162,11 +10259,12 @@ function openNodeInfo({ kind, kingdom, stage, subareaName, nodeId, fallbackName,
     // return: Goal: Free" / "From Home return: PushBlockExStageEntDokan:
     // Free") instead of collapsing every free-to-reach source into one
     // bare "Free" tag that hides that there was a choice at all.
-    const sourceReqs = kingdom ? computeNodeSourceReqs(kingdom, nodeId) : null;
+    const scopeMoon = existScenarios ? { existScenarios } : null;
+    const sourceReqs = kingdom ? computeNodeSourceReqs(kingdom, nodeId, scopeMoon) : null;
     if(sourceReqs){
       block.appendChild(renderEntranceReqs(sourceReqs, "entrance-reqs in-modal", true));
     } else {
-      appendReachRequirement(block, data && nodeId ? data.reachBranches[nodeId] : null, true);
+      appendReachRequirement(block, data && nodeId ? scopeBranchesToMoon(data.reachBranches[nodeId], scopeMoon) : null, true);
     }
     nodeModalBody.appendChild(block);
   }
