@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityCapReturnJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2541,9 +2541,155 @@
   .cp-req .tier-options{ gap:8px; }
   .cp-req.cp-req-compact{ padding:10px 16px 10px 18px; }
   @media (max-width:720px){ .cp-reqs-grid{ grid-template-columns:1fr; } .cp-req{ padding:14px 14px 16px 16px; } }
+
+  /* ===================== SEARCH AND SELECT MODE (default) ===================== */
+  body.ss-mode .corner-btn, body.ss-mode #debugPanel, body.ss-mode #filterMoonsPanel, body.ss-mode #filterWrap,
+  body.ss-mode #filterBars, body.ss-mode h1, body.ss-mode #loadStatus, body.ss-mode #submitBar,
+  body.ss-mode #pagerPrev, body.ss-mode #pagerNext, body.ss-mode #pagerDots{ display:none !important; }
+  body.ss-home #navRail, body.ss-home #kingdomPager, body.ss-home #ownerPanel, body.ss-home #grid, body.ss-home #checkpointGroups,
+  body.ss-home #emptyState, body.ss-home .cp-reqs,
+  body.ss-results #navRail, body.ss-results #kingdomPager, body.ss-results #ownerPanel, body.ss-results #grid, body.ss-results #checkpointGroups,
+  body.ss-results #emptyState, body.ss-results .cp-reqs{ display:none !important; }
+  body.ss-home{ overflow:hidden; }
+  body:not(.ss-mode) #ssRoot, body:not(.ss-mode) #ssBar, body:not(.ss-mode) #ssResults, body:not(.ss-mode) #ssFlash{ display:none !important; }
+  body.ss-mode:not(.ss-home) #ssRoot, body.ss-mode:not(.ss-results) #ssResults, body.ss-home #ssBar{ display:none !important; }
+
+  #ssRoot{ position:fixed; inset:0; z-index:60; background:radial-gradient(ellipse at 50% 35%, #26272c 0%, var(--bg) 62%); overflow-y:auto; }
+  #ssSnake{ position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:61; }
+  .ss-main{ position:relative; z-index:62; min-height:100%; display:flex; flex-direction:column; align-items:center; padding:9vh 24px 120px; }
+  .ss-eyebrow{ font-size:13px; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; display:flex; align-items:center; gap:12px; }
+  .ss-eyebrow::before, .ss-eyebrow::after{ content:""; width:8px; height:8px; background:var(--gold); transform:rotate(45deg); }
+  .ss-searchbox{ width:min(820px, 100%); display:flex; align-items:center; gap:14px; padding:0 22px; height:76px; background:var(--bg-panel); border:3px solid var(--border-hi, #4a4c54); border-bottom-width:5px;
+    clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px); filter:drop-shadow(3px 5px 0 var(--ink)); transition:border-color .15s; }
+  .ss-searchbox:focus-within{ border-color:var(--gold); }
+  .ss-searchbox svg{ width:30px; height:30px; flex:none; color:var(--gold); }
+  .ss-searchbox input{ flex:1; min-width:0; background:none; border:0; outline:0; color:var(--text); font:inherit; font-size:26px; }
+  .ss-searchbox input::placeholder{ color:var(--text-dim); }
+  .ss-hint{ margin:12px 0 0; font-size:13px; color:var(--text-dim); }
+  .ss-panel{ width:min(820px,100%); margin-top:14px; background:var(--bg-panel); border:2px solid var(--border); }
+  .ss-results-list{ max-height:34vh; overflow-y:auto; }
+  .ss-row{ display:flex; align-items:center; gap:12px; padding:9px 14px; cursor:pointer; border-bottom:1px solid var(--border); }
+  .ss-row:last-child{ border-bottom:0; }
+  .ss-row:hover{ background:rgba(230,194,0,.08); }
+  .ss-row .ss-check{ width:18px; height:18px; flex:none; border:2px solid var(--border-hi, #4a4c54); display:flex; align-items:center; justify-content:center; font-size:13px; color:#1b1c1f; transform:rotate(45deg) scale(.8); transition:all .12s; }
+  .ss-row .ss-check > i{ transform:rotate(-45deg); font-style:normal; opacity:0; font-weight:700; }
+  .ss-row.sel .ss-check{ background:var(--gold); border-color:var(--gold); }
+  .ss-row.sel .ss-check > i{ opacity:1; }
+  .ss-row .ss-ic{ width:26px; height:26px; flex:none; display:flex; }
+  .ss-row .ss-ic img, .ss-row .ss-ic svg{ width:26px; height:26px; object-fit:contain; }
+  .ss-row .ss-nm{ flex:1; min-width:0; overflow-wrap:anywhere; }
+  .ss-row .ss-sub{ font-size:12px; color:var(--text-dim); }
+  .ss-selection{ width:min(820px,100%); margin-top:16px; padding:12px 14px; background:color-mix(in srgb, var(--gold) 8%, var(--bg-panel)); border:2px solid var(--gold); display:flex; flex-direction:column; gap:10px; }
+  .ss-chips{ display:flex; flex-wrap:wrap; gap:6px; }
+  .ss-chip{ display:inline-flex; align-items:center; gap:7px; padding:4px 6px 4px 10px; background:var(--bg); border:1px solid var(--border-hi, #4a4c54); font-size:13px; }
+  .ss-chip small{ color:var(--text-dim); }
+  .ss-chip button{ background:none; border:0; color:var(--text-dim); cursor:pointer; font-size:16px; line-height:1; padding:0 4px; }
+  .ss-chip button:hover{ color:var(--red, #ff5c6c); }
+  .ss-selbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .ss-btn{ font:inherit; font-size:14px; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; padding:9px 18px; color:var(--text); background:var(--bg-panel); border:2px solid var(--border-hi, #4a4c54); border-bottom-width:3px;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px); transition:transform .08s, border-color .12s, color .12s; }
+  .ss-btn:hover{ border-color:var(--gold); color:var(--gold); }
+  .ss-btn:active{ transform:translateY(1px); }
+  .ss-btn.primary{ background:var(--gold); color:#1b1c1f; border-color:#8a7500; }
+  .ss-btn.primary:hover{ color:#1b1c1f; border-color:#ffe14d; filter:brightness(1.08); }
+  .ss-btn.ghost{ background:none; }
+  .ss-btn.sm{ font-size:12px; padding:6px 12px; }
+  .ss-btn.access{ --c:var(--worldpeace, #5fd0a2); }
+  .ss-btn.access:hover{ border-color:var(--c); color:var(--c); }
+  .ss-section{ width:min(1100px,100%); margin-top:44px; }
+  .ss-section h2{ margin:0 0 14px; font-size:14px; font-weight:400; letter-spacing:.22em; text-transform:uppercase; color:var(--text-dim); display:flex; align-items:center; gap:12px; }
+  .ss-section h2::after{ content:""; flex:1; height:1px; background:var(--border); }
+  .ss-kgrid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(330px, 1fr)); gap:12px; align-items:start; }
+  .ss-k{ background:var(--bg-panel); border:2px solid var(--border); }
+  .ss-k.open{ border-color:var(--gold); }
+  .ss-khead{ display:flex; align-items:center; gap:10px; padding:10px 12px; }
+  .ss-khead .ss-ic{ width:32px; height:32px; flex:none; display:flex; }
+  .ss-khead .ss-ic img, .ss-khead .ss-ic svg{ width:32px; height:32px; object-fit:contain; }
+  .ss-kname{ flex:1; min-width:0; text-align:left; background:none; border:0; color:var(--text); font:inherit; font-size:15px; cursor:pointer; padding:4px 0; }
+  .ss-kname small{ display:block; font-size:11.5px; color:var(--text-dim); letter-spacing:.02em; }
+  .ss-arrow{ width:34px; height:34px; flex:none; display:flex; align-items:center; justify-content:center; background:none; border:2px solid var(--border); color:var(--text); cursor:pointer; transition:all .15s; }
+  .ss-arrow:hover{ border-color:var(--gold); color:var(--gold); }
+  .ss-arrow svg{ width:16px; height:16px; transition:transform .2s; }
+  .ss-k.open .ss-arrow svg{ transform:rotate(180deg); }
+  .ss-kbody{ border-top:1px solid var(--border); max-height:320px; overflow-y:auto; }
+  .ss-ic{ overflow:hidden; align-items:center; justify-content:center; }
+  .ss-ic > *{ width:100% !important; height:100% !important; max-width:100%; font-size:11px; margin:0 !important; }
+  .ss-row, .ss-kname, .ss-nm{ text-align:left; }
+  #ssClassicBtn{ background:#232427 !important; }
+  .ss-kcount{ padding:6px 14px; font-size:12px; color:var(--text-dim); display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg-panel); z-index:1; }
+  .ss-link{ background:none; border:0; color:var(--gold); cursor:pointer; font:inherit; font-size:12px; }
+
+  /* Classic button (hold 5s, release within 5s) */
+  #ssClassic{ position:fixed; left:22px; bottom:22px; z-index:70; display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+  #ssClassicBtn{ --p:0; position:relative; overflow:hidden; display:flex; align-items:center; gap:12px; padding:11px 18px 11px 14px; min-width:290px; text-align:left; cursor:pointer; user-select:none; touch-action:none;
+    font:inherit; color:var(--text); background:rgba(35,36,39,.92); border:2px solid var(--border-hi, #4a4c54); border-bottom-width:3px;
+    clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px); backdrop-filter:blur(4px); transition:border-color .2s; }
+  #ssClassicBtn::before{ content:""; position:absolute; inset:0; width:calc(var(--p) * 100%); background:linear-gradient(90deg, rgba(230,194,0,.25), rgba(230,194,0,.55)); }
+  #ssClassicBtn > *{ position:relative; }
+  #ssClassicBtn .cb-dia{ width:22px; height:22px; flex:none; background:var(--gold); transform:rotate(45deg) scale(.7); transition:transform .2s; }
+  #ssClassicBtn .cb-txt{ display:flex; flex-direction:column; line-height:1.2; }
+  #ssClassicBtn .cb-title{ font-size:13px; letter-spacing:.08em; text-transform:uppercase; }
+  #ssClassicBtn .cb-sub{ font-size:11px; color:var(--text-dim); letter-spacing:.02em; }
+  #ssClassic[data-s="hold"] #ssClassicBtn{ border-color:var(--gold); animation:ssShake .12s linear infinite; }
+  #ssClassic[data-s="hold"] .cb-dia{ transform:rotate(225deg) scale(1); }
+  #ssClassic[data-s="ready"] #ssClassicBtn{ border-color:#ff5c6c; animation:ssPulse .5s ease-in-out infinite alternate; }
+  #ssClassic[data-s="ready"] #ssClassicBtn::before{ background:linear-gradient(90deg, rgba(255,92,108,.3), rgba(255,92,108,.65)); width:calc(var(--p) * 100%); }
+  #ssClassic[data-s="ready"] .cb-dia{ background:#ff5c6c; transform:rotate(405deg) scale(1.1); }
+  #ssClassic[data-s="fail"] #ssClassicBtn{ border-color:var(--border); opacity:.7; }
+  #ssClassicHint{ font-size:11.5px; color:var(--text-dim); padding-left:4px; min-height:16px; }
+  #ssClassic[data-s="ready"] #ssClassicHint{ color:#ff8b97; }
+  @keyframes ssShake{ 0%{ transform:translate(0,0) } 25%{ transform:translate(calc(var(--p) * 2px), calc(var(--p) * -1px)) } 50%{ transform:translate(calc(var(--p) * -2px), calc(var(--p) * 1px)) } 75%{ transform:translate(calc(var(--p) * 1px), calc(var(--p) * 2px)) } 100%{ transform:translate(0,0) } }
+  @keyframes ssPulse{ from{ filter:drop-shadow(0 0 2px rgba(255,92,108,.4)); } to{ filter:drop-shadow(0 0 12px rgba(255,92,108,.95)); } }
+  #ssFlash{ position:fixed; inset:0; z-index:200; pointer-events:none; background:var(--gold); clip-path:circle(0 at var(--fx,50px) var(--fy,95%)); opacity:1; }
+  #ssFlash.go{ animation:ssFlash .75s cubic-bezier(.5,0,.2,1) forwards; pointer-events:all; }
+  @keyframes ssFlash{ 0%{ clip-path:circle(0 at var(--fx) var(--fy)); opacity:1 } 70%{ clip-path:circle(150vmax at var(--fx) var(--fy)); opacity:1 } 100%{ clip-path:circle(150vmax at var(--fx) var(--fy)); opacity:0 } }
+
+  /* Selected moons / kingdom views */
+  #ssBar{ position:fixed; top:14px; left:16px; z-index:30; display:flex; gap:10px; align-items:center; }
+  body.ss-results #ssResults{ padding-top:64px; }
+  #ssResults{ max-width:1400px; margin:0 auto; padding:64px 24px 60px; }
+  #ssResults h2{ margin:0 0 10px; font-size:18px; letter-spacing:.08em; text-transform:uppercase; font-weight:400; }
+  body.ss-kingdom #kingdomPager{ margin-top:56px; }
+  @media (max-width:640px){ .ss-searchbox{ height:62px; } .ss-searchbox input{ font-size:20px; } #ssClassicBtn{ min-width:0; } }
 </style>
 </head>
-<body>
+<body class="ss-mode ss-home">
+
+<!-- ===== SEARCH AND SELECT MODE (default view) ===== -->
+<div id="ssRoot" aria-label="Search and Select Mode">
+  <canvas id="ssSnake" aria-hidden="true"></canvas>
+  <div class="ss-main">
+    <div class="ss-eyebrow">Search and Select Mode</div>
+    <div class="ss-searchbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="ssInput" placeholder="Which moon do you want logic for?" autocomplete="off" spellcheck="false" aria-label="Search for a moon">
+    </div>
+    <p class="ss-hint" id="ssHint">Loading kingdoms…</p>
+    <div class="ss-panel" id="ssResultsPanel" style="display:none;"><div class="ss-results-list" id="ssSearchList"></div></div>
+    <div class="ss-selection" id="ssSelection" style="display:none;">
+      <div class="ss-chips" id="ssChips"></div>
+      <div class="ss-selbar">
+        <button type="button" class="ss-btn ghost sm" id="ssClear">Clear all</button>
+        <button type="button" class="ss-btn primary" id="ssView">View Logic</button>
+      </div>
+    </div>
+    <div class="ss-section">
+      <h2>Or browse by kingdom</h2>
+      <div class="ss-kgrid" id="ssKingdoms"></div>
+    </div>
+  </div>
+  <div id="ssClassic" data-s="idle">
+    <button type="button" id="ssClassicBtn" aria-label="Proceed to Classic Viewing. Hold for 5 seconds, then release within 5 seconds.">
+      <span class="cb-dia"></span>
+      <span class="cb-txt"><span class="cb-title">Proceed to Classic Viewing</span><span class="cb-sub">(LAG at your own risk)</span></span>
+    </button>
+    <div id="ssClassicHint">Hold for 5 seconds, then release within 5 seconds.</div>
+  </div>
+</div>
+<div id="ssBar"><button type="button" class="ss-btn" id="ssBack">&larr; Search and Select</button></div>
+<div id="ssResults"><h2 id="ssResultsTitle">Selected Moons</h2><div class="ss-chips" id="ssResChips" style="margin-bottom:18px;"></div><div class="grid" id="ssResultsGrid"></div></div>
+<div id="ssFlash"></div>
+
 
 <button class="corner-btn" id="searchToggle" type="button" aria-label="Search for a moon">
   <span class="icon-svg" aria-hidden="true">
@@ -7015,7 +7161,8 @@ async function tryAutoload(){
   if(loaded > 0){
     setStatus(`Auto-loaded ${loaded} kingdom file${loaded===1?"":"s"} from /logic/`);
     rebuildKingdomTabs();
-    renderKingdom(KINGDOM_ORDER[0]);
+    // Search and Select Mode is the default: no kingdom page is drawn until one is opened.
+    if(!document.body.classList.contains("ss-mode")) renderKingdom(KINGDOM_ORDER[0]);
     return true;
   }
   return false;
@@ -11588,8 +11735,11 @@ async function init(){
   if(autoloaded){
     buildSearchIndex();
     initFilterBars();
+    window.__ssDataReady = true;
+    if(window.ssOnLoaded) window.ssOnLoaded();
   } else {
     setStatus("No kingdom files found in /logic/graph-editor/saves/kingdoms/ yet — add some there.", true);
+    const h = document.getElementById("ssHint"); if(h) h.textContent = "No kingdom files found yet \u2014 add them to /logic/ and reload.";
   }
 }
 
@@ -11694,5 +11844,219 @@ init();
   queue();
 })();
 </script>
+<script>
+/* ===================== SEARCH AND SELECT MODE ===================== */
+(function(){
+  const body = document.body;
+  const $ = id => document.getElementById(id);
+  const sel = [];                       // [{ kingdom, name }] in the order picked
+  const key = (k, n) => k + "\u0001" + n;
+  const isSel = (k, n) => sel.some(s => s.kingdom === k && s.name === n);
+  const CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+
+  function setState(s){ body.classList.remove("ss-home", "ss-results", "ss-kingdom"); body.classList.add("ss-mode", "ss-" + s); window.scrollTo(0, 0); if(s === "home") snake.start(); }
+  function iconFor(k){ try{ return makeKingdomIcon(k); }catch(e){ return document.createElement("span"); } }
+
+  /* ---------- selection ---------- */
+  function toggle(k, n){
+    const i = sel.findIndex(s => s.kingdom === k && s.name === n);
+    if(i >= 0) sel.splice(i, 1); else sel.push({ kingdom: k, name: n });
+    refresh();
+  }
+  function chipEl(s, removable){
+    const c = document.createElement("span"); c.className = "ss-chip";
+    c.append(s.name);
+    const sm = document.createElement("small"); sm.textContent = s.kingdom; c.appendChild(sm);
+    if(removable){ const x = document.createElement("button"); x.type = "button"; x.textContent = "\u00d7"; x.setAttribute("aria-label", "Remove " + s.name); x.onclick = () => toggle(s.kingdom, s.name); c.appendChild(x); }
+    return c;
+  }
+  function refresh(){
+    const box = $("ssSelection"); box.style.display = sel.length ? "" : "none";
+    const chips = $("ssChips"); chips.innerHTML = "";
+    sel.forEach(s => chips.appendChild(chipEl(s, true)));
+    $("ssView").textContent = "View Logic (" + sel.length + ")";
+    document.querySelectorAll("#ssRoot .ss-row[data-k]").forEach(r => r.classList.toggle("sel", isSel(r.dataset.k, r.dataset.n)));
+    if(body.classList.contains("ss-results")) renderResults();
+  }
+
+  /* ---------- search ---------- */
+  function moonRow(k, n, withKingdom){
+    const r = document.createElement("div"); r.className = "ss-row" + (isSel(k, n) ? " sel" : ""); r.dataset.k = k; r.dataset.n = n; r.tabIndex = 0;
+    const ck = document.createElement("span"); ck.className = "ss-check"; ck.innerHTML = "<i>\u2713</i>"; r.appendChild(ck);
+    if(withKingdom){ const ic = document.createElement("span"); ic.className = "ss-ic"; ic.appendChild(iconFor(k)); r.appendChild(ic); }
+    const nm = document.createElement("span"); nm.className = "ss-nm"; nm.textContent = n; r.appendChild(nm);
+    if(withKingdom){ const sub = document.createElement("span"); sub.className = "ss-sub"; sub.textContent = k; r.appendChild(sub); }
+    r.onclick = () => toggle(k, n);
+    r.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(k, n); } };
+    return r;
+  }
+  function doSearch(){
+    const q = $("ssInput").value.trim().toLowerCase(), panel = $("ssResultsPanel"), list = $("ssSearchList");
+    list.innerHTML = "";
+    if(!q){ panel.style.display = "none"; return; }
+    const m = (window.MOON_SEARCH_INDEX || MOON_SEARCH_INDEX).filter(x => x.name.toLowerCase().includes(q));
+    panel.style.display = "";
+    if(!m.length){ const e = document.createElement("div"); e.className = "ss-row"; e.style.cursor = "default"; e.textContent = "No moons match \u201c" + $("ssInput").value.trim() + "\u201d."; list.appendChild(e); return; }
+    m.slice(0, 80).forEach(x => list.appendChild(moonRow(x.kingdom, x.name, true)));
+  }
+  $("ssInput").addEventListener("input", doSearch);
+
+  /* ---------- kingdom accordion (moon lists are built only when a kingdom is opened) ---------- */
+  function buildKingdoms(){
+    const root = $("ssKingdoms"); root.innerHTML = "";
+    KINGDOM_ORDER.forEach(k => {
+      const darker = k === "Darker Side";
+      const card = document.createElement("div"); card.className = "ss-k";
+      const head = document.createElement("div"); head.className = "ss-khead";
+      const ic = document.createElement("span"); ic.className = "ss-ic"; ic.appendChild(iconFor(k)); head.appendChild(ic);
+      const nameBtn = document.createElement("button"); nameBtn.type = "button"; nameBtn.className = "ss-kname";
+      const count = (KINGDOMS[k] || []).length;
+      nameBtn.innerHTML = ""; nameBtn.append(k);
+      const sm = document.createElement("small"); sm.textContent = darker ? "Opens the Darker Side page" : count + " moons"; nameBtn.appendChild(sm);
+      head.appendChild(nameBtn);
+      if(darker){
+        nameBtn.onclick = () => openKingdom(k, "all");
+      } else {
+        const ap = document.createElement("button"); ap.type = "button"; ap.className = "ss-btn sm access"; ap.textContent = "Access Points";
+        ap.onclick = e => { e.stopPropagation(); openKingdom(k, "access"); };
+        head.appendChild(ap);
+        const ar = document.createElement("button"); ar.type = "button"; ar.className = "ss-arrow"; ar.innerHTML = CHEV; ar.setAttribute("aria-label", "Show moons in " + k); ar.setAttribute("aria-expanded", "false");
+        const bodyEl = document.createElement("div"); bodyEl.className = "ss-kbody"; bodyEl.style.display = "none";
+        const flip = () => {
+          const open = !card.classList.contains("open");
+          card.classList.toggle("open", open); ar.setAttribute("aria-expanded", open ? "true" : "false"); bodyEl.style.display = open ? "" : "none";
+          if(open && !bodyEl.dataset.built){ // populate lazily, only now
+            bodyEl.dataset.built = "1";
+            const bar = document.createElement("div"); bar.className = "ss-kcount";
+            const t = document.createElement("span"); t.textContent = count + " moons \u2014 tap to select";
+            const all = document.createElement("button"); all.type = "button"; all.className = "ss-link"; all.textContent = "Select all";
+            all.onclick = () => { const names = (KINGDOMS[k] || []).map(m => m.name); const every = names.every(n => isSel(k, n));
+              names.forEach(n => { const i = sel.findIndex(s => s.kingdom === k && s.name === n); if(every && i >= 0) sel.splice(i, 1); else if(!every && i < 0) sel.push({ kingdom: k, name: n }); });
+              all.textContent = every ? "Select all" : "Clear"; refresh(); };
+            bar.append(t, all); bodyEl.appendChild(bar);
+            (KINGDOMS[k] || []).forEach(m => bodyEl.appendChild(moonRow(k, m.name, false)));
+          }
+        };
+        ar.onclick = flip; nameBtn.onclick = flip;
+        head.appendChild(ar);
+        card.append(head, bodyEl);
+        root.appendChild(card);
+        return;
+      }
+      card.appendChild(head); root.appendChild(card);
+    });
+    $("ssHint").textContent = "Type a moon name, or open a kingdom below. You can pick moons from several kingdoms at once.";
+  }
+
+  /* ---------- results / kingdom views ---------- */
+  function renderResults(){
+    const g = $("ssResultsGrid"); g.innerHTML = "";
+    $("ssResultsTitle").textContent = "Selected Moons (" + sel.length + ")";
+    const chips = $("ssResChips"); chips.innerHTML = ""; sel.forEach(s => chips.appendChild(chipEl(s, true)));
+    sel.forEach(s => {
+      let moon = (KINGDOMS[s.kingdom] || []).find(m => m.name === s.name);
+      if(!moon) return;
+      if(isFullyGlitched(moon)) return;
+      moon = withGlitchedLanesStripped(moon);
+      g.appendChild(buildMoonCard(moon));
+    });
+    if(!g.children.length){ g.innerHTML = '<div class="empty-state" style="display:block;">No moons selected.</div>'; }
+    else measureOptionsCollapsiblesIn(g);
+  }
+  function showResults(){ if(!sel.length) return; setState("results"); renderResults(); }
+  function openKingdom(k, scope){
+    viewScope = scope;                    // "access" = Access Points only, "all" = the full page
+    setState("kingdom");
+    renderKingdom(k);
+  }
+  $("ssView").onclick = showResults;
+  $("ssClear").onclick = () => { sel.length = 0; refresh(); };
+  $("ssBack").onclick = () => { viewScope = "all"; setState("home"); };
+
+  /* ---------- diamond snake around the screen border ---------- */
+  const snake = (function(){
+    const cv = $("ssSnake"), cx = cv.getContext("2d");
+    let W = 0, H = 0, dpr = 1, d = 0, last = 0, raf = 0;
+    const INSET = 14, GAP = 15, LEN = 56, SPEED = 280;
+    function size(){ dpr = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    function at(t){ // distance along the rectangle border -> {x,y}
+      const w = W - INSET * 2, h = H - INSET * 2, P = 2 * (w + h); t = ((t % P) + P) % P;
+      if(t < w) return { x: INSET + t, y: INSET };
+      t -= w; if(t < h) return { x: W - INSET, y: INSET + t };
+      t -= h; if(t < w) return { x: W - INSET - t, y: H - INSET };
+      t -= w; return { x: INSET, y: H - INSET - t };
+    }
+    function dia(x, y, r, fill, a){ cx.globalAlpha = a; cx.fillStyle = fill; cx.beginPath(); cx.moveTo(x, y - r); cx.lineTo(x + r, y); cx.lineTo(x, y + r); cx.lineTo(x - r, y); cx.closePath(); cx.fill(); }
+    function frame(ts){
+      if(!body.classList.contains("ss-home")){ raf = 0; return; }
+      const dt = Math.min(.05, (ts - (last || ts)) / 1000); last = ts; d += SPEED * dt;
+      cx.clearRect(0, 0, W, H);
+      const P = 2 * ((W - INSET * 2) + (H - INSET * 2));
+      for(let t = 0; t < P; t += 30){ const p = at(t); dia(p.x, p.y, 2.2, "#e6c200", .14); }       // faint track
+      for(let i = LEN - 1; i >= 0; i--){                                                         // body, tail -> head
+        const p = at(d - i * GAP), f = 1 - i / LEN, r = 3 + f * 6;
+        dia(p.x, p.y, r, i === 0 ? "#fff3a6" : "#e6c200", .25 + f * .75);
+      }
+      const hd = at(d); cx.globalAlpha = 1; cx.fillStyle = "#1b1c1f"; cx.fillRect(hd.x - 1.5, hd.y - 1.5, 3, 3);
+      cx.globalAlpha = 1; raf = requestAnimationFrame(frame);
+    }
+    addEventListener("resize", size); size();
+    return { start(){ if(!raf){ last = 0; raf = requestAnimationFrame(frame); } } };
+  })();
+
+  /* ---------- Classic Viewing: hold 5s, then release within 5s ---------- */
+  (function(){
+    const wrap = $("ssClassic"), btn = $("ssClassicBtn"), hint = $("ssClassicHint");
+    const HOLD = 5000, WINDOW = 5000, IDLE_HINT = "Hold for 5 seconds, then release within 5 seconds.";
+    let state = "idle", t0 = 0, raf = 0, resetT = 0;
+    const set = (s, text) => { state = s; wrap.dataset.s = s; if(text != null) hint.textContent = text; };
+    const prog = p => btn.style.setProperty("--p", Math.max(0, Math.min(1, p)).toFixed(3));
+    function reset(msg, delay){ cancelAnimationFrame(raf); prog(0); set(msg ? "fail" : "idle", msg || IDLE_HINT);
+      clearTimeout(resetT); if(msg) resetT = setTimeout(() => { if(state === "fail") set("idle", IDLE_HINT); }, delay || 1800); }
+    function tick(){
+      const el = performance.now() - t0;
+      if(state === "hold"){
+        prog(el / HOLD);
+        const left = Math.ceil((HOLD - el) / 1000); hint.textContent = "Keep holding\u2026 " + Math.max(0, left) + "s";
+        if(el >= HOLD){ t0 = performance.now(); set("ready", "Release NOW! 5s"); }
+      } else if(state === "ready"){
+        const rem = WINDOW - el; prog(rem / WINDOW); hint.textContent = "Release NOW! " + Math.max(0, Math.ceil(rem / 1000)) + "s";
+        if(rem <= 0){ reset("Too slow \u2014 you held on too long. Try again.", 2200); return; }
+      } else return;
+      raf = requestAnimationFrame(tick);
+    }
+    function down(){ if(state !== "idle" && state !== "fail") return; clearTimeout(resetT); t0 = performance.now(); prog(0); set("hold", "Keep holding\u2026 5s"); raf = requestAnimationFrame(tick); }
+    function up(){
+      if(state === "hold") reset("Released too early \u2014 hold the full 5 seconds.", 1800);
+      else if(state === "ready"){ cancelAnimationFrame(raf); proceed(); }
+    }
+    btn.addEventListener("pointerdown", e => { e.preventDefault(); try{ btn.setPointerCapture(e.pointerId); }catch(_){} down(); });
+    btn.addEventListener("pointerup", up);
+    btn.addEventListener("pointercancel", () => { if(state === "hold" || state === "ready") reset("Cancelled.", 1200); });
+    btn.addEventListener("contextmenu", e => e.preventDefault());
+    btn.addEventListener("keydown", e => { if((e.key === " " || e.key === "Enter") && !e.repeat){ e.preventDefault(); down(); } });
+    btn.addEventListener("keyup", e => { if(e.key === " " || e.key === "Enter"){ e.preventDefault(); up(); } });
+    function proceed(){
+      set("done", "Loading Classic Viewing\u2026"); prog(1);
+      const r = btn.getBoundingClientRect(), fl = $("ssFlash");
+      fl.style.setProperty("--fx", (r.left + r.width / 2) + "px"); fl.style.setProperty("--fy", (r.top + r.height / 2) + "px");
+      fl.classList.add("go");
+      setTimeout(() => {
+        body.classList.remove("ss-mode", "ss-home", "ss-results", "ss-kingdom");
+        viewScope = "all"; window.scrollTo(0, 0);
+        try{ renderKingdom(KINGDOM_ORDER[0]); }catch(e){ console.error(e); }
+        set("idle", IDLE_HINT); prog(0);
+        setTimeout(() => fl.classList.remove("go"), 800);
+      }, 560);
+    }
+  })();
+
+  /* ---------- boot ---------- */
+  function ready(){ buildKingdoms(); refresh(); snake.start(); $("ssInput").focus({ preventScroll: true }); }
+  window.ssOnLoaded = ready;
+  if(window.__ssDataReady) ready(); else snake.start();
+})();
+</script>
+
 </body>
 </html>
