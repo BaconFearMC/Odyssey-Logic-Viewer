@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityCapReturnJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2551,7 +2551,7 @@
   body.ss-results #navRail, body.ss-results #kingdomPager, body.ss-results #ownerPanel, body.ss-results #grid, body.ss-results #checkpointGroups,
   body.ss-results #emptyState, body.ss-results .cp-reqs{ display:none !important; }
   body.ss-home{ overflow:hidden; }
-  body:not(.ss-mode) #ssRoot, body:not(.ss-mode) #ssBar, body:not(.ss-mode) #ssResults, body:not(.ss-mode) #ssFlash{ display:none !important; }
+  body:not(.ss-mode) #ssRoot, body:not(.ss-mode) #ssBar, body:not(.ss-mode) #ssResults{ display:none !important; }
   body.ss-mode:not(.ss-home) #ssRoot, body.ss-mode:not(.ss-results) #ssResults, body.ss-home #ssBar{ display:none !important; }
 
   #ssRoot{ position:fixed; inset:0; z-index:60; background:radial-gradient(ellipse at 50% 35%, #26272c 0%, var(--bg) 62%); overflow-y:auto; }
@@ -2651,6 +2651,66 @@
   #ssResults h2{ margin:0 0 10px; font-size:18px; letter-spacing:.08em; text-transform:uppercase; font-weight:400; }
   body.ss-kingdom #kingdomPager{ margin-top:56px; }
   @media (max-width:640px){ .ss-searchbox{ height:62px; } .ss-searchbox input{ font-size:20px; } #ssClassicBtn{ min-width:0; } }
+
+  /* ===== Return to Search and Select (Classic Viewing) ===== */
+#ssReturn{ position:fixed; left:22px; bottom:22px; z-index:70; display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+  #ssReturnBtn{ --p:0; position:relative; overflow:hidden; display:flex; align-items:center; gap:12px; padding:11px 18px 11px 14px; min-width:290px; text-align:left; cursor:pointer; user-select:none; touch-action:none;
+    font:inherit; color:var(--text); background:rgba(35,36,39,.92); border:2px solid var(--border-hi, #4a4c54); border-bottom-width:3px;
+    clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px); backdrop-filter:blur(4px); transition:border-color .2s; }
+  #ssReturnBtn::before{ content:""; position:absolute; inset:0; width:calc(var(--p) * 100%); background:linear-gradient(90deg, rgba(230,194,0,.25), rgba(230,194,0,.55)); }
+  #ssReturnBtn > *{ position:relative; }
+  #ssReturnBtn .cb-dia{ width:22px; height:22px; flex:none; background:var(--gold); transform:rotate(45deg) scale(.7); transition:transform .2s; }
+  #ssReturnBtn .cb-txt{ display:flex; flex-direction:column; line-height:1.2; }
+  #ssReturnBtn .cb-title{ font-size:13px; letter-spacing:.08em; text-transform:uppercase; }
+  #ssReturnBtn .cb-sub{ font-size:11px; color:var(--text-dim); letter-spacing:.02em; }
+  #ssReturn[data-s="hold"] #ssReturnBtn{ border-color:var(--gold); animation:ssShake .12s linear infinite; }
+  #ssReturn[data-s="hold"] .cb-dia{ transform:rotate(225deg) scale(1); }
+  #ssReturn[data-s="ready"] #ssReturnBtn{ border-color:#ff5c6c; animation:ssPulse .5s ease-in-out infinite alternate; }
+  #ssReturn[data-s="ready"] #ssReturnBtn::before{ background:linear-gradient(90deg, rgba(255,92,108,.3), rgba(255,92,108,.65)); width:calc(var(--p) * 100%); }
+  #ssReturn[data-s="ready"] .cb-dia{ background:#ff5c6c; transform:rotate(405deg) scale(1.1); }
+  #ssReturn[data-s="fail"] #ssReturnBtn{ border-color:var(--border); opacity:.7; }
+  #ssReturnHint{ font-size:11.5px; color:var(--text-dim); padding-left:4px; min-height:16px; }
+  #ssReturn[data-s="ready"] #ssReturnHint{ color:#ff8b97; }
+  
+  #ssReturn{ display:none; left:50%; right:auto; transform:translateX(-50%); align-items:center; }
+  body:not(.ss-mode) #ssReturn{ display:flex; }
+  #ssReturnHint{ padding-left:0; text-align:center; }
+
+  /* ===== Classic Viewing: shorter debug buttons (right side) ===== */
+  #debugPanel .dbg-item .corner-btn{ min-width:0 !important; width:auto !important; padding:0 12px 0 8px !important; gap:8px !important; }
+  #debugPanel .btn-txt small{ white-space:nowrap; }
+
+  /* ===== Lazy moon cards (Classic Viewing) ===== */
+  .lazy-card{ padding-bottom:14px; }
+  .lazy-toggle{ display:flex; justify-content:space-between; align-items:center; width:100%; margin-top:2px; padding:7px 10px;
+    background:var(--bg-chip); border:1px solid var(--border); border-left:3px solid var(--gold); color:var(--text-dim);
+    font:inherit; font-size:12px; cursor:pointer; transition:color .12s ease, border-color .12s ease; }
+  .lazy-toggle:hover{ color:var(--gold); border-color:var(--gold); }
+  .lazy-toggle svg{ width:16px; height:16px; transition:transform .2s ease; }
+  .lazy-card.lazy-open .lazy-toggle svg{ transform:rotate(180deg); }
+  .lazy-body{ margin-top:10px; }
+
+  /* ===== Kingdom icon chip (+ "Found with Art" progressive chip) ===== */
+  .kchip{ position:relative; display:inline-flex; flex:none; width:var(--s,26px); height:var(--s,26px); margin-right:calc(var(--s,26px) * .3); }
+  .kchip > span:first-child, .kchip > span:first-child img, .kchip > span:first-child .icon-fallback{ width:100%; height:100%; object-fit:contain; display:flex; }
+  .kchip-prog{ position:absolute; top:-30%; right:-38%; width:62%; height:62%; border:2px solid var(--gold); border-radius:5px; background:#1b1b1b;
+    display:flex; align-items:center; justify-content:center; font-size:8px; color:#fff; }
+  .kchip-prog img{ width:100%; height:100%; object-fit:cover; border-radius:3px; display:block; }
+  .kchip-arrow{ position:absolute; bottom:-6px; right:-5px; width:11px; height:11px; border-radius:50%; background:var(--gold); color:#1b1b1b;
+    border:1.5px solid #1b1b1b; box-sizing:border-box; font-size:6px; display:flex; align-items:center; justify-content:center; line-height:1; }
+  .ss-chip{ align-items:center; }
+
+  /* ===== Symmetrical kingdom grid (16 = 4 x 4) ===== */
+  .ss-section{ width:min(1280px,100%); }
+  .ss-kgrid{ grid-template-columns:repeat(4, minmax(0,1fr)); }
+  @media (max-width:1100px){ .ss-kgrid{ grid-template-columns:repeat(2, minmax(0,1fr)); } }
+  @media (max-width:640px){ .ss-kgrid{ grid-template-columns:1fr; } }
+  .ss-khead{ gap:8px; padding:10px; }
+  .ss-khead .ss-ic{ width:28px; height:28px; }
+  .ss-khead .ss-ic img, .ss-khead .ss-ic svg{ width:28px; height:28px; }
+  .ss-kname{ font-size:14px; }
+  .ss-khead .ss-btn.sm{ font-size:10.5px; padding:6px 8px; letter-spacing:.03em; }
+  .ss-ksub{ position:static; border-top:1px solid var(--border); }
 </style>
 </head>
 <body class="ss-mode ss-home">
@@ -2689,6 +2749,13 @@
 <div id="ssBar"><button type="button" class="ss-btn" id="ssBack">&larr; Search and Select</button></div>
 <div id="ssResults"><h2 id="ssResultsTitle">Selected Moons</h2><div class="ss-chips" id="ssResChips" style="margin-bottom:18px;"></div><div class="grid" id="ssResultsGrid"></div></div>
 <div id="ssFlash"></div>
+<div id="ssReturn" data-s="idle">
+  <button type="button" id="ssReturnBtn" aria-label="Back to Search and Select. Hold for 3 seconds, then release within 3 seconds.">
+    <span class="cb-dia"></span>
+    <span class="cb-txt"><span class="cb-title">Back to Search and Select</span><span class="cb-sub">(hold to return)</span></span>
+  </button>
+  <div id="ssReturnHint">Hold for 3 seconds, then release within 3 seconds.</div>
+</div>
 
 
 <button class="corner-btn" id="searchToggle" type="button" aria-label="Search for a moon">
@@ -7979,6 +8046,78 @@ function buildMoonCard(moon, opts){
   return card;
 }
 
+
+// Lazy moon card for Classic Viewing: only name + badges are drawn until the
+// dropdown arrow is clicked, then the real requirements are built once.
+const LAZY_OPEN = new Set();
+function buildLazyMoonCard(moon){
+  const key = moon.kingdom + "|" + moon.name;
+  const shell = document.createElement("div");
+  shell.className = "moon-card lazy-card";
+  shell.dataset.moonName = moon.name;
+  if(isSubmittable(moon)) shell.dataset.submittable = "1";
+
+  const name = document.createElement("p");
+  name.className = "moon-name";
+  name.textContent = moon.name;
+  shell.appendChild(name);
+
+  if(moon.badges && moon.badges.length){
+    const badgeRow = document.createElement("div");
+    badgeRow.className = "badges";
+    moon.badges.forEach(b => {
+      const info = b === "moonRock" ? {label:"Moon Rock", file:"badge-moon-rock.png"} : {label:"World Peace", file:"badge-world-peace.png"};
+      const el = document.createElement("div");
+      el.className = "badge " + b.toLowerCase();
+      el.title = info.label;
+      el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '" onerror="this.style.display=\'none\'">';
+      badgeRow.appendChild(el);
+    });
+    shell.appendChild(badgeRow);
+  }
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "lazy-toggle";
+  btn.setAttribute("aria-expanded", "false");
+  const label = document.createElement("span");
+  label.textContent = "Show requirements";
+  btn.appendChild(label);
+  btn.insertAdjacentHTML("beforeend", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+  shell.appendChild(btn);
+
+  const body = document.createElement("div");
+  body.className = "lazy-body";
+  body.style.display = "none";
+  shell.appendChild(body);
+
+  let built = false;
+  shell._lazyOpen = function(want){
+    const open = want === undefined ? !shell.classList.contains("lazy-open") : !!want;
+    if(open && !built){
+      built = true;
+      const real = buildMoonCard(moon);
+      real.classList.forEach(c => { if(c !== "moon-card") shell.classList.add(c); });
+      Array.from(real.children).forEach(ch => {
+        if(ch.classList.contains("moon-name") || ch.classList.contains("badges")) return;
+        body.appendChild(ch);
+      });
+    }
+    shell.classList.toggle("lazy-open", open);
+    body.style.display = open ? "" : "none";
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    label.textContent = open ? "Hide requirements" : "Show requirements";
+    if(open){
+      LAZY_OPEN.add(key);
+      measureOptionsCollapsiblesIn(body);
+      applyFilterMatchHighlight();
+    } else LAZY_OPEN.delete(key);
+  };
+  btn.addEventListener("click", () => shell._lazyOpen());
+  if(LAZY_OPEN.has(key)) shell._lazyOpen(true);
+  return shell;
+}
+
 // Restarts an already-rendered chip's CSS entrance animation (clear the
 // inline override, force a reflow, reapply with a fresh delay) — used when
 // uncollapsing an options box so the chips that were hidden under the fade
@@ -8271,12 +8410,19 @@ function buildMoonPanel(moon, opts){
 
   const body = document.createElement("div");
   body.className = "moon-panel-body";
-  body.appendChild(buildMoonRequirements(moon, true, opts));
   panel.appendChild(body);
+
+  let filled = false;
+  panel._fill = () => {
+    if(filled) return;
+    filled = true;
+    body.appendChild(buildMoonRequirements(moon, true, opts));
+    applyFilterMatchHighlight();
+  };
 
   header.addEventListener("click", () => {
     panel.classList.toggle("open");
-    if(panel.classList.contains("open")) measureOptionsCollapsiblesIn(panel);
+    if(panel.classList.contains("open")){ panel._fill(); measureOptionsCollapsiblesIn(panel); }
   });
 
   return panel;
@@ -8933,7 +9079,7 @@ function renderGrid(){
   } else {
     grid.style.display = "";
     checkpointGroups.style.display = "none";
-    moons.forEach(moon => grid.appendChild(buildMoonCard(moon)));
+    moons.forEach(moon => grid.appendChild(buildLazyMoonCard(moon)));
     measureOptionsCollapsiblesIn(grid);
   }
   applyFilterMatchHighlight();
@@ -10417,6 +10563,7 @@ function goToMoon(kingdomName, moonName){
       const group = panel.closest(".checkpoint-group");
       if(group) group.classList.add("open");
       panel.classList.add("open");
+      if(panel._fill) panel._fill();
       measureOptionsCollapsiblesIn(panel);
       panel.scrollIntoView({ behavior: "smooth", block: "center" });
       setTimeout(() => {
@@ -10428,6 +10575,7 @@ function goToMoon(kingdomName, moonName){
 
     const card = document.querySelector('.moon-card[data-moon-name="' + escaped + '"]');
     if(!card) return;
+    if(card._lazyOpen) card._lazyOpen(true);
     card.scrollIntoView({ behavior: "smooth", block: "center" });
     // Give the smooth scroll a moment to arrive before popping, so the
     // animation reads as "found it!" rather than happening off-screen.
@@ -11856,6 +12004,33 @@ init();
 
   function setState(s){ body.classList.remove("ss-home", "ss-results", "ss-kingdom"); body.classList.add("ss-mode", "ss-" + s); window.scrollTo(0, 0); if(s === "home") snake.start(); }
   function iconFor(k){ try{ return makeKingdomIcon(k); }catch(e){ return document.createElement("span"); } }
+  // "Found with X Art" moons point at another kingdom; shown as a progressive chip on the icon.
+  const ART_HINT = {
+    "Found with Cap Kingdom Art":"Moon", "Found with Sand Kingdom Art":"Bowser's", "Found with Wooded Kingdom Art":"Sand",
+    "Found with Lake Kingdom Art":"Cascade", "Found with Metro Kingdom Art":"Lake", "Found with Seaside Kingdom Art":"Metro",
+    "Found with Snow Kingdom Art":"Lost", "Found with Luncheon Kingdom Art":"Seaside", "Found with Bowser's Kingdom Art":"Sand",
+    "Found with Moon Kingdom Art":"Wooded", "Found with Mushroom Kingdom Art":"Cap",
+    "Found with Dark Side Art 1":"Cascade", "Found with Dark Side Art 2":"Metro", "Found with Dark Side Art 3":"Mushroom",
+    "Found with Dark Side Art 4":"Cloud", "Found with Dark Side Art 5":"Snow", "Found with Dark Side Art 6":"Seaside",
+    "Found with Dark Side Art 7":"Lost", "Found with Dark Side Art 8":"Luncheon", "Found with Dark Side Art 9":"Lake",
+    "Found with Dark Side Art 10":"Ruined"
+  };
+  function kchip(k, moonName, size){
+    const w = document.createElement("span"); w.className = "kchip"; w.style.setProperty("--s", (size || 26) + "px");
+    w.appendChild(iconFor(k));
+    const short = moonName ? ART_HINT[moonName] : null;
+    if(short){
+      const hk = short + " Kingdom", f = KINGDOM_ICON_FILENAME[hk];
+      const p = document.createElement("span"); p.className = "kchip-prog"; p.title = hk;
+      const im = document.createElement("img"); im.alt = hk;
+      if(f) im.src = "icon/" + f + ".png";
+      im.onerror = function(){ this.replaceWith(document.createTextNode(initialsFor(hk))); };
+      p.appendChild(im);
+      const ar = document.createElement("span"); ar.className = "kchip-arrow"; ar.textContent = "\u25B2"; p.appendChild(ar);
+      w.appendChild(p);
+    }
+    return w;
+  }
 
   /* ---------- selection ---------- */
   function toggle(k, n){
@@ -11865,8 +12040,9 @@ init();
   }
   function chipEl(s, removable){
     const c = document.createElement("span"); c.className = "ss-chip";
+    c.title = s.name + " \u2014 " + s.kingdom;
+    c.appendChild(kchip(s.kingdom, s.name, 24));
     c.append(s.name);
-    const sm = document.createElement("small"); sm.textContent = s.kingdom; c.appendChild(sm);
     if(removable){ const x = document.createElement("button"); x.type = "button"; x.textContent = "\u00d7"; x.setAttribute("aria-label", "Remove " + s.name); x.onclick = () => toggle(s.kingdom, s.name); c.appendChild(x); }
     return c;
   }
@@ -11883,7 +12059,7 @@ init();
   function moonRow(k, n, withKingdom){
     const r = document.createElement("div"); r.className = "ss-row" + (isSel(k, n) ? " sel" : ""); r.dataset.k = k; r.dataset.n = n; r.tabIndex = 0;
     const ck = document.createElement("span"); ck.className = "ss-check"; ck.innerHTML = "<i>\u2713</i>"; r.appendChild(ck);
-    if(withKingdom){ const ic = document.createElement("span"); ic.className = "ss-ic"; ic.appendChild(iconFor(k)); r.appendChild(ic); }
+    if(withKingdom) r.appendChild(kchip(k, n, 28));
     const nm = document.createElement("span"); nm.className = "ss-nm"; nm.textContent = n; r.appendChild(nm);
     if(withKingdom){ const sub = document.createElement("span"); sub.className = "ss-sub"; sub.textContent = k; r.appendChild(sub); }
     r.onclick = () => toggle(k, n);
@@ -11904,46 +12080,53 @@ init();
   /* ---------- kingdom accordion (moon lists are built only when a kingdom is opened) ---------- */
   function buildKingdoms(){
     const root = $("ssKingdoms"); root.innerHTML = "";
+    const merged = KINGDOM_ORDER.indexOf("Darker Side") >= 0 && KINGDOM_ORDER.indexOf("Dark Side") >= 0;
     KINGDOM_ORDER.forEach(k => {
-      const darker = k === "Darker Side";
+      if(merged && k === "Darker Side") return;          // lives inside the Dark Side card
+      const groups = [{ k, label: null }];
+      if(merged && k === "Dark Side") groups.push({ k: "Darker Side", label: "Darker Side" });
+      const count = groups.reduce((n, g) => n + (KINGDOMS[g.k] || []).length, 0);
       const card = document.createElement("div"); card.className = "ss-k";
       const head = document.createElement("div"); head.className = "ss-khead";
       const ic = document.createElement("span"); ic.className = "ss-ic"; ic.appendChild(iconFor(k)); head.appendChild(ic);
       const nameBtn = document.createElement("button"); nameBtn.type = "button"; nameBtn.className = "ss-kname";
-      const count = (KINGDOMS[k] || []).length;
-      nameBtn.innerHTML = ""; nameBtn.append(k);
-      const sm = document.createElement("small"); sm.textContent = darker ? "Opens the Darker Side page" : count + " moons"; nameBtn.appendChild(sm);
+      nameBtn.append(k);
+      const sm = document.createElement("small"); sm.textContent = count + " moons" + (groups.length > 1 ? " + Darker Side" : ""); nameBtn.appendChild(sm);
       head.appendChild(nameBtn);
-      if(darker){
-        nameBtn.onclick = () => openKingdom(k, "all");
-      } else {
-        const ap = document.createElement("button"); ap.type = "button"; ap.className = "ss-btn sm access"; ap.textContent = "Access Points";
-        ap.onclick = e => { e.stopPropagation(); openKingdom(k, "access"); };
-        head.appendChild(ap);
-        const ar = document.createElement("button"); ar.type = "button"; ar.className = "ss-arrow"; ar.innerHTML = CHEV; ar.setAttribute("aria-label", "Show moons in " + k); ar.setAttribute("aria-expanded", "false");
-        const bodyEl = document.createElement("div"); bodyEl.className = "ss-kbody"; bodyEl.style.display = "none";
-        const flip = () => {
-          const open = !card.classList.contains("open");
-          card.classList.toggle("open", open); ar.setAttribute("aria-expanded", open ? "true" : "false"); bodyEl.style.display = open ? "" : "none";
-          if(open && !bodyEl.dataset.built){ // populate lazily, only now
-            bodyEl.dataset.built = "1";
-            const bar = document.createElement("div"); bar.className = "ss-kcount";
-            const t = document.createElement("span"); t.textContent = count + " moons \u2014 tap to select";
-            const all = document.createElement("button"); all.type = "button"; all.className = "ss-link"; all.textContent = "Select all";
-            all.onclick = () => { const names = (KINGDOMS[k] || []).map(m => m.name); const every = names.every(n => isSel(k, n));
-              names.forEach(n => { const i = sel.findIndex(s => s.kingdom === k && s.name === n); if(every && i >= 0) sel.splice(i, 1); else if(!every && i < 0) sel.push({ kingdom: k, name: n }); });
-              all.textContent = every ? "Select all" : "Clear"; refresh(); };
-            bar.append(t, all); bodyEl.appendChild(bar);
-            (KINGDOMS[k] || []).forEach(m => bodyEl.appendChild(moonRow(k, m.name, false)));
-          }
-        };
-        ar.onclick = flip; nameBtn.onclick = flip;
-        head.appendChild(ar);
-        card.append(head, bodyEl);
-        root.appendChild(card);
-        return;
-      }
-      card.appendChild(head); root.appendChild(card);
+      const ap = document.createElement("button"); ap.type = "button"; ap.className = "ss-btn sm access"; ap.textContent = "Access Points";
+      ap.onclick = e => { e.stopPropagation(); openKingdom(k, "access"); };
+      head.appendChild(ap);
+      const ar = document.createElement("button"); ar.type = "button"; ar.className = "ss-arrow"; ar.innerHTML = CHEV; ar.setAttribute("aria-label", "Show moons in " + k); ar.setAttribute("aria-expanded", "false");
+      const bodyEl = document.createElement("div"); bodyEl.className = "ss-kbody"; bodyEl.style.display = "none";
+      const flip = () => {
+        const open = !card.classList.contains("open");
+        card.classList.toggle("open", open); ar.setAttribute("aria-expanded", open ? "true" : "false"); bodyEl.style.display = open ? "" : "none";
+        if(open && !bodyEl.dataset.built){ // populate lazily, only now
+          bodyEl.dataset.built = "1";
+          const all2 = () => groups.reduce((a2, g) => a2.concat((KINGDOMS[g.k] || []).map(m => ({ kingdom: g.k, name: m.name }))), []);
+          const bar = document.createElement("div"); bar.className = "ss-kcount";
+          const t = document.createElement("span"); t.textContent = count + " moons \u2014 tap to select";
+          const all = document.createElement("button"); all.type = "button"; all.className = "ss-link"; all.textContent = "Select all";
+          all.onclick = () => { const list = all2(); const every = list.every(s => isSel(s.kingdom, s.name));
+            list.forEach(s => { const i = sel.findIndex(x => x.kingdom === s.kingdom && x.name === s.name); if(every && i >= 0) sel.splice(i, 1); else if(!every && i < 0) sel.push({ kingdom: s.kingdom, name: s.name }); });
+            all.textContent = every ? "Select all" : "Clear"; refresh(); };
+          bar.append(t, all); bodyEl.appendChild(bar);
+          groups.forEach(g => {
+            if(g.label){
+              const sub = document.createElement("div"); sub.className = "ss-kcount ss-ksub";
+              const st = document.createElement("span"); st.textContent = g.label + " \u2014 " + (KINGDOMS[g.k] || []).length + " moons";
+              const op = document.createElement("button"); op.type = "button"; op.className = "ss-link"; op.textContent = "Open " + g.label + " page";
+              op.onclick = () => openKingdom(g.k, "all");
+              sub.append(st, op); bodyEl.appendChild(sub);
+            }
+            (KINGDOMS[g.k] || []).forEach(m => bodyEl.appendChild(moonRow(g.k, m.name, false)));
+          });
+        }
+      };
+      ar.onclick = flip; nameBtn.onclick = flip;
+      head.appendChild(ar);
+      card.append(head, bodyEl);
+      root.appendChild(card);
     });
     $("ssHint").textContent = "Type a moon name, or open a kingdom below. You can pick moons from several kingdoms at once.";
   }
@@ -12045,6 +12228,52 @@ init();
         body.classList.remove("ss-mode", "ss-home", "ss-results", "ss-kingdom");
         viewScope = "all"; window.scrollTo(0, 0);
         try{ renderKingdom(KINGDOM_ORDER[0]); }catch(e){ console.error(e); }
+        set("idle", IDLE_HINT); prog(0);
+        setTimeout(() => fl.classList.remove("go"), 800);
+      }, 560);
+    }
+  })();
+
+  /* ---------- Back to Search and Select: hold 3s, then release within 3s ---------- */
+  (function(){
+    const wrap = $("ssReturn"), btn = $("ssReturnBtn"), hint = $("ssReturnHint");
+    const HOLD = 3000, WINDOW = 3000, IDLE_HINT = "Hold for 3 seconds, then release within 3 seconds.";
+    let state = "idle", t0 = 0, raf = 0, resetT = 0;
+    const set = (s, text) => { state = s; wrap.dataset.s = s; if(text != null) hint.textContent = text; };
+    const prog = p => btn.style.setProperty("--p", Math.max(0, Math.min(1, p)).toFixed(3));
+    function reset(msg, delay){ cancelAnimationFrame(raf); prog(0); set(msg ? "fail" : "idle", msg || IDLE_HINT);
+      clearTimeout(resetT); if(msg) resetT = setTimeout(() => { if(state === "fail") set("idle", IDLE_HINT); }, delay || 1800); }
+    function tick(){
+      const el = performance.now() - t0;
+      if(state === "hold"){
+        prog(el / HOLD);
+        hint.textContent = "Keep holding\u2026 " + Math.max(0, Math.ceil((HOLD - el) / 1000)) + "s";
+        if(el >= HOLD){ t0 = performance.now(); set("ready", "Release NOW! 3s"); }
+      } else if(state === "ready"){
+        const rem = WINDOW - el; prog(rem / WINDOW); hint.textContent = "Release NOW! " + Math.max(0, Math.ceil(rem / 1000)) + "s";
+        if(rem <= 0){ reset("Too slow \u2014 you held on too long. Try again.", 2200); return; }
+      } else return;
+      raf = requestAnimationFrame(tick);
+    }
+    function down(){ if(state !== "idle" && state !== "fail") return; clearTimeout(resetT); t0 = performance.now(); prog(0); set("hold", "Keep holding\u2026 3s"); raf = requestAnimationFrame(tick); }
+    function up(){
+      if(state === "hold") reset("Released too early \u2014 hold the full 3 seconds.", 1800);
+      else if(state === "ready"){ cancelAnimationFrame(raf); proceed(); }
+    }
+    btn.addEventListener("pointerdown", e => { e.preventDefault(); try{ btn.setPointerCapture(e.pointerId); }catch(_){} down(); });
+    btn.addEventListener("pointerup", up);
+    btn.addEventListener("pointercancel", () => { if(state === "hold" || state === "ready") reset("Cancelled.", 1200); });
+    btn.addEventListener("contextmenu", e => e.preventDefault());
+    btn.addEventListener("keydown", e => { if((e.key === " " || e.key === "Enter") && !e.repeat){ e.preventDefault(); down(); } });
+    btn.addEventListener("keyup", e => { if(e.key === " " || e.key === "Enter"){ e.preventDefault(); up(); } });
+    function proceed(){
+      set("done", "Returning\u2026"); prog(1);
+      const r = btn.getBoundingClientRect(), fl = $("ssFlash");
+      fl.style.setProperty("--fx", (r.left + r.width / 2) + "px"); fl.style.setProperty("--fy", (r.top + r.height / 2) + "px");
+      fl.classList.add("go");
+      setTimeout(() => {
+        viewScope = "all";
+        setState("home");
         set("idle", IDLE_HINT); prog(0);
         setTimeout(() => fl.classList.remove("go"), 800);
       }, 560);
