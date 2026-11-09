@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDoubleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3461,6 +3461,7 @@ function isTokenIncompleteOn(token, kingdomName){
   return !(done && grp && done.indexOf(grp) >= 0);
 }
 function syncBonusFreeState(){
+  ACCESS_EPOCH++;
   Object.keys(BONUS_ABILITY_TOKENS).forEach(tok => {
     // Never Free: the data flags Jump / Cap Return Jump always_unlocked, which
     // turned branches that need them (e.g. Hole in the Desert) into "Free".
@@ -3470,8 +3471,12 @@ function syncBonusFreeState(){
 // Raw file data per kingdom, kept so the logic can be rebuilt when the
 // Bonus Abilities switch changes.
 const KINGDOM_SOURCES = {};
+// Bumped whenever token rules change (Free/always-unlocked sets), so cached Access Point source
+// rows (see computeFormulaicSources) are never reused across a rule change.
+let ACCESS_EPOCH = 0;
 
 function mergeTokensIntoManifest(logicTokens){
+  ACCESS_EPOCH++;
   (logicTokens || []).forEach(t => {
     if(t.token_type === "ability" && /bonus abilit/i.test(String(t.notes || ""))) BONUS_ABILITY_TOKENS[t.token] = true;
     if(/cap\s*_?return/i.test(String(t.display_name || "")) || /cap\s*_?return/i.test(String(t.token || ""))){
@@ -5788,38 +5793,61 @@ function customNodeReachBranchesRaw(data, nodeId, seen){
     if(!sn || sn.node_type !== "custom_place") sb = [{ group: [], scenarios: null, tier: "casual" }];
     else { sb = customNodeReachBranches(data, src, seen); if(!sb) return; }
     res = res.concat(crossBranches(edgeBranches(e), sb));
+    if(res.length > 24) res = pruneDominatedBranches(res); // keep the walk from compounding
   });
   return res.length ? res : null;
 }
 
 // Branches for one inbound edge, with the source's own reach cost folded in when
 // the source is a Custom Node. Returns null when the source is an unreachable orphan.
-// A "Home return: X" node is where you land back in the overworld after leaving a subarea
-// through its exit. Being there is only possible if you can get THROUGH that subarea, so
-// the cost of traversing it (entry pipe(s) -> this exit) is part of the source's cost.
-// -> { stageName, branches } | null (no subarea / nothing to add)
-function homeReturnContext(data, sn){
-  if(!sn || sn.node_type !== "home_entrance" || sn.side !== "home_out" || !sn.entrance_id) return null;
-  data._homeRetMemo = data._homeRetMemo || {};
-  if(Object.prototype.hasOwnProperty.call(data._homeRetMemo, sn.node_id)) return data._homeRetMemo[sn.node_id];
+// SOURCE CONTEXT (generic, every kingdom): a source node that sits INSIDE a subarea (or that is
+// the overworld landing of a subarea exit, "Home return: X") can only be used if you can get
+// to that spot, so the cost of crossing the subarea - from its entrance pipe(s) to that spot -
+// is part of the source's cost. Free edges out of such a node therefore never read as plain Free.
+// -> { stageName, branches|null } or null when the node is not tied to a subarea.
+function subareaSourceContext(data, sn){
+  if(!sn || !data || !data.nodeMap) return null;
+  data._srcCtxMemo = data._srcCtxMemo || {};
+  if(Object.prototype.hasOwnProperty.call(data._srcCtxMemo, sn.node_id)) return data._srcCtxMemo[sn.node_id];
+  const homeStage = (data.subCtx && data.subCtx.homeStage) || null;
+  const exempt = (data.subCtx && data.subCtx.exemptStages) || null;
+  let target = null; // the node INSIDE the subarea that this source corresponds to
+  if(sn.node_type === "home_entrance" && sn.side === "home_out" && sn.entrance_id){
+    // overworld landing of an exit -> the exit pipe on the subarea side
+    target = (data.nodes || []).find(n => n.node_type === "substage_entrance" && n.entrance_id === sn.entrance_id
+      && n.side === "sub_far" && n.stage && n.stage !== sn.stage) || null;
+  } else if(sn.stage && homeStage && sn.stage !== homeStage && !(exempt && exempt.has(sn.stage))
+            && sn.node_type !== "stage_start" && sn.node_type !== "stage_change" && sn.node_type !== "custom_place"){
+    // any pipe/checkpoint/event node inside a subarea stage (Custom Nodes already walk back to
+    // their own anchors through customNodeReachBranches)
+    target = sn;
+  }
   let out = null;
-  const far = (data.nodes || []).find(n => n.node_type === "substage_entrance" && n.entrance_id === sn.entrance_id
-    && n.side === "sub_far" && n.stage && n.stage !== sn.stage);
-  if(far){
-    const nears = (data.nodes || []).filter(n => n.node_type === "substage_entrance" && n.stage === far.stage && n.side === "sub_near");
+  if(target && target.stage && !(exempt && exempt.has(target.stage)) && (!homeStage || target.stage !== homeStage)){
+    const nears = (data.nodes || []).filter(n => n.node_type === "substage_entrance" && n.stage === target.stage && n.side === "sub_near");
     let br = [];
-    nears.forEach(nr => {
-      const r = reachWithinStage(data.nodeMap, data.edges, far.stage, nr.node_id, far.node_id);
+    if(nears.some(n => n.node_id === target.node_id)) br = [{ group: [], scenarios: null, tier: "casual" }];
+    else nears.forEach(nr => {
+      const r = reachWithinStage(data.nodeMap, data.edges, target.stage, nr.node_id, target.node_id);
       if(r) br = br.concat(r);
     });
-    out = { stageName: far.stage_display_name || far.stage, branches: br.length ? br : null };
+    if(nears.length) out = { stageName: target.stage_display_name || target.stage, branches: br.length ? br : null };
   }
-  data._homeRetMemo[sn.node_id] = out;
+  data._srcCtxMemo[sn.node_id] = out;
   return out;
+}
+// Readable source label: "<Subarea> exit" for an exit's overworld landing, otherwise the node's
+// own name with the subarea it sits in. null = nothing special (caller keeps its own label).
+function subareaSourceLabel(data, sn, ctx){
+  ctx = ctx || subareaSourceContext(data, sn);
+  if(!ctx) return null;
+  if(sn.node_type === "home_entrance" && sn.side === "home_out") return ctx.stageName + " exit";
+  const nm = (sn.display_name || sn.node_id || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "").trim();
+  return nm + " (" + ctx.stageName + ")";
 }
 function inboundEdgeBranches(data, nodeId, e, src){
   const sn = data.nodeMap[src];
-  const hr = homeReturnContext(data, sn);
+  const hr = subareaSourceContext(data, sn);
   if(hr){
     if(!hr.branches) return null; // the subarea can't be crossed to that exit
     return { branches: crossBranches(edgeBranches(e), hr.branches), folded: true };
@@ -5833,6 +5861,13 @@ function inboundEdgeBranches(data, nodeId, e, src){
 function computeNodeSourceReqs(kingdomName, nodeId, scopeMoon){
   const data = KINGDOM_NODE_DATA[kingdomName];
   if(!data || !nodeId) return null;
+  if(scopeMoon) return computeNodeSourceReqsRaw(kingdomName, nodeId, scopeMoon, data);
+  if(!data._nsCache || data._nsCache.epoch !== ACCESS_EPOCH) data._nsCache = { epoch: ACCESS_EPOCH, map: new Map() };
+  if(!data._nsCache.map.has(nodeId)) data._nsCache.map.set(nodeId, computeNodeSourceReqsRaw(kingdomName, nodeId, null, data));
+  const c = data._nsCache.map.get(nodeId);
+  return c ? c.map(r => Object.assign({}, r)) : c;
+}
+function computeNodeSourceReqsRaw(kingdomName, nodeId, scopeMoon, data){
   const rows = [];
   let anyFolded = false;
   directedInbound(data, nodeId).forEach(({ e, src }) => {
@@ -5841,8 +5876,7 @@ function computeNodeSourceReqs(kingdomName, nodeId, scopeMoon){
     if(r.folded) anyFolded = true;
     const srcNode = data.nodeMap[src];
     const rawLabel = (srcNode && srcNode.display_name) || src;
-    const hrc = homeReturnContext(data, srcNode);
-    const label = hrc ? hrc.stageName + " exit" : rawLabel.replace(/\s*\([^)]*\)\s*$/, "");
+    const label = subareaSourceLabel(data, srcNode) || rawLabel.replace(/\s*\([^)]*\)\s*$/, "");
     rows.push(Object.assign({ label: "From " + label }, summarizeBranches(scopeBranchesToMoon(r.branches, scopeMoon), kingdomName)));
   });
   if(rows.length < 2 && !anyFolded) return null; // plain single-source case: flat reach path handles it
@@ -5933,6 +5967,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   console.log(`[${kingdomName}] perf: checkpoint lookup ${Math.round(__t1 - __t0)}ms, node reach index ${Math.round(performance.now() - __t1)}ms`);
 
   buildSubareaContext(kingdomName, ws.logicNodes || [], ws.routeEdges || []);
+  const __t2 = performance.now();
   const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => {
     // A moon shows ONLY its own requirement. The cost of reaching its
     // checkpoint/custom node/subarea pipe is node info and lives in the
@@ -5945,6 +5980,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
     return moon;
   }));
 
+  console.log(`[${kingdomName}] perf: moon parse + per-pipe rows ${Math.round(performance.now() - __t2)}ms (${moons.length} moons)`);
   console.log(`[${kingdomName}] per-pipe subarea rows on ${moons.filter(m => m.entranceReqs).length} moon(s): ` + moons.filter(m => m.entranceReqs).map(m => m.name).join(", "));
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons; // always overwrite; never merge with a stale prior entry
@@ -5960,7 +5996,9 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   // Re-apply any user-defined Moon+Node merge rules now that this
   // kingdom's moons AND node data are both in place (checkpoint/custom
   // node merges need KINGDOM_NODE_DATA's reachBranches).
+  const __t3 = performance.now();
   applyNodeMergeRules(kingdomName);
+  console.log(`[${kingdomName}] perf: node merge rules ${Math.round(performance.now() - __t3)}ms`);
 }
 
 /* =========================================================
@@ -8836,15 +8874,12 @@ function nodeSourceKind(n){
   if(n.node_type === "checkpoint") return "checkpoint";
   return "other";
 }
-function nodeSourceLabel(n, fallback){
+function nodeSourceLabel(n, fallback, data){
   if(!n) return fallback;
   if(n.node_type === "stage_start") return "Kingdom Start";
   if(nodeSourceKind(n) === "painting") return (/^come$/i.test(n.entrance_id) ? "Come" : "Go") + " Painting";
-  if(n.node_type === "home_entrance" && n.side === "home_out"){
-    const far = (typeof KINGDOM_NODE_DATA !== "undefined") ? Object.keys(KINGDOM_NODE_DATA).map(k => KINGDOM_NODE_DATA[k]).find(d => d && d.nodeMap && d.nodeMap[n.node_id] === n) : null;
-    const hr = far ? homeReturnContext(far, n) : null;
-    if(hr) return hr.stageName + " exit";
-  }
+  const lab = data ? subareaSourceLabel(data, n) : null;
+  if(lab) return lab;
   return cleanCheckpointName(n.display_name) || fallback;
 }
 // A source row is only applicable if no other source reaches the same place at an equal-or-easier
@@ -8867,6 +8902,15 @@ function dropDominatedSourceRows(rows){
 function computeFormulaicSources(kingdomName, nodeId){
   const data = KINGDOM_NODE_DATA[kingdomName];
   if(!data || !nodeId) return [];
+  // Every Checkpoint / Painting / Subarea card asks for this on each (re)render and filter change.
+  if(!data._fsCache || data._fsCache.epoch !== ACCESS_EPOCH) data._fsCache = { epoch: ACCESS_EPOCH, map: new Map() };
+  const hit = data._fsCache.map.get(nodeId);
+  if(hit) return hit.map(r => Object.assign({}, r));
+  const res = computeFormulaicSourcesRaw(kingdomName, nodeId, data);
+  data._fsCache.map.set(nodeId, res);
+  return res.map(r => Object.assign({}, r));
+}
+function computeFormulaicSourcesRaw(kingdomName, nodeId, data){
   const viableAll = directedInbound(data, nodeId).map(({ e, src }) => {
     const r = inboundEdgeBranches(data, nodeId, e, src);
     return r ? { e, src, branches: r.branches } : null;
@@ -8883,7 +8927,7 @@ function computeFormulaicSources(kingdomName, nodeId){
     const sig = entrySignatureFromReqEntry(summary);
     let row = bySig.get(sig);
     if(!row){ row = Object.assign({ labels: [], rank: 9 }, summary); bySig.set(sig, row); }
-    const lab = nodeSourceLabel(src, v.src);
+    const lab = nodeSourceLabel(src, v.src, data);
     if(!row.labels.includes(lab)) row.labels.push(lab);
     row.rank = Math.min(row.rank, RANK[nodeSourceKind(src)]);
   });
