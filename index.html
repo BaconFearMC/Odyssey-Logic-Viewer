@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2521,6 +2521,23 @@
   .gh-star-note .icon-wrap.any-badged::after{ font-size:5.5px; padding:1px 3px; bottom:-4px; }
   .gh-star-note .icon-wrap.any-badged::before{ inset:-2px; }
   .gh-star-note .prog-badge{ display:none; }
+
+  /* ===== ACCESS POINTS — tidy pass (CSS only) ===== */
+  .cp-reqs{ margin-top:56px; }
+  .cp-reqs-head{ padding:12px 16px 12px 12px; margin-bottom:10px; }
+  .cp-reqs-title{ font-size:19px; letter-spacing:.06em; }
+  .cp-reqs-sub{ margin:0 0 18px 4px; font-size:13px; opacity:.9; }
+  .cp-reqs-grid{ gap:16px; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); }
+  .cp-req{ gap:12px; padding:16px 18px 18px 20px; border-radius:2px; }
+  .cp-req .cp-req-name{ padding:0 24px 12px 0; font-size:15px; }
+  .cp-req .cp-req-name img{ width:30px; height:30px; border-radius:3px; }
+  .cp-req-source{ gap:8px; padding:4px 0 4px 14px; border-left-width:3px; border-radius:0 3px 3px 0; background:rgba(255,255,255,.02); }
+  .cp-req-source + .cp-req-source{ margin-top:6px; padding-top:10px; border-top:1px dashed var(--border); }
+  .cp-req-source-head{ gap:4px; margin-bottom:6px; }
+  .cp-req .free-tag, .cp-req .impossible-tag{ align-self:flex-start; }
+  .cp-req .tier-options{ gap:8px; }
+  .cp-req.cp-req-compact{ padding:10px 16px 10px 18px; }
+  @media (max-width:720px){ .cp-reqs-grid{ grid-template-columns:1fr; } .cp-req{ padding:14px 14px 16px 16px; } }
 </style>
 </head>
 <body>
@@ -4121,7 +4138,6 @@ const SUBAREA_EXEMPTIONS = [
 
   // Wooded Kingdom
   "Wooded Kingdom: Secret Flower Field",
-  "Wooded Kingdom: Sky Garden Tower",
 
   // Moon Kingdom
   "Moon Kingdom: Underground Caverns",
@@ -5776,7 +5792,7 @@ function computeNodeSourceReqs(kingdomName, nodeId, scopeMoon){
     rows.push(Object.assign({ label: "From " + label }, summarizeBranches(scopeBranchesToMoon(r.branches, scopeMoon), kingdomName)));
   });
   if(rows.length < 2 && !anyFolded) return null; // plain single-source case: flat reach path handles it
-  const trimmed = dropDominatedSourceRows(rows.filter(r => !r.impossible));
+  const trimmed = rows.filter(r => !r.impossible);
   return trimmed.length ? trimmed : (rows.length ? rows : null);
 }
 
@@ -6973,11 +6989,29 @@ function appendGhStar(chip, andGroup){
   note.setAttribute("aria-label", "* " + spoken.join("; "));
   chip.appendChild(note);
 }
+// Context-dependent progressives inside one method (AND-group):
+//  - every Capture without a Cap Throw in the method gets an Any Cap Throw progressive
+//  - Wallet next to Coin Coffer is shown as a progressive on Coin Coffer
+const COIN_COFFER_RE = /coin[\s_-]*coffer/i, WALLET_RE = /^wallet$/i;
+function _tokLabelMatch(t, re){ return re.test(String(t)) || re.test(String((ICON_MANIFEST[t] || {}).label || "")); }
+function dynamicProgChain(token, andGroup){
+  const info = ICON_MANIFEST[token];
+  if(!info || info.tokenType !== "capture") return null;
+  const chain = [];
+  const hasThrow = andGroup.some(t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1);
+  if(!hasThrow) chain.push(ANY_THROW_TOKEN);
+  if(_tokLabelMatch(token, COIN_COFFER_RE)){
+    const w = andGroup.find(t => _tokLabelMatch(t, WALLET_RE));
+    if(w) chain.push(w);
+  }
+  return chain.length ? chain : null;
+}
 function appendAndGroupIcons(chip, andGroup, extra){
   // A move that is only shown as a progression icon on a later move in the
   // same group (Ground Pound on Ground Pound Jump, ...) isn't listed twice.
   const covered = new Set();
   andGroup.forEach(t => (ABILITY_PROGRESSION[t] || []).forEach(pt => covered.add(pt)));
+  andGroup.forEach(t => { const c = dynamicProgChain(t, andGroup); if(c) c.forEach(pt => { if(pt !== ANY_THROW_TOKEN) covered.add(pt); }); });
   const visible = andGroup.filter(t => !covered.has(t));
   const tokens = sortedTokensForDisplay(visible.length ? visible : andGroup);
   const rows = balancedRowCounts(tokens.length, ICON_ROW_MAX);
@@ -6993,7 +7027,7 @@ function appendAndGroupIcons(chip, andGroup, extra){
         plus.textContent = "+";
         rowEl.appendChild(plus);
       }
-      rowEl.appendChild(makeIcon(tokens[idx], { twoDJump: needsTwoDJump && tokens[idx] === "SingleJump" }));
+      rowEl.appendChild(makeIcon(tokens[idx], { twoDJump: needsTwoDJump && tokens[idx] === "SingleJump", progChain: dynamicProgChain(tokens[idx], andGroup) }));
       idx++;
     }
     chip.appendChild(rowEl);
@@ -7038,8 +7072,8 @@ function makeProgImg(pt){
   };
   return img;
 }
-function makeProgressionBadge(token){
-  const cyc = PROG_CYCLE[token];
+function makeProgressionBadge(token, chainOverride){
+  const cyc = chainOverride ? null : PROG_CYCLE[token];
   if(cyc){
     const badge = document.createElement("span");
     badge.className = "prog-badge prog-cycle";
@@ -7056,7 +7090,7 @@ function makeProgressionBadge(token){
     badge.appendChild(arrow);
     return badge;
   }
-  const chain = ABILITY_PROGRESSION[token];
+  const chain = chainOverride || ABILITY_PROGRESSION[token];
   if(!chain || !chain.length) return null;
   const badge = document.createElement("span");
   badge.className = "prog-badge";
@@ -7243,7 +7277,7 @@ function makeIcon(token, opts){
     wrap.appendChild(img);
   }
 
-  const progBadge = makeProgressionBadge(token);
+  const progBadge = makeProgressionBadge(token, opts && opts.progChain);
   if(progBadge) wrap.appendChild(progBadge);
   if(opts && opts.twoDJump) wrap.appendChild(makeTwoDJumpBadge());
   const hpMatch = MINHP_RE.exec(String(token));
@@ -8389,6 +8423,17 @@ const HOIST_TOKENS = ["PSwitch", "CappyFlower", "Scarecrow", "Notes", "NpcTalk",
 // Needs at least this many total methods before a shared requirement is pulled out;
 // with only 1-2 methods the plain chips are clearer than a header.
 const HOIST_MIN_METHODS = 3;
+// Paintings, Binoculars, Goomba and Mini Rocket join the shared-requirement ("Besides ...") rule.
+// Matched by display name / token so the exact token ids in the data don't matter.
+const HOIST_EXTRA_RE = /^(paintings?( access)?|binoculars?|goombas?|mini[\s_-]*rocket)$/i;
+function hoistCandidates(){
+  const out = HOIST_TOKENS.slice();
+  Object.keys(ICON_MANIFEST).forEach(t => {
+    if(out.indexOf(t) !== -1 || t === ANY_THROW_TOKEN) return;
+    if(HOIST_EXTRA_RE.test(String((ICON_MANIFEST[t] || {}).label || "").trim()) || HOIST_EXTRA_RE.test(t) || t === "PaintingAccess") out.push(t);
+  });
+  return out;
+}
 function hoistForms(tok){ return [tok].concat(typeof subTwinsOf === "function" ? subTwinsOf(tok) : []); }
 // "Found with <X> Art" moons always need Ground Pound plus access to a kingdom, so
 // both are always stated once in the header (even with only 1-2 routes).
@@ -8415,7 +8460,7 @@ function hoistedTokensFor(tierLanes, moonName){
   if(moonName && PEACH_MOON_NAME.test(moonName))
     return PEACH_MOON_HOISTED.filter(t => ICON_MANIFEST[t] && !(filterMode === "cando" && hoistForms(t).some(f => tokenIsSelected(f))));
   if(groups.length < HOIST_MIN_METHODS) return [];
-  const out = HOIST_TOKENS.filter(tok => {
+  const out = hoistCandidates().filter(tok => {
     if(!ICON_MANIFEST[tok]) return false;
     const forms = hoistForms(tok);
     // Already marked as "I Have This!" -> it's stripped by the filter instead.
@@ -8764,8 +8809,9 @@ function computeFormulaicSources(kingdomName, nodeId){
     const r = inboundEdgeBranches(data, nodeId, e, src);
     return r ? { e, src, branches: r.branches } : null;
   }).filter(Boolean);
-  const main = viableAll.filter(v => nodeSourceKind(data.nodeMap[v.src]) !== "other");
-  const use = main.length ? main : viableAll;
+  // Universal: EVERY viable inbound route is listed (start, painting, checkpoint AND
+  // side areas / exits / entrances), for every Checkpoint, Painting and Subarea card.
+  const use = viableAll;
   const RANK = { start: 0, painting: 1, checkpoint: 2, other: 3 };
   const bySig = new Map();
   use.forEach(v => {
@@ -8779,7 +8825,10 @@ function computeFormulaicSources(kingdomName, nodeId){
     if(!row.labels.includes(lab)) row.labels.push(lab);
     row.rank = Math.min(row.rank, RANK[nodeSourceKind(src)]);
   });
-  let rows = dropDominatedSourceRows(Array.from(bySig.values()));
+  // When nothing but side-area sources lead in (e.g. Top Hat Tower), show EVERY way in
+  // instead of letting one free return trip hide the others.
+  // Sources with an identical cost share one row; nothing is hidden as "dominated".
+  let rows = Array.from(bySig.values());
   rows.forEach(r => {
     const rk = l => l === "Kingdom Start" ? 0 : /Painting$/.test(l) ? 1 : 2;
     r.labels.sort((a, b) => rk(a) - rk(b) || a.localeCompare(b));
