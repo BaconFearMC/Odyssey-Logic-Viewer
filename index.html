@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -148,8 +148,14 @@
   #videoToggle, #raiseToggle{ display:none !important; }
   #debugPanel{ gap:12px !important; }
   .dbg-item{ position:relative; display:block; }
-  #debugPanel .dbg-item .corner-btn{ width:56px; height:56px; padding:0; justify-content:center; font-size:0; }
-  .btn-ic{ width:34px; height:34px; object-fit:contain; display:block; }
+  #debugPanel .dbg-item .corner-btn{ width:auto; min-width:168px; height:48px; padding:0 16px 0 10px; justify-content:flex-start; gap:10px; font-size:12px; }
+  #debugPanel .btn-txt{ display:flex; flex-direction:column; align-items:flex-start; line-height:1.15; text-align:left; }
+  #debugPanel .btn-txt b{ font-size:12.5px; font-weight:400; letter-spacing:.06em; text-transform:uppercase; }
+  #debugPanel .btn-txt small{ font-size:10.5px; letter-spacing:.03em; opacity:.75; text-transform:none; }
+  #debugPanel .btn-txt small::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:5px; border-radius:50%; background:currentColor; opacity:.55; vertical-align:1px; }
+  #debugPanel .corner-btn.active .btn-txt small::before{ opacity:1; }
+  .btn-ic{ width:30px; height:30px; min-width:30px; object-fit:contain; display:block !important; flex:none; }
+  .btn-ic-fb{ display:flex !important; align-items:center; justify-content:center; font-size:20px; line-height:1; }
   .dbg-tip{
     position:absolute; left:calc(100% + 12px); bottom:0; width:270px; z-index:30;
     display:flex; flex-direction:column; gap:4px; text-align:left;
@@ -2363,12 +2369,9 @@
     100%{ transform:translate(var(--bx),var(--by)) rotate(14deg) scale(.7); opacity:0; z-index:2; }
   }
   @media (prefers-reduced-motion:reduce){ .prog-badge.prog-cycle .prog-icon{ animation:none; } .prog-badge.prog-cycle .pc-b{ display:none; } }
-  /* Access Points: tighter chips so 5-6 icons sit on one line */
-  .cp-reqs .option-chip{ padding:4px 6px; }
-  .cp-reqs .icon-wrap, .cp-reqs .icon, .cp-reqs .icon-fallback{ width:42px; height:42px; }
-  .cp-reqs .option-chip-row{ gap:2px; }
-  .cp-reqs .and-plus{ font-size:10px; margin:0; }
-  .cp-reqs .tier-options{ flex-direction:row; flex-wrap:wrap; }
+  /* Access Points: same chip sizing as Moon cards */
+  /* Access Points use the Moon-card chip layout: one method per line */
+  .cp-reqs .tier-options{ flex-direction:column; flex-wrap:nowrap; align-items:flex-start; }
 
   /* =====================================================================
      ACCESS POINTS — single consolidated style (replaces four stacked layers)
@@ -2576,7 +2579,8 @@
 <div id="debugPanel" role="menu" aria-label="Debug options">
 <div class="dbg-item">
   <button class="corner-btn" id="unmarkedToggle" type="button" aria-label="NO LOGIC? - show only unmarked logic moons">
-    <img class="btn-ic" src="icon/AbilityDeath.png" alt="" onerror="this.style.display='none'">
+    <img class="btn-ic" src="icon/AbilityDeath.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>?</span>'">
+    <span class="btn-txt"><b>No Logic?</b><small id="unmarkedBtnState">Off</small></span>
   </button>
   <div class="dbg-tip" role="tooltip">
     <b>NO LOGIC?</b>
@@ -2586,7 +2590,8 @@
 </div>
 <div class="dbg-item">
   <button class="corner-btn active" id="glitchToggle" type="button" aria-label="Cycle Glitch Bible filter">
-    <img class="btn-ic" src="icon/AbilitySideFlip.png" alt="" onerror="this.style.display='none'">
+    <img class="btn-ic" src="icon/AbilitySideFlip.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9889;</span>'">
+    <span class="btn-txt"><b>Glitch Bible</b><small id="glitchBtnState">Hidden</small></span>
   </button>
   <div class="dbg-tip" role="tooltip">
     <b>Glitch Bible [WIP]</b>
@@ -7955,7 +7960,8 @@ function buildMovementOptions(moon, boxed){
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
   // Darker Side moons never use the shared "This moon requires X. Beyond this…" header.
   const mLanes = withGroundedMerge(moon.tierLanes, moon.kingdom);
-  const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(mLanes, moon.name);
+  // Access Point cards (Checkpoints / Paintings / Subarea Entrances) use the same rule, with 2+ methods.
+  const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(mLanes, moon.name, (moon.isCheckpointNode || moon.isAccessPoint) ? 2 : undefined);
   const hoistSet = hoistedFormSet(hoisted);
 
   mLanes.forEach(lane => {
@@ -8548,13 +8554,13 @@ function artMoonHoisted(groups){
 // always stated once up top, whatever the individual routes look like.
 const PEACH_MOON_NAME = /^Peach in the .+ Kingdom$/i;
 const PEACH_MOON_HOISTED = ["NpcTalk", "KingdomAccess_Mushroom"];
-function hoistedTokensFor(tierLanes, moonName){
+function hoistedTokensFor(tierLanes, moonName, minMethods){
   const groups = [];
   (tierLanes || []).forEach(l => (l.groups || []).forEach(g => groups.push(g)));
   if(moonName && ART_MOON_NAME.test(moonName)) return artMoonHoisted(groups);
   if(moonName && PEACH_MOON_NAME.test(moonName))
     return PEACH_MOON_HOISTED.filter(t => ICON_MANIFEST[t] && !(filterMode === "cando" && hoistForms(t).some(f => tokenIsSelected(f))));
-  if(groups.length < HOIST_MIN_METHODS) return [];
+  if(groups.length < (minMethods || HOIST_MIN_METHODS)) return [];
   const out = hoistCandidates().filter(tok => {
     if(!ICON_MANIFEST[tok]) return false;
     const forms = hoistForms(tok);
@@ -9031,7 +9037,7 @@ function appendSourceHeader(wrap, label, kingdomName, prefix){
 }
 
 function renderPaintingReqs(kingdomName){
-  const __prevRow = ICON_ROW_MAX; ICON_ROW_MAX = 6;
+  const __prevRow = ICON_ROW_MAX; ICON_ROW_MAX = 3;
   try{ return renderPaintingReqs_impl(kingdomName); } finally { ICON_ROW_MAX = __prevRow; }
 }
 function renderPaintingReqs_impl(kingdomName){
@@ -9140,7 +9146,7 @@ function getSubareaEntranceCards(kingdomName){
 }
 
 function renderSubareaReqs(kingdomName){
-  const __prevRow = ICON_ROW_MAX; ICON_ROW_MAX = 6;
+  const __prevRow = ICON_ROW_MAX; ICON_ROW_MAX = 3;
   try{ return renderSubareaReqs_impl(kingdomName); } finally { ICON_ROW_MAX = __prevRow; }
 }
 function renderSubareaReqs_impl(kingdomName){
@@ -9199,7 +9205,7 @@ function renderSubareaReqs_impl(kingdomName){
 }
 
 function renderCheckpointReqs(kingdomName, nodeType){
-  const __prevRow = ICON_ROW_MAX; ICON_ROW_MAX = 6;
+  const __prevRow = ICON_ROW_MAX; ICON_ROW_MAX = 3;
   try{ return renderCheckpointReqs_impl(kingdomName, nodeType); } finally { ICON_ROW_MAX = __prevRow; }
 }
 function renderCheckpointReqs_impl(kingdomName, nodeType){
@@ -9439,6 +9445,16 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     const sy = () => { us.textContent = un.classList.contains("active") ? "On" : "Off"; };
     new MutationObserver(sy).observe(un, { attributes:true, attributeFilter:["class"] }); sy();
   }
+})();
+
+// Mirror the toggle states into the labelled debug buttons.
+(function(){
+  const un = document.getElementById("unmarkedToggle"), us = document.getElementById("unmarkedBtnState");
+  const gl = document.getElementById("glitchToggleLabel"), gs = document.getElementById("glitchBtnState");
+  if(un && us){ const f = () => { us.textContent = un.classList.contains("active") ? "On" : "Off"; };
+    new MutationObserver(f).observe(un, { attributes:true, attributeFilter:["class"] }); f(); }
+  if(gl && gs){ const f = () => { gs.textContent = gl.textContent.replace(/^.*:\s*/, ""); };
+    new MutationObserver(f).observe(gl, { childList:true, characterData:true, subtree:true }); f(); }
 })();
 
 // ---- Exempt Levels (lives in the Filters panel) ----
@@ -10330,7 +10346,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
   tierLanes = withGroundedMerge(tierLanes);
   const stack = document.createElement("div");
   stack.className = "tier-stack";
-  const hoisted = hoistedTokensFor(tierLanes, moonName);
+  const hoisted = hoistedTokensFor(tierLanes, moonName, noun === "entrance" ? undefined : 2);
   const hoistSet = hoistedFormSet(hoisted);
   tierLanes.forEach(lane => {
     const laneEl = document.createElement("div");
