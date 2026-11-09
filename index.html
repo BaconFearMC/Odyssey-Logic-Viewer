@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -5423,7 +5423,9 @@ function buildNodeReachIndex(nodes, edges){
     if(/ent(?:rance)?\b|ent$|\bnear\b|near[\s_-]*side/i.test(t)) return "Entrance";
     return null;
   };
-  const entranceLabel = n => {
+  const _elMemo = new Map();
+  const entranceLabel = n => { if(_elMemo.has(n)) return _elMemo.get(n); const v = entranceLabelRaw(n); _elMemo.set(n, v); return v; };
+  const entranceLabelRaw = n => {
     if(n.node_type === "substage_entrance" || isFromSubstage(n)){
       const kind = pipeKind(n);
       if(kind){
@@ -5561,10 +5563,22 @@ function edgeBranches(e){
 }
 
 // Branches (or null = impossible) for walking fromId -> toId inside one stage.
+// Perf: the same (stage, from, to) is asked for once per moon x pipe, and the path walk below is
+// exponential in dense subareas, so results are cached per edge list, only nodes that can still
+// reach the target are explored, and branch lists are pruned of dominated routes as they grow.
+const _rwsCache = new WeakMap();
 function reachWithinStage(nodeMap, edges, stage, fromId, toId){
   if(fromId === toId) return [{ group: [], scenarios: null, tier: "casual" }];
-  const adj = {};
-  const add = (a, b, e) => { (adj[a] = adj[a] || []).push({ to: b, e }); };
+  let cache = edges && typeof edges === "object" ? _rwsCache.get(edges) : null;
+  if(edges && typeof edges === "object" && !cache){ cache = new Map(); _rwsCache.set(edges, cache); }
+  const ckey = stage + "\u0001" + fromId + "\u0001" + toId;
+  if(cache && cache.has(ckey)){
+    const hit = cache.get(ckey);
+    reachWithinStage.lastWhy = hit.why;
+    return hit.res ? hit.res.map(b => Object.assign({}, b)) : null;
+  }
+  const adj = {}, radj = {};
+  const add = (a, b, e) => { (adj[a] = adj[a] || []).push({ to: b, e }); (radj[b] = radj[b] || []).push(a); };
   (edges || []).forEach(e => {
     const a = nodeMap[e.from_node_id], b = nodeMap[e.to_node_id];
     if(!a || !b || a.stage !== stage || b.stage !== stage) return;
@@ -5573,25 +5587,36 @@ function reachWithinStage(nodeMap, edges, stage, fromId, toId){
     add(e.from_node_id, e.to_node_id, e);
     if(/^(true|1|yes|y)$/i.test(String(e.bidirectional).trim())) add(e.to_node_id, e.from_node_id, e);
   });
+  // Nodes that can reach the target at all (reverse BFS) - never wander into dead ends.
+  const canReach = new Set([toId]);
+  const queue = [toId];
+  while(queue.length){ const x = queue.pop(); (radj[x] || []).forEach(y => { if(!canReach.has(y)){ canReach.add(y); queue.push(y); } }); }
   let result = [];
+  let steps = 0;
   const seen = new Set([fromId]);
   reachWithinStage.lastWhy = null;
-  (function dfs(cur, acc, depth){
-    if(depth > 6 || result.length > 60) return;
-    if(cur === toId){ result = result.concat(acc); return; }
-    (adj[cur] || []).forEach(({ to, e }) => {
-      if(seen.has(to)) return;
-      seen.add(to);
-      dfs(to, crossBranches(acc, edgeBranches(e)), depth + 1);
-      seen.delete(to);
-    });
-  })(fromId, [{ group: [], scenarios: null, tier: "casual" }], 0);
+  if(canReach.has(fromId)){
+    (function dfs(cur, acc, depth){
+      if(depth > 6 || result.length > 60 || ++steps > 20000) return;
+      if(cur === toId){ result = result.concat(acc); return; }
+      (adj[cur] || []).forEach(({ to, e }) => {
+        if(seen.has(to) || !canReach.has(to)) return;
+        seen.add(to);
+        let next = crossBranches(acc, edgeBranches(e));
+        if(next.length > 24) next = pruneDominatedBranches(next);
+        dfs(to, next, depth + 1);
+        seen.delete(to);
+      });
+    })(fromId, [{ group: [], scenarios: null, tier: "casual" }], 0);
+  }
+  if(result.length > 24) result = pruneDominatedBranches(result);
   if(!result.length){
     const explicit = (edges || []).some(e => e.from_node_id === fromId && String(e.requirement_expr || "").trim().toLowerCase() === "impossible");
     reachWithinStage.lastWhy = (adj[fromId] || []).length === 0
       ? (explicit ? "only explicit 'impossible' edges leave this pipe" : "no edges leave this pipe in the data")
       : "edges leave this pipe but none lead to the moon's tracked node";
   }
+  if(cache) cache.set(ckey, { res: result.length ? result.map(b => Object.assign({}, b)) : null, why: reachWithinStage.lastWhy });
   return result.length ? result : null;
 }
 
@@ -5769,8 +5794,36 @@ function customNodeReachBranchesRaw(data, nodeId, seen){
 
 // Branches for one inbound edge, with the source's own reach cost folded in when
 // the source is a Custom Node. Returns null when the source is an unreachable orphan.
+// A "Home return: X" node is where you land back in the overworld after leaving a subarea
+// through its exit. Being there is only possible if you can get THROUGH that subarea, so
+// the cost of traversing it (entry pipe(s) -> this exit) is part of the source's cost.
+// -> { stageName, branches } | null (no subarea / nothing to add)
+function homeReturnContext(data, sn){
+  if(!sn || sn.node_type !== "home_entrance" || sn.side !== "home_out" || !sn.entrance_id) return null;
+  data._homeRetMemo = data._homeRetMemo || {};
+  if(Object.prototype.hasOwnProperty.call(data._homeRetMemo, sn.node_id)) return data._homeRetMemo[sn.node_id];
+  let out = null;
+  const far = (data.nodes || []).find(n => n.node_type === "substage_entrance" && n.entrance_id === sn.entrance_id
+    && n.side === "sub_far" && n.stage && n.stage !== sn.stage);
+  if(far){
+    const nears = (data.nodes || []).filter(n => n.node_type === "substage_entrance" && n.stage === far.stage && n.side === "sub_near");
+    let br = [];
+    nears.forEach(nr => {
+      const r = reachWithinStage(data.nodeMap, data.edges, far.stage, nr.node_id, far.node_id);
+      if(r) br = br.concat(r);
+    });
+    out = { stageName: far.stage_display_name || far.stage, branches: br.length ? br : null };
+  }
+  data._homeRetMemo[sn.node_id] = out;
+  return out;
+}
 function inboundEdgeBranches(data, nodeId, e, src){
   const sn = data.nodeMap[src];
+  const hr = homeReturnContext(data, sn);
+  if(hr){
+    if(!hr.branches) return null; // the subarea can't be crossed to that exit
+    return { branches: crossBranches(edgeBranches(e), hr.branches), folded: true };
+  }
   if(!sn || sn.node_type !== "custom_place") return { branches: edgeBranches(e), folded: false };
   const sb = customNodeReachBranches(data, src, new Set([nodeId]));
   if(!sb) return null;
@@ -5788,7 +5841,8 @@ function computeNodeSourceReqs(kingdomName, nodeId, scopeMoon){
     if(r.folded) anyFolded = true;
     const srcNode = data.nodeMap[src];
     const rawLabel = (srcNode && srcNode.display_name) || src;
-    const label = rawLabel.replace(/\s*\([^)]*\)\s*$/, "");
+    const hrc = homeReturnContext(data, srcNode);
+    const label = hrc ? hrc.stageName + " exit" : rawLabel.replace(/\s*\([^)]*\)\s*$/, "");
     rows.push(Object.assign({ label: "From " + label }, summarizeBranches(scopeBranchesToMoon(r.branches, scopeMoon), kingdomName)));
   });
   if(rows.length < 2 && !anyFolded) return null; // plain single-source case: flat reach path handles it
@@ -5872,8 +5926,11 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   const customPlaceCount = (ws.logicNodes || []).filter(n => n.node_type === "custom_place").length;
   console.log(`[${kingdomName}] loaded ${(ws.logicNodes||[]).length} nodes (${customPlaceCount} custom_place), ${(ws.routeEdges||[]).length} edges`);
 
+  const __t0 = performance.now();
   const checkpointLookup = buildCheckpointLookup(ws.logicNodes || [], ws.routeEdges || []);
+  const __t1 = performance.now();
   const { reachExprs: nodeReachExpr, reachBranches: nodeReachBranches } = buildNodeReachIndex(ws.logicNodes || [], ws.routeEdges || []);
+  console.log(`[${kingdomName}] perf: checkpoint lookup ${Math.round(__t1 - __t0)}ms, node reach index ${Math.round(performance.now() - __t1)}ms`);
 
   buildSubareaContext(kingdomName, ws.logicNodes || [], ws.routeEdges || []);
   const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => {
@@ -8783,6 +8840,11 @@ function nodeSourceLabel(n, fallback){
   if(!n) return fallback;
   if(n.node_type === "stage_start") return "Kingdom Start";
   if(nodeSourceKind(n) === "painting") return (/^come$/i.test(n.entrance_id) ? "Come" : "Go") + " Painting";
+  if(n.node_type === "home_entrance" && n.side === "home_out"){
+    const far = (typeof KINGDOM_NODE_DATA !== "undefined") ? Object.keys(KINGDOM_NODE_DATA).map(k => KINGDOM_NODE_DATA[k]).find(d => d && d.nodeMap && d.nodeMap[n.node_id] === n) : null;
+    const hr = far ? homeReturnContext(far, n) : null;
+    if(hr) return hr.stageName + " exit";
+  }
   return cleanCheckpointName(n.display_name) || fallback;
 }
 // A source row is only applicable if no other source reaches the same place at an equal-or-easier
