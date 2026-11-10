@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDoubleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -12084,7 +12084,7 @@ init();
 
   /* ---------- kingdom accordion (moon lists are built only when a kingdom is opened) ---------- */
   // SETTING: true = every kingdom's moon list is always shown (no collapsing); false = click the arrow to open/close.
-  const SS_KINGDOMS_ALWAYS_OPEN = true;
+  const SS_KINGDOMS_ALWAYS_OPEN = false;
   function buildKingdoms(){
     const root = $("ssKingdoms"); root.innerHTML = "";
     const merged = KINGDOM_ORDER.indexOf("Darker Side") >= 0 && KINGDOM_ORDER.indexOf("Dark Side") >= 0;
