@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityCapReturnJump.png">
+<link rel="icon" href="icon/AbilityDoubleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -8049,6 +8049,10 @@ function buildMoonCard(moon, opts){
 
 // Lazy moon card for Classic Viewing: only name + badges are drawn until the
 // dropdown arrow is clicked, then the real requirements are built once.
+// ===== SETTING: Classic Viewing lazy loading =====
+// true  = moon cards / node panels are only built when you click their dropdown arrow (much less lag)
+// false = everything is built up front like the original (slow, but all content is immediately present)
+const LAZY_CLASSIC_NODES = true;
 const LAZY_OPEN = new Set();
 function buildLazyMoonCard(moon){
   const key = moon.kingdom + "|" + moon.name;
@@ -8419,6 +8423,7 @@ function buildMoonPanel(moon, opts){
     body.appendChild(buildMoonRequirements(moon, true, opts));
     applyFilterMatchHighlight();
   };
+  if(!LAZY_CLASSIC_NODES) panel._fill();
 
   header.addEventListener("click", () => {
     panel.classList.toggle("open");
@@ -9079,7 +9084,7 @@ function renderGrid(){
   } else {
     grid.style.display = "";
     checkpointGroups.style.display = "none";
-    moons.forEach(moon => grid.appendChild(buildLazyMoonCard(moon)));
+    moons.forEach(moon => grid.appendChild(LAZY_CLASSIC_NODES ? buildLazyMoonCard(moon) : buildMoonCard(moon)));
     measureOptionsCollapsiblesIn(grid);
   }
   applyFilterMatchHighlight();
