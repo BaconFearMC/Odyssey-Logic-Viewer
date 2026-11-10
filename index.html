@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -8052,7 +8052,7 @@ function buildMoonCard(moon, opts){
 // ===== SETTING: Classic Viewing lazy loading =====
 // true  = moon cards / node panels are only built when you click their dropdown arrow (much less lag)
 // false = everything is built up front like the original (slow, but all content is immediately present)
-const LAZY_CLASSIC_NODES = true;
+const LAZY_CLASSIC_NODES = false;
 const LAZY_OPEN = new Set();
 function buildLazyMoonCard(moon){
   const key = moon.kingdom + "|" + moon.name;
@@ -12083,6 +12083,8 @@ init();
   $("ssInput").addEventListener("input", doSearch);
 
   /* ---------- kingdom accordion (moon lists are built only when a kingdom is opened) ---------- */
+  // SETTING: true = every kingdom's moon list is always shown (no collapsing); false = click the arrow to open/close.
+  const SS_KINGDOMS_ALWAYS_OPEN = true;
   function buildKingdoms(){
     const root = $("ssKingdoms"); root.innerHTML = "";
     const merged = KINGDOM_ORDER.indexOf("Darker Side") >= 0 && KINGDOM_ORDER.indexOf("Dark Side") >= 0;
@@ -12128,10 +12130,11 @@ init();
           });
         }
       };
-      ar.onclick = flip; nameBtn.onclick = flip;
+      if(!SS_KINGDOMS_ALWAYS_OPEN){ ar.onclick = flip; nameBtn.onclick = flip; } else { ar.style.display = "none"; nameBtn.style.cursor = "default"; }
       head.appendChild(ar);
       card.append(head, bodyEl);
       root.appendChild(card);
+      if(SS_KINGDOMS_ALWAYS_OPEN) flip();
     });
     $("ssHint").textContent = "Type a moon name, or open a kingdom below. You can pick moons from several kingdoms at once.";
   }
