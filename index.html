@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2244,7 +2244,15 @@
   /* Cycling "Any ..." icons: Any Cap Throw (burgundy red) + Any Grounded High Jump (blue) */
   .icon-wrap.any-throw{ --any-acc:#d11a3a; }
   .icon-wrap.any-throw::after{ color:#fff; }
-  .icon-wrap.any-grounded{ --any-acc:#5cc8ff; }
+  .icon-wrap.any-grounded{ --any-acc:#19b8a6; }
+  .icon-wrap.any-normal{ --any-acc:#8fd0ff; }
+  .icon-wrap.any-high{ --any-acc:#2347b5; }
+  .icon-wrap.any-high::after{ color:#fff; }
+  .prog-badge.prog-crossed .prog-icon, .prog-badge.prog-crossed .prog-fallback{ border-color:#e0314b; filter:grayscale(.6) brightness(.8); }
+  .prog-badge.prog-crossed{ position:absolute; }
+  .prog-badge .prog-x{ position:absolute; left:2px; top:2px; width:29px; height:29px; pointer-events:none; z-index:4;
+    background:linear-gradient(to top right, transparent calc(50% - 2px), #ff2d4d calc(50% - 2px), #ff2d4d calc(50% + 2px), transparent calc(50% + 2px)),
+                linear-gradient(to top left, transparent calc(50% - 2px), #ff2d4d calc(50% - 2px), #ff2d4d calc(50% + 2px), transparent calc(50% + 2px)); }
   .icon-wrap.any-badged{ position:relative; }
   .icon-wrap.any-badged::before{
     content:""; position:absolute; inset:-3px; z-index:0; background:var(--any-acc);
@@ -2270,6 +2278,10 @@
   .cycle-4{ animation-name:cycle4; }
   .cycle-8{ animation-name:cycle8; }
   @keyframes cycle4{ 0%{opacity:1} 21%{opacity:1} 25%{opacity:0} 96%{opacity:0} 100%{opacity:1} }
+  .cycle-7{ animation-name:cycle7; }
+  .cycle-5{ animation-name:cycle5; }
+  @keyframes cycle7{ 0%{opacity:1} 11.8%{opacity:1} 14.3%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
+  @keyframes cycle5{ 0%{opacity:1} 17.5%{opacity:1} 20%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
   @keyframes cycle8{ 0%{opacity:1} 10%{opacity:1} 12.5%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
   .icon-wrap.any-badged > .icon-tooltip{ display:none; }
   .prog-badge.pink{ pointer-events:auto; }
@@ -2808,7 +2820,7 @@
 </div>
 <div class="dbg-item">
   <button class="corner-btn active" id="glitchToggle" type="button" aria-label="Cycle Glitch Bible filter">
-    <img class="btn-ic" src="icon/AbilitySideFlip.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9889;</span>'">
+    <img class="btn-ic" src="icon/AbilityRocketFlower.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9889;</span>'">
     <span class="btn-txt"><b>Glitch Bible</b><small id="glitchBtnState">Hidden</small></span>
   </button>
   <div class="dbg-tip" role="tooltip">
@@ -3287,7 +3299,9 @@ let ICON_MANIFEST = {
   // through the four throws (see makeIcon).
   AnyThrow: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw", color:"#34406e", category:"Movement", tokenType:"ability" },
   // Display-only merge of every grounded-height method (see GH_* below).
-  GroundedHeight: { filenames:["AbilityJump.png"], label:"Any Grounded High Jump", color:"#34406e", category:"Movement", tokenType:"ability" },
+  GroundedHeight: { filenames:["AbilityJump.png"], label:"Any Grounded Height", color:"#0f8f84", category:"Movement", tokenType:"ability" },
+  GroundedNormal: { filenames:["AbilityJump.png"], label:"Any Grounded Normal Jump", color:"#5aa9e6", category:"Movement", tokenType:"ability" },
+  GroundedHigh: { filenames:["AbilitySideFlip.png"], label:"Any Grounded High Jump", color:"#1f3a8a", category:"Movement", tokenType:"ability" },
 };
 
 // Movement/CapThrow ("ability") icon sets found in the wild are commonly
@@ -3375,7 +3389,7 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Turnip: true,
   Nut: true,
   Seed: true,
-  GroundedHeight: true, // display-only merge; never a filter tile
+  GroundedHeight: true, GroundedNormal: true, GroundedHigh: true, // display-only merges; never filter tiles
   AnyThrow: true, // never its own filter tile — it answers to the four Cap throws below
 };
 
@@ -3391,34 +3405,60 @@ function anyThrowSelected(){
 // "Any Grounded High Jump": when ALL of these methods sit in ONE logic level of a
 // moon (and the kingdom's Jump / Cap Return Jump are not Incomplete), they are
 // shown as a single merged chip. Each entry is one method (an AND-group).
-const GH_TOKEN = "GroundedHeight";
-const GH_METHODS = [
-  ["SingleJump"], ["CapReturnJump"], ["Backflip"], ["Spin"], ["SideFlip"],
-  ["NeutralThrow", "Vault"], ["DownThrow", "Vault"],
+const GH_TOKEN = "GroundedHeight";          // tier 1: Any Grounded Height (teal)
+const GH_NORMAL_TOKEN = "GroundedNormal";   // tier 2: Any Grounded Normal Jump (light blue, Long Jump crossed out)
+const GH_HIGH_TOKEN = "GroundedHigh";       // tier 3: Any Grounded High Jump (dark blue, Side Flip icon)
+const GH_TIERS = [
+  { token: GH_TOKEN, label: "Any Grounded Height", cls: "any-grounded", cycle: "cycle-8",
+    methods: [["SingleJump"], ["CapReturnJump"], ["LongJump"], ["Backflip"], ["Spin"], ["SideFlip"], ["NeutralThrow", "Vault"], ["DownThrow", "Vault"]] },
+  { token: GH_NORMAL_TOKEN, label: "Any Grounded Normal Jump", cls: "any-normal", cycle: "cycle-7", crossed: "LongJump",
+    methods: [["SingleJump"], ["CapReturnJump"], ["Backflip"], ["Spin"], ["SideFlip"], ["NeutralThrow", "Vault"], ["DownThrow", "Vault"]] },
+  { token: GH_HIGH_TOKEN, label: "Any Grounded High Jump", cls: "any-high", cycle: "cycle-5", iconFirst: "SideFlip",
+    methods: [["Backflip"], ["Spin"], ["SideFlip"], ["NeutralThrow", "Vault"], ["DownThrow", "Vault"]] },
 ];
-const GH_ALL_TOKENS = Array.from(new Set(GH_METHODS.reduce((a, m) => a.concat(m), [])));
+GH_TIERS.forEach(t => { t.allTokens = Array.from(new Set(t.methods.reduce((a, m) => a.concat(m), []))); });
+const GH_METHODS = GH_TIERS[0].methods; // kept for older references
+function ghTier(token){ return GH_TIERS.find(t => t.token === token) || null; }
+function isGhToken(token){ return !!ghTier(token); }
+// Frames for the icon (static mode shows only the first one).
+function ghIconFrames(t){
+  if(!t.iconFirst) return t.methods;
+  const i = t.methods.findIndex(m => m.length === 1 && m[0] === t.iconFirst);
+  return i > 0 ? [t.methods[i]].concat(t.methods.slice(0, i), t.methods.slice(i + 1)) : t.methods;
+}
 function ghTokenKey(t){ return /cap\s*_?return/i.test(String(t)) ? "CapReturnJump" : t; }
-// True when picking things in the filters satisfies at least one merged method.
-function ghSatisfied(){
-  return GH_METHODS.some(m => m.every(t => tokenIsSelected(t) || (t === "CapReturnJump" && Object.keys(ICON_MANIFEST).some(k => ghTokenKey(k) === "CapReturnJump" && tokenIsSelected(k)))));
+// True when picking things in the filters satisfies at least one merged method of the tier.
+function ghSatisfied(tier){
+  const t = tier || GH_TIERS[0];
+  return t.methods.some(m => m.every(x => tokenIsSelected(x) || (x === "CapReturnJump" && Object.keys(ICON_MANIFEST).some(k => ghTokenKey(k) === "CapReturnJump" && tokenIsSelected(k)))));
 }
-// Any selected filter item that is part of the merge (for the highlight ring).
-function ghAnySelected(){
-  return GH_ALL_TOKENS.some(t => selectedAbilities.has(t))
-    || Object.keys(ICON_MANIFEST).some(k => ghTokenKey(k) === "CapReturnJump" && selectedAbilities.has(k));
+// Any selected filter item that is part of the tier's merge (for the highlight ring).
+function ghAnySelected(tier){
+  const t = tier || GH_TIERS[0];
+  return t.allTokens.some(x => selectedAbilities.has(x))
+    || (t.allTokens.indexOf("CapReturnJump") !== -1 && Object.keys(ICON_MANIFEST).some(k => ghTokenKey(k) === "CapReturnJump" && selectedAbilities.has(k)));
 }
-function ghKingdomActive(kingdomName){
+function ghKingdomActive(kingdomName, tier){
   const k = kingdomName || KINGDOM_ORDER[currentKingdomIndex];
-  return !isTokenIncompleteOn("SingleJump", k) && !isTokenIncompleteOn("CapReturnJump", k);
+  const t = tier || GH_TIERS[0];
+  if(t.allTokens.indexOf("SingleJump") !== -1 && isTokenIncompleteOn("SingleJump", k)) return false;
+  if(t.allTokens.indexOf("CapReturnJump") !== -1 && isTokenIncompleteOn("CapReturnJump", k)) return false;
+  return true;
 }
 function ghSpecIndex(group){
   const keys = group.map(ghTokenKey);
-  return GH_METHODS.findIndex(m => m.length === keys.length && m.every(t => keys.indexOf(t) !== -1));
+  return GH_TIERS[0].methods.findIndex(m => m.length === keys.length && m.every(t => keys.indexOf(t) !== -1));
 }
 // Returns a copy of `tierLanes` where, in any lane holding all merged methods
 // (same scenarios + origin), they are replaced by one merged group.
 function withGroundedMerge(tierLanes, kingdomName){
-  if(!tierLanes || submitMode || !ghKingdomActive(kingdomName)) return tierLanes;
+  if(!tierLanes || submitMode) return tierLanes;
+  let cur = tierLanes;
+  GH_TIERS.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t); });
+  return cur;
+}
+function mergeGroundedTier(tierLanes, tier){
+  const GH_METHODS = tier.methods;
   let changed = false;
   const out = tierLanes.map(lane => {
     // Every way a group can be "one Grounded Height method + extra tokens".
@@ -3485,7 +3525,7 @@ function withGroundedMerge(tierLanes, kingdomName){
     const at = {}, drop = new Set();
     merges.forEach(mg => {
       const slots = mg.all.map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
-      const merged = Object.assign([GH_TOKEN].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null });
+      const merged = Object.assign([tier.token].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null });
       at[Math.min(...mg.all)] = merged;
       mg.all.forEach(i => drop.add(i));
     });
@@ -3680,7 +3720,8 @@ function isTokenIncompleteHere(token){
 function isTokenIncompleteOn(token, kingdomName){
   if(!INCOMPLETE_ABILITY_TOKENS[token]) return false;
   const done = COMPLETE_ON_KINGDOM[kingdomName];
-  const grp = incompleteGroupOf(token);
+  let grp = incompleteGroupOf(token);
+  if(grp === "death") grp = "health"; // Death follows Health: it only says Incomplete while Health does
   return !(done && grp && done.indexOf(grp) >= 0);
 }
 function syncBonusFreeState(){
@@ -7465,12 +7506,13 @@ function hideAnyPop(){ if(anyPopEl){ anyPopEl.remove(); anyPopEl = null; } }
 function showAnyPop(anchor, token){
   hideAnyPop();
   const isThrow = token === ANY_THROW_TOKEN;
-  const options = isThrow ? ANY_THROW_MEMBERS.map(m => [m]) : GH_METHODS;
+  const ghT = isThrow ? null : (ghTier(token) || GH_TIERS[0]);
+  const options = isThrow ? ANY_THROW_MEMBERS.map(m => [m]) : ghT.methods;
   const el = document.createElement("div");
   el.className = "any-pop " + (isThrow ? "pop-throw" : "pop-grounded");
   const title = document.createElement("div");
   title.className = "any-pop-title";
-  title.textContent = (isThrow ? "Any Cap Throw" : "Any Grounded High Jump") + " \u2014 any one of:";
+  title.textContent = (isThrow ? "Any Cap Throw" : ghT.label) + " \u2014 any one of:";
   el.appendChild(title);
   options.forEach(toks => {
     const keys = toks.map(t => ICON_MANIFEST[t] ? t : (Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t));
@@ -7573,9 +7615,19 @@ function makeIcon(token, opts){
   } else if(token === ANY_THROW_TOKEN){
     wrap.classList.add("any-badged", "any-throw");
     buildCycleFrames(wrap, ANY_THROW_MEMBERS.map(m => [m]), ANY_THROW_CYCLE_SECONDS, "cycle-4");
-  } else if(token === GH_TOKEN){
-    wrap.classList.add("any-badged", "any-grounded");
-    buildCycleFrames(wrap, GH_METHODS, 10, "cycle-8");
+  } else if(isGhToken(token)){
+    const ghT = ghTier(token);
+    wrap.classList.add("any-badged", "any-grounded", ghT.cls);
+    buildCycleFrames(wrap, ghIconFrames(ghT), 10, ghT.cycle);
+    if(ghT.crossed){
+      const cb = document.createElement("span");
+      cb.className = "prog-badge prog-crossed";
+      cb.title = "Long Jump is NOT included";
+      cb.appendChild(makeProgImg(ghT.crossed));
+      const x = document.createElement("span"); x.className = "prog-x"; cb.appendChild(x);
+      const ar = document.createElement("span"); ar.className = "prog-arrow"; ar.textContent = "\u25B2"; cb.appendChild(ar);
+      wrap.appendChild(cb);
+    }
   } else {
     const img = document.createElement("img");
     img.className = "icon";
@@ -7614,7 +7666,7 @@ function makeIcon(token, opts){
   tip.className = "icon-tooltip";
   tip.textContent = hpMatch ? ("Requires 1 Damage; Needs " + hpMatch[1] + " or More Total Health") : (label + ((opts && opts.twoDJump) ? " (2D Jump)" : ""));
   if(hpMatch) wrap.setAttribute("aria-label", "Requires 1 Damage; Needs " + hpMatch[1] + " or More Total Health");
-  if(token === ANY_THROW_TOKEN || token === GH_TOKEN) attachAnyPop(wrap, token);
+  if(token === ANY_THROW_TOKEN || isGhToken(token)) attachAnyPop(wrap, token);
   wrap.appendChild(tip);
 
   return wrap;
@@ -8710,7 +8762,7 @@ function tokenIsSelected(tok){
   if(selectedAbilities.has(tok) || selectedCaptures.has(tok)) return true;
   if(filterMode === "cando" && impliedProgressiveTokens().has(tok)) return true;
   if(tok === ANY_THROW_TOKEN && anyThrowSelected()) return true;
-  if(tok === GH_TOKEN) return ghSatisfied();
+  if(isGhToken(tok)) return ghSatisfied(ghTier(tok));
   const folded = ABILITY_FILTER_FOLD_TOKENS[tok];
   if(folded && (selectedAbilities.has(folded) || selectedCaptures.has(folded))) return true;
   return false;
@@ -9622,7 +9674,7 @@ function applyFilterMatchHighlight(){
     // ring gold when "Grab" is the active filter, since that's the
     // option the player actually selected to reach it.
     const foldedTok = ABILITY_FILTER_FOLD_TOKENS[tok] || tok;
-    if((tok === ANY_THROW_TOKEN && anyThrowSelected()) || (tok === GH_TOKEN && ghAnySelected())
+    if((tok === ANY_THROW_TOKEN && anyThrowSelected()) || (isGhToken(tok) && ghAnySelected(ghTier(tok)))
       || selectedAbilities.has(tok) || selectedCaptures.has(tok)
       || selectedAbilities.has(foldedTok) || selectedCaptures.has(foldedTok)){
       el.classList.add("filter-match");
