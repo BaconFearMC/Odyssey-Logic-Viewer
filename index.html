@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDoubleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2241,7 +2241,7 @@
     .moon-name{ font-size:14px; }
   }
 
-  /* Cycling "Any ..." icons: Any Cap Throw (burgundy red) + Any Grounded Height (blue) */
+  /* Cycling "Any ..." icons: Any Cap Throw (burgundy red) + Any Grounded High Jump (blue) */
   .icon-wrap.any-throw{ --any-acc:#d11a3a; }
   .icon-wrap.any-throw::after{ color:#fff; }
   .icon-wrap.any-grounded{ --any-acc:#5cc8ff; }
@@ -2514,21 +2514,17 @@
   .cp-req-compact .cp-req-source{ flex:1 1 auto; min-width:0; max-width:100%; }
   .cp-req .cp-req-name, .cp-req .cp-req-name span{ white-space:normal; }
   .gh-star{ color:var(--gold); font-weight:bold; margin-left:2px; align-self:flex-start; }
-  .gh-star-note{ display:flex; flex-direction:column; align-items:stretch; gap:5px; width:100%; box-sizing:border-box; margin-top:6px; padding:6px 7px 7px;
-    background:rgba(230,194,0,.055); border:1px solid rgba(230,194,0,.28); border-left:3px solid var(--gold); font-size:10px; color:var(--text-dim); text-align:left; }
-  .gh-star-head{ display:flex; align-items:center; gap:5px; font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); font-weight:bold; }
+  .gh-star-note{ display:flex; flex-direction:column; align-items:center; gap:4px; width:100%; box-sizing:border-box; margin-top:6px; padding-top:6px;
+    border-top:1px dashed rgba(230,194,0,.35); font-size:10px; color:var(--text-dim); }
+  .gh-ex{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:3px 6px; }
   .gh-star-mark{ color:var(--gold); font-weight:bold; font-size:13px; line-height:1; }
-  .gh-ex{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 7px; padding:5px 6px; background:rgba(0,0,0,.22); border:1px solid var(--border); }
-  .gh-ex + .gh-ex{ margin-top:0; }
-  .gh-ex-grp{ display:inline-flex; align-items:center; gap:3px; padding:2px 6px; background:var(--bg-chip, rgba(255,255,255,.05)); border:1px solid var(--border-hi, #4a4c54); }
-  .gh-ex-method{ border-color:rgba(230,194,0,.45); }
-  .gh-ex-needs{ display:inline-flex; align-items:center; gap:4px; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); }
-  .gh-ex-needs::before{ content:"\2192"; color:var(--gold); font-size:13px; letter-spacing:0; }
-  .gh-ex-alts{ display:inline-flex; flex-wrap:wrap; align-items:center; gap:4px; }
-  .gh-ex-or{ font-size:8.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); opacity:.8; padding:0 1px; }
+  .gh-ex-grp{ display:inline-flex; align-items:center; }
+  .gh-ex-needs{ font-size:9px; letter-spacing:.08em; text-transform:lowercase; font-style:italic; color:var(--text-dim); }
+  .gh-ex-alts{ display:inline-flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:3px 5px; }
+  .gh-ex-or{ font-size:9px; font-style:italic; color:var(--text-dim); }
   .gh-star-icons{ display:inline-flex; align-items:center; gap:2px; }
   .gh-star-icons .and-plus{ font-size:10px; }
-  .gh-star-note .icon-wrap{ width:26px; height:26px; }
+  .gh-star-note .icon-wrap{ width:24px; height:24px; }
   .gh-star-note .icon-wrap > .icon, .gh-star-note .icon-wrap > .icon-fallback{ width:100%; height:100%; font-size:9px; }
   .gh-star-note .icon-wrap.any-badged::after{ font-size:5.5px; padding:1px 3px; bottom:-4px; }
   .gh-star-note .icon-wrap.any-badged::before{ inset:-2px; }
@@ -3038,7 +3034,7 @@ if(!VIDEOS_ENABLED) document.documentElement.classList.add("videos-off");
 
 
 /* ============ ANY-ICON ANIMATION ============
-   0 = "Any Grounded Height" and "Any Cap Throw" icons are STATIC: they show the Single Jump /
+   0 = "Any Grounded High Jump" and "Any Cap Throw" icons are STATIC: they show the Single Jump /
        Neutral Throw icon (blue / red frame, "ANY" label). Hovering still lists every option.
    1 = they cycle through every option like a gif (old behavior). */
 const ANIMATED_ANY_ICONS = 0;
@@ -3291,7 +3287,7 @@ let ICON_MANIFEST = {
   // through the four throws (see makeIcon).
   AnyThrow: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw", color:"#34406e", category:"Movement", tokenType:"ability" },
   // Display-only merge of every grounded-height method (see GH_* below).
-  GroundedHeight: { filenames:["AbilityJump.png"], label:"Any Grounded Height", color:"#34406e", category:"Movement", tokenType:"ability" },
+  GroundedHeight: { filenames:["AbilityJump.png"], label:"Any Grounded High Jump", color:"#34406e", category:"Movement", tokenType:"ability" },
 };
 
 // Movement/CapThrow ("ability") icon sets found in the wild are commonly
@@ -3392,12 +3388,12 @@ function anyThrowSelected(){
   return ANY_THROW_MEMBERS.some(t => selectedAbilities.has(t));
 }
 
-// "Any Grounded Height": when ALL of these methods sit in ONE logic level of a
+// "Any Grounded High Jump": when ALL of these methods sit in ONE logic level of a
 // moon (and the kingdom's Jump / Cap Return Jump are not Incomplete), they are
 // shown as a single merged chip. Each entry is one method (an AND-group).
 const GH_TOKEN = "GroundedHeight";
 const GH_METHODS = [
-  ["SingleJump"], ["CapReturnJump"], ["Backflip"], ["Spin"], ["SideFlip"], ["LongJump"],
+  ["SingleJump"], ["CapReturnJump"], ["Backflip"], ["Spin"], ["SideFlip"],
   ["NeutralThrow", "Vault"], ["DownThrow", "Vault"],
 ];
 const GH_ALL_TOKENS = Array.from(new Set(GH_METHODS.reduce((a, m) => a.concat(m), [])));
@@ -3419,7 +3415,7 @@ function ghSpecIndex(group){
   const keys = group.map(ghTokenKey);
   return GH_METHODS.findIndex(m => m.length === keys.length && m.every(t => keys.indexOf(t) !== -1));
 }
-// Returns a copy of `tierLanes` where, in any lane holding all 8 methods
+// Returns a copy of `tierLanes` where, in any lane holding all merged methods
 // (same scenarios + origin), they are replaced by one merged group.
 function withGroundedMerge(tierLanes, kingdomName){
   if(!tierLanes || submitMode || !ghKingdomActive(kingdomName)) return tierLanes;
@@ -7271,7 +7267,7 @@ function balancedRowCounts(total, max){
 // line, so a chip with 4+ requirements stays fully visible — wrapping
 // into a compact, centered block — rather than scrolling or overflowing.
 let ICON_ROW_MAX = 3; // icons per row inside a requirement chip (Access Point cards widen this)
-// "Any Grounded Height*": one or more of the merged methods needs something extra
+// "Any Grounded High Jump*": one or more of the merged methods needs something extra
 // (e.g. Long Jump also needs Any Throw). Adds the star + a plain-language note to the chip.
 function appendGhStar(chip, andGroup){
   if(!andGroup || !andGroup.ghStar || !andGroup.ghStar.length) return;
@@ -7293,19 +7289,12 @@ function appendGhStar(chip, andGroup){
   if(first && first.parentNode) first.parentNode.insertBefore(star, first.nextSibling); else chip.appendChild(star);
   const note = document.createElement("div");
   note.className = "gh-star-note";
-  const head = document.createElement("div");
-  head.className = "gh-star-head";
-  const mark = document.createElement("span");
-  mark.className = "gh-star-mark";
-  mark.textContent = "*";
-  head.appendChild(mark);
-  head.appendChild(document.createTextNode(andGroup.ghStar.length > 1 ? "Exceptions" : "Exception"));
-  note.appendChild(head);
   const spoken = [];
   const grp = (toks, cls) => { const g = document.createElement("span"); g.className = "gh-ex-grp " + (cls || ""); g.appendChild(iconRow(toks)); return g; };
   andGroup.ghStar.forEach(n => {
     const row = document.createElement("div");
     row.className = "gh-ex";
+    const rm = document.createElement("span"); rm.className = "gh-star-mark"; rm.textContent = "*"; row.appendChild(rm);
     row.appendChild(grp(n.method, "gh-ex-method"));
     const w = document.createElement("span"); w.className = "gh-ex-needs"; w.textContent = "needs"; row.appendChild(w);
     const alts = document.createElement("span"); alts.className = "gh-ex-alts";
@@ -7481,7 +7470,7 @@ function showAnyPop(anchor, token){
   el.className = "any-pop " + (isThrow ? "pop-throw" : "pop-grounded");
   const title = document.createElement("div");
   title.className = "any-pop-title";
-  title.textContent = (isThrow ? "Any Cap Throw" : "Any Grounded Height") + " \u2014 any one of:";
+  title.textContent = (isThrow ? "Any Cap Throw" : "Any Grounded High Jump") + " \u2014 any one of:";
   el.appendChild(title);
   options.forEach(toks => {
     const keys = toks.map(t => ICON_MANIFEST[t] ? t : (Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t));
