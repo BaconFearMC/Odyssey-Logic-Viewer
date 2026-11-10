@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2514,9 +2514,18 @@
   .cp-req-compact .cp-req-source{ flex:1 1 auto; min-width:0; max-width:100%; }
   .cp-req .cp-req-name, .cp-req .cp-req-name span{ white-space:normal; }
   .gh-star{ color:var(--gold); font-weight:bold; margin-left:2px; align-self:flex-start; }
-  .gh-star-note{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px; margin-top:3px; font-size:10px; color:var(--text-dim); }
-  .gh-star-mark{ color:var(--gold); font-weight:bold; font-size:13px; }
-  .gh-star-word{ letter-spacing:.04em; }
+  .gh-star-note{ display:flex; flex-direction:column; align-items:stretch; gap:5px; width:100%; box-sizing:border-box; margin-top:6px; padding:6px 7px 7px;
+    background:rgba(230,194,0,.055); border:1px solid rgba(230,194,0,.28); border-left:3px solid var(--gold); font-size:10px; color:var(--text-dim); text-align:left; }
+  .gh-star-head{ display:flex; align-items:center; gap:5px; font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); font-weight:bold; }
+  .gh-star-mark{ color:var(--gold); font-weight:bold; font-size:13px; line-height:1; }
+  .gh-ex{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 7px; padding:5px 6px; background:rgba(0,0,0,.22); border:1px solid var(--border); }
+  .gh-ex + .gh-ex{ margin-top:0; }
+  .gh-ex-grp{ display:inline-flex; align-items:center; gap:3px; padding:2px 6px; background:var(--bg-chip, rgba(255,255,255,.05)); border:1px solid var(--border-hi, #4a4c54); }
+  .gh-ex-method{ border-color:rgba(230,194,0,.45); }
+  .gh-ex-needs{ display:inline-flex; align-items:center; gap:4px; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); }
+  .gh-ex-needs::before{ content:"\2192"; color:var(--gold); font-size:13px; letter-spacing:0; }
+  .gh-ex-alts{ display:inline-flex; flex-wrap:wrap; align-items:center; gap:4px; }
+  .gh-ex-or{ font-size:8.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); opacity:.8; padding:0 1px; }
   .gh-star-icons{ display:inline-flex; align-items:center; gap:2px; }
   .gh-star-icons .and-plus{ font-size:10px; }
   .gh-star-note .icon-wrap{ width:26px; height:26px; }
@@ -7282,21 +7291,30 @@ function appendGhStar(chip, andGroup){
   star.textContent = "*";
   const first = chip.querySelector(".icon-wrap.any-grounded");
   if(first && first.parentNode) first.parentNode.insertBefore(star, first.nextSibling); else chip.appendChild(star);
-  const note = document.createElement("span");
+  const note = document.createElement("div");
   note.className = "gh-star-note";
+  const head = document.createElement("div");
+  head.className = "gh-star-head";
   const mark = document.createElement("span");
   mark.className = "gh-star-mark";
   mark.textContent = "*";
-  note.appendChild(mark);
+  head.appendChild(mark);
+  head.appendChild(document.createTextNode(andGroup.ghStar.length > 1 ? "Exceptions" : "Exception"));
+  note.appendChild(head);
   const spoken = [];
-  andGroup.ghStar.forEach((n, ni) => {
-    if(ni){ const sep = document.createElement("span"); sep.className = "gh-star-word"; sep.textContent = ";"; note.appendChild(sep); }
-    note.appendChild(iconRow(n.method));
-    const w = document.createElement("span"); w.className = "gh-star-word"; w.textContent = "needs"; note.appendChild(w);
+  const grp = (toks, cls) => { const g = document.createElement("span"); g.className = "gh-ex-grp " + (cls || ""); g.appendChild(iconRow(toks)); return g; };
+  andGroup.ghStar.forEach(n => {
+    const row = document.createElement("div");
+    row.className = "gh-ex";
+    row.appendChild(grp(n.method, "gh-ex-method"));
+    const w = document.createElement("span"); w.className = "gh-ex-needs"; w.textContent = "needs"; row.appendChild(w);
+    const alts = document.createElement("span"); alts.className = "gh-ex-alts";
     n.needs.forEach((alt, ai) => {
-      if(ai){ const o = document.createElement("span"); o.className = "gh-star-word"; o.textContent = "or"; note.appendChild(o); }
-      note.appendChild(iconRow(alt));
+      if(ai){ const o = document.createElement("span"); o.className = "gh-ex-or"; o.textContent = "or"; alts.appendChild(o); }
+      alts.appendChild(grp(alt));
     });
+    row.appendChild(alts);
+    note.appendChild(row);
     spoken.push(lab(n.method) + " also needs " + n.needs.map(lab).join(" or "));
   });
   note.title = "* " + spoken.join("; ");
