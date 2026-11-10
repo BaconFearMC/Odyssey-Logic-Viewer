@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityGroundPoundJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2691,6 +2691,7 @@
   
   #ssReturn{ display:none; left:50%; right:auto; transform:translateX(-50%); align-items:center; }
   body:not(.ss-mode) #ssReturn{ display:flex; }
+  html.classic-only #ssRoot, html.classic-only #ssBar, html.classic-only #ssResults, html.classic-only #ssClassic, html.classic-only #ssReturn, html.classic-only #ssSnake, html.classic-only #ssFlash{ display:none !important; }
   #ssReturnHint{ padding-left:0; text-align:center; }
 
   /* ===== Classic Viewing: shorter debug buttons (right side) ===== */
@@ -3036,6 +3037,16 @@
 /* =========================================================
    SETTINGS — every 0/1 switch lives here. Edit the number, reload.
    ========================================================= */
+
+/* ============ CLASSIC VIEWING ONLY ============
+   0 = normal: the site opens on Search and Select, with the hold-to-switch buttons to move between it and Classic Viewing.
+   1 = Classic Viewing is the ONLY page (like it used to be): opens straight into Classic Viewing and
+       Search and Select plus both switch buttons are hidden. */
+const CLASSIC_ONLY = 1;
+if(CLASSIC_ONLY){
+  document.documentElement.classList.add("classic-only");
+  document.body.classList.remove("ss-mode", "ss-home", "ss-results", "ss-kingdom");
+}
 
 /* ============ MASTER VIDEO SWITCH ============
    0 = videos OFF: no probing for assets/logicvideos/*, no "has video" badges,
@@ -12066,7 +12077,7 @@ init();
   const isSel = (k, n) => sel.some(s => s.kingdom === k && s.name === n);
   const CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
 
-  function setState(s){ body.classList.remove("ss-home", "ss-results", "ss-kingdom"); body.classList.add("ss-mode", "ss-" + s); window.scrollTo(0, 0); if(s === "home") snake.start(); }
+  function setState(s){ if(typeof CLASSIC_ONLY !== "undefined" && CLASSIC_ONLY) return; body.classList.remove("ss-home", "ss-results", "ss-kingdom"); body.classList.add("ss-mode", "ss-" + s); window.scrollTo(0, 0); if(s === "home") snake.start(); }
   function iconFor(k){ try{ return makeKingdomIcon(k); }catch(e){ return document.createElement("span"); } }
   // "Found with X Art" moons point at another kingdom; shown as a progressive chip on the icon.
   const ART_HINT = {
