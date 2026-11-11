@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2366,6 +2366,16 @@
     animation-duration:var(--cyc, 5s); animation-iteration-count:infinite; animation-timing-function:linear; will-change:transform,opacity;
   }
   .prog-badge.prog-cycle .prog-arrow{ background:#a88a00; }
+  /* Two-step progressions (Roll Boost, Triple Jump): both icons visible at once, small, sitting just above the move icon */
+  .prog-badge.prog-pair{ top:-17px; right:-4px; flex-direction:row; gap:2px; }
+  .prog-badge.prog-pair .prog-icon, .prog-badge.prog-pair .prog-fallback{ width:22px; height:22px; margin:0; border-width:2px; border-radius:5px; }
+  .prog-badge.prog-pair .prog-fallback{ font-size:10px; }
+  .prog-badge.prog-pair .prog-arrow{ width:14px; height:14px; font-size:8px; bottom:-5px; right:-5px; border-width:1.5px; }
+  .hoist-token .prog-badge.prog-pair{ top:-12px; right:-6px; }
+  /* Tooltip with requirement: "Dive (requires [icon] Ground Pound)" */
+  .icon-tooltip .tip-req{ display:inline-flex; align-items:center; gap:4px; vertical-align:middle; }
+  .icon-tooltip .tip-req .prog-icon, .icon-tooltip .tip-req .prog-fallback{ width:16px; height:16px; margin:0; border-width:1px; border-radius:3px; display:inline-block; font-size:9px; }
+  .icon-tooltip .tip-req-word{ color:var(--gold); font-weight:700; }
   .prog-badge.prog-cycle .pc-a{ animation-name:pcA; }
   .prog-badge.prog-cycle .pc-b{ animation-name:pcB; }
   @keyframes pcA{
@@ -2471,7 +2481,7 @@
      ===================================================================== */
   #navRail{
     position:fixed; right:14px; top:50%; transform:translateY(-50%); z-index:18;
-    height:min(62vh, 440px); width:92px; display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end;
+    height:min(88vh, 820px); width:92px; display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end;
     user-select:none; -webkit-user-select:none;
     opacity:0; pointer-events:none; transition:opacity .3s ease;
   }
@@ -2787,25 +2797,6 @@
   <span class="icon-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg></span>
   <span>Filter</span>
 </button>
-
-<button class="corner-btn" id="viewModeToggle" type="button" aria-label="Switch between moon view and checkpoint view">
-  <span class="icon-svg" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-7-11a7 7 0 0 1 14 0c0 6.65-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-  </span>
-  <span id="viewModeToggleLabel">By Moon</span>
-</button>
-
-<button class="corner-btn" id="filterMoonsToggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Filter moons by area type">
-  <span class="icon-svg" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8L3 4Z"/></svg>
-  </span>
-  <span>Filter Moons</span>
-</button>
-<div id="filterMoonsPanel" role="group" aria-label="Filter moons">
-  <label><input type="checkbox" data-mf="overworld" checked> Overworld</label>
-  <label><input type="checkbox" data-mf="subarea" checked> Subarea Moons</label>
-  <label><input type="checkbox" data-mf="moonrock" checked> Moon Rock Moons</label>
-</div>
 
 <div id="debugPanel" role="menu" aria-label="Debug options">
 <div class="dbg-item">
@@ -7449,27 +7440,12 @@ function makeProgImg(pt){
   return img;
 }
 function makeProgressionBadge(token, chainOverride){
-  const cyc = chainOverride ? null : PROG_CYCLE[token];
-  if(cyc){
-    const badge = document.createElement("span");
-    badge.className = "prog-badge prog-cycle";
-    const stack = document.createElement("span");
-    stack.className = "prog-stack";
-    const a = makeProgImg(cyc.items[0]), b = makeProgImg(cyc.items[1]);
-    a.classList.add("pc-a"); b.classList.add("pc-b");
-    a.style.setProperty("--ax", cyc.a[0] + "px"); a.style.setProperty("--ay", cyc.a[1] + "px");
-    b.style.setProperty("--bx", cyc.b[0] + "px"); b.style.setProperty("--by", cyc.b[1] + "px");
-    stack.appendChild(b); stack.appendChild(a);
-    badge.appendChild(stack);
-    const arrow = document.createElement("span");
-    arrow.className = "prog-arrow"; arrow.textContent = "\u25B2";
-    badge.appendChild(arrow);
-    return badge;
-  }
   const chain = chainOverride || ABILITY_PROGRESSION[token];
   if(!chain || !chain.length) return null;
   const badge = document.createElement("span");
   badge.className = "prog-badge";
+  // Two-step chains (Roll Boost, Triple Jump) show both icons side by side, condensed above the icon.
+  if(chain.length === 2 && !chain.includes(ANY_THROW_TOKEN)) badge.classList.add("prog-pair");
   chain.forEach(pt => {
     if(pt === ANY_THROW_TOKEN){
       const holder = document.createElement("span");
@@ -7678,7 +7654,24 @@ function makeIcon(token, opts){
 
   const tip = document.createElement("span");
   tip.className = "icon-tooltip";
-  tip.textContent = hpMatch ? ("Requires 1 Damage; Needs " + hpMatch[1] + " or More Total Health") : (label + ((opts && opts.twoDJump) ? " (2D Jump)" : ""));
+  const _tipChain = hpMatch ? null : ((opts && opts.progChain) || ABILITY_PROGRESSION[token]);
+  if(hpMatch){
+    tip.textContent = "Requires 1 Damage; Needs " + hpMatch[1] + " or More Total Health";
+  } else if(_tipChain && _tipChain.length){
+    tip.appendChild(document.createTextNode(label + ((opts && opts.twoDJump) ? " (2D Jump)" : "") + " ("));
+    const rw = document.createElement("span"); rw.className = "tip-req-word"; rw.textContent = "requires ";
+    tip.appendChild(rw);
+    _tipChain.forEach((pt, i) => {
+      if(i) tip.appendChild(document.createTextNode(" + "));
+      const g = document.createElement("span"); g.className = "tip-req";
+      if(pt !== ANY_THROW_TOKEN && ICON_MANIFEST[pt]) g.appendChild(makeProgImg(pt));
+      g.appendChild(document.createTextNode(pt === ANY_THROW_TOKEN ? "Any Cap Throw" : (ICON_MANIFEST[pt] ? ICON_MANIFEST[pt].label : pt)));
+      tip.appendChild(g);
+    });
+    tip.appendChild(document.createTextNode(")"));
+  } else {
+    tip.textContent = label + ((opts && opts.twoDJump) ? " (2D Jump)" : "");
+  }
   if(hpMatch) wrap.setAttribute("aria-label", "Requires 1 Damage; Needs " + hpMatch[1] + " or More Total Health");
   if(token === ANY_THROW_TOKEN || isGhToken(token)) attachAnyPop(wrap, token);
   wrap.appendChild(tip);
@@ -9906,6 +9899,7 @@ document.getElementById("videoToggle").addEventListener("click", () => {
 (function(){
   const btn = document.getElementById("filterMoonsToggle");
   const panel = document.getElementById("filterMoonsPanel");
+  if(!btn || !panel) return; // buttons removed from the page
   const sync = () => {
     btn.classList.toggle("active", moonFiltersActive());
     btn.setAttribute("aria-expanded", panel.classList.contains("open") ? "true" : "false");
@@ -9920,7 +9914,8 @@ document.getElementById("videoToggle").addEventListener("click", () => {
   }));
 })();
 
-document.getElementById("viewModeToggle").addEventListener("click", () => {
+const _viewModeBtn = document.getElementById("viewModeToggle");
+if(_viewModeBtn) _viewModeBtn.addEventListener("click", () => {
   viewMode = viewMode === "moon" ? "checkpoint" : "moon";
   const btn = document.getElementById("viewModeToggle");
   btn.classList.toggle("active", viewMode === "checkpoint");
