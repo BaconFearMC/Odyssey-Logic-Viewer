@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3953,6 +3953,10 @@ function tokenGroupRank(token){
 
 function sortedTokensForDisplay(tokens){
   const labelOf = token => (ICON_MANIFEST[token] ? ICON_MANIFEST[token].label : token);
+  // "Any Cap Throw" is redundant when a specific Cap Throw (Neutral/Up/Down/Spin) is already in the same method.
+  if(tokens.indexOf(ANY_THROW_TOKEN) !== -1 && tokens.some(t => ANY_THROW_MEMBERS.indexOf(t) !== -1)){
+    tokens = tokens.filter(t => t !== ANY_THROW_TOKEN);
+  }
   return tokens.slice().sort((a, b) => {
     const ra = tokenGroupRank(a), rb = tokenGroupRank(b);
     if(ra !== rb) return ra - rb;
