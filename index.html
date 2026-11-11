@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilityUpThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -4343,6 +4343,42 @@ function buildCheckpointLookup(nodes, edges){
     }
   });
 
+  // ---- Stage-local phase (subareas) ----
+  // A subarea's own Custom Node / Checkpoint must claim the nodes of ITS OWN
+  // stage before an overworld source can leak in through the entrance_id
+  // bridge at equal BFS distance. Seed from every non-home-stage source and
+  // flood only along same-stage edges; the global BFS below then resolves
+  // whatever is still unlabeled exactly as before.
+  const stageOf = {};
+  const stageCount = {}, homeCount = {};
+  (nodes || []).forEach(n => {
+    stageOf[n.node_id] = n.stage || null;
+    if(n.stage) stageCount[n.stage] = (stageCount[n.stage] || 0) + 1;
+    if(n.stage && n.node_type === "home_entrance") homeCount[n.stage] = (homeCount[n.stage] || 0) + 1;
+  });
+  const topStage = obj => Object.keys(obj).sort((x, y) => obj[y] - obj[x])[0] || null;
+  const homeStage = topStage(homeCount) || topStage(stageCount);
+  if(homeStage){
+    const localQueue = [];
+    ["custom_place", "checkpoint"].forEach(t => {
+      (nodes || []).forEach(n => {
+        if(sourceType[n.node_id] === t && n.stage && n.stage !== homeStage) localQueue.push(n.node_id);
+      });
+    });
+    let li = 0;
+    while(li < localQueue.length){
+      const cur = localQueue[li++];
+      const origin = checkpointOf[cur];
+      (adj[cur] || []).forEach(next => {
+        if(sourceType[next] || next in checkpointOf) return;
+        if(!stageOf[next] || stageOf[next] !== stageOf[cur]) return;
+        checkpointOf[next] = origin;
+        localQueue.push(next);
+      });
+    }
+    localQueue.forEach(id => { if(!queue.includes(id)) queue.push(id); });
+  }
+
   let qi = 0;
   while(qi < queue.length){
     const cur = queue[qi++];
@@ -6254,6 +6290,30 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
     }
     return moon;
   }));
+
+  // Same-name fallback: a subarea moon whose own stage holds a Custom Node
+  // named after the moon (e.g. "Across the Gusty Bridges") tracks that node,
+  // even if the BFS labeled it from a different source.
+  {
+    const normN = t => String(t || "").toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]/g, "").replace(/^the(?=.)/, "");
+    const cleanN = nm => String(nm || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "");
+    const nodeById = {};
+    (ws.logicNodes || []).forEach(n => { nodeById[n.node_id] = n; });
+    const customs = (ws.logicNodes || []).filter(n => n.node_type === "custom_place" && !/purples/i.test(n.display_name || ""));
+    moons.forEach(moon => {
+      if(!moon.subarea) return;
+      const mn = nodeMap[(ws.moonAccess.find(r => r.moon_name === moon.name) || {}).from_node_id];
+      const stage = mn && mn.stage;
+      if(!stage) return;
+      const key = normN(moon.name);
+      const hit = customs.find(n => n.stage === stage && normN(cleanN(n.display_name)) === key);
+      if(hit && moon.checkpointNodeId !== hit.node_id){
+        moon.checkpoint = cleanN(hit.display_name);
+        moon.checkpointType = "custom_place";
+        moon.checkpointNodeId = hit.node_id;
+      }
+    });
+  }
 
   console.log(`[${kingdomName}] perf: moon parse + per-pipe rows ${Math.round(performance.now() - __t2)}ms (${moons.length} moons)`);
   console.log(`[${kingdomName}] per-pipe subarea rows on ${moons.filter(m => m.entranceReqs).length} moon(s): ` + moons.filter(m => m.entranceReqs).map(m => m.name).join(", "));
