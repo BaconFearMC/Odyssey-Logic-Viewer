@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityUpThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -6642,6 +6642,26 @@ function applyMergedBranchesToMoon(moon, branches, kingdomName){
 // currently attached to it. Returns the node's own raw node_id (suitable
 // for KINGDOM_NODE_DATA[kingdom].reachBranches lookups), or null if
 // nothing matches.
+// Per-pipe walk (multi-hop, within the subarea stage) from every entrance pipe to
+// nodeId, each branch tagged with its pipe label as `origin`. Null when the
+// subarea doesn't have the simple 1-2 pipe layout computeEntranceReqs supports.
+function subareaPipeReachBranches(data, nodeId, kingdomName){
+  const node = data && data.nodeMap && data.nodeMap[nodeId];
+  if(!node || !subareaInfoFor(node, kingdomName)) return null;
+  const ents = subareaEntrances(data.nodes, node.stage);
+  if(ents.length < 1 || ents.length > 2) return null;
+  if(ents.length === 2 && ents[0].side === ents[1].side) return null;
+  let out = [];
+  ents.forEach(en => {
+    const label = pipeLabel(en, ents);
+    en.aliasNodes.forEach(alias => {
+      const r = reachWithinStage(data.nodeMap, data.edges, node.stage, alias.node_id, nodeId);
+      if(r) out = out.concat(r.map(b => Object.assign({}, b, { origin: label, fromNodeId: alias.node_id })));
+    });
+  });
+  return out.length ? out : null;
+}
+
 function findNamedNodeId(data, nodeName){
   if(!data) return null;
   const target = normalizeMergeName(nodeName);
@@ -6930,15 +6950,20 @@ function applyNodeMergeRules(kingdomName){
         // requirement is empty is wrongly folded down to "Free".
         const nodeId = moon.checkpointNodeId;
         const nodeIsFreeNode = !!autoRule || /(^|\s)free\s*$/i.test(String(plainRule.node || "").trim());
+        // A subarea moon sitting ON this very node: the node's cost is the walk
+        // pipe -> node. branchesForNodeId only sees the node's DIRECT inbound
+        // edges, so routes that pass through the other pipe (e.g. Entrance Pipe ->
+        // Exit Pipe -> node) were dropped. Use the full per-pipe walk instead.
+        const pipeReach = (moon.subarea && nodeId && nodeId === moon.fromNodeId) ? subareaPipeReachBranches(data, nodeId, kingdomName) : null;
         const reachBranches = (FREE_NODE_SKIPS_REACH_COST && nodeIsFreeNode && (!!autoRule || (nodeId && nodeId === moon.fromNodeId)))
           ? [{ group: [], scenarios: null, tier: "casual" }]
-          : branchesForNodeId(data, nodeId);
+          : (pipeReach || branchesForNodeId(data, nodeId));
         // A moon in a Subarea renders its per-pipe entranceReqs rows INSTEAD of
         // tierLanes, so merging only into tierLanes left the icon claiming
         // "(included above)" while nothing above had changed. Start from the
         // entrance-crossed branches (same as the subarea merge) and drop the
         // rows so the merged result is what actually displays.
-        const ownBranches = moon._baseEntranceReqs
+        const ownBranches = (moon._baseEntranceReqs && !pipeReach)
           ? branchesFromEntranceReqs(moon._baseEntranceReqs)
           : ownBranchesFromTierLanes(moon._baseTierLanes);
         const crossedAll = ownBranches.length ? crossBranches(ownBranches, reachBranches) : [];
