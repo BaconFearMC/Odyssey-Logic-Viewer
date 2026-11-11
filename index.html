@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityTripleJump.png">
+<link rel="icon" href="icon/AbilityDoubleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3042,7 +3042,7 @@
    0 = normal: the site opens on Search and Select, with the hold-to-switch buttons to move between it and Classic Viewing.
    1 = Classic Viewing is the ONLY page (like it used to be): opens straight into Classic Viewing and
        Search and Select plus both switch buttons are hidden. */
-const CLASSIC_ONLY = 1;
+const CLASSIC_ONLY = 0;
 if(CLASSIC_ONLY){
   document.documentElement.classList.add("classic-only");
   document.body.classList.remove("ss-mode", "ss-home", "ss-results", "ss-kingdom");
@@ -3508,6 +3508,9 @@ function mergeGroundedTier(tierLanes, tier){
         if(pos.length) picked[si] = pos;
       });
       const missing = GH_METHODS.map((m, si) => si).filter(si => !picked[si]);
+      // If Long Jump is the one that needs something extra, don't star-merge into Any Grounded Height:
+      // Any Grounded Normal Jump takes priority and Long Jump stays listed on its own.
+      if(tier.token === GH_TOKEN && missing.some(si => GH_METHODS[si].length === 1 && GH_METHODS[si][0] === "LongJump")) return;
       if(!Object.keys(picked).length || missing.length === 0 || missing.length > 3 || Object.keys(picked).length < 4) return;
       const sameWhere = k2 => { const q = k2.split("|"); return q[1] === scKey && q[2] === orKey; };
       const notes = [], extraPos = [];
