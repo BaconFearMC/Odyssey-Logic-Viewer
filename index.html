@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2021,7 +2021,9 @@
 
   /* ===== Much stronger "this icon matched your filter" highlight =====
      (the old box-shadow was cut off by the icon's chamfer clip-path) */
-  .icon-wrap.filter-match{ z-index:2; animation:filterGlow 1.8s ease-in-out infinite; }
+  /* PERF: was an infinite animated drop-shadow filter on every matched icon (repainted every frame; got
+     slower with each extra selected ability in "What Does This Unlock?"). Now a static glow = painted once. */
+  .icon-wrap.filter-match{ z-index:2; filter:drop-shadow(0 0 7px rgba(230,194,0,.9)); }
   .icon-wrap.filter-match::before{
     content:""; position:absolute; inset:-5px; z-index:0; background:var(--gold);
     clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px);
