@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilityUpThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2779,6 +2779,10 @@
   .filter-option-icon.moon-icon{ overflow:visible; clip-path:none; border:none; box-shadow:none !important; }
   .filter-option-icon.moon-icon > div{ display:flex; align-items:center; justify-content:center; }
   .filter-option-icon.moon-icon .icon-wrap{ width:48.6px; height:48.6px; flex:none; }
+  /* The tile rule "img{width:100%}" was stretching the corner chips; restore the normal chip size (same as the main filter chips). */
+  .filter-option-icon.moon-icon .prog-badge .prog-icon, .filter-option-icon.moon-icon .prog-badge .prog-fallback{ width:29px; height:29px; object-fit:cover; }
+  .filter-option-icon.moon-icon .prog-badge .prog-icon.prog-any, .filter-option-icon.moon-icon .frame-chip .prog-icon{ width:19px; height:19px; }
+  .filter-option-icon.moon-icon .prog-badge.prog-crossed, .filter-option-icon.moon-icon .prog-badge.prog-plus{ top:-14px; right:-14px; }
   #navRail .nr-node[data-target="access"]{ position:absolute; right:0; top:0; }
 </style>
 </head>
