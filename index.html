@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityUpThrow.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1934,13 +1934,13 @@
   .hoist-wrap{ width:100%; display:flex; flex-direction:column; gap:3px; }
   .origin-wrap{ width:100%; display:flex; flex-direction:column; gap:4px; }
   .origin-strip{
-    display:flex; align-items:center; gap:8px; align-self:flex-start; max-width:100%;
-    padding:3px 12px 3px 6px; cursor:default;
-    background:rgba(230,194,0,.08); border:1px dashed var(--gold-light);
-    border-left:2px solid var(--gold); border-radius:2px;
+    display:flex; align-items:center; gap:6px; align-self:flex-start; max-width:100%;
+    margin:0 0 1px 6px; padding:0; cursor:default;
+    background:none; border:0;
   }
-  .origin-strip img{ width:20px; height:20px; flex:none; opacity:.9; }
-  .origin-strip-text{ display:flex; flex-direction:column; min-width:0; line-height:1.2; text-align:left; }
+  .origin-strip::before{ content:"\2022"; color:var(--gold); font-size:14px; line-height:1; flex:none; }
+  .origin-strip img{ width:16px; height:16px; flex:none; opacity:.9; }
+  .origin-strip-text{ display:flex; flex-direction:row; flex-wrap:wrap; align-items:baseline; gap:6px; min-width:0; line-height:1.2; text-align:left; }
   .origin-strip-kind{ font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); opacity:.85; }
   .origin-strip-name{ font-size:12px; color:var(--text); overflow-wrap:anywhere; }
   .hoist-head{
