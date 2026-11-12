@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityUpThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -143,8 +143,8 @@
   /* Submit Video button hidden for now (remove this rule to bring it back). The debug
      "!" button drops into its slot. */
   #submitToggle{ display:none !important; }
-  #debugToggle{ display:none !important; }
-  #debugPanel{ display:flex !important; left:24px !important; bottom:24px !important; z-index:21; }
+  #debugPanel{ display:none; left:24px !important; bottom:112px !important; z-index:21; }
+  #debugPanel.open{ display:flex !important; }
   #videoToggle, #raiseToggle{ display:none !important; }
   #debugPanel{ gap:12px !important; }
   .dbg-item{ position:relative; display:block; }
@@ -2356,7 +2356,7 @@
   .exempt-opt-ex b{ color:var(--gold); font-weight:400; }
 
   /* Ability info button (bottom right) + popup */
-  #infoBtn{ position:fixed; right:24px; bottom:24px; left:auto; top:auto; margin:0; padding:7px 10px; z-index:21; }
+  #infoBtn{ position:fixed; left:24px; bottom:68px; right:auto; top:auto; margin:0; padding:7px 10px; z-index:21; }
   #infoOverlay{ position:fixed; inset:0; background:rgba(0,0,0,0.72); display:none; align-items:center; justify-content:center; z-index:1200; }
   #infoOverlay.open{ display:flex; }
   .info-modal{ position:relative; width:75vw; height:75vh; max-width:1100px; overflow-y:auto; text-align:left;
@@ -2767,6 +2767,16 @@
   .ss-kname{ font-size:14px; }
   .ss-khead .ss-btn.sm{ font-size:10.5px; padding:6px 8px; letter-spacing:.03em; }
   .ss-ksub{ position:static; border-top:1px solid var(--border); }
+  /* Settings button (bottom-left), Part 2 Groupings row, nav-rail Access node */
+  #debugToggle{ position:fixed !important; left:24px !important; bottom:24px !important; right:auto !important; top:auto !important; margin:0 !important; padding:7px 12px !important; z-index:21; }
+  #debugToggle.active, #debugToggle[aria-expanded="true"]{ background:var(--red); border-color:#a52530; color:#fff; }
+  .part2-row{ margin-top:18px; padding:8px 12px 12px; border:2px solid #7da000; background:#a6d82a; color:#1b1c1f; }
+  .part2-row .filter-section-heading{ margin:0 0 8px; color:#1b1c1f; }
+  .part2-row[hidden]{ display:none; }
+  #part2Grid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; }
+  #part2Toggle{ background:#a6d82a; border-color:#7da000; color:#1b1c1f; }
+  #part2Toggle.active{ background:#c6f04a; }
+  #navRail .nr-node[data-target="access"]{ position:absolute; right:0; top:0; }
 </style>
 </head>
 <body class="ss-mode ss-home">
@@ -2850,6 +2860,18 @@
   </div>
 </div>
 
+<div class="dbg-item">
+  <button class="corner-btn" id="part2Toggle" type="button" aria-label="Show Part 2 Groupings in the Ability filters">
+    <span class="btn-ic btn-ic-fb" aria-hidden="true">&#9776;</span>
+    <span class="btn-txt"><b>Part 2 Groupings</b><small id="part2BtnState">Off</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip">
+    <b>Part 2 Groupings</b>
+    <span>Adds a lime section under Bonus Abilities in the Ability filters with Any Cap Throw and the grouped Any Grounded tiles.</span>
+    <em>Currently: <span id="part2StateTip">Off</span> &middot; click to toggle</em>
+  </div>
+</div>
+
 <button id="videoToggle" type="button" hidden aria-hidden="true"><span id="videoToggleLabel">Video: All</span></button>
 <button class="corner-btn" id="approveToggle" type="button" aria-label="Approve videos" style="display:none;"><span>Approve Videos</span></button>
 </div>
@@ -2869,10 +2891,8 @@
 <button class="corner-btn" id="seeExample" type="button"><span>See an Example</span></button>
 
 <button class="corner-btn" id="debugToggle" type="button" aria-label="Debug options" aria-haspopup="true" aria-expanded="false">
-  <span class="icon-svg" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v6M12 16.8h.01"/></svg>
-  </span>
-  <span class="dbg-tip" role="tooltip">Debug options</span>
+  <span class="icon-svg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span>
+  <span>Settings</span>
 </button>
 
 <button class="corner-btn" id="submitToggle" type="button" aria-label="Open video submitter">
@@ -2974,11 +2994,14 @@
       <div class="filter-bar-grid" id="abilityFilterGrid"></div>
       <div class="ability-bottom-row" id="abilityBottomRow">
         <div class="filter-section-heading">Bonus Abilities</div>
-        <div class="bonus-note">Separate from the main Abilities above.</div>
         <div class="ability-bottom-cols">
           <div class="filter-bar-grid" id="bonusLeftGrid"></div>
           <div class="filter-bar-grid" id="bonusRightGrid"></div>
         </div>
+      </div>
+      <div class="part2-row" id="part2Row" hidden>
+        <div class="filter-section-heading">Part 2 Groupings</div>
+        <div id="part2Grid"></div>
       </div>
       <div class="filter-section-heading">Captures</div>
       <input type="text" class="filter-bar-search" id="captureFilterSearch" placeholder="Search captures…" autocomplete="off">
@@ -10002,6 +10025,28 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   renderGrid();
 });
 
+// ---- Part 2 Groupings toggle (Settings menu) ----
+(function(){
+  const b = document.getElementById("part2Toggle"); if(!b) return;
+  try{ window.__part2Mode = localStorage.getItem("part2GroupingsV1") === "1"; }catch(e){ window.__part2Mode = false; }
+  const st = document.getElementById("part2BtnState"), tp = document.getElementById("part2StateTip");
+  const paint = () => { b.classList.toggle("active", !!window.__part2Mode); const t = window.__part2Mode ? "On" : "Off"; st.textContent = t; tp.textContent = t; };
+  paint();
+  b.addEventListener("click", () => {
+    window.__part2Mode = !window.__part2Mode;
+    try{ localStorage.setItem("part2GroupingsV1", window.__part2Mode ? "1" : "0"); }catch(e){}
+    if(!window.__part2Mode){
+      selectedAbilities.delete(ANY_THROW_TOKEN);
+      GH_TIERS.forEach(t => {});
+    }
+    paint();
+    if(window.__refreshAbilityGrids) window.__refreshAbilityGrids();
+    if(window.__drawFilterChips) window.__drawFilterChips();
+    if(typeof updateFilterSummary === "function") updateFilterSummary();
+    renderGrid();
+  });
+})();
+
 // ---- Filter toggle (slides the Filters section in/out) + hover-tip state ----
 (function(){
   const btn = document.getElementById("filterToggle"), wrap = document.getElementById("filterWrap");
@@ -10159,6 +10204,13 @@ function makeFilterIconEl(token, sizeClass){
     fb.className = "icon-fallback";
     fb.textContent = "?";
     wrap.appendChild(fb);
+    return wrap;
+  }
+  if(isGhToken(token)){
+    const gt = ghTier(token), gbox = document.createElement("span");
+    gbox.className = "any-cycle-box";
+    buildCycleFrames(gbox, ghIconFrames(gt), gt.seconds || 10, gt.cycle);
+    wrap.appendChild(gbox);
     return wrap;
   }
   if(token === ANY_THROW_TOKEN){
@@ -10369,6 +10421,12 @@ function refreshImpliedTiles(){
   });
 }
 
+function ghMemberKeys(token){
+  const t = ghTier(token); if(!t) return [];
+  return Object.keys(ICON_MANIFEST).filter(k => t.allTokens.indexOf(ghTokenKey(k)) !== -1 && ICON_MANIFEST[k].tokenType === "ability");
+}
+function ghTileOn(token){ const k = ghMemberKeys(token); return k.length > 0 && k.every(x => selectedAbilities.has(x)); }
+
 function setupMergedFilterBar(tokens){
   const { abilities, captures } = tokens;
   FILTER_LIST_ABILITIES = abilities;
@@ -10384,7 +10442,7 @@ function setupMergedFilterBar(tokens){
   const bonusRowEl = document.getElementById("abilityBottomRow");
   const bonusLeftEl = document.getElementById("bonusLeftGrid");
   const bonusRightEl = document.getElementById("bonusRightGrid");
-  const mainAbilities = () => abilities.filter(t => !BONUS_ABILITY_TOKENS[t]);
+  const mainAbilities = () => abilities.filter(t => !BONUS_ABILITY_TOKENS[t] && t !== ANY_THROW_TOKEN);
   const bonusAbilities = () => abilities.filter(t => BONUS_ABILITY_TOKENS[t]);
   const BONUS_LEFT_ORDER = [/^(single )?jump$/, /cap return/, /wallet/, /painting/, /odyssey/];
   const BONUS_RIGHT_ORDER = [/wallet/, /painting/, /death/, /health/];
@@ -10401,6 +10459,14 @@ function setupMergedFilterBar(tokens){
     renderOptions("ability", right, selectedAbilities, bonusRightEl, abilitySearchEl.value);
     [bonusLeftEl, bonusRightEl].forEach(el => el.querySelectorAll(".filter-bar-none").forEach(n => n.remove()));
     bonusRowEl.hidden = !bonusLeftEl.children.length && !bonusRightEl.children.length;
+    const p2Row = document.getElementById("part2Row"), p2Grid = document.getElementById("part2Grid");
+    if(p2Row){
+      p2Row.hidden = !window.__part2Mode;
+      if(window.__part2Mode){
+        renderOptions("ability", [ANY_THROW_TOKEN].concat(GH_TIERS.map(t => t.token)).filter(t => ICON_MANIFEST[t]), selectedAbilities, p2Grid, abilitySearchEl.value);
+        p2Grid.querySelectorAll(".filter-bar-none").forEach(n => n.remove());
+      }
+    }
   }
   // Kingdom pages can differ in which tiles are "Incomplete", so redraw on page change.
   window.__refreshAbilityGrids = renderAbilityGrids;
@@ -10504,7 +10570,7 @@ function setupMergedFilterBar(tokens){
       btn.className = "filter-option"
         + (kind === "ability" && !selectedSet.has(token) && impliedProgressiveTokens().has(token) ? " implied" : "")
         + (hasSubmenu ? " has-submenu" : "")
-        + ((selectedSet.has(token) || (kind === "ability" && subsSelected(token, selectedSet))) ? " selected" : "")
+        + ((selectedSet.has(token) || (kind === "ability" && subsSelected(token, selectedSet)) || (kind === "ability" && isGhToken(token) && ghTileOn(token))) ? " selected" : "")
         + (notImplemented ? " not-implemented" : "")
         + (incomplete ? " incomplete" : "");
       const iconWrap = document.createElement("div");
@@ -10515,6 +10581,7 @@ function setupMergedFilterBar(tokens){
       const iconBox = document.createElement("div");
       iconBox.className = "filter-option-iconbox";
       if(kind === "ability" && token === ANY_THROW_TOKEN){ iconBox.classList.add("any-badged", "any-throw"); iconBox.dataset.badge = "ANY"; }
+      if(kind === "ability" && isGhToken(token)){ const gt = ghTier(token); iconBox.classList.add("any-badged", "any-grounded", gt.cls); iconBox.dataset.badge = gt.badge || "ANY"; }
       iconBox.appendChild(iconWrap);
       const progBadge = kind === "ability" ? makeProgressionBadge(token) : null;
       if(progBadge) iconBox.appendChild(progBadge);
@@ -10565,6 +10632,12 @@ function setupMergedFilterBar(tokens){
               btn.classList.toggle("selected", subsSelected(token, selectedSet));
               renderChips(); updateFilterSummary(); renderGrid();
             });
+            return;
+          }
+          if(kind === "ability" && isGhToken(token)){
+            const toks = ghMemberKeys(token), on = !ghTileOn(token);
+            toks.forEach(k => { if(on) selectedAbilities.add(k); else selectedAbilities.delete(k); });
+            refreshImpliedTiles(); renderChips(); refreshOpenPanels(); updateFilterSummary(); renderGrid();
             return;
           }
           const group = (kind === "ability" && ABILITY_SUBTOKEN_PARENT[token]) ? [token, ...subTwinsOf(token)] : [token];
@@ -10620,48 +10693,9 @@ function setupMergedFilterBar(tokens){
   // "I Have This!" tab, which strips them out of the logic (they read Free).
   const _pn = x => String(x || "").toLowerCase().replace(/[^a-z0-9]/g, "");
   const PRESET_DEFS = [
-    {
-      id: "classic", label: "Classic Abilities", icon: "icon/AbilityJump.png", emoji: "🎮",
-      resolve: () => {
-        const want = ["MoonLowGravity","Grab","Swim","Bike","Jaxi","RocketFlower","NpcTalk","Pipe2D","PSwitch","CappyFlower","Scarecrow","Notes"];
-        const out = [];
-        want.forEach(tok => {
-          if(!ICON_MANIFEST[tok]) return;
-          out.push(tok);
-          if(ABILITY_SUBTOKEN_PARENT[tok]) subTwinsOf(tok).forEach(k => out.push(k));
-        });
-        return { abilities: out, captures: [] };
-      },
-    },
-    {
-      id: "useless", label: "Useless Captures", emoji: "🌿",
-      resolve: () => {
-        const aliases = [
-          ["moeeye", "moe"],
-          ["poisonpiranhaplant", "poisonpiranha"],
-          ["boulder"],
-          ["firepiranhaplant", "firepiranha"],
-          ["charginchuck", "chuck"],
-        ];
-        const out = [];
-        aliases.forEach(al => {
-          const hit = captures.find(tok => al.indexOf(_pn(filterLabelFor(tok))) !== -1 || al.indexOf(_pn(tok)) !== -1);
-          if(hit) out.push(hit);
-        });
-        return { abilities: [], captures: out };
-      },
-      iconToken: () => {
-        const al = ["poisonpiranhaplant", "poisonpiranha"];
-        return captures.find(tok => al.indexOf(_pn(filterLabelFor(tok))) !== -1 || al.indexOf(_pn(tok)) !== -1) || null;
-      },
-    },
     // "What Does This Unlock?" presets — replace the current selection.
     { id: "capjump",  mode: "unlocks", exclusive: true, label: "Classic Cap Jump", emoji: "🧢", iconFixed: "Vault",
       resolve: () => ({ abilities: ["Vault", "NeutralThrow", "Dive"].filter(t => ICON_MANIFEST[t]), captures: [] }) },
-    { id: "annoying", mode: "unlocks", exclusive: true, label: "Annoying Vaults", emoji: "😤", iconFixed: "DownThrow",
-      resolve: () => ({ abilities: ["Vault", "DownThrow"].filter(t => ICON_MANIFEST[t]), captures: [] }) },
-    { id: "torture",  mode: "unlocks", exclusive: true, label: "Torture Vaults", emoji: "💀", iconFixed: "UpThrow",
-      resolve: () => ({ abilities: ["Vault", "UpThrow"].filter(t => ICON_MANIFEST[t]), captures: [] }) },
   ];
   const presetsEl = document.getElementById("filterPresets");
   const presetBtns = {};
@@ -12228,7 +12262,11 @@ init();
     raf = 0;
     const { m, a } = measure();
     const y = window.scrollY, dir = y >= lastY ? "down" : "up"; lastY = y;
-    const t = Math.min(1, Math.max(0, (y - A) / (B - A)));
+    const Z = maxY();
+    const f = (a.length && Z - B > 40) ? Math.min(.8, Math.max(.2, (B - A) / (Z - A))) : 1;
+    let t = y <= B ? f * Math.max(0, y - A) / (B - A) : f + (1 - f) * Math.min(1, (y - B) / Math.max(1, Z - B));
+    t = Math.min(1, Math.max(0, t));
+    nodes.access.style.top = (f * (rail.clientHeight - nodes.access.offsetHeight)) + "px";
     const h = puck.parentElement.clientHeight;
     puck.style.top = (t * h) + "px"; fill.style.height = (t * h) + "px";
     // which zone are we in?
