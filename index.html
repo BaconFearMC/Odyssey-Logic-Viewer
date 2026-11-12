@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDeath.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2263,12 +2263,14 @@
   .icon-wrap.any-high{ --any-acc:#2347b5; }
   .icon-wrap.any-high::after{ color:#fff; }
   .icon-wrap.any-height-gp, .icon-wrap.any-jump-gp{ --any-acc:var(--any-amber); }
-  .icon-wrap.any-jump, .icon-wrap.any-nocrj{ --any-acc:var(--any-purple); }
+  .icon-wrap.any-jump, .icon-wrap.any-jump-ct, .icon-wrap.any-nocrj{ --any-acc:var(--any-purple); }
   .icon-wrap.any-vault, .icon-wrap.any-capthrow{ --any-acc:var(--any-green); }
-  .icon-wrap.any-jump::after, .icon-wrap.any-nocrj::after{ color:#fff; }
+  .icon-wrap.any-jump::after, .icon-wrap.any-jump-ct::after, .icon-wrap.any-nocrj::after{ color:#fff; }
   .prog-badge.prog-plus .prog-icon{ border-color:var(--any-amber); }
   .prog-badge.prog-plus .prog-arrow{ background:var(--any-amber); font-size:14px; }
   .prog-badge.prog-plus{ position:absolute; }
+  .prog-badge.prog-plus-cap .prog-icon{ border-color:var(--any-green); }
+  .prog-badge.prog-plus-cap .prog-arrow{ background:var(--any-green); }
   .frame-chip{ position:absolute; top:1px; right:1px; z-index:3; pointer-events:none; }
   .frame-chip .prog-icon{ width:19px; height:19px; margin:0; border:1.5px solid #d11a3a; border-radius:4px; position:relative; overflow:hidden; }
   .frame-chip .prog-any .cycle-frame{ clip-path:none; }
@@ -3377,7 +3379,8 @@ let ICON_MANIFEST = {
   // Further display-only grounded groupings (see GH_TIERS). Never filter tiles.
   GroundedHeightGP: { filenames:["AbilityJump.png"], label:"Any Grounded Height + Ground Pound Jump", color:"#d9901a", category:"Movement", tokenType:"ability" },
   GroundedJumpGP: { filenames:["AbilityJump.png"], label:"Any Grounded Jump + Ground Pound Jump", color:"#d9901a", category:"Movement", tokenType:"ability" },
-  GroundedJump: { filenames:["AbilityJump.png"], label:"Any Grounded Jump", color:"#8d5be0", category:"Movement", tokenType:"ability" },
+  GroundedJumpCT: { filenames:["AbilityCapReturnJump.png"], label:"Any Grounded Jump", color:"#8d5be0", category:"Movement", tokenType:"ability" },
+  GroundedJump: { filenames:["AbilityJump.png"], label:"Any Grounded Jump (No Cap Throw)", color:"#8d5be0", category:"Movement", tokenType:"ability" },
   AnyVault: { filenames:["AbilityVault.png"], label:"Any Vault", color:"#2fa85a", category:"Movement", tokenType:"ability" },
   AnyCapThrowJump: { filenames:["AbilityCapReturnJump.png"], label:"Any Cap Throw Jump", color:"#2fa85a", category:"Movement", tokenType:"ability" },
   GroundedNoCRJ: { filenames:["AbilityJump.png"], label:"Any Grounded Height without Cap Return Jump", color:"#8d5be0", category:"Movement", tokenType:"ability" },
@@ -3519,7 +3522,10 @@ const GH_TIERS = [
   { token: "GroundedJumpGP", label: "Any Grounded Jump + Ground Pound Jump", cls: "any-jump-gp", cycle: "cycle-6", badge: "JUMP+GP", plusGP: true, seconds: 7.5, crossed: "AnyThrow", crossedLeft: true,
     desc: "Plain grounded jumps plus Ground Pound Jump; no Cap Return Jump or throw needed",
     methods: [_SJ, _LJ, _BF, _SP, _SF, _GPJ] },
-  { token: "GroundedJump", label: "Any Grounded Jump", cls: "any-jump", cycle: "cycle-5", badge: "JUMPS", seconds: 6.25,
+  { token: "GroundedJumpCT", label: "Any Grounded Jump", cls: "any-jump-ct", cycle: "cycle-6", badge: "JUMPS", plusIcon: "AnyCapThrowJump", plusTitle: "Includes Cap Throw Jump", seconds: 7.5,
+    desc: "Plain grounded jumps plus Cap Throw Jump",
+    methods: [_SJ, _LJ, _BF, _SP, _SF, _CRJ] },
+  { token: "GroundedJump", label: "Any Grounded Jump (No Cap Throw)", cls: "any-jump", cycle: "cycle-5", badge: "JUMPS", seconds: 6.25, crossed: "AnyThrow", crossedLeft: true,
     desc: "Plain grounded jumps only; no Cap Return Jump or throw needed",
     methods: [_SJ, _LJ, _BF, _SP, _SF] },
   { token: "AnyVault", label: "Any Vault", cls: "any-vault", cycle: "cycle-2", badge: "VAULT", seconds: 2.5,
@@ -3540,7 +3546,8 @@ const JUMP_GROUP_ENABLED = {
   GroundedNormal:   1,   // Any Grounded Normal Jump
   GroundedHigh:     1,   // Any Grounded High Jump
   GroundedJumpGP:   0,   // Any Grounded Jump + Ground Pound Jump
-  GroundedJump:     1,   // Any Grounded Jump
+  GroundedJumpCT:   1,   // Any Grounded Jump (includes Cap Throw Jump)
+  GroundedJump:     1,   // Any Grounded Jump (No Cap Throw)
   AnyVault:         1,   // Any Vault
   AnyCapThrowJump:  0,   // Any Cap Throw Jump
   GroundedNoCRJ:    0,   // Any Grounded Height without Cap Return Jump
@@ -7870,11 +7877,11 @@ function makeIcon(token, opts){
       const ar = document.createElement("span"); ar.className = "prog-arrow"; ar.textContent = "\u25B2"; cb.appendChild(ar);
       wrap.appendChild(cb);
     }
-    if(ghT.plusGP){
+    if(ghT.plusGP || ghT.plusIcon){
       const pb = document.createElement("span");
-      pb.className = "prog-badge prog-plus";
-      pb.title = "Includes Ground Pound Jump";
-      pb.appendChild(makeProgImg("GroundPoundJump"));
+      pb.className = "prog-badge prog-plus" + (ghT.plusIcon ? " prog-plus-cap" : "");
+      pb.title = ghT.plusTitle || "Includes Ground Pound Jump";
+      pb.appendChild(makeProgImg(ghT.plusIcon || "GroundPoundJump"));
       const ar = document.createElement("span"); ar.className = "prog-arrow"; ar.textContent = "+"; pb.appendChild(ar);
       wrap.appendChild(pb);
     }
