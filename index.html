@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDeath.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2281,6 +2281,7 @@
   .any-pop-desc{ font-size:11px; color:var(--text-dim); margin:-4px 0 8px; max-width:300px; white-space:normal; }
   .prog-badge.prog-crossed .prog-icon, .prog-badge.prog-crossed .prog-fallback{ border-color:#e0314b; filter:grayscale(.6) brightness(.8); }
   .prog-badge.prog-crossed{ position:absolute; }
+  .prog-badge.prog-left, .filter-option-icon.moon-icon .prog-badge.prog-crossed.prog-left{ right:auto; left:-14px; top:-14px; }
   .prog-badge .prog-x{ position:absolute; left:2px; top:2px; width:29px; height:29px; pointer-events:none; z-index:4;
     background:linear-gradient(to top right, transparent calc(50% - 2px), #ff2d4d calc(50% - 2px), #ff2d4d calc(50% + 2px), transparent calc(50% + 2px)),
                 linear-gradient(to top left, transparent calc(50% - 2px), #ff2d4d calc(50% - 2px), #ff2d4d calc(50% + 2px), transparent calc(50% + 2px)); }
@@ -2898,7 +2899,7 @@
   </button>
   <div class="dbg-tip" role="tooltip">
     <b>Jump Group Filters</b>
-    <span>Adds a lime section under Bonus Abilities in the Ability filters with Any Cap Throw and the grouped Any Grounded tiles.</span>
+    <span>Adds a lime section under Bonus Abilities in the Ability filters with the grouped Any Grounded tiles.</span>
     <em>Currently: <span id="jumpGroupStateTip">Off</span> &middot; click to toggle</em>
   </div>
 </div>
@@ -3506,16 +3507,16 @@ const GH_TIERS = [
   { token: "GroundedHeightGP", label: "Any Grounded Height + Ground Pound Jump", cls: "any-height-gp", cycle: "cycle-9", badge: "+GP", plusGP: true, seconds: 11.25,
     desc: "Same as Any Grounded Height, plus Ground Pound Jump",
     methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV, _GPJ] },
-  { token: GH_TOKEN, label: "Any Grounded Height", cls: "any-grounded", cycle: "cycle-8", badge: "HEIGHT", seconds: 10,
+  { token: GH_TOKEN, label: "Any Grounded Height", cls: "any-grounded", cycle: "cycle-8", badge: "HEIGHT", seconds: 10, iconFirst: "LongJump",
     desc: "Every grounded way to gain height, including the throw + Vault routes",
     methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
   { token: GH_NORMAL_TOKEN, label: "Any Grounded Normal Jump", cls: "any-normal", cycle: "cycle-7", badge: "NO LJ", seconds: 10, crossed: "LongJump",
     desc: "Same as Any Grounded Height, minus Long Jump",
     methods: [_SJ, _CRJ, _BF, _SP, _SF, _NV, _DV] },
   { token: GH_HIGH_TOKEN, label: "Any Grounded High Jump", cls: "any-high", cycle: "cycle-5", badge: "HIGH", seconds: 10, iconFirst: "SideFlip",
-    desc: "Only the high jumps: Backflip, Spin, Side Flip and the throw + Vault routes",
-    methods: [_BF, _SP, _SF, _NV, _DV] },
-  { token: "GroundedJumpGP", label: "Any Grounded Jump + Ground Pound Jump", cls: "any-jump-gp", cycle: "cycle-6", badge: "JUMP+GP", plusGP: true, seconds: 7.5,
+    desc: "Only the high jumps: Backflip, Spin and Side Flip",
+    methods: [_BF, _SP, _SF] },
+  { token: "GroundedJumpGP", label: "Any Grounded Jump + Ground Pound Jump", cls: "any-jump-gp", cycle: "cycle-6", badge: "JUMP+GP", plusGP: true, seconds: 7.5, crossed: "AnyThrow", crossedLeft: true,
     desc: "Plain grounded jumps plus Ground Pound Jump; no Cap Return Jump or throw needed",
     methods: [_SJ, _LJ, _BF, _SP, _SF, _GPJ] },
   { token: "GroundedJump", label: "Any Grounded Jump", cls: "any-jump", cycle: "cycle-5", badge: "JUMPS", seconds: 6.25,
@@ -3839,6 +3840,7 @@ function isTokenIncompleteHere(token){
   return isTokenIncompleteOn(token, KINGDOM_ORDER[currentKingdomIndex]);
 }
 function isTokenIncompleteOn(token, kingdomName){
+  if(token === ANY_THROW_TOKEN) return isTokenIncompleteOn("SingleJump", kingdomName); // follows Jump
   if(!INCOMPLETE_ABILITY_TOKENS[token]) return false;
   // Cap Return Jump is unlocked by the Cap throws, so it is only Incomplete while ALL four throws are.
   if(isCapReturnToken(token)) return ANY_THROW_MEMBERS.every(m => isTokenIncompleteOn(m, kingdomName));
@@ -7845,7 +7847,7 @@ function makeIcon(token, opts){
     buildCycleFrames(wrap, ghIconFrames(ghT), ghT.seconds || 10, ghT.cycle, !!(opts && opts.progChain && opts.progChain.length));
     if(ghT.crossed){
       const cb = document.createElement("span");
-      cb.className = "prog-badge prog-crossed";
+      cb.className = "prog-badge prog-crossed" + (ghT.crossedLeft ? " prog-left" : "");
       cb.title = (ICON_MANIFEST[ghT.crossed] ? ICON_MANIFEST[ghT.crossed].label : ghT.crossed) + " is NOT included";
       cb.appendChild(makeProgImg(ghT.crossed));
       const x = document.createElement("span"); x.className = "prog-x"; cb.appendChild(x);
@@ -10105,7 +10107,6 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     window.__jumpGroupMode = !window.__jumpGroupMode;
     try{ localStorage.setItem("jumpGroupFiltersV1", window.__jumpGroupMode ? "1" : "0"); }catch(e){}
     if(!window.__jumpGroupMode){
-      selectedAbilities.delete(ANY_THROW_TOKEN);
       GH_TIERS.forEach(t => {});
     }
     paint();
@@ -10514,6 +10515,10 @@ function setupMergedFilterBar(tokens){
       .sort((a, b) => rankBy(BONUS_RIGHT_ORDER, a) - rankBy(BONUS_RIGHT_ORDER, b));
     const left = bonus.filter(t => right.indexOf(t) < 0)
       .sort((a, b) => rankBy(BONUS_LEFT_ORDER, a) - rankBy(BONUS_LEFT_ORDER, b));
+    if(ICON_MANIFEST[ANY_THROW_TOKEN] && left.indexOf(ANY_THROW_TOKEN) < 0){
+      const ci = left.findIndex(t => isCapReturnToken(t) || /cap return/.test(filterLabelFor(t).toLowerCase()));
+      left.splice(ci >= 0 ? ci + 1 : left.length, 0, ANY_THROW_TOKEN);
+    }
     renderOptions("ability", left, selectedAbilities, bonusLeftEl, abilitySearchEl.value);
     renderOptions("ability", right, selectedAbilities, bonusRightEl, abilitySearchEl.value);
     [bonusLeftEl, bonusRightEl].forEach(el => el.querySelectorAll(".filter-bar-none").forEach(n => n.remove()));
@@ -10522,7 +10527,7 @@ function setupMergedFilterBar(tokens){
     if(jgRow){
       jgRow.hidden = !window.__jumpGroupMode;
       if(window.__jumpGroupMode){
-        renderOptions("ability", [ANY_THROW_TOKEN].concat(GH_TIERS.map(t => t.token)).filter(t => ICON_MANIFEST[t]), selectedAbilities, jgGrid, abilitySearchEl.value);
+        renderOptions("ability", GH_TIERS.map(t => t.token).filter(t => ICON_MANIFEST[t]), selectedAbilities, jgGrid, abilitySearchEl.value);
         jgGrid.querySelectorAll(".filter-bar-none").forEach(n => n.remove());
       }
     }
