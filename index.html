@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilityUpThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2244,25 +2244,43 @@
   }
 
   /* Cycling "Any ..." icons: Any Cap Throw (burgundy red) + Any Grounded High Jump (blue) */
-  .icon-wrap.any-throw{ --any-acc:#d11a3a; }
+  :root{ --any-amber:#f0a020; --any-purple:#a56cf0; --any-green:#3fbf6a; --gold-dim:#a98a00; }
+  .any-throw{ --any-acc:#d11a3a; }
   .icon-wrap.any-throw::after{ color:#fff; }
   .icon-wrap.any-grounded{ --any-acc:#19b8a6; }
   .icon-wrap.any-normal{ --any-acc:#8fd0ff; }
   .icon-wrap.any-high{ --any-acc:#2347b5; }
   .icon-wrap.any-high::after{ color:#fff; }
+  .icon-wrap.any-height-gp, .icon-wrap.any-jump-gp{ --any-acc:var(--any-amber); }
+  .icon-wrap.any-jump, .icon-wrap.any-nocrj{ --any-acc:var(--any-purple); }
+  .icon-wrap.any-vault, .icon-wrap.any-capthrow{ --any-acc:var(--any-green); }
+  .icon-wrap.any-jump::after, .icon-wrap.any-nocrj::after{ color:#fff; }
+  .prog-badge.prog-plus .prog-icon{ border-color:var(--any-amber); }
+  .prog-badge.prog-plus .prog-arrow{ background:var(--any-amber); font-size:14px; }
+  .prog-badge.prog-plus{ position:absolute; }
+  .frame-chip{ position:absolute; top:1px; right:1px; z-index:3; pointer-events:none; }
+  .frame-chip .prog-icon{ width:19px; height:19px; margin:0; border:1.5px solid #d11a3a; border-radius:4px; position:relative; overflow:hidden; }
+  .frame-chip .prog-any .cycle-frame{ clip-path:none; }
+  .cycle-frame.frame-match{ box-shadow:inset 0 0 0 3px var(--gold); }
+  .icon-wrap.filter-match.filter-match-alt{ filter:drop-shadow(0 0 6px rgba(169,138,0,.85)); }
+  .icon-wrap.filter-match.filter-match-alt::before, .icon-wrap.any-badged.filter-match.filter-match-alt::before{ background:var(--gold-dim); }
+  .any-cycle-box{ position:relative; display:block; width:100%; height:100%; }
+  .filter-option-iconbox.any-badged > .filter-option-icon{ position:relative; z-index:1; }
+  .filter-option.selected .filter-option-iconbox.any-badged::before{ background:var(--gold); }
+  .any-pop-desc{ font-size:11px; color:var(--text-dim); margin:-4px 0 8px; max-width:300px; white-space:normal; }
   .prog-badge.prog-crossed .prog-icon, .prog-badge.prog-crossed .prog-fallback{ border-color:#e0314b; filter:grayscale(.6) brightness(.8); }
   .prog-badge.prog-crossed{ position:absolute; }
   .prog-badge .prog-x{ position:absolute; left:2px; top:2px; width:29px; height:29px; pointer-events:none; z-index:4;
     background:linear-gradient(to top right, transparent calc(50% - 2px), #ff2d4d calc(50% - 2px), #ff2d4d calc(50% + 2px), transparent calc(50% + 2px)),
                 linear-gradient(to top left, transparent calc(50% - 2px), #ff2d4d calc(50% - 2px), #ff2d4d calc(50% + 2px), transparent calc(50% + 2px)); }
-  .icon-wrap.any-badged{ position:relative; }
-  .icon-wrap.any-badged::before{
+  .any-badged{ position:relative; }
+  .any-badged::before{
     content:""; position:absolute; inset:-3px; z-index:0; background:var(--any-acc);
     clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
   }
   .icon-wrap.any-badged.filter-match::before{ background:var(--gold); }
-  .icon-wrap.any-badged::after{
-    content:"ANY"; position:absolute; left:50%; bottom:-7px; transform:translateX(-50%); z-index:3;
+  .any-badged::after{
+    content:attr(data-badge); position:absolute; left:50%; bottom:-7px; transform:translateX(-50%); z-index:3;
     font-size:8.5px; font-weight:800; letter-spacing:.1em; line-height:1; padding:2px 6px;
     color:#1b1c1f; background:var(--any-acc); pointer-events:none;
     clip-path:polygon(3px 0,100% 0,100% calc(100% - 3px),calc(100% - 3px) 100%,0 100%,0 3px);
@@ -2284,6 +2302,14 @@
   .cycle-5{ animation-name:cycle5; }
   @keyframes cycle7{ 0%{opacity:1} 11.8%{opacity:1} 14.3%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
   @keyframes cycle5{ 0%{opacity:1} 17.5%{opacity:1} 20%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
+  .cycle-2{ animation-name:cycle2; }
+  .cycle-3{ animation-name:cycle3; }
+  .cycle-6{ animation-name:cycle6; }
+  .cycle-9{ animation-name:cycle9; }
+  @keyframes cycle2{ 0%{opacity:1} 47.5%{opacity:1} 50%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
+  @keyframes cycle3{ 0%{opacity:1} 30.8%{opacity:1} 33.3%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
+  @keyframes cycle6{ 0%{opacity:1} 14.2%{opacity:1} 16.7%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
+  @keyframes cycle9{ 0%{opacity:1} 8.6%{opacity:1} 11.1%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
   @keyframes cycle8{ 0%{opacity:1} 10%{opacity:1} 12.5%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
   .icon-wrap.any-badged > .icon-tooltip{ display:none; }
   .prog-badge.pink{ pointer-events:auto; }
@@ -3306,6 +3332,13 @@ let ICON_MANIFEST = {
   GroundedHeight: { filenames:["AbilityJump.png"], label:"Any Grounded Height", color:"#0f8f84", category:"Movement", tokenType:"ability" },
   GroundedNormal: { filenames:["AbilityJump.png"], label:"Any Grounded Normal Jump", color:"#5aa9e6", category:"Movement", tokenType:"ability" },
   GroundedHigh: { filenames:["AbilitySideFlip.png"], label:"Any Grounded High Jump", color:"#1f3a8a", category:"Movement", tokenType:"ability" },
+  // Further display-only grounded groupings (see GH_TIERS). Never filter tiles.
+  GroundedHeightGP: { filenames:["AbilityJump.png"], label:"Any Grounded Height + Ground Pound Jump", color:"#d9901a", category:"Movement", tokenType:"ability" },
+  GroundedJumpGP: { filenames:["AbilityJump.png"], label:"Any Grounded Jump + Ground Pound Jump", color:"#d9901a", category:"Movement", tokenType:"ability" },
+  GroundedJump: { filenames:["AbilityJump.png"], label:"Any Grounded Jump", color:"#8d5be0", category:"Movement", tokenType:"ability" },
+  AnyVault: { filenames:["AbilityVault.png"], label:"Any Vault", color:"#2fa85a", category:"Movement", tokenType:"ability" },
+  AnyCapThrowJump: { filenames:["AbilityCapReturnJump.png"], label:"Any Cap Throw Jump", color:"#2fa85a", category:"Movement", tokenType:"ability" },
+  GroundedNoCRJ: { filenames:["AbilityJump.png"], label:"Any Grounded Height without Cap Return Jump", color:"#8d5be0", category:"Movement", tokenType:"ability" },
 };
 
 // Movement/CapThrow ("ability") icon sets found in the wild are commonly
@@ -3394,7 +3427,9 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Nut: true,
   Seed: true,
   GroundedHeight: true, GroundedNormal: true, GroundedHigh: true, // display-only merges; never filter tiles
-  AnyThrow: true, // never its own filter tile — it answers to the four Cap throws below
+  GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true,
+  AnyVault: true, AnyCapThrowJump: true, GroundedNoCRJ: true,
+  // AnyThrow is a real filter tile now (shown next to the four Cap throws); selecting it acts like selecting all four.
 };
 
 // "Any Cap Throw" token: satisfied by any one of these four throws, in the
@@ -3402,26 +3437,64 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
 const ANY_THROW_TOKEN = "AnyThrow";
 const ANY_THROW_MEMBERS = ["NeutralThrow", "UpThrow", "SpinThrow", "DownThrow"];
 const ANY_THROW_CYCLE_SECONDS = 6; // whole loop (1.5s per throw)
+// True when the Any Cap Throw tile OR any one of the four throws is selected.
 function anyThrowSelected(){
-  return ANY_THROW_MEMBERS.some(t => selectedAbilities.has(t));
+  return selectedAbilities.has(ANY_THROW_TOKEN) || ANY_THROW_MEMBERS.some(t => selectedAbilities.has(t));
 }
+// Cap Return Jump is unlocked by any one of the four Cap throws (not an ability of its own in game).
+function isCapReturnToken(t){ return ghTokenKey(t) === "CapReturnJump"; }
+// A specific throw counts as selected when the Any Cap Throw tile is (it stands in for all four).
+function throwViaAnyTile(t){ return ANY_THROW_MEMBERS.indexOf(t) !== -1 && selectedAbilities.has(ANY_THROW_TOKEN); }
 
 // "Any Grounded High Jump": when ALL of these methods sit in ONE logic level of a
 // moon (and the kingdom's Jump / Cap Return Jump are not Incomplete), they are
 // shown as a single merged chip. Each entry is one method (an AND-group).
-const GH_TOKEN = "GroundedHeight";          // tier 1: Any Grounded Height (teal)
-const GH_NORMAL_TOKEN = "GroundedNormal";   // tier 2: Any Grounded Normal Jump (light blue, Long Jump crossed out)
-const GH_HIGH_TOKEN = "GroundedHigh";       // tier 3: Any Grounded High Jump (dark blue, Side Flip icon)
+const GH_TOKEN = "GroundedHeight";          // Any Grounded Height (teal)
+const GH_NORMAL_TOKEN = "GroundedNormal";   // Any Grounded Normal Jump (light blue, Long Jump crossed out)
+const GH_HIGH_TOKEN = "GroundedHigh";       // Any Grounded High Jump (dark blue, Side Flip icon)
+// One entry per merged grouping, in display order. Data-driven: every field below is read by the
+// merge logic (mergeGroundedTier), the icon (makeIcon) and the hover list (showAnyPop).
+//   cls     colour class (see .icon-wrap.any-* CSS)      badge  text on the icon instead of "ANY"
+//   cycle   keyframe class (cycle-N, N = frame count)    seconds  length of one full icon cycle
+//   crossed icon drawn crossed out in the corner         plusGP   small "+ Ground Pound Jump" corner badge
+//   iconFirst  frame shown first                          desc   one-line hover description
+// Methods: one AND-group each ("throw + Vault" is ONE frame with two overlapped icons).
+const _SJ = ["SingleJump"], _CRJ = ["CapReturnJump"], _LJ = ["LongJump"], _BF = ["Backflip"], _SP = ["Spin"], _SF = ["SideFlip"];
+const _NV = ["NeutralThrow", "Vault"], _DV = ["DownThrow", "Vault"], _GPJ = ["GroundPoundJump"];
 const GH_TIERS = [
-  { token: GH_TOKEN, label: "Any Grounded Height", cls: "any-grounded", cycle: "cycle-8",
-    methods: [["SingleJump"], ["CapReturnJump"], ["LongJump"], ["Backflip"], ["Spin"], ["SideFlip"], ["NeutralThrow", "Vault"], ["DownThrow", "Vault"]] },
-  { token: GH_NORMAL_TOKEN, label: "Any Grounded Normal Jump", cls: "any-normal", cycle: "cycle-7", crossed: "LongJump",
-    methods: [["SingleJump"], ["CapReturnJump"], ["Backflip"], ["Spin"], ["SideFlip"], ["NeutralThrow", "Vault"], ["DownThrow", "Vault"]] },
-  { token: GH_HIGH_TOKEN, label: "Any Grounded High Jump", cls: "any-high", cycle: "cycle-5", iconFirst: "SideFlip",
-    methods: [["Backflip"], ["Spin"], ["SideFlip"], ["NeutralThrow", "Vault"], ["DownThrow", "Vault"]] },
+  { token: "GroundedHeightGP", label: "Any Grounded Height + Ground Pound Jump", cls: "any-height-gp", cycle: "cycle-9", badge: "+GP", plusGP: true, seconds: 11.25,
+    desc: "Same as Any Grounded Height, plus Ground Pound Jump",
+    methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV, _GPJ] },
+  { token: GH_TOKEN, label: "Any Grounded Height", cls: "any-grounded", cycle: "cycle-8", badge: "HEIGHT", seconds: 10,
+    desc: "Every grounded way to gain height, including the throw + Vault routes",
+    methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
+  { token: GH_NORMAL_TOKEN, label: "Any Grounded Normal Jump", cls: "any-normal", cycle: "cycle-7", badge: "NO LJ", seconds: 10, crossed: "LongJump",
+    desc: "Same as Any Grounded Height, minus Long Jump",
+    methods: [_SJ, _CRJ, _BF, _SP, _SF, _NV, _DV] },
+  { token: GH_HIGH_TOKEN, label: "Any Grounded High Jump", cls: "any-high", cycle: "cycle-5", badge: "HIGH", seconds: 10, iconFirst: "SideFlip",
+    desc: "Only the high jumps: Backflip, Spin, Side Flip and the throw + Vault routes",
+    methods: [_BF, _SP, _SF, _NV, _DV] },
+  { token: "GroundedJumpGP", label: "Any Grounded Jump + Ground Pound Jump", cls: "any-jump-gp", cycle: "cycle-6", badge: "JUMP+GP", plusGP: true, seconds: 7.5,
+    desc: "Plain grounded jumps plus Ground Pound Jump; no Cap Return Jump or throw needed",
+    methods: [_SJ, _LJ, _BF, _SP, _SF, _GPJ] },
+  { token: "GroundedJump", label: "Any Grounded Jump", cls: "any-jump", cycle: "cycle-5", badge: "JUMPS", seconds: 6.25,
+    desc: "Plain grounded jumps only; no Cap Return Jump or throw needed",
+    methods: [_SJ, _LJ, _BF, _SP, _SF] },
+  { token: "AnyVault", label: "Any Vault", cls: "any-vault", cycle: "cycle-2", badge: "VAULT", seconds: 2.5,
+    desc: "Either throw + Vault route",
+    methods: [_NV, _DV] },
+  { token: "AnyCapThrowJump", label: "Any Cap Throw Jump", cls: "any-capthrow", cycle: "cycle-3", badge: "CAP", seconds: 3.75,
+    desc: "Cap Return Jump or either throw + Vault route",
+    methods: [_CRJ, _NV, _DV] },
+  { token: "GroundedNoCRJ", label: "Any Grounded Height without Cap Return Jump", cls: "any-nocrj", cycle: "cycle-7", badge: "NO CRJ", seconds: 8.75, crossed: "CapReturnJump",
+    desc: "Same as Any Grounded Height, minus Cap Return Jump",
+    methods: [_SJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
 ];
 GH_TIERS.forEach(t => { t.allTokens = Array.from(new Set(t.methods.reduce((a, m) => a.concat(m), []))); });
-const GH_METHODS = GH_TIERS[0].methods; // kept for older references
+// Merge order: the largest grouping first (ties keep the order above), so the moves a bigger grouping
+// covers are used up before a smaller one is tried and a lane never gets two chips for the same moves.
+const GH_MERGE_ORDER = GH_TIERS.map((t, i) => ({ t, i })).sort((a, b) => (b.t.methods.length - a.t.methods.length) || (a.i - b.i)).map(x => x.t);
+const GH_METHODS = GH_TIERS.find(t => t.token === GH_TOKEN).methods; // kept for older references
 function ghTier(token){ return GH_TIERS.find(t => t.token === token) || null; }
 function isGhToken(token){ return !!ghTier(token); }
 // Frames for the icon (static mode shows only the first one).
@@ -3433,32 +3506,32 @@ function ghIconFrames(t){
 function ghTokenKey(t){ return /cap\s*_?return/i.test(String(t)) ? "CapReturnJump" : t; }
 // True when picking things in the filters satisfies at least one merged method of the tier.
 function ghSatisfied(tier){
-  const t = tier || GH_TIERS[0];
+  const t = tier || ghTier(GH_TOKEN);
   return t.methods.some(m => m.every(x => tokenIsSelected(x) || (x === "CapReturnJump" && Object.keys(ICON_MANIFEST).some(k => ghTokenKey(k) === "CapReturnJump" && tokenIsSelected(k)))));
 }
 // Any selected filter item that is part of the tier's merge (for the highlight ring).
 function ghAnySelected(tier){
-  const t = tier || GH_TIERS[0];
-  return t.allTokens.some(x => selectedAbilities.has(x))
-    || (t.allTokens.indexOf("CapReturnJump") !== -1 && Object.keys(ICON_MANIFEST).some(k => ghTokenKey(k) === "CapReturnJump" && selectedAbilities.has(k)));
+  const t = tier || ghTier(GH_TOKEN);
+  return t.allTokens.some(x => selectedAbilities.has(x) || throwViaAnyTile(x))
+    || (t.allTokens.indexOf("CapReturnJump") !== -1 && (anyThrowSelected() || Object.keys(ICON_MANIFEST).some(k => ghTokenKey(k) === "CapReturnJump" && selectedAbilities.has(k))));
 }
 function ghKingdomActive(kingdomName, tier){
   const k = kingdomName || KINGDOM_ORDER[currentKingdomIndex];
-  const t = tier || GH_TIERS[0];
+  const t = tier || ghTier(GH_TOKEN);
   if(t.allTokens.indexOf("SingleJump") !== -1 && isTokenIncompleteOn("SingleJump", k)) return false;
   if(t.allTokens.indexOf("CapReturnJump") !== -1 && isTokenIncompleteOn("CapReturnJump", k)) return false;
   return true;
 }
 function ghSpecIndex(group){
   const keys = group.map(ghTokenKey);
-  return GH_TIERS[0].methods.findIndex(m => m.length === keys.length && m.every(t => keys.indexOf(t) !== -1));
+  return ghTier(GH_TOKEN).methods.findIndex(m => m.length === keys.length && m.every(t => keys.indexOf(t) !== -1));
 }
 // Returns a copy of `tierLanes` where, in any lane holding all merged methods
 // (same scenarios + origin), they are replaced by one merged group.
 function withGroundedMerge(tierLanes, kingdomName){
   if(!tierLanes || submitMode) return tierLanes;
   let cur = tierLanes;
-  GH_TIERS.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t); });
+  GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t); });
   return cur;
 }
 function mergeGroundedTier(tierLanes, tier){
@@ -3501,9 +3574,9 @@ function mergeGroundedTier(tierLanes, tier){
         if(pos.length) picked[si] = pos;
       });
       const missing = GH_METHODS.map((m, si) => si).filter(si => !picked[si]);
-      // If Long Jump is the one that needs something extra, don't star-merge into Any Grounded Height:
-      // Any Grounded Normal Jump takes priority and Long Jump stays listed on its own.
-      if(tier.token === GH_TOKEN && missing.some(si => GH_METHODS[si].length === 1 && GH_METHODS[si][0] === "LongJump")) return;
+      // If Long Jump is the one that needs something extra, don't star-merge into a grouping that
+      // contains Long Jump: the Normal Jump grouping takes priority and Long Jump stays listed on its own.
+      if(missing.some(si => GH_METHODS[si].length === 1 && GH_METHODS[si][0] === "LongJump")) return;
       if(!Object.keys(picked).length || missing.length === 0 || missing.length > 3 || Object.keys(picked).length < 4) return;
       const sameWhere = k2 => { const q = k2.split("|"); return q[1] === scKey && q[2] === orKey; };
       const notes = [], extraPos = [];
@@ -3726,6 +3799,8 @@ function isTokenIncompleteHere(token){
 }
 function isTokenIncompleteOn(token, kingdomName){
   if(!INCOMPLETE_ABILITY_TOKENS[token]) return false;
+  // Cap Return Jump is unlocked by the Cap throws, so it is only Incomplete while ALL four throws are.
+  if(isCapReturnToken(token)) return ANY_THROW_MEMBERS.every(m => isTokenIncompleteOn(m, kingdomName));
   const done = COMPLETE_ON_KINGDOM[kingdomName];
   let grp = incompleteGroupOf(token);
   if(grp === "death") grp = "health"; // Death follows Health: it only says Incomplete while Health does
@@ -3826,7 +3901,7 @@ function mergeTokensIntoManifest(logicTokens){
 // lives on the moon cards themselves (see the display-only sort applied
 // in buildMovementOptions/renderReachTierLanes/openLogicVideo), not here.
 const ABILITY_DISPLAY_ORDER = [
-  "NeutralThrow", "UpThrow", "DownThrow", "SpinThrow",
+  "AnyThrow", "NeutralThrow", "UpThrow", "DownThrow", "SpinThrow",
   "Vault", "Crouch", "Backflip", "LongJump", "Roll", "RollBoost",
   "GroundPound", "GroundPoundJump", "Dive",
   "SingleJump", "DoubleJump", "TripleJump", "SideFlip", "Spin", "WallJump",
@@ -7454,6 +7529,14 @@ const COIN_COFFER_RE = /coin[\s_-]*coffer/i, WALLET_RE = /^wallet$/i;
 function _tokLabelMatch(t, re){ return re.test(String(t)) || re.test(String((ICON_MANIFEST[t] || {}).label || "")); }
 function dynamicProgChain(token, andGroup){
   const info = ICON_MANIFEST[token];
+  // Cap Return Jump (also inside merged groupings that contain it): needs a Cap throw. Show the Any Cap Throw
+  // chip only when ITS OWN method (this one AND-group) has no throw; exempting the throws strips it.
+  const crj = isGhToken(token) ? ghTier(token).allTokens.indexOf("CapReturnJump") !== -1 : isCapReturnToken(token);
+  if(crj){
+    if(filterMode === "cando" && anyThrowSelected()) return null;
+    const grp = andGroup || [];
+    return grp.some(t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1) ? null : [ANY_THROW_TOKEN];
+  }
   if(!info || info.tokenType !== "capture") return null;
   const chain = [];
   const hasThrow = andGroup.some(t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1);
@@ -7503,7 +7586,7 @@ const ABILITY_PROGRESSION = {
   Dive: ["GroundPound"],
   DoubleJump: ["SingleJump"],
   TripleJump: ["SingleJump", "DoubleJump"],
-  CapReturnJump: ["AnyThrow"],
+  // Cap Return Jump's Any Cap Throw chip is conditional (only when its method has no throw): see dynamicProgChain.
 };
 const PROG_CYCLE = {
   // token: [first, second, [ax,ay] first leaves toward, [bx,by] second leaves toward] (px; clock angles)
@@ -7587,7 +7670,7 @@ function hideAnyPop(){ if(anyPopEl){ anyPopEl.remove(); anyPopEl = null; } }
 function showAnyPop(anchor, token){
   hideAnyPop();
   const isThrow = token === ANY_THROW_TOKEN;
-  const ghT = isThrow ? null : (ghTier(token) || GH_TIERS[0]);
+  const ghT = isThrow ? null : (ghTier(token) || ghTier(GH_TOKEN));
   const options = isThrow ? ANY_THROW_MEMBERS.map(m => [m]) : ghT.methods;
   const el = document.createElement("div");
   el.className = "any-pop " + (isThrow ? "pop-throw" : "pop-grounded");
@@ -7595,6 +7678,12 @@ function showAnyPop(anchor, token){
   title.className = "any-pop-title";
   title.textContent = (isThrow ? "Any Cap Throw" : ghT.label) + " \u2014 any one of:";
   el.appendChild(title);
+  if(ghT && ghT.desc){
+    const d = document.createElement("div");
+    d.className = "any-pop-desc";
+    d.textContent = ghT.desc;
+    el.appendChild(d);
+  }
   options.forEach(toks => {
     const keys = toks.map(t => ICON_MANIFEST[t] ? t : (Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t));
     const row = document.createElement("div");
@@ -7633,7 +7722,7 @@ window.addEventListener("scroll", hideAnyPop, true);
 
 // Cross-fading icon frames on a shared wall-clock (every instance stays in
 // step). `frames` = list of token lists; two tokens render as an overlapped pair.
-function buildCycleFrames(wrap, frames, seconds, cls){
+function buildCycleFrames(wrap, frames, seconds, cls, crjChip){
   const isStatic = !ANIMATED_ANY_ICONS;
   if(isStatic) frames = [frames[0]]; // first option only: Single Jump / Neutral Throw
   const step = seconds / frames.length;
@@ -7642,6 +7731,7 @@ function buildCycleFrames(wrap, frames, seconds, cls){
     const k = (((phase - i * step) % seconds) + seconds) % seconds;
     const fr = document.createElement("span");
     fr.className = "cycle-frame " + cls + (toks.length > 1 ? " pair" : "") + (i === 0 ? " first" : "");
+    fr.dataset.toks = toks.join("+");
     if(isStatic){ fr.classList.add("static"); fr.style.animation = "none"; fr.style.opacity = "1"; }
     else {
       fr.style.animationDuration = seconds + "s";
@@ -7668,6 +7758,16 @@ function buildCycleFrames(wrap, frames, seconds, cls){
       };
       fr.appendChild(img);
     });
+    // Cap Return Jump frame inside a merged icon carries the same Any Cap Throw chip as a plain Cap Return Jump.
+    if(crjChip && toks.length === 1 && isCapReturnToken(toks[0])){
+      const chip = document.createElement("span");
+      chip.className = "frame-chip";
+      const holder = document.createElement("span");
+      holder.className = "prog-icon prog-any";
+      buildCycleFrames(holder, ANY_THROW_MEMBERS.map(m => [m]), ANY_THROW_CYCLE_SECONDS, "cycle-4");
+      chip.appendChild(holder);
+      fr.appendChild(chip);
+    }
     wrap.appendChild(fr);
   });
 }
@@ -7695,19 +7795,29 @@ function makeIcon(token, opts){
     wrap.appendChild(d);
   } else if(token === ANY_THROW_TOKEN){
     wrap.classList.add("any-badged", "any-throw");
+    wrap.dataset.badge = "ANY";
     buildCycleFrames(wrap, ANY_THROW_MEMBERS.map(m => [m]), ANY_THROW_CYCLE_SECONDS, "cycle-4");
   } else if(isGhToken(token)){
     const ghT = ghTier(token);
     wrap.classList.add("any-badged", "any-grounded", ghT.cls);
-    buildCycleFrames(wrap, ghIconFrames(ghT), 10, ghT.cycle);
+    wrap.dataset.badge = ghT.badge || "ANY";
+    buildCycleFrames(wrap, ghIconFrames(ghT), ghT.seconds || 10, ghT.cycle, !!(opts && opts.progChain && opts.progChain.length));
     if(ghT.crossed){
       const cb = document.createElement("span");
       cb.className = "prog-badge prog-crossed";
-      cb.title = "Long Jump is NOT included";
+      cb.title = (ICON_MANIFEST[ghT.crossed] ? ICON_MANIFEST[ghT.crossed].label : ghT.crossed) + " is NOT included";
       cb.appendChild(makeProgImg(ghT.crossed));
       const x = document.createElement("span"); x.className = "prog-x"; cb.appendChild(x);
       const ar = document.createElement("span"); ar.className = "prog-arrow"; ar.textContent = "\u25B2"; cb.appendChild(ar);
       wrap.appendChild(cb);
+    }
+    if(ghT.plusGP){
+      const pb = document.createElement("span");
+      pb.className = "prog-badge prog-plus";
+      pb.title = "Includes Ground Pound Jump";
+      pb.appendChild(makeProgImg("GroundPoundJump"));
+      const ar = document.createElement("span"); ar.className = "prog-arrow"; ar.textContent = "+"; pb.appendChild(ar);
+      wrap.appendChild(pb);
     }
   } else {
     const img = document.createElement("img");
@@ -7731,7 +7841,7 @@ function makeIcon(token, opts){
     wrap.appendChild(img);
   }
 
-  const progBadge = makeProgressionBadge(token, opts && opts.progChain);
+  const progBadge = isGhToken(token) ? null : makeProgressionBadge(token, opts && opts.progChain);
   if(progBadge) wrap.appendChild(progBadge);
   if(opts && opts.twoDJump) wrap.appendChild(makeTwoDJumpBadge());
   const hpMatch = MINHP_RE.exec(String(token));
@@ -8825,7 +8935,9 @@ function requireAllActive(){
 function groupHasAllTokens(group, tokens){
   const set = new Set();
   group.forEach(t => { set.add(t); if(ABILITY_FILTER_FOLD_TOKENS[t]) set.add(ABILITY_FILTER_FOLD_TOKENS[t]); });
-  const missing = tokens.filter(t => !set.has(t));
+  // "Any Cap Throw" is met by any Cap throw (or Cap Return Jump, which a throw unlocks) in the route.
+  const hasThrowish = set.has(ANY_THROW_TOKEN) || ANY_THROW_MEMBERS.some(m => set.has(m)) || Array.from(set).some(isCapReturnToken);
+  const missing = tokens.filter(t => !set.has(t) && !(t === ANY_THROW_TOKEN && hasThrowish));
   if(!missing.length) return true;
   // "Any Cap Throw" can stand in for exactly ONE missing Cap throw.
   return set.has(ANY_THROW_TOKEN) && missing.length === 1 && ANY_THROW_MEMBERS.indexOf(missing[0]) !== -1;
@@ -8860,6 +8972,8 @@ function tokenIsSelected(tok){
   if(selectedAbilities.has(tok) || selectedCaptures.has(tok)) return true;
   if(filterMode === "cando" && impliedProgressiveTokens().has(tok)) return true;
   if(tok === ANY_THROW_TOKEN && anyThrowSelected()) return true;
+  if(throwViaAnyTile(tok)) return true;                    // Any Cap Throw tile = all four throws
+  if(isCapReturnToken(tok) && anyThrowSelected()) return true; // any throw unlocks Cap Return Jump
   if(isGhToken(tok)) return ghSatisfied(ghTier(tok));
   const folded = ABILITY_FILTER_FOLD_TOKENS[tok];
   if(folded && (selectedAbilities.has(folded) || selectedCaptures.has(folded))) return true;
@@ -8881,8 +8995,12 @@ function moonMatchesUnlocks(moon){
     return (moon.orGroups || []).some(g => groupHasAllTokens(g, need));
   }
   const toks = moonTokens(moon);
+  // Selecting Any Cap Throw acts like selecting all four throws; any throw (or the tile) also unlocks Cap Return Jump.
+  const sel = new Set(selectedAbilities);
+  if(selectedAbilities.has(ANY_THROW_TOKEN)) ANY_THROW_MEMBERS.forEach(m => sel.add(m));
+  if(anyThrowSelected()) Object.keys(ICON_MANIFEST).forEach(k => { if(isCapReturnToken(k)) sel.add(k); });
   let any = false;
-  selectedAbilities.forEach(t => { if(toks.has(t)) any = true; });
+  sel.forEach(t => { if(toks.has(t)) any = true; });
   selectedCaptures.forEach(t => { if(toks.has(t)) any = true; });
   return any;
 }
@@ -9772,11 +9890,19 @@ function applyFilterMatchHighlight(){
     // ring gold when "Grab" is the active filter, since that's the
     // option the player actually selected to reach it.
     const foldedTok = ABILITY_FILTER_FOLD_TOKENS[tok] || tok;
+    const viaThrowTile = throwViaAnyTile(tok) && !selectedAbilities.has(tok);
     if((tok === ANY_THROW_TOKEN && anyThrowSelected()) || (isGhToken(tok) && ghAnySelected(ghTier(tok)))
+      || (isCapReturnToken(tok) && anyThrowSelected()) || viaThrowTile
       || selectedAbilities.has(tok) || selectedCaptures.has(tok)
       || selectedAbilities.has(foldedTok) || selectedCaptures.has(foldedTok)){
       el.classList.add("filter-match");
+      // A specific throw lit only because the Any Cap Throw tile is selected: slightly darker gold.
+      if(viaThrowTile) el.classList.add("filter-match-alt");
     }
+    // Merged groupings: ring the individual frame that matches (e.g. its Cap Return Jump frame).
+    if(isGhToken(tok)) el.querySelectorAll(".cycle-frame[data-toks]").forEach(fr => {
+      if(fr.dataset.toks.split("+").every(x => tokenIsSelected(x))) fr.classList.add("frame-match");
+    });
   });
 }
 
@@ -10033,6 +10159,14 @@ function makeFilterIconEl(token, sizeClass){
     fb.className = "icon-fallback";
     fb.textContent = "?";
     wrap.appendChild(fb);
+    return wrap;
+  }
+  if(token === ANY_THROW_TOKEN){
+    // Same cycling Any Cap Throw icon as on the moon cards (the red ANY badge is added by the picker tile).
+    const box = document.createElement("span");
+    box.className = "any-cycle-box";
+    buildCycleFrames(box, ANY_THROW_MEMBERS.map(m => [m]), ANY_THROW_CYCLE_SECONDS, "cycle-4");
+    wrap.appendChild(box);
     return wrap;
   }
   const img = document.createElement("img");
@@ -10380,6 +10514,7 @@ function setupMergedFilterBar(tokens){
       // wrapper around it instead (same chip as on the moon cards).
       const iconBox = document.createElement("div");
       iconBox.className = "filter-option-iconbox";
+      if(kind === "ability" && token === ANY_THROW_TOKEN){ iconBox.classList.add("any-badged", "any-throw"); iconBox.dataset.badge = "ANY"; }
       iconBox.appendChild(iconWrap);
       const progBadge = kind === "ability" ? makeProgressionBadge(token) : null;
       if(progBadge) iconBox.appendChild(progBadge);
