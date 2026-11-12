@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDeath.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2786,7 +2786,7 @@
   .jumpgroup-row .filter-section-heading{ margin:0 0 8px; }
   .jumpgroup-row[hidden]{ display:none; }
   #jumpGroupGrid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; }
-  #jumpGroupToggle.active{ background:var(--red); border-color:#a52530; color:#fff; }
+  #jumpGroupToggle.active{ background:#3f9d3f; border-color:#2c7a2c; color:#fff; }
   /* Moon-style grouped icons: native moon size so the chips match the main filter chips */
   .filter-option-icon.moon-icon{ overflow:visible; clip-path:none; border:none; box-shadow:none !important; }
   .filter-option-icon.moon-icon > div{ display:flex; align-items:center; justify-content:center; }
@@ -2881,7 +2881,7 @@
 
 <div class="dbg-item">
   <button class="corner-btn" id="exemptLevelsToggle" type="button" role="switch" aria-label="Exempt Levels: Fold Up or Separate">
-    <img class="btn-ic" src="icon/AbilityJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#8645;</span>'">
+    <img class="btn-ic" src="icon/AbilityGPJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#8645;</span>'">
     <span class="btn-txt"><b>Exempt Levels</b><small id="exemptLevelsBtnState">Fold Up</small></span>
   </button>
   <div class="dbg-tip" role="tooltip">
@@ -3532,6 +3532,22 @@ const GH_TIERS = [
     desc: "Same as Any Grounded Height, minus Cap Return Jump",
     methods: [_SJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
 ];
+// ---- Jump Group on/off switches: 1 = enabled, 0 = disabled ----------------------------------
+// A disabled group is never merged on moon cards and never gets a Jump Group Filter tile.
+const JUMP_GROUP_ENABLED = {
+  GroundedHeightGP: 0,   // Any Grounded Height + Ground Pound Jump
+  GroundedHeight:   1,   // Any Grounded Height
+  GroundedNormal:   1,   // Any Grounded Normal Jump
+  GroundedHigh:     1,   // Any Grounded High Jump
+  GroundedJumpGP:   0,   // Any Grounded Jump + Ground Pound Jump
+  GroundedJump:     1,   // Any Grounded Jump
+  AnyVault:         1,   // Any Vault
+  AnyCapThrowJump:  0,   // Any Cap Throw Jump
+  GroundedNoCRJ:    0,   // Any Grounded Height without Cap Return Jump
+};
+for(let i = GH_TIERS.length - 1; i >= 0; i--){
+  if(JUMP_GROUP_ENABLED[GH_TIERS[i].token] === 0) GH_TIERS.splice(i, 1);
+}
 GH_TIERS.forEach(t => { t.allTokens = Array.from(new Set(t.methods.reduce((a, m) => a.concat(m), []))); });
 // Merge order: the largest grouping first (ties keep the order above), so the moves a bigger grouping
 // covers are used up before a smaller one is tried and a lane never gets two chips for the same moves.
@@ -9039,6 +9055,12 @@ function moonMatchesUnlocks(moon){
     return (moon.orGroups || []).some(g => groupHasAllTokens(g, need));
   }
   const toks = moonTokens(moon);
+  // Jump Group tokens: a moon has one only when that merged chip is shown on it.
+  if(GH_TIERS.some(t => selectedAbilities.has(t.token))){
+    try{
+      (withGroundedMerge(moon.tierLanes, moon.kingdom) || []).forEach(l => (l.groups || []).forEach(g => { if(g && isGhToken(g[0])) toks.add(g[0]); }));
+    }catch(e){}
+  }
   // Selecting Any Cap Throw acts like selecting all four throws; any throw (or the tile) also unlocks Cap Return Jump.
   const sel = new Set(selectedAbilities);
   if(selectedAbilities.has(ANY_THROW_TOKEN)) ANY_THROW_MEMBERS.forEach(m => sel.add(m));
@@ -9985,7 +10007,7 @@ function applyFilterMatchHighlight(){
     // option the player actually selected to reach it.
     const foldedTok = ABILITY_FILTER_FOLD_TOKENS[tok] || tok;
     const viaThrowTile = throwViaAnyTile(tok) && !selectedAbilities.has(tok);
-    if((tok === ANY_THROW_TOKEN && anyThrowSelected()) || (isGhToken(tok) && ghAnySelected(ghTier(tok)))
+    if((tok === ANY_THROW_TOKEN && anyThrowSelected()) || (isGhToken(tok) && selectedAbilities.has(tok))
       || (isCapReturnToken(tok) && anyThrowSelected()) || viaThrowTile
       || selectedAbilities.has(tok) || selectedCaptures.has(tok)
       || selectedAbilities.has(foldedTok) || selectedCaptures.has(foldedTok)){
@@ -10107,7 +10129,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     window.__jumpGroupMode = !window.__jumpGroupMode;
     try{ localStorage.setItem("jumpGroupFiltersV1", window.__jumpGroupMode ? "1" : "0"); }catch(e){}
     if(!window.__jumpGroupMode){
-      GH_TIERS.forEach(t => {});
+      GH_TIERS.forEach(t => selectedAbilities.delete(t.token));
     }
     paint();
     if(window.__refreshAbilityGrids) window.__refreshAbilityGrids();
@@ -10337,7 +10359,7 @@ function joinWithAnd(list){
 function updateFilterSummary(){
   const summaryEl = document.getElementById("filterSummary");
   if(!summaryEl) return;
-  const abilityNames = FILTER_LIST_ABILITIES.filter(t => selectedAbilities.has(t)).map(filterLabelFor);
+  const abilityNames = FILTER_LIST_ABILITIES.concat(GH_TIERS.map(t => t.token).filter(t => FILTER_LIST_ABILITIES.indexOf(t) < 0)).filter(t => selectedAbilities.has(t)).map(filterLabelFor);
   const captureNames = FILTER_LIST_CAPTURES.filter(t => selectedCaptures.has(t)).map(filterLabelFor);
   if(abilityNames.length === 0 && captureNames.length === 0){
     summaryEl.style.display = "none";
@@ -10485,7 +10507,7 @@ function ghMemberKeys(token){
   const t = ghTier(token); if(!t) return [];
   return Object.keys(ICON_MANIFEST).filter(k => t.allTokens.indexOf(ghTokenKey(k)) !== -1 && ICON_MANIFEST[k].tokenType === "ability");
 }
-function ghTileOn(token){ const k = ghMemberKeys(token); return k.length > 0 && k.every(x => selectedAbilities.has(x)); }
+function ghTileOn(token){ return selectedAbilities.has(token); }
 
 function setupMergedFilterBar(tokens){
   const { abilities, captures } = tokens;
@@ -10592,7 +10614,7 @@ function setupMergedFilterBar(tokens){
       });
       pills.appendChild(pill);
     };
-    abilities.forEach(token => { if(token !== "TimerChallenge" && (!isSubTokenDuplicate(token) || ABILITY_SUBTOKEN_PARENT[token]) && selectedAbilities.has(token)) addPill(token, selectedAbilities); });
+    abilities.concat(GH_TIERS.map(t => t.token).filter(t => abilities.indexOf(t) < 0)).forEach(token => { if(token !== "TimerChallenge" && (!isSubTokenDuplicate(token) || ABILITY_SUBTOKEN_PARENT[token]) && selectedAbilities.has(token)) addPill(token, selectedAbilities); });
     captures.forEach(token => { if(selectedCaptures.has(token)) addPill(token, selectedCaptures); });
     chipsEl.appendChild(pills);
     clearBtn.style.display = "";
@@ -10703,8 +10725,8 @@ function setupMergedFilterBar(tokens){
             return;
           }
           if(kind === "ability" && isGhToken(token)){
-            const toks = ghMemberKeys(token), on = !ghTileOn(token);
-            toks.forEach(k => { if(on) selectedAbilities.add(k); else selectedAbilities.delete(k); });
+            // Filter by this exact Jump Group token (moons that show this merged chip), not its members.
+            if(selectedAbilities.has(token)) selectedAbilities.delete(token); else selectedAbilities.add(token);
             refreshImpliedTiles(); renderChips(); refreshOpenPanels(); updateFilterSummary(); renderGrid();
             return;
           }
