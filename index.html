@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityUpThrow.png">
+<link rel="icon" href="icon/AbilityNeutralThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2770,12 +2770,12 @@
   /* Settings button (bottom-left), Jump Group Filters row, nav-rail Access node */
   #debugToggle{ position:fixed !important; left:24px !important; bottom:24px !important; right:auto !important; top:auto !important; margin:0 !important; padding:7px 12px !important; z-index:21; }
   #debugToggle.active, #debugToggle[aria-expanded="true"]{ background:var(--red); border-color:#a52530; color:#fff; }
-  .jumpgroup-row{ margin-top:18px; padding:8px 12px 12px; border:2px dashed rgba(166,216,42,0.45); background:rgba(166,216,42,0.05); }
+  .jumpgroup-row{ margin-top:18px; padding:8px 12px 12px; border:2px dashed rgba(166,216,42,0.6); background:rgba(166,216,42,0.09); }
   .jumpgroup-row .filter-section-heading{ margin:0 0 8px; }
   .jumpgroup-row[hidden]{ display:none; }
   #jumpGroupGrid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; }
-  #jumpGroupToggle{ border-color:rgba(166,216,42,0.55); }
-  #jumpGroupToggle.active{ background:rgba(166,216,42,0.18); border-color:#a6d82a; }
+  #jumpGroupToggle.active{ background:var(--red); border-color:#a52530; color:#fff; }
+  .filter-option-icon > .icon-wrap{ width:100%; height:100%; }
   #navRail .nr-node[data-target="access"]{ position:absolute; right:0; top:0; }
 </style>
 </head>
@@ -10206,19 +10206,9 @@ function makeFilterIconEl(token, sizeClass){
     wrap.appendChild(fb);
     return wrap;
   }
-  if(isGhToken(token)){
-    const gt = ghTier(token), gbox = document.createElement("span");
-    gbox.className = "any-cycle-box";
-    buildCycleFrames(gbox, ghIconFrames(gt), gt.seconds || 10, gt.cycle);
-    wrap.appendChild(gbox);
-    return wrap;
-  }
-  if(token === ANY_THROW_TOKEN){
-    // Same cycling Any Cap Throw icon as on the moon cards (the red ANY badge is added by the picker tile).
-    const box = document.createElement("span");
-    box.className = "any-cycle-box";
-    buildCycleFrames(box, ANY_THROW_MEMBERS.map(m => [m]), ANY_THROW_CYCLE_SECONDS, "cycle-4");
-    wrap.appendChild(box);
+  if(token === ANY_THROW_TOKEN || isGhToken(token)){
+    // Same bordered, badged icon (with the hover list of every option) as on the moon cards.
+    wrap.appendChild(makeIcon(token));
     return wrap;
   }
   const img = document.createElement("img");
@@ -10580,8 +10570,7 @@ function setupMergedFilterBar(tokens){
       // wrapper around it instead (same chip as on the moon cards).
       const iconBox = document.createElement("div");
       iconBox.className = "filter-option-iconbox";
-      if(kind === "ability" && token === ANY_THROW_TOKEN){ iconBox.classList.add("any-badged", "any-throw"); iconBox.dataset.badge = "ANY"; }
-      if(kind === "ability" && isGhToken(token)){ const gt = ghTier(token); iconBox.classList.add("any-badged", "any-grounded", gt.cls); iconBox.dataset.badge = gt.badge || "ANY"; }
+
       iconBox.appendChild(iconWrap);
       const progBadge = kind === "ability" ? makeProgressionBadge(token) : null;
       if(progBadge) iconBox.appendChild(progBadge);
