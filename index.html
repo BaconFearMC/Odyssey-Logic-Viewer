@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2269,8 +2269,6 @@
   .prog-badge.prog-plus .prog-icon{ border-color:var(--any-amber); }
   .prog-badge.prog-plus .prog-arrow{ background:var(--any-amber); font-size:14px; }
   .prog-badge.prog-plus{ position:absolute; }
-  .prog-badge.prog-plus-cap .prog-icon{ border-color:var(--any-green); }
-  .prog-badge.prog-plus-cap .prog-arrow{ background:var(--any-green); }
   .frame-chip{ position:absolute; top:1px; right:1px; z-index:3; pointer-events:none; }
   .frame-chip .prog-icon{ width:19px; height:19px; margin:0; border:1.5px solid #d11a3a; border-radius:4px; position:relative; overflow:hidden; }
   .frame-chip .prog-any .cycle-frame{ clip-path:none; }
@@ -2865,7 +2863,7 @@
   </button>
   <div class="dbg-tip" role="tooltip">
     <b>NO LOGIC?</b>
-    <span>Bug-fixing view. Shows only moons whose routes haven&rsquo;t been given a difficulty yet (unmarked logic), so they can be found and fixed.</span>
+    <span>Shows only moons with no logic difficulty set.</span>
     <em>Currently: <span id="unmarkedState">Off</span> &middot; click to toggle</em>
   </div>
 </div>
@@ -2876,7 +2874,7 @@
   </button>
   <div class="dbg-tip" role="tooltip">
     <b>Glitch Bible [WIP]</b>
-    <span>Glitched / out-of-bounds routes. Cycles Hidden &rarr; All &rarr; Only: hide them, mix them in, or show only moons that have a glitched route.</span>
+    <span>Cycles Hidden, All, Only.</span>
     <em>Currently: <span id="glitchToggleLabel">Glitch Bible [WIP]: Hidden</span> &middot; click to cycle</em>
   </div>
 </div>
@@ -2888,8 +2886,8 @@
   </button>
   <div class="dbg-tip" role="tooltip">
     <b>Exempt Levels</b>
-    <span><b style="font-size:12px">Separate</b> &mdash; Each logic level stays on its own. Example: a moon has Casual: Backflip and Advanced: Dive + Cap Throw. You exempt Backflip &rarr; Casual reads Free, but the Advanced route is still listed below it.</span>
-    <span><b style="font-size:12px">Fold Up</b> &mdash; Harder levels fold away once an easier one is Free. Example: same moon, same exemption &rarr; Casual is Free, so the Advanced and Expert routes are hidden with a note, since you&rsquo;d never need them.</span>
+    <span><b style="font-size:12px">Separate</b> &mdash; Every logic level stays listed.</span>
+    <span><b style="font-size:12px">Fold Up</b> &mdash; Harder levels are hidden once an easier one is Free.</span>
     <em>Currently: <span id="exemptLevelsStateTip">Fold Up</span> &middot; click to toggle</em>
   </div>
 </div>
@@ -2901,7 +2899,7 @@
   </button>
   <div class="dbg-tip" role="tooltip">
     <b>Jump Group Filters</b>
-    <span>Adds a lime section under Bonus Abilities in the Ability filters with the grouped Any Grounded tiles.</span>
+    <span>Adds the Any Grounded tiles to the Ability filters.</span>
     <em>Currently: <span id="jumpGroupStateTip">Off</span> &middot; click to toggle</em>
   </div>
 </div>
@@ -2985,17 +2983,15 @@
 <div class="filter-bars" id="filterBars">
   <div class="filter-mode-tabs" id="filterModeTabs">
     <button type="button" class="filter-mode-tab active" id="filterModeCanDo" data-mode="cando">
-      <span class="filter-mode-icon" aria-hidden="true">✅</span>
       <span class="filter-mode-text">
         <span class="filter-mode-title">I Have This!</span>
-        <span class="filter-mode-subtitle">Mark what you already have as Free in the logic</span>
+        <span class="filter-mode-subtitle">Mark as Free</span>
       </span>
     </button>
     <button type="button" class="filter-mode-tab" id="filterModeUnlocks" data-mode="unlocks">
-      <span class="filter-mode-icon" aria-hidden="true">🔓</span>
       <span class="filter-mode-text">
         <span class="filter-mode-title">What Does This Unlock?</span>
-        <span class="filter-mode-subtitle">See every moon that uses what you picked</span>
+        <span class="filter-mode-subtitle">Moons that use your picks</span>
       </span>
     </button>
   </div>
@@ -3472,7 +3468,7 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Nut: true,
   Seed: true,
   GroundedHeight: true, GroundedNormal: true, GroundedHigh: true, // display-only merges; never filter tiles
-  GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true,
+  GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true, GroundedJumpCT: true,
   AnyVault: true, AnyCapThrowJump: true, GroundedNoCRJ: true,
   // AnyThrow is a real filter tile now (shown next to the four Cap throws); selecting it acts like selecting all four.
 };
@@ -3508,34 +3504,24 @@ const _SJ = ["SingleJump"], _CRJ = ["CapReturnJump"], _LJ = ["LongJump"], _BF = 
 const _NV = ["NeutralThrow", "Vault"], _DV = ["DownThrow", "Vault"], _GPJ = ["GroundPoundJump"];
 const GH_TIERS = [
   { token: "GroundedHeightGP", label: "Any Grounded Height + Ground Pound Jump", cls: "any-height-gp", cycle: "cycle-9", badge: "+GP", plusGP: true, seconds: 11.25,
-    desc: "Same as Any Grounded Height, plus Ground Pound Jump",
     methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV, _GPJ] },
   { token: GH_TOKEN, label: "Any Grounded Height", cls: "any-grounded", cycle: "cycle-8", badge: "HEIGHT", seconds: 10, iconFirst: "LongJump",
-    desc: "Every grounded way to gain height, including the throw + Vault routes",
     methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
   { token: GH_NORMAL_TOKEN, label: "Any Grounded Normal Jump", cls: "any-normal", cycle: "cycle-7", badge: "NO LJ", seconds: 10, crossed: "LongJump",
-    desc: "Same as Any Grounded Height, minus Long Jump",
     methods: [_SJ, _CRJ, _BF, _SP, _SF, _NV, _DV] },
   { token: GH_HIGH_TOKEN, label: "Any Grounded High Jump", cls: "any-high", cycle: "cycle-5", badge: "HIGH", seconds: 10, iconFirst: "SideFlip",
-    desc: "Only the high jumps: Backflip, Spin and Side Flip",
     methods: [_BF, _SP, _SF] },
   { token: "GroundedJumpGP", label: "Any Grounded Jump + Ground Pound Jump", cls: "any-jump-gp", cycle: "cycle-6", badge: "JUMP+GP", plusGP: true, seconds: 7.5, crossed: "AnyThrow", crossedLeft: true,
-    desc: "Plain grounded jumps plus Ground Pound Jump; no Cap Return Jump or throw needed",
     methods: [_SJ, _LJ, _BF, _SP, _SF, _GPJ] },
-  { token: "GroundedJumpCT", label: "Any Grounded Jump", cls: "any-jump-ct", cycle: "cycle-6", badge: "JUMPS", plusIcon: "AnyCapThrowJump", plusTitle: "Includes Cap Throw Jump", seconds: 7.5,
-    desc: "Plain grounded jumps plus Cap Throw Jump",
+  { token: "GroundedJumpCT", label: "Any Grounded Jump", cls: "any-jump-ct", cycle: "cycle-6", badge: "JUMPS", iconFirst: "CapReturnJump", seconds: 7.5,
     methods: [_SJ, _LJ, _BF, _SP, _SF, _CRJ] },
   { token: "GroundedJump", label: "Any Grounded Jump (No Cap Throw)", cls: "any-jump", cycle: "cycle-5", badge: "JUMPS", seconds: 6.25, crossed: "AnyThrow", crossedLeft: true,
-    desc: "Plain grounded jumps only; no Cap Return Jump or throw needed",
     methods: [_SJ, _LJ, _BF, _SP, _SF] },
   { token: "AnyVault", label: "Any Vault", cls: "any-vault", cycle: "cycle-2", badge: "VAULT", seconds: 2.5,
-    desc: "Either throw + Vault route",
     methods: [_NV, _DV] },
   { token: "AnyCapThrowJump", label: "Any Cap Throw Jump", cls: "any-capthrow", cycle: "cycle-3", badge: "CAP", seconds: 3.75,
-    desc: "Cap Return Jump or either throw + Vault route",
     methods: [_CRJ, _NV, _DV] },
   { token: "GroundedNoCRJ", label: "Any Grounded Height without Cap Return Jump", cls: "any-nocrj", cycle: "cycle-7", badge: "NO CRJ", seconds: 8.75, crossed: "CapReturnJump",
-    desc: "Same as Any Grounded Height, minus Cap Return Jump",
     methods: [_SJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
 ];
 // ---- Jump Group on/off switches: 1 = enabled, 0 = disabled ----------------------------------
@@ -7877,11 +7863,11 @@ function makeIcon(token, opts){
       const ar = document.createElement("span"); ar.className = "prog-arrow"; ar.textContent = "\u25B2"; cb.appendChild(ar);
       wrap.appendChild(cb);
     }
-    if(ghT.plusGP || ghT.plusIcon){
+    if(ghT.plusGP){
       const pb = document.createElement("span");
-      pb.className = "prog-badge prog-plus" + (ghT.plusIcon ? " prog-plus-cap" : "");
-      pb.title = ghT.plusTitle || "Includes Ground Pound Jump";
-      pb.appendChild(makeProgImg(ghT.plusIcon || "GroundPoundJump"));
+      pb.className = "prog-badge prog-plus";
+      pb.title = "Includes Ground Pound Jump";
+      pb.appendChild(makeProgImg("GroundPoundJump"));
       const ar = document.createElement("span"); ar.className = "prog-arrow"; ar.textContent = "+"; pb.appendChild(ar);
       wrap.appendChild(pb);
     }
@@ -10377,7 +10363,7 @@ function updateFilterSummary(){
   summaryEl.dataset.mode = filterMode;
   if(requireAllActive()){
     summaryEl.style.display = "block";
-    summaryEl.textContent = "🎮 Preset: only moons with a route that needs ALL of " + joinWithAnd(abilityNames.concat(captureNames)) + " together.";
+    summaryEl.textContent = "Moons with a route needing all of " + joinWithAnd(abilityNames.concat(captureNames)) + ".";
     return;
   }
   const parts = [];
@@ -10389,7 +10375,7 @@ function updateFilterSummary(){
   }
   parts.push(exempt ? "Removed from the logic below." : "What does that specifically unlock for me?");
   summaryEl.style.display = "block";
-  summaryEl.textContent = "🎮 " + parts.join(" ");
+  summaryEl.textContent = parts.join(" ");
 }
 
 // The two filter bars (Ability, Capture) are merged into a single
@@ -10582,8 +10568,8 @@ function setupMergedFilterBar(tokens){
     cap.className = "filter-sel-caption";
     const allMode = typeof requireAllActive === "function" && requireAllActive();
     cap.textContent = exempt
-      ? "✅ Marked as Free (hidden from the logic):"
-      : (allMode ? "🔓 Showing moons with a route needing ALL of:" : "🔓 Showing moons that use ANY of:");
+      ? "Marked as Free:"
+      : (allMode ? "Moons needing all of:" : "Moons using any of:");
     chipsEl.appendChild(cap);
     if(none){
       const empty = document.createElement("span");
