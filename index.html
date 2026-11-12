@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityUpThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1932,6 +1932,8 @@
   /* ---- Shared requirement header ("This moon requires X. Beyond this…") --
      Original boxed look, scaled down. */
   .hoist-wrap{ width:100%; display:flex; flex-direction:column; gap:3px; }
+  .origin-wrap{ width:100%; display:flex; flex-direction:column; gap:4px; }
+  .origin-head{ display:flex; align-items:center; }
   .hoist-head{
     display:flex; flex-direction:column; align-items:flex-start; gap:3px;
     align-self:flex-start; width:fit-content; max-width:100%;
@@ -8550,6 +8552,7 @@ function buildMovementOptions(moon, boxed){
   // Access Point cards (Checkpoints / Paintings / Subarea Entrances) use the same rule, with 2+ methods.
   const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(mLanes, moon.name, (moon.isCheckpointNode || moon.isAccessPoint) ? 2 : undefined);
   const hoistSet = hoistedFormSet(hoisted);
+  const sharedOrigin = sharedOriginOf(mLanes);
 
   mLanes.forEach(lane => {
     const laneEl = document.createElement("div");
@@ -8586,7 +8589,7 @@ function buildMovementOptions(moon, boxed){
         chip.dataset.slot = slotOf(andGroup, i);
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
         attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
-        if(andGroup.origin){
+        if(andGroup.origin && !sharedOrigin){
           const otag = document.createElement("span");
           otag.className = "origin-tag";
           otag.textContent = "From " + andGroup.origin;
@@ -8635,7 +8638,7 @@ function buildMovementOptions(moon, boxed){
         tag.textContent = scenarioLabel;
         chip.appendChild(tag);
       }
-      if(andGroup.origin){
+      if(andGroup.origin && !sharedOrigin){
         // This method only applies when approaching from a specific node
         // (e.g. "From Wedding Hall") — see buildNodeReachIndex.
         const otag = document.createElement("span");
@@ -8661,7 +8664,7 @@ function buildMovementOptions(moon, boxed){
   // slice of the second under a fade, and an expand toggle pinned to the
   // box's own top-right corner.
   const totalOptions = mLanes.reduce((sum, lane) => sum + lane.groups.length - exemptHiddenCount(mLanes, lane), 0);
-  return wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions), hoisted, "moon");
+  return wrapWithOriginHeader(wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions), hoisted, "moon"), sharedOrigin);
 }
 
 /* =========================================================
@@ -9215,6 +9218,38 @@ function wrapWithHoistHeader(body, hoisted, noun){
   const wrap = document.createElement("div");
   wrap.className = "hoist-wrap";
   wrap.appendChild(buildHoistHeader(hoisted, noun));
+  wrap.appendChild(body);
+  return wrap;
+}
+
+// When EVERY visible method of a node/moon comes from the same single origin
+// (e.g. a Custom Node only tracked from "Fossil Falls Heights"), return that
+// origin so it can be stated once at the top instead of on each chip.
+function sharedOriginOf(lanes){
+  let found = null, count = 0;
+  for(const lane of lanes){
+    for(const g of lane.groups){
+      if(exemptHides(lane, g) || exemptSubsumedBy(lanes, lane, g)) continue;
+      if(!g.origin) return null;
+      if(found === null) found = g.origin;
+      else if(found !== g.origin) return null;
+      count++;
+    }
+  }
+  return count ? found : null;
+}
+function wrapWithOriginHeader(body, origin){
+  if(!origin) return body;
+  const wrap = document.createElement("div");
+  wrap.className = "origin-wrap";
+  const head = document.createElement("div");
+  head.className = "origin-head";
+  const tag = document.createElement("span");
+  tag.className = "origin-tag";
+  tag.textContent = "From " + origin;
+  tag.title = "Every route here starts from the " + origin + " node";
+  head.appendChild(tag);
+  wrap.appendChild(head);
   wrap.appendChild(body);
   return wrap;
 }
@@ -10977,6 +11012,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
   stack.className = "tier-stack";
   const hoisted = hoistedTokensFor(tierLanes, moonName, noun === "entrance" ? undefined : 2);
   const hoistSet = hoistedFormSet(hoisted);
+  const sharedOrigin = sharedOriginOf(tierLanes);
   tierLanes.forEach(lane => {
     const laneEl = document.createElement("div");
     laneEl.className = "tier-lane " + lane.tier;
@@ -11015,7 +11051,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
         tag.textContent = scenarioLabel;
         chip.appendChild(tag);
       }
-      if(andGroup.origin){
+      if(andGroup.origin && !sharedOrigin){
         // This method only applies when approaching from a specific node
         // (e.g. "From Wedding Hall") — see buildNodeReachIndex.
         const otag = document.createElement("span");
@@ -11036,7 +11072,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
     stack.appendChild(laneEl);
   });
   const totalOptions = tierLanes.reduce((sum, lane) => sum + lane.groups.length - exemptHiddenCount(tierLanes, lane), 0);
-  return wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse), hoisted, noun || "node");
+  return wrapWithOriginHeader(wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse), hoisted, noun || "node"), sharedOrigin);
 }
 
 // Appends either a tiered requirement stack or a plain "Free" tag to
