@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDeath.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2879,6 +2879,19 @@
 </div>
 
 <div class="dbg-item">
+  <button class="corner-btn" id="exemptLevelsToggle" type="button" role="switch" aria-label="Exempt Levels: Fold Up or Separate">
+    <img class="btn-ic" src="icon/AbilityJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#8645;</span>'">
+    <span class="btn-txt"><b>Exempt Levels</b><small id="exemptLevelsBtnState">Fold Up</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip">
+    <b>Exempt Levels</b>
+    <span><b style="font-size:12px">Separate</b> &mdash; Each logic level stays on its own. Example: a moon has Casual: Backflip and Advanced: Dive + Cap Throw. You exempt Backflip &rarr; Casual reads Free, but the Advanced route is still listed below it.</span>
+    <span><b style="font-size:12px">Fold Up</b> &mdash; Harder levels fold away once an easier one is Free. Example: same moon, same exemption &rarr; Casual is Free, so the Advanced and Expert routes are hidden with a note, since you&rsquo;d never need them.</span>
+    <em>Currently: <span id="exemptLevelsStateTip">Fold Up</span> &middot; click to toggle</em>
+  </div>
+</div>
+
+<div class="dbg-item">
   <button class="corner-btn" id="jumpGroupToggle" type="button" aria-label="Show Jump Group Filters in the Ability filters">
     <img class="btn-ic" src="icon/AbilityJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9776;</span>'">
     <span class="btn-txt"><b>Jump Group Filters</b><small id="jumpGroupBtnState">Off</small></span>
@@ -2994,19 +3007,6 @@
       <button type="button" class="filter-bar-clear" id="tokenFilterClear" aria-label="Clear Ability/Capture filter" style="display:none;">&times;</button>
     </div>
     <div class="filter-bar-panel" id="tokenFilterPanel">
-      <div class="filter-section-heading">Exempt Levels</div>
-      <div class="exempt-levels" id="exemptLevels" role="radiogroup" aria-label="Exempt Levels mode">
-        <button type="button" class="exempt-opt" data-fold="0" role="radio">
-          <span class="exempt-opt-title">Separate</span>
-          <span class="exempt-opt-desc">Each logic level stays on its own.</span>
-          <span class="exempt-opt-ex"><b>Example:</b> a moon has Casual: <i>Backflip</i> and Advanced: <i>Dive + Cap Throw</i>. You exempt Backflip &rarr; Casual reads <i>Free</i>, but the Advanced route is still listed below it.</span>
-        </button>
-        <button type="button" class="exempt-opt" data-fold="1" role="radio">
-          <span class="exempt-opt-title">Fold Up</span>
-          <span class="exempt-opt-desc">Harder levels fold away once an easier one is Free.</span>
-          <span class="exempt-opt-ex"><b>Example:</b> same moon, same exemption &rarr; Casual is <i>Free</i>, so the Advanced and Expert routes are hidden with a note, since you'd never need them.</span>
-        </button>
-      </div>
       <div class="filter-section-heading">Abilities</div>
       <input type="text" class="filter-bar-search" id="abilityFilterSearch" placeholder="Search abilities…" autocomplete="off">
       <div class="filter-bar-grid" id="abilityFilterGrid"></div>
@@ -9095,9 +9095,14 @@ function sameScenarioData(a, b){
   if(!x || !y) return !x && !y;
   return x.length === y.length && x.every(n => y.includes(n));
 }
-// Option (Debug menu): Exempt! can fold the harder levels once an easier one is Free.
-let exemptRaiseLevels = false;   // default: levels stay separate
-try{ if(localStorage.getItem("exemptRaiseLevelsV2") === "1") exemptRaiseLevels = true; }catch(e){}
+// An unrestricted Free method covers everything; a restricted one only covers Scenarios it lists.
+function scenariosCover(f, g){
+  if(!f || !f.length) return true;
+  return !!g && g.length > 0 && g.every(n => f.includes(n));
+}
+// Option (Settings menu): Exempt! can fold the harder levels once an easier one is Free.
+let exemptRaiseLevels = true;   // default: Fold Up (Settings > Exempt Levels switches to Separate)
+try{ if(localStorage.getItem("exemptRaiseLevelsV3") === "0") exemptRaiseLevels = false; }catch(e){}
 function exemptSubsumedBy(lanes, lane, g){
   if(!exemptRaiseLevels) return null;
   const rank = EXEMPT_RANK[lane.tier];
@@ -9107,7 +9112,7 @@ function exemptSubsumedBy(lanes, lane, g){
     const r = EXEMPT_RANK[L.tier];
     if(r === undefined || r >= rank) return;
     const covers = (L.groups || []).some(f => f.length > 0 && exemptedDisplayGroup(f).length === 0
-      && (f.origin || null) === (g.origin || null) && sameScenarioData(f.scenarios, g.scenarios));
+      && (f.origin || null) === (g.origin || null) && scenariosCover(f.scenarios, g.scenarios));
     if(covers && (!best || r < EXEMPT_RANK[best.tier])) best = L;
   });
   return best;
@@ -10147,20 +10152,20 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     new MutationObserver(f).observe(gl, { childList:true, characterData:true, subtree:true }); f(); }
 })();
 
-// ---- Exempt Levels (lives in the Filters panel) ----
+// ---- Exempt Levels (Settings menu): Fold Up (default) / Separate ----
 (function(){
-  const wrap = document.getElementById("exemptLevels");
-  if(!wrap) return;
-  const sync = () => wrap.querySelectorAll(".exempt-opt").forEach(b => {
-    const on = (b.dataset.fold === "1") === exemptRaiseLevels;
-    b.classList.toggle("active", on); b.setAttribute("aria-checked", on ? "true" : "false");
-  });
-  sync();
-  wrap.addEventListener("click", e => {
-    const b = e.target.closest(".exempt-opt"); if(!b) return;
-    exemptRaiseLevels = b.dataset.fold === "1";
-    try{ localStorage.setItem("exemptRaiseLevelsV2", exemptRaiseLevels ? "1" : "0"); }catch(err){}
-    sync(); renderGrid();
+  const b = document.getElementById("exemptLevelsToggle"); if(!b) return;
+  const st = document.getElementById("exemptLevelsBtnState"), tp = document.getElementById("exemptLevelsStateTip");
+  const paint = () => {
+    const t = exemptRaiseLevels ? "Fold Up" : "Separate";
+    b.setAttribute("aria-checked", exemptRaiseLevels ? "true" : "false");
+    st.textContent = t; tp.textContent = t;
+  };
+  paint();
+  b.addEventListener("click", () => {
+    exemptRaiseLevels = !exemptRaiseLevels;
+    try{ localStorage.setItem("exemptRaiseLevelsV3", exemptRaiseLevels ? "1" : "0"); }catch(err){}
+    paint(); renderGrid();
   });
 })();
 
