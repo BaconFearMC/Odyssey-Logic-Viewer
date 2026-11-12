@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilityUpThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1933,7 +1933,16 @@
      Original boxed look, scaled down. */
   .hoist-wrap{ width:100%; display:flex; flex-direction:column; gap:3px; }
   .origin-wrap{ width:100%; display:flex; flex-direction:column; gap:4px; }
-  .origin-head{ display:flex; align-items:center; }
+  .origin-strip{
+    display:flex; align-items:center; gap:8px; align-self:flex-start; max-width:100%;
+    padding:3px 12px 3px 6px; cursor:default;
+    background:rgba(230,194,0,.08); border:1px dashed var(--gold-light);
+    border-left:2px solid var(--gold); border-radius:2px;
+  }
+  .origin-strip img{ width:20px; height:20px; flex:none; opacity:.9; }
+  .origin-strip-text{ display:flex; flex-direction:column; min-width:0; line-height:1.2; text-align:left; }
+  .origin-strip-kind{ font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); opacity:.85; }
+  .origin-strip-name{ font-size:12px; color:var(--text); overflow-wrap:anywhere; }
   .hoist-head{
     display:flex; flex-direction:column; align-items:flex-start; gap:3px;
     align-self:flex-start; width:fit-content; max-width:100%;
@@ -9242,13 +9251,26 @@ function wrapWithOriginHeader(body, origin){
   if(!origin) return body;
   const wrap = document.createElement("div");
   wrap.className = "origin-wrap";
+  // Checkpoint-style strip (same icon + kind/name layout as a real Checkpoint
+  // strip) but visibly distinct: tinted, dashed accent, non-clickable.
   const head = document.createElement("div");
-  head.className = "origin-head";
-  const tag = document.createElement("span");
-  tag.className = "origin-tag";
-  tag.textContent = "From " + origin;
-  tag.title = "Every route here starts from the " + origin + " node";
-  head.appendChild(tag);
+  head.className = "origin-strip";
+  head.title = "Every route here starts from the " + origin + " node";
+  const img = document.createElement("img");
+  img.src = "icon/infocheckpoint.png";
+  img.alt = "Checkpoint";
+  img.onerror = function(){ this.style.display = "none"; };
+  head.appendChild(img);
+  const txt = document.createElement("span");
+  txt.className = "origin-strip-text";
+  const k = document.createElement("span");
+  k.className = "origin-strip-kind";
+  k.textContent = "Always from \u00b7 Checkpoint";
+  const n = document.createElement("span");
+  n.className = "origin-strip-name";
+  n.textContent = origin;
+  txt.appendChild(k); txt.appendChild(n);
+  head.appendChild(txt);
   wrap.appendChild(head);
   wrap.appendChild(body);
   return wrap;
