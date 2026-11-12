@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2767,15 +2767,15 @@
   .ss-kname{ font-size:14px; }
   .ss-khead .ss-btn.sm{ font-size:10.5px; padding:6px 8px; letter-spacing:.03em; }
   .ss-ksub{ position:static; border-top:1px solid var(--border); }
-  /* Settings button (bottom-left), Part 2 Groupings row, nav-rail Access node */
+  /* Settings button (bottom-left), Jump Group Filters row, nav-rail Access node */
   #debugToggle{ position:fixed !important; left:24px !important; bottom:24px !important; right:auto !important; top:auto !important; margin:0 !important; padding:7px 12px !important; z-index:21; }
   #debugToggle.active, #debugToggle[aria-expanded="true"]{ background:var(--red); border-color:#a52530; color:#fff; }
-  .part2-row{ margin-top:18px; padding:8px 12px 12px; border:2px solid #7da000; background:#a6d82a; color:#1b1c1f; }
-  .part2-row .filter-section-heading{ margin:0 0 8px; color:#1b1c1f; }
-  .part2-row[hidden]{ display:none; }
-  #part2Grid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; }
-  #part2Toggle{ background:#a6d82a; border-color:#7da000; color:#1b1c1f; }
-  #part2Toggle.active{ background:#c6f04a; }
+  .jumpgroup-row{ margin-top:18px; padding:8px 12px 12px; border:2px solid #7da000; background:#a6d82a; color:#1b1c1f; }
+  .jumpgroup-row .filter-section-heading{ margin:0 0 8px; color:#1b1c1f; }
+  .jumpgroup-row[hidden]{ display:none; }
+  #jumpGroupGrid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; }
+  #jumpGroupToggle{ background:#a6d82a; border-color:#7da000; color:#1b1c1f; }
+  #jumpGroupToggle.active{ background:#c6f04a; }
   #navRail .nr-node[data-target="access"]{ position:absolute; right:0; top:0; }
 </style>
 </head>
@@ -2850,7 +2850,7 @@
 </div>
 <div class="dbg-item">
   <button class="corner-btn active" id="glitchToggle" type="button" aria-label="Cycle Glitch Bible filter">
-    <img class="btn-ic" src="icon/AbilityRocketFlower.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9889;</span>'">
+    <img class="btn-ic" src="icon/AbilityGrab.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9889;</span>'">
     <span class="btn-txt"><b>Glitch Bible</b><small id="glitchBtnState">Hidden</small></span>
   </button>
   <div class="dbg-tip" role="tooltip">
@@ -2861,14 +2861,14 @@
 </div>
 
 <div class="dbg-item">
-  <button class="corner-btn" id="part2Toggle" type="button" aria-label="Show Part 2 Groupings in the Ability filters">
-    <span class="btn-ic btn-ic-fb" aria-hidden="true">&#9776;</span>
-    <span class="btn-txt"><b>Part 2 Groupings</b><small id="part2BtnState">Off</small></span>
+  <button class="corner-btn" id="jumpGroupToggle" type="button" aria-label="Show Jump Group Filters in the Ability filters">
+    <img class="btn-ic" src="icon/AbilityJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9776;</span>'">
+    <span class="btn-txt"><b>Jump Group Filters</b><small id="jumpGroupBtnState">Off</small></span>
   </button>
   <div class="dbg-tip" role="tooltip">
-    <b>Part 2 Groupings</b>
+    <b>Jump Group Filters</b>
     <span>Adds a lime section under Bonus Abilities in the Ability filters with Any Cap Throw and the grouped Any Grounded tiles.</span>
-    <em>Currently: <span id="part2StateTip">Off</span> &middot; click to toggle</em>
+    <em>Currently: <span id="jumpGroupStateTip">Off</span> &middot; click to toggle</em>
   </div>
 </div>
 
@@ -2999,9 +2999,9 @@
           <div class="filter-bar-grid" id="bonusRightGrid"></div>
         </div>
       </div>
-      <div class="part2-row" id="part2Row" hidden>
-        <div class="filter-section-heading">Part 2 Groupings</div>
-        <div id="part2Grid"></div>
+      <div class="jumpgroup-row" id="jumpGroupRow" hidden>
+        <div class="filter-section-heading">Jump Group Filters</div>
+        <div id="jumpGroupGrid"></div>
       </div>
       <div class="filter-section-heading">Captures</div>
       <input type="text" class="filter-bar-search" id="captureFilterSearch" placeholder="Search captures…" autocomplete="off">
@@ -10025,17 +10025,17 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   renderGrid();
 });
 
-// ---- Part 2 Groupings toggle (Settings menu) ----
+// ---- Jump Group Filters toggle (Settings menu) ----
 (function(){
-  const b = document.getElementById("part2Toggle"); if(!b) return;
-  try{ window.__part2Mode = localStorage.getItem("part2GroupingsV1") === "1"; }catch(e){ window.__part2Mode = false; }
-  const st = document.getElementById("part2BtnState"), tp = document.getElementById("part2StateTip");
-  const paint = () => { b.classList.toggle("active", !!window.__part2Mode); const t = window.__part2Mode ? "On" : "Off"; st.textContent = t; tp.textContent = t; };
+  const b = document.getElementById("jumpGroupToggle"); if(!b) return;
+  try{ window.__jumpGroupMode = localStorage.getItem("jumpGroupFiltersV1") === "1"; }catch(e){ window.__jumpGroupMode = false; }
+  const st = document.getElementById("jumpGroupBtnState"), tp = document.getElementById("jumpGroupStateTip");
+  const paint = () => { b.classList.toggle("active", !!window.__jumpGroupMode); const t = window.__jumpGroupMode ? "On" : "Off"; st.textContent = t; tp.textContent = t; };
   paint();
   b.addEventListener("click", () => {
-    window.__part2Mode = !window.__part2Mode;
-    try{ localStorage.setItem("part2GroupingsV1", window.__part2Mode ? "1" : "0"); }catch(e){}
-    if(!window.__part2Mode){
+    window.__jumpGroupMode = !window.__jumpGroupMode;
+    try{ localStorage.setItem("jumpGroupFiltersV1", window.__jumpGroupMode ? "1" : "0"); }catch(e){}
+    if(!window.__jumpGroupMode){
       selectedAbilities.delete(ANY_THROW_TOKEN);
       GH_TIERS.forEach(t => {});
     }
@@ -10459,12 +10459,12 @@ function setupMergedFilterBar(tokens){
     renderOptions("ability", right, selectedAbilities, bonusRightEl, abilitySearchEl.value);
     [bonusLeftEl, bonusRightEl].forEach(el => el.querySelectorAll(".filter-bar-none").forEach(n => n.remove()));
     bonusRowEl.hidden = !bonusLeftEl.children.length && !bonusRightEl.children.length;
-    const p2Row = document.getElementById("part2Row"), p2Grid = document.getElementById("part2Grid");
-    if(p2Row){
-      p2Row.hidden = !window.__part2Mode;
-      if(window.__part2Mode){
-        renderOptions("ability", [ANY_THROW_TOKEN].concat(GH_TIERS.map(t => t.token)).filter(t => ICON_MANIFEST[t]), selectedAbilities, p2Grid, abilitySearchEl.value);
-        p2Grid.querySelectorAll(".filter-bar-none").forEach(n => n.remove());
+    const jgRow = document.getElementById("jumpGroupRow"), jgGrid = document.getElementById("jumpGroupGrid");
+    if(jgRow){
+      jgRow.hidden = !window.__jumpGroupMode;
+      if(window.__jumpGroupMode){
+        renderOptions("ability", [ANY_THROW_TOKEN].concat(GH_TIERS.map(t => t.token)).filter(t => ICON_MANIFEST[t]), selectedAbilities, jgGrid, abilitySearchEl.value);
+        jgGrid.querySelectorAll(".filter-bar-none").forEach(n => n.remove());
       }
     }
   }
