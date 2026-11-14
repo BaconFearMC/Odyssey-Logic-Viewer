@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2798,33 +2798,28 @@
   #debugToggle{ position:fixed !important; left:24px !important; bottom:24px !important; right:auto !important; top:auto !important; margin:0 !important; padding:7px 12px !important; z-index:21; }
   #debugToggle.active, #debugToggle[aria-expanded="true"]{ background:var(--red); border-color:#a52530; color:#fff; }
   /* Exempt Levels + Group Filters buttons: hang under the Filter button while the Filters section is open. */
-  #filterSideBtns{ position:absolute; left:24px; top:112px; z-index:20; display:none; flex-direction:column; gap:10px; }
+  #filterSideBtns{ position:absolute; left:24px; top:108px; z-index:20; display:none; flex-direction:column; gap:8px; }
   #filterToggle.active ~ #filterSideBtns{ display:flex; }
   #filterSideBtns .corner-btn{ position:static; margin:0; }
-  @media (max-width:640px){ #filterSideBtns{ left:12px; top:100px; } }
+  #filterSideBtns .dbg-item .corner-btn{ height:38px !important; padding:0 10px 0 6px !important; gap:6px !important; }
+  #filterSideBtns .btn-ic{ width:24px; height:24px; min-width:24px; }
+  #filterSideBtns .btn-txt b{ font-size:11px; letter-spacing:.04em; }
+  #filterSideBtns .btn-txt small{ font-size:9.5px; }
+  @media (max-width:640px){ #filterSideBtns{ left:12px; top:96px; } #filterSideBtns .btn-txt b{ font-size:10.5px; } }
   body.ss-mode #filterSideBtns{ display:none !important; }
 
-  /* ---- Group Filters panel ---- */
-  .groupfilters{ margin-top:20px; padding:0 0 12px; border:2px solid #2f8f83; border-top-width:4px;
-    background:linear-gradient(180deg, rgba(25,184,166,0.16), rgba(25,184,166,0.04) 70%), var(--bg-panel);
-    clip-path:polygon(var(--cut-sm) 0,100% 0,100% calc(100% - var(--cut-sm)),calc(100% - var(--cut-sm)) 100%,0 100%,0 var(--cut-sm)); }
+  /* ---- Group Filters panel (same box style as Bonus Abilities, teal instead of gold) ---- */
+  .groupfilters{ margin-top:18px; padding:8px 12px 12px; border:2px dashed rgba(25,184,166,0.55); background:rgba(25,184,166,0.05); }
   .groupfilters[hidden]{ display:none; }
-  .gf-head{ display:flex; align-items:center; gap:10px; margin:0 0 10px; padding:7px 14px; background:#14383a; border-bottom:2px solid #2f8f83;
-    font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#7be0d2; }
-  .gf-head::before{ content:""; width:10px; height:10px; background:#19b8a6; transform:rotate(45deg); flex:none; }
-  .gf-head small{ margin-left:auto; font-size:10.5px; letter-spacing:.04em; text-transform:none; color:var(--text-dim); }
-  .gf-body{ padding:0 14px; display:flex; flex-direction:column; gap:14px; }
-  .gf-split{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:14px 24px; }
-  .gf-split .gf-row{ flex:0 1 auto; }
-  .gf-row{ --gf:#19b8a6; position:relative; padding:12px 12px 12px; background:rgba(0,0,0,0.22); border:1px solid color-mix(in srgb, var(--gf) 45%, transparent); border-left:4px solid var(--gf); }
+  .groupfilters > .filter-section-heading{ margin:0 0 6px; }
   .gf-row[hidden]{ display:none; }
-  .gf-row.gf-jumps{ --gf:#a6d82a; }
-  .gf-row.gf-vaults{ --gf:#f0a020; }
-  .gf-row.gf-extras{ --gf:#b98cff; }
-  .gf-label{ position:absolute; top:-9px; left:10px; padding:1px 8px; background:var(--gf); color:#14161a; font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
-    clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px); }
-  .gf-grid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; padding-top:4px; }
-  .gf-vaults .gf-grid, .gf-extras .gf-grid{ justify-content:flex-start; }
+  .gf-row + .gf-split{ margin-top:12px; }
+  .gf-label{ margin:0 0 8px; padding-bottom:3px; border-bottom:1px solid var(--border); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); text-align:left; }
+  .gf-split{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px 24px; }
+  .gf-grid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; }
+  .gf-vaults .gf-grid{ justify-content:flex-start; }
+  .gf-extras{ margin-left:auto; }
+  .gf-extras .gf-grid{ justify-content:flex-end; }
   #jumpGroupToggle.active{ background:#3f9d3f; border-color:#2c7a2c; color:#fff; }
   /* Moon-style grouped icons: native moon size so the chips match the main filter chips */
   .filter-option-icon.moon-icon{ overflow:visible; clip-path:none; border:none; box-shadow:none !important; }
@@ -2910,7 +2905,7 @@
 
 <div class="dbg-item">
   <button class="corner-btn" id="jumpGroupToggle" type="button" aria-label="Show Group Filters in the Ability filters">
-    <img class="btn-ic" src="icon/AbilityJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9776;</span>'">
+    <img class="btn-ic" src="icon/AbilityVault.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9776;</span>'">
     <span class="btn-txt"><b>Group Filters</b><small id="jumpGroupBtnState">Off</small></span>
   </button>
   <div class="dbg-tip" role="tooltip">
@@ -3059,13 +3054,11 @@
         </div>
       </div>
       <div class="groupfilters" id="jumpGroupRow" hidden>
-        <div class="gf-head">Group Filters<small>moons that show this exact grouped icon</small></div>
-        <div class="gf-body">
-          <div class="gf-row gf-jumps" id="gfJumpsRow"><span class="gf-label">Jumps</span><div class="gf-grid" id="gfJumpsGrid"></div></div>
-          <div class="gf-split">
-            <div class="gf-row gf-vaults"><span class="gf-label">Vaults</span><div class="gf-grid" id="gfVaultsGrid"></div></div>
-            <div class="gf-row gf-extras"><span class="gf-label">Extras</span><div class="gf-grid" id="gfExtrasGrid"></div></div>
-          </div>
+        <div class="filter-section-heading">Group Filters</div>
+        <div class="gf-row gf-jumps" id="gfJumpsRow"><div class="gf-label">Jumps</div><div class="gf-grid" id="gfJumpsGrid"></div></div>
+        <div class="gf-split">
+          <div class="gf-row gf-vaults"><div class="gf-label">Vaults</div><div class="gf-grid" id="gfVaultsGrid"></div></div>
+          <div class="gf-row gf-extras"><div class="gf-label">Extras</div><div class="gf-grid" id="gfExtrasGrid"></div></div>
         </div>
       </div>
       <div class="filter-section-heading">Captures</div>
@@ -3573,7 +3566,7 @@ const GH_TIERS = [
     methods: [_SJ, _LJ, _BF, _SP, _SF] },
   { token: "NormalJump", label: "Normal Jump", cls: "any-normaljump", cycle: "static", badge: "JUMP", seconds: 2.5, iconPair: [["SingleJump", "CapReturnJump"]],
     methods: [_SJ, _CRJ] },
-  { token: "ClassicCapJump", label: "Classic Cap Jump", cls: "any-classic", cycle: "static", badge: "CLASSIC", seconds: 2.5, iconPair: [["NeutralThrow", "Vault", "Dive"]], row: "vaults",
+  { token: "ClassicCapJump", label: "Classic Cap Jump", cls: "any-classic", cycle: "static", badge: "CLASSIC", seconds: 2.5, iconPair: [["Vault"]], row: "vaults",
     methods: [["NeutralThrow", "Vault", "Dive"]] },
   { token: "TortureCapJump", label: "Torture Cap Jumps", cls: "any-torture", cycle: "static", badge: "TORTURE", seconds: 2.5, iconPair: [["UpThrow", "Vault"]], row: "vaults",
     methods: [["UpThrow", "Vault"]] },
