@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2527,7 +2527,9 @@
     user-select:none; -webkit-user-select:none;
     opacity:0; pointer-events:none; transition:opacity .3s ease;
   }
-  #navRail.ready{ opacity:1; pointer-events:auto; }
+  #navRail.ready{ opacity:1; pointer-events:none; }
+  /* The rail box is wide and overlaps the cards; only its buttons catch taps so Node details etc. stay clickable. */
+  #navRail.ready .nr-node{ pointer-events:auto; }
   .nr-node{
     position:relative; z-index:2; display:flex; align-items:center; gap:9px; margin:0; padding:0; background:none; border:0; cursor:pointer;
     font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim);
