@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2260,6 +2260,8 @@
   .icon-wrap.any-throw::after{ color:#fff; }
   .icon-wrap.any-grounded{ --any-acc:#19b8a6; }
   .icon-wrap.any-normal{ --any-acc:#8fd0ff; }
+  .icon-wrap.any-normaljump{ --any-acc:#e0679a; }
+  .icon-wrap.any-normaljump::after{ color:#fff; }
   .icon-wrap.any-high{ --any-acc:#2347b5; }
   .icon-wrap.any-high::after{ color:#fff; }
   .icon-wrap.any-height-gp, .icon-wrap.any-jump-gp{ --any-acc:var(--any-amber); }
@@ -3370,6 +3372,7 @@ let ICON_MANIFEST = {
   AnyThrow: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw", color:"#34406e", category:"Movement", tokenType:"ability" },
   // Display-only merge of every grounded-height method (see GH_* below).
   GroundedHeight: { filenames:["AbilityJump.png"], label:"Any Grounded Height", color:"#0f8f84", category:"Movement", tokenType:"ability" },
+  NormalJump: { filenames:["AbilityJump.png"], label:"Normal Jump", color:"#e0679a", category:"Movement", tokenType:"ability" },
   GroundedNormal: { filenames:["AbilityJump.png"], label:"Any Grounded Normal Jump", color:"#5aa9e6", category:"Movement", tokenType:"ability" },
   GroundedHigh: { filenames:["AbilitySideFlip.png"], label:"Any Grounded High Jump", color:"#1f3a8a", category:"Movement", tokenType:"ability" },
   // Further display-only grounded groupings (see GH_TIERS). Never filter tiles.
@@ -3468,7 +3471,7 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Nut: true,
   Seed: true,
   GroundedHeight: true, GroundedNormal: true, GroundedHigh: true, // display-only merges; never filter tiles
-  GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true, GroundedJumpCT: true,
+  GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true, GroundedJumpCT: true, NormalJump: true,
   AnyVault: true, AnyCapThrowJump: true, GroundedNoCRJ: true,
   // AnyThrow is a real filter tile now (shown next to the four Cap throws); selecting it acts like selecting all four.
 };
@@ -3513,10 +3516,12 @@ const GH_TIERS = [
     methods: [_BF, _SP, _SF] },
   { token: "GroundedJumpGP", label: "Any Grounded Jump + Ground Pound Jump", cls: "any-jump-gp", cycle: "cycle-6", badge: "JUMP+GP", plusGP: true, seconds: 7.5, crossed: "AnyThrow", crossedLeft: true,
     methods: [_SJ, _LJ, _BF, _SP, _SF, _GPJ] },
-  { token: "GroundedJumpCT", label: "Any Grounded Jump", cls: "any-jump-ct", cycle: "cycle-6", badge: "JUMPS", iconFirst: "CapReturnJump", seconds: 7.5,
-    methods: [_SJ, _LJ, _BF, _SP, _SF, _CRJ] },
+  { token: "GroundedJumpCT", label: "Any Grounded Jump", cls: "any-jump-ct", cycle: "cycle-6", badge: "JUMPS", seconds: 7.5,
+    methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF] },
   { token: "GroundedJump", label: "Any Grounded Jump (No Cap Throw)", cls: "any-jump", cycle: "cycle-5", badge: "JUMPS", seconds: 6.25, crossed: "AnyThrow", crossedLeft: true,
     methods: [_SJ, _LJ, _BF, _SP, _SF] },
+  { token: "NormalJump", label: "Normal Jump", cls: "any-normaljump", cycle: "static", badge: "JUMP", seconds: 2.5, iconPair: [["SingleJump", "CapReturnJump"]],
+    methods: [_SJ, _CRJ] },
   { token: "AnyVault", label: "Any Vault", cls: "any-vault", cycle: "cycle-2", badge: "VAULT", seconds: 2.5,
     methods: [_NV, _DV] },
   { token: "AnyCapThrowJump", label: "Any Cap Throw Jump", cls: "any-capthrow", cycle: "cycle-3", badge: "CAP", seconds: 3.75,
@@ -3534,6 +3539,7 @@ const JUMP_GROUP_ENABLED = {
   GroundedJumpGP:   0,   // Any Grounded Jump + Ground Pound Jump
   GroundedJumpCT:   1,   // Any Grounded Jump (includes Cap Throw Jump)
   GroundedJump:     1,   // Any Grounded Jump (No Cap Throw)
+  NormalJump:       1,   // Normal Jump (Jump + Cap Return Jump)
   AnyVault:         1,   // Any Vault
   AnyCapThrowJump:  0,   // Any Cap Throw Jump
   GroundedNoCRJ:    0,   // Any Grounded Height without Cap Return Jump
@@ -3550,6 +3556,7 @@ function ghTier(token){ return GH_TIERS.find(t => t.token === token) || null; }
 function isGhToken(token){ return !!ghTier(token); }
 // Frames for the icon (static mode shows only the first one).
 function ghIconFrames(t){
+  if(t.iconPair) return t.iconPair; // one frame showing both icons together
   if(!t.iconFirst) return t.methods;
   const i = t.methods.findIndex(m => m.length === 1 && m[0] === t.iconFirst);
   return i > 0 ? [t.methods[i]].concat(t.methods.slice(0, i), t.methods.slice(i + 1)) : t.methods;
@@ -10010,7 +10017,7 @@ function applyFilterMatchHighlight(){
     }
     // Merged groupings: ring the individual frame that matches (e.g. its Cap Return Jump frame).
     if(isGhToken(tok)) el.querySelectorAll(".cycle-frame[data-toks]").forEach(fr => {
-      if(fr.dataset.toks.split("+").every(x => tokenIsSelected(x))) fr.classList.add("frame-match");
+      { const tl = fr.dataset.toks.split("+"); if(tok === "NormalJump" ? tl.some(x => tokenIsSelected(x)) : tl.every(x => tokenIsSelected(x))) fr.classList.add("frame-match"); }
     });
   });
 }
