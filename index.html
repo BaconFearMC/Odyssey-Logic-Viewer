@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2834,14 +2834,19 @@
   .filter-option-icon.moon-icon .prog-badge.prog-crossed, .filter-option-icon.moon-icon .prog-badge.prog-plus{ top:-14px; right:-14px; }
   #navRail .nr-node[data-target="access"]{ position:absolute; right:0; top:0; }
   /* ---- Boot intro + docked logo ---- */
-  #bootLogo{ position:fixed; top:12px; right:16px; width:150px; z-index:10001; pointer-events:none; transform-origin:100% 0; transition:transform 1.4s cubic-bezier(.65,0,.25,1); }
-  #bootLogo img{ display:block; width:100%; height:auto; max-height:90px; object-fit:contain; transform-origin:50% -40%; }
+  #bootLogo{ position:fixed; bottom:12px; right:16px; width:150px; z-index:10001; pointer-events:none; transform-origin:100% 100%; transition:transform 1.4s cubic-bezier(.65,0,.25,1); }
+  #bootLogo img{ display:block; width:100%; height:auto; max-height:90px; object-fit:contain; transform-origin:50% 50%; }
   #bootLogo.rocking img{ animation:bootRock 3s ease-in-out 1; }
-  #bootSplash{ position:fixed; inset:0; z-index:10000; background:var(--bg); overflow:hidden; transition:opacity 1.2s ease; }
-  #bootSplash.fade{ opacity:0; pointer-events:none; }
+  #bootLogo.docked img{ animation:bootSway 4.5s ease-in-out infinite; }
+  @property --bootR{ syntax:'<percentage>'; inherits:false; initial-value:0%; }
+  #bootSplash{ position:fixed; inset:0; z-index:10000; background:var(--bg); overflow:hidden; }
+  /* Fade-out reveals the page from the middle first, then out to the sides. */
+  #bootSplash.fade{ pointer-events:none; -webkit-mask-image:radial-gradient(circle at 50% 50%, transparent var(--bootR), #000 calc(var(--bootR) + 30%)); mask-image:radial-gradient(circle at 50% 50%, transparent var(--bootR), #000 calc(var(--bootR) + 30%)); animation:bootReveal 1.7s ease-in forwards; }
+  @keyframes bootReveal{ from{ --bootR:0%; } to{ --bootR:100%; } }
   #bootSpinWrap{ position:absolute; top:50%; left:50%; width:2048px; height:2048px; margin:-1024px 0 0 -1024px; }
   #bootSpinWrap img{ display:block; width:2048px; height:2048px; max-width:none; animation:bootSpin 14s linear infinite; }
   @keyframes bootSpin{ to{ transform:rotate(360deg); } }
+  @keyframes bootSway{ 0%{ transform:rotate(0); } 25%{ transform:rotate(3deg); } 50%{ transform:rotate(0); } 75%{ transform:rotate(-3deg); } 100%{ transform:rotate(0); } }
   @keyframes bootRock{ 0%{ transform:rotate(0); } 25%{ transform:rotate(10deg); } 50%{ transform:rotate(0); } 75%{ transform:rotate(-10deg); } 100%{ transform:rotate(0); } }
   @media (prefers-reduced-motion:reduce){ #bootSpinWrap img{ animation-duration:60s; } }
 </style>
@@ -2856,7 +2861,7 @@
    first click/key press, so it starts on the first interaction in that case. */
 const BOOT_INTRO_ENABLED = 1;
 const BOOT_HOLD_MS = 3000;
-const BOOT_AUDIO_FILE = "assets/boot/audio/Boot.wav";
+const BOOT_AUDIO_FILE = "assets/boot/audio/bootSound.wav";
 /* ============ PAGE SOUNDS ============
    1 = play assets/boot/audio/<name> when changing kingdom pages. 0 = silent. */
 const PAGE_SOUNDS_ENABLED = 1;
@@ -2893,7 +2898,7 @@ const PAGE_SOUNDS_ENABLED = 1;
   li.onerror = function(){ logo.style.display = "none"; };
   logo.appendChild(li);
   document.body.appendChild(logo);
-  if(!boot) return;
+  if(!boot){ logo.classList.add("docked"); return; }
 
   var splash = document.createElement("div");
   splash.id = "bootSplash";
@@ -2903,47 +2908,56 @@ const PAGE_SOUNDS_ENABLED = 1;
   wrap.appendChild(bg); splash.appendChild(wrap);
   document.body.appendChild(splash);
 
-  var done = false, timer = null;
+  var done = false, timer = null, audio = null, started = false;
   function finish(){
     if(done) return; done = true;
     clearTimeout(timer);
     logo.classList.remove("rocking");
+    logo.classList.add("docked");
     logo.style.transition = "";
     logo.style.transform = "none";
     splash.classList.add("fade");
-    setTimeout(function(){ if(splash.parentNode) splash.parentNode.removeChild(splash); }, 1400);
+    fadeAudioOut(1700);
+    setTimeout(function(){ if(splash.parentNode) splash.parentNode.removeChild(splash); }, 1900);
   }
   splash.addEventListener("click", finish);
   var begun = false;
   function begin(){
     if(begun || done) return; begun = true;
-    // Big, centered start: scale the docked logo up (origin = its top-right corner) and move it to the middle.
-    var BIG = Math.min(window.innerWidth * 0.8, 640);
+    // Big, centered start: scale the docked logo up (origin = its bottom-right corner) and move it to the middle.
+    var BIG = Math.min(window.innerWidth * 0.9, 760);
     var w = logo.offsetWidth || 150, s = BIG / w, r = logo.getBoundingClientRect();
     var tx = window.innerWidth / 2 + (w * s) / 2 - r.right;
-    var ty = window.innerHeight / 2 - (r.height * s) / 2 - r.top;
+    var ty = window.innerHeight / 2 + (r.height * s) / 2 - r.bottom;
     logo.style.transition = "none";
     logo.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + s + ")";
     logo.classList.add("rocking");
     void logo.offsetWidth;
     logo.style.transition = "";
     timer = setTimeout(finish, BOOT_HOLD_MS);
+    startAudio();
   }
   if(li.complete && li.naturalWidth) begin(); else { li.addEventListener("load", begin); setTimeout(begin, 1500); }
-  var audio = null, started = false;
   function startAudio(){
-    if(!BOOT_AUDIO_FILE || started) return;
+    if(!BOOT_AUDIO_FILE || started || audio || done) return;
     try{
       audio = new Audio(BOOT_AUDIO_FILE);
       var p = audio.play();
       if(p && p.then){ p.then(function(){ started = true; }).catch(function(){
-        var once = function(){ document.removeEventListener("pointerdown", once, true); document.removeEventListener("keydown", once, true); if(!started){ try{ audio.play().then(function(){ started = true; }).catch(function(){}); }catch(e){} } };
+        var once = function(){ document.removeEventListener("pointerdown", once, true); document.removeEventListener("keydown", once, true); if(!started && !done){ try{ audio.play().then(function(){ started = true; }).catch(function(){}); }catch(e){} } };
         document.addEventListener("pointerdown", once, true); document.addEventListener("keydown", once, true);
       }); }
     }catch(e){}
   }
-  startAudio();
-
+  function fadeAudioOut(ms){
+    if(!audio) return;
+    var a = audio, v0 = a.volume, t0 = Date.now();
+    var iv = setInterval(function(){
+      var k = Math.min(1, (Date.now() - t0) / ms);
+      try{ a.volume = Math.max(0, v0 * (1 - k)); }catch(e){}
+      if(k >= 1){ clearInterval(iv); try{ a.pause(); }catch(e){} }
+    }, 50);
+  }
 })();
 </script>
 
@@ -10301,7 +10315,7 @@ function rebuildKingdomTabs(){
     dot.dataset.kingdom = name;
     dot.title = name;
     dot.setAttribute("aria-label", name);
-    dot.onclick = () => { if(window.pageSnd) pageSnd.play("UiTurnPage"); renderKingdom(name); };
+    dot.onclick = () => { if(window.pageSnd) pageSnd.play("UiDecide"); renderKingdom(name); };
     dots.appendChild(dot);
   });
 }
@@ -10309,7 +10323,7 @@ function rebuildKingdomTabs(){
 function goToRelativeKingdom(delta){
   if(KINGDOM_ORDER.length === 0) return;
   const next = (currentKingdomIndex + delta + KINGDOM_ORDER.length) % KINGDOM_ORDER.length;
-  if(window.pageSnd) pageSnd.play("UiTurnPage");
+  if(window.pageSnd) pageSnd.play("UiDecide");
   renderKingdom(KINGDOM_ORDER[next]);
 }
 
