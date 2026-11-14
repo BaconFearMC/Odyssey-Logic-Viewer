@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityUpThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2863,6 +2863,9 @@
    corner, no boot sound and no page sounds. */
 const BOOT_ENABLED = 0;
 const BOOT_INTRO_ENABLED = 1;
+/* LOGO SWITCH (independent of BOOT_ENABLED): 1 = the Randomizer logo sits swaying in the bottom right corner,
+   0 = no corner logo (an intro, if on, still uses it in the middle, then it disappears). */
+const BOOT_LOGO_ENABLED = 1;
 const BOOT_HOLD_MS = 3000;
 const BOOT_AUDIO_FILE = "assets/boot/audio/bootSound.wav";
 /* ============ PAGE SOUNDS ============
@@ -2888,10 +2891,10 @@ const PAGE_SOUNDS_ENABLED = 1;
   try{ Object.keys(FILES).forEach(function(k){ var a = new Audio(DIR + FILES[k]); a.preload = "auto"; cache[k] = a; }); }catch(e){}
 })();
 (function(){
-  if(!BOOT_ENABLED) return;
   var icon = document.querySelector('link[rel="icon"]');
   var ver = icon ? icon.getAttribute("href") : "";
-  var boot = !!BOOT_INTRO_ENABLED;
+  var boot = !!(BOOT_ENABLED && BOOT_INTRO_ENABLED);
+  if(!boot && !BOOT_LOGO_ENABLED) return;
   try{
     if(boot && localStorage.getItem("bootSeenIconV1") === ver) boot = false;
     if(boot) localStorage.setItem("bootSeenIconV1", ver);
@@ -2918,6 +2921,7 @@ const PAGE_SOUNDS_ENABLED = 1;
     clearTimeout(timer);
     logo.classList.remove("rocking");
     logo.classList.add("docked");
+    if(!BOOT_LOGO_ENABLED) logo.style.display = "none";
     logo.style.transition = "";
     logo.style.transform = "none";
     splash.classList.add("fade");
