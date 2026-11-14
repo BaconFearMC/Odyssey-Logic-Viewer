@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2833,9 +2833,119 @@
   .filter-option-icon.moon-icon .prog-badge .prog-icon.prog-any, .filter-option-icon.moon-icon .frame-chip .prog-icon{ width:19px; height:19px; }
   .filter-option-icon.moon-icon .prog-badge.prog-crossed, .filter-option-icon.moon-icon .prog-badge.prog-plus{ top:-14px; right:-14px; }
   #navRail .nr-node[data-target="access"]{ position:absolute; right:0; top:0; }
+  /* ---- Boot intro + docked logo ---- */
+  #bootLogo{ position:fixed; top:12px; right:16px; width:150px; z-index:10001; pointer-events:none; transform-origin:100% 0; transition:transform 1.4s cubic-bezier(.65,0,.25,1); }
+  #bootLogo img{ display:block; width:100%; height:auto; max-height:90px; object-fit:contain; transform-origin:50% -40%; }
+  #bootLogo.rocking img{ animation:bootRock 3s ease-in-out 1; }
+  #bootSplash{ position:fixed; inset:0; z-index:10000; background:var(--bg); overflow:hidden; transition:opacity 1.2s ease; }
+  #bootSplash.fade{ opacity:0; pointer-events:none; }
+  #bootSpinWrap{ position:absolute; top:50%; left:50%; width:2048px; height:2048px; margin:-1024px 0 0 -1024px; }
+  #bootSpinWrap img{ display:block; width:2048px; height:2048px; max-width:none; animation:bootSpin 14s linear infinite; }
+  @keyframes bootSpin{ to{ transform:rotate(360deg); } }
+  @keyframes bootRock{ 0%{ transform:rotate(0); } 25%{ transform:rotate(10deg); } 50%{ transform:rotate(0); } 75%{ transform:rotate(-10deg); } 100%{ transform:rotate(0); } }
+  @media (prefers-reduced-motion:reduce){ #bootSpinWrap img{ animation-duration:60s; } }
 </style>
 </head>
 <body class="ss-mode ss-home">
+<script>
+/* ============ BOOT INTRO + PAGE SOUNDS SWITCHES ============
+   1 = on the first visit (and whenever the <link rel="icon"> href changes) the Randomizer logo swings in
+       the middle of the screen over the spinning background, then slides to the top right.
+   0 = never show it (the logo still sits at the top right). Files live in assets/boot/.
+   BOOT_AUDIO_FILE: played once during the intro ("" = none). Browsers may block autoplay until the
+   first click/key press, so it starts on the first interaction in that case. */
+const BOOT_INTRO_ENABLED = 1;
+const BOOT_HOLD_MS = 3000;
+const BOOT_AUDIO_FILE = "assets/boot/audio/Boot.wav";
+/* ============ PAGE SOUNDS ============
+   1 = play assets/boot/audio/<name> when changing kingdom pages. 0 = silent. */
+const PAGE_SOUNDS_ENABLED = 1;
+/* Page sounds + boot intro. Inline on purpose (no extra .js file). Every call is wrapped so a missing
+   or blocked sound can never break whatever was clicked. Sound names/files come from the old wsnd table. */
+(function(){
+  var DIR = "assets/boot/audio/";
+  var FILES = { UiBack:"UiBack.wav", UiDecide:"UiDecide.wav", UiCursor:"UiCursor.wav", UiTurnPage:"UiTurnPage.wav", UiToModeSelect:"UiToModeSelect.wav" };
+  var cache = {};
+  window.pageSnd = {
+    play: function(name){
+      try{
+        if(!PAGE_SOUNDS_ENABLED || !FILES[name]) return;
+        var a = cache[name] || (cache[name] = new Audio(DIR + FILES[name]));
+        a.onerror = function(){ cache[name] = null; };
+        a.currentTime = 0;
+        var p = a.play(); if(p && p.catch) p.catch(function(){});
+      }catch(e){}
+    }
+  };
+  try{ Object.keys(FILES).forEach(function(k){ var a = new Audio(DIR + FILES[k]); a.preload = "auto"; cache[k] = a; }); }catch(e){}
+})();
+(function(){
+  var icon = document.querySelector('link[rel="icon"]');
+  var ver = icon ? icon.getAttribute("href") : "";
+  var boot = !!BOOT_INTRO_ENABLED;
+  try{
+    if(boot && localStorage.getItem("bootSeenIconV1") === ver) boot = false;
+    if(boot) localStorage.setItem("bootSeenIconV1", ver);
+  }catch(e){}
+  var logo = document.createElement("div");
+  logo.id = "bootLogo";
+  var li = new Image(); li.alt = "Randomizer"; li.src = "assets/boot/RandomizerLogo.png";
+  li.onerror = function(){ logo.style.display = "none"; };
+  logo.appendChild(li);
+  document.body.appendChild(logo);
+  if(!boot) return;
+
+  var splash = document.createElement("div");
+  splash.id = "bootSplash";
+  var wrap = document.createElement("div"); wrap.id = "bootSpinWrap";
+  var bg = new Image(); bg.alt = ""; bg.src = "assets/boot/RandomizerBackground.png";
+  bg.onerror = function(){ wrap.style.display = "none"; };
+  wrap.appendChild(bg); splash.appendChild(wrap);
+  document.body.appendChild(splash);
+
+  var done = false, timer = null;
+  function finish(){
+    if(done) return; done = true;
+    clearTimeout(timer);
+    logo.classList.remove("rocking");
+    logo.style.transition = "";
+    logo.style.transform = "none";
+    splash.classList.add("fade");
+    setTimeout(function(){ if(splash.parentNode) splash.parentNode.removeChild(splash); }, 1400);
+  }
+  splash.addEventListener("click", finish);
+  var begun = false;
+  function begin(){
+    if(begun || done) return; begun = true;
+    // Big, centered start: scale the docked logo up (origin = its top-right corner) and move it to the middle.
+    var BIG = Math.min(window.innerWidth * 0.8, 640);
+    var w = logo.offsetWidth || 150, s = BIG / w, r = logo.getBoundingClientRect();
+    var tx = window.innerWidth / 2 + (w * s) / 2 - r.right;
+    var ty = window.innerHeight / 2 - (r.height * s) / 2 - r.top;
+    logo.style.transition = "none";
+    logo.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + s + ")";
+    logo.classList.add("rocking");
+    void logo.offsetWidth;
+    logo.style.transition = "";
+    timer = setTimeout(finish, BOOT_HOLD_MS);
+  }
+  if(li.complete && li.naturalWidth) begin(); else { li.addEventListener("load", begin); setTimeout(begin, 1500); }
+  var audio = null, started = false;
+  function startAudio(){
+    if(!BOOT_AUDIO_FILE || started) return;
+    try{
+      audio = new Audio(BOOT_AUDIO_FILE);
+      var p = audio.play();
+      if(p && p.then){ p.then(function(){ started = true; }).catch(function(){
+        var once = function(){ document.removeEventListener("pointerdown", once, true); document.removeEventListener("keydown", once, true); if(!started){ try{ audio.play().then(function(){ started = true; }).catch(function(){}); }catch(e){} } };
+        document.addEventListener("pointerdown", once, true); document.addEventListener("keydown", once, true);
+      }); }
+    }catch(e){}
+  }
+  startAudio();
+
+})();
+</script>
 
 <!-- ===== SEARCH AND SELECT MODE (default view) ===== -->
 <div id="ssRoot" aria-label="Search and Select Mode">
@@ -3188,6 +3298,11 @@ const PYRAMID_LOGIC_ENABLED = 1;
 // >>> QUICK TOGGLE: 1 = clicking/opening the "Top of the Pyramid" node also lists the Lower + Upper Interior
 //     requirements (separate from PYRAMID_LOGIC_ENABLED), 0 = off.
 const TOP_PYRAMID_INTERIORS_ENABLED = 1;
+// >>> 1 = the "Disable Useless Filtering" setting button exists (and works), 0 = hidden and always off.
+const USELESS_FILTERING_ENABLED = 0;
+
+// Boot intro + page sound switches (BOOT_INTRO_ENABLED, BOOT_HOLD_MS, BOOT_AUDIO_FILE, PAGE_SOUNDS_ENABLED)
+// live at the very top of <body>, because that script has to run before anything else.
 /* ============ END SETTINGS ============ */
 
 /* =========================================================
@@ -3773,8 +3888,8 @@ const LOW_GRAVITY_PAGES = ["Moon Kingdom", "Dark Side", "Darker Side"];
 const BIG_CHOMP_TOKEN = "WanwanBig";
 const CHAIN_CHOMP_TOKEN = () => "Wanwan";
 let uselessFilterMode = false;
-try{ uselessFilterMode = localStorage.getItem("uselessFilterV1") === "1"; }catch(e){}
-function uselessFilterOn(){ return uselessFilterMode; }
+if(USELESS_FILTERING_ENABLED){ try{ uselessFilterMode = localStorage.getItem("uselessFilterV1") === "1"; }catch(e){} }
+function uselessFilterOn(){ return !!USELESS_FILTERING_ENABLED && uselessFilterMode; }
 // Matched against the token name and the label, lower-cased with punctuation removed.
 const USELESS_CAPTURE_RES = [
   /broode/, /binocular/, /moeeye|^megane$/, /cactus/, /knucklotec/, /minirocket/, /lakitu/, /zipper/,
@@ -3790,6 +3905,7 @@ function isUselessCapture(token){
   return USELESS_CAPTURE_RES.some(re => names.some(n => n && re.test(n)));
 }
 function syncUselessFold(){
+  if(!USELESS_FILTERING_ENABLED) return;
   // Big Chain Chomp is grouped under Chain Chomp: picking Chain Chomp also counts as Big Chain Chomp.
   if(uselessFilterMode) ABILITY_FILTER_FOLD_TOKENS[BIG_CHOMP_TOKEN] = CHAIN_CHOMP_TOKEN();
   else delete ABILITY_FILTER_FOLD_TOKENS[BIG_CHOMP_TOKEN];
@@ -10185,7 +10301,7 @@ function rebuildKingdomTabs(){
     dot.dataset.kingdom = name;
     dot.title = name;
     dot.setAttribute("aria-label", name);
-    dot.onclick = () => renderKingdom(name);
+    dot.onclick = () => { if(window.pageSnd) pageSnd.play("UiTurnPage"); renderKingdom(name); };
     dots.appendChild(dot);
   });
 }
@@ -10193,6 +10309,7 @@ function rebuildKingdomTabs(){
 function goToRelativeKingdom(delta){
   if(KINGDOM_ORDER.length === 0) return;
   const next = (currentKingdomIndex + delta + KINGDOM_ORDER.length) % KINGDOM_ORDER.length;
+  if(window.pageSnd) pageSnd.play("UiTurnPage");
   renderKingdom(KINGDOM_ORDER[next]);
 }
 
@@ -10257,6 +10374,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 // ---- Disable Useless Filtering toggle (Filters setting) ----
 (function(){
   const b = document.getElementById("uselessFilterToggle"); if(!b) return;
+  if(!USELESS_FILTERING_ENABLED){ const w = b.closest(".dbg-item"); if(w) w.style.display = "none"; return; }
   const st = document.getElementById("uselessFilterBtnState"), tp = document.getElementById("uselessFilterStateTip");
   const paint = () => { b.classList.toggle("active", uselessFilterMode); const t = uselessFilterMode ? "On" : "Off"; st.textContent = t; tp.textContent = t; };
   paint();
@@ -10817,7 +10935,7 @@ function setupMergedFilterBar(tokens){
         + (notImplemented ? " not-implemented" : "")
         + (incomplete ? " incomplete" : "")
         + (greyedOut ? " greyed-out" : "");
-      if(greyedOut) btn.title = wrongPage ? "Only used on the Moon Kingdom, Dark Side and Darker Side pages" : "Barely used (Disable Useless Filtering is on)";
+      if(greyedOut) btn.title = wrongPage ? "Only Available on Moon Kingdom(s)" : "Barely used (Disable Useless Filtering is on)";
       const iconWrap = document.createElement("div");
       iconWrap.className = "filter-option-icon";
       iconWrap.appendChild(makeFilterIconEl(token, ""));
