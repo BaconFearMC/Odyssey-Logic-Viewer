@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1731,6 +1731,9 @@
   .filter-option.not-implemented .filter-option-icon{
     filter:grayscale(1);
   }
+  .filter-option.greyed-out{ opacity:0.4; cursor:not-allowed; }
+  .filter-option.greyed-out:hover{ background:none; }
+  .filter-option.greyed-out .filter-option-icon{ filter:grayscale(1); }
   .not-implemented-toast{
     position:fixed;
     left:50%;
@@ -2914,6 +2917,18 @@
     <em>Currently: <span id="jumpGroupStateTip">Off</span> &middot; click to toggle</em>
   </div>
 </div>
+
+<div class="dbg-item">
+  <button class="corner-btn" id="uselessFilterToggle" type="button" aria-label="Disable Useless Filtering">
+    <img class="btn-ic" src="icon/AbilityDeath.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#8856;</span>'">
+    <span class="btn-txt"><b>Disable Useless Filtering</b><small id="uselessFilterBtnState">Off</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip">
+    <b>Disable Useless Filtering</b>
+    <span>Greys out barely-used Captures in the Filters. Big Chain Chomp is grouped under Chain Chomp instead.</span>
+    <em>Currently: <span id="uselessFilterStateTip">Off</span> &middot; click to toggle</em>
+  </div>
+</div>
 </div>
 
 <div id="debugPanel" role="menu" aria-label="Debug options">
@@ -3651,6 +3666,17 @@ function withGroundedMerge(tierLanes, kingdomName){
   GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t); });
   return cur;
 }
+// A selected Group Filter (Trickjumping, Any Vault, ...) moves its merged chip to the front of its lane.
+// Only the display order changes: each group keeps its own slot, so video lookups are unaffected.
+function promoteGroupFilters(lanes){
+  if(!lanes || !GH_TIERS.some(t => selectedAbilities.has(t.token))) return lanes;
+  const isSel = g => !!(g && g[0] && isGhToken(g[0]) && selectedAbilities.has(g[0]));
+  return lanes.map(lane => {
+    const groups = lane.groups || [];
+    if(!groups.some(isSel)) return lane;
+    return Object.assign({}, lane, { groups: groups.filter(isSel).concat(groups.filter(g => !isSel(g))) });
+  });
+}
 function mergeGroundedTier(tierLanes, tier){
   const GH_METHODS = tier.methods;
   let changed = false;
@@ -3742,12 +3768,39 @@ function mergeGroundedTier(tierLanes, tier){
 // "Turnip". This is what maps
 // each folded token to the filter option it's supposed to answer for, so
 // moonTokens()/applyFilterMatchHighlight() can treat them as equivalent.
+const LOW_GRAVITY_PAGES = ["Moon Kingdom", "Dark Side", "Darker Side"];
+// ---- Disable Useless Filtering (Filters setting) ----
+const BIG_CHOMP_TOKEN = "WanwanBig";
+const CHAIN_CHOMP_TOKEN = () => "Wanwan";
+let uselessFilterMode = false;
+try{ uselessFilterMode = localStorage.getItem("uselessFilterV1") === "1"; }catch(e){}
+function uselessFilterOn(){ return uselessFilterMode; }
+// Matched against the token name and the label, lower-cased with punctuation removed.
+const USELESS_CAPTURE_RES = [
+  /broode/, /binocular/, /moeeye|^megane$/, /cactus/, /knucklotec/, /minirocket/, /lakitu/, /zipper/,
+  /puzzlepart.*lake|^gotogotonlake$/, /poisonpiranha/, /firebro/, /coincoffer/, /^trees?$/, /boulder/,
+  /picturematch.*goomba/, /tropicalwiggler/, /^pole$/, /manhole/, /^taxi$/, /^rccar$/, /tyfoo/,
+  /shiverianracer/, /volbonan/, /hammerbro/, /^meat$/, /firepiranha/, /jizo/, /bowserstatue/,
+  /parabones/, /banzaibill/, /charginchuck/, /^bowser$/, /^letters?$/ , /^anagramalphabetcharacter$/,
+  /puzzlepart.*(metro|city)|^gotogotoncity$/, /picturematch.*mario/
+];
+function isUselessCapture(token){
+  const norm = x => String(x || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const names = [norm(token), norm(filterLabelFor(token)), norm(ICON_MANIFEST[token] && ICON_MANIFEST[token].label)];
+  return USELESS_CAPTURE_RES.some(re => names.some(n => n && re.test(n)));
+}
+function syncUselessFold(){
+  // Big Chain Chomp is grouped under Chain Chomp: picking Chain Chomp also counts as Big Chain Chomp.
+  if(uselessFilterMode) ABILITY_FILTER_FOLD_TOKENS[BIG_CHOMP_TOKEN] = CHAIN_CHOMP_TOKEN();
+  else delete ABILITY_FILTER_FOLD_TOKENS[BIG_CHOMP_TOKEN];
+}
 const ABILITY_FILTER_FOLD_TOKENS = {
   MinHp1: "HealthUp", MinHp2: "HealthUp", MinHp3: "HealthUp", MinHp4: "HealthUp", MinHp5: "HealthUp",
   Turnip: "Grab",
   Nut: "Grab",
   Seed: "Grab",
 };
+syncUselessFold();
 
 // Tokens whose category in the raw data doesn't match where they should
 // show up in the filter UI. Currently: Jaxi (Jaxi Riding) and Bike
@@ -3917,8 +3970,7 @@ function isTokenIncompleteHere(token){
 function isTokenIncompleteOn(token, kingdomName){
   if(token === ANY_THROW_TOKEN) return isTokenIncompleteOn("SingleJump", kingdomName); // follows Jump
   if(!INCOMPLETE_ABILITY_TOKENS[token]) return false;
-  // Cap Return Jump is unlocked by the Cap throws, so it is only Incomplete while ALL four throws are.
-  if(isCapReturnToken(token)) return ANY_THROW_MEMBERS.every(m => isTokenIncompleteOn(m, kingdomName));
+  // Cap Return Jump always shares Jump's state (same "jump" group): both say Incomplete, or neither does.
   const done = COMPLETE_ON_KINGDOM[kingdomName];
   let grp = incompleteGroupOf(token);
   if(grp === "death") grp = "health"; // Death follows Health: it only says Incomplete while Health does
@@ -8634,7 +8686,7 @@ function buildMovementOptions(moon, boxed){
   const stack = document.createElement("div");
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
   // Darker Side moons never use the shared "This moon requires X. Beyond this…" header.
-  const mLanes = withGroundedMerge(moon.tierLanes, moon.kingdom);
+  const mLanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes, moon.kingdom));
   // Access Point cards (Checkpoints / Paintings / Subarea Entrances) use the same rule, with 2+ methods.
   const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(mLanes, moon.name, (moon.isCheckpointNode || moon.isAccessPoint) ? 2 : undefined);
   const hoistSet = hoistedFormSet(hoisted);
@@ -10202,6 +10254,29 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   });
 })();
 
+// ---- Disable Useless Filtering toggle (Filters setting) ----
+(function(){
+  const b = document.getElementById("uselessFilterToggle"); if(!b) return;
+  const st = document.getElementById("uselessFilterBtnState"), tp = document.getElementById("uselessFilterStateTip");
+  const paint = () => { b.classList.toggle("active", uselessFilterMode); const t = uselessFilterMode ? "On" : "Off"; st.textContent = t; tp.textContent = t; };
+  paint();
+  b.addEventListener("click", () => {
+    uselessFilterMode = !uselessFilterMode;
+    try{ localStorage.setItem("uselessFilterV1", uselessFilterMode ? "1" : "0"); }catch(e){}
+    if(uselessFilterMode){
+      // Barely-used Captures can't stay selected; Big Chain Chomp folds into Chain Chomp.
+      Array.from(selectedCaptures).forEach(t => { if(isUselessCapture(t)) selectedCaptures.delete(t); });
+      if(selectedCaptures.has(BIG_CHOMP_TOKEN)){ selectedCaptures.delete(BIG_CHOMP_TOKEN); selectedCaptures.add(CHAIN_CHOMP_TOKEN()); }
+    }
+    syncUselessFold();
+    paint();
+    if(window.__refreshFilterPanels) window.__refreshFilterPanels();
+    if(window.__drawFilterChips) window.__drawFilterChips();
+    if(typeof updateFilterSummary === "function") updateFilterSummary();
+    renderGrid();
+  });
+})();
+
 // ---- Filter toggle (slides the Filters section in/out) + hover-tip state ----
 (function(){
   const btn = document.getElementById("filterToggle"), wrap = document.getElementById("filterWrap");
@@ -10437,8 +10512,13 @@ function updateFilterSummary(){
     return;
   }
   const parts = [];
-  if(abilityNames.length){
-    parts.push((exempt ? "Exempt the Abilit" : "I have the Abilit") + (abilityNames.length === 1 ? "y" : "ies") + " " + joinWithAnd(abilityNames) + ".");
+  const groupNames = FILTER_LIST_ABILITIES.concat(GH_TIERS.map(t => t.token).filter(t => FILTER_LIST_ABILITIES.indexOf(t) < 0)).filter(t => selectedAbilities.has(t) && isGhToken(t)).map(filterLabelFor);
+  const plainAbilityNames = abilityNames.filter(n => groupNames.indexOf(n) < 0);
+  if(groupNames.length){
+    parts.push((exempt ? "Exempt all the Abilities for " : "I have all the Abilities for ") + joinWithAnd(groupNames) + ".");
+  }
+  if(plainAbilityNames.length){
+    parts.push((exempt ? "Exempt the Abilit" : "I have the Abilit") + (plainAbilityNames.length === 1 ? "y" : "ies") + " " + joinWithAnd(plainAbilityNames) + ".");
   }
   if(captureNames.length){
     parts.push((exempt ? "Exempt the Capture" : "I have the Capture") + (captureNames.length === 1 ? "" : "s") + " " + joinWithAnd(captureNames) + ".");
@@ -10713,12 +10793,17 @@ function setupMergedFilterBar(tokens){
       return;
     }
     matches.forEach(token => {
+      if(kind === "capture" && uselessFilterOn() && token === BIG_CHOMP_TOKEN) return; // grouped under Chain Chomp
       const label = filterLabelFor(token);
       // Greyed out only in "I Have This!"; "What Does This Unlock?" lets them be picked.
       // The "Incomplete" label always shows; the grey-out/lock only applies outside it.
       const isIncomplete = kind === "ability" && isTokenIncompleteHere(token);
       const incomplete = false; // Incomplete tiles are fully usable (incl. exemption); only the badge remains
       const notImplemented = (kind === "ability" && NOT_IMPLEMENTED_ABILITY_TOKENS[token]) || incomplete;
+      // Greyed out: Moon Kingdom Low Gravity off the Moon pages, and (optional setting) barely-used Captures.
+      const wrongPage = kind === "ability" && token === "MoonLowGravity" && LOW_GRAVITY_PAGES.indexOf(KINGDOM_ORDER[currentKingdomIndex]) < 0;
+      const useless = kind === "capture" && uselessFilterOn() && isUselessCapture(token);
+      const greyedOut = (wrongPage || useless) && !notImplemented;
       const btn = document.createElement("button");
       btn.type = "button";
       const isSub = kind === "ability" && !!ABILITY_SUBTOKEN_PARENT[token];
@@ -10730,7 +10815,9 @@ function setupMergedFilterBar(tokens){
         + (hasSubmenu ? " has-submenu" : "")
         + ((selectedSet.has(token) || (kind === "ability" && subsSelected(token, selectedSet)) || (kind === "ability" && isGhToken(token) && ghTileOn(token))) ? " selected" : "")
         + (notImplemented ? " not-implemented" : "")
-        + (incomplete ? " incomplete" : "");
+        + (incomplete ? " incomplete" : "")
+        + (greyedOut ? " greyed-out" : "");
+      if(greyedOut) btn.title = wrongPage ? "Only used on the Moon Kingdom, Dark Side and Darker Side pages" : "Barely used (Disable Useless Filtering is on)";
       const iconWrap = document.createElement("div");
       iconWrap.className = "filter-option-icon";
       iconWrap.appendChild(makeFilterIconEl(token, ""));
@@ -10745,7 +10832,8 @@ function setupMergedFilterBar(tokens){
       iconBox.className = "filter-option-iconbox";
 
       iconBox.appendChild(iconWrap);
-      const progBadge = kind === "ability" ? makeProgressionBadge(token) : null;
+      const progBadge = kind === "ability" ? makeProgressionBadge(token)
+        : (kind === "capture" && uselessFilterOn() && token === CHAIN_CHOMP_TOKEN() ? makeProgressionBadge(token, [BIG_CHOMP_TOKEN]) : null);
       if(progBadge) iconBox.appendChild(progBadge);
       btn.appendChild(iconBox);
       const nameEl = document.createElement("span");
@@ -10778,7 +10866,14 @@ function setupMergedFilterBar(tokens){
         btn.appendChild(badge);
         if(incomplete) btn.setAttribute("aria-disabled", "true");
       }
-      if(notImplemented){
+      if(greyedOut){
+        // Not pickable, but an already-selected tile can still be switched off.
+        btn.addEventListener("click", () => {
+          if(!selectedSet.has(token)) return;
+          selectedSet.delete(token);
+          refreshImpliedTiles(); renderChips(); refreshOpenPanels(); updateFilterSummary(); renderGrid();
+        });
+      } else if(notImplemented){
         btn.title = incomplete ? "Incomplete" : "Not Implemented Yet";
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -11133,7 +11228,7 @@ function buildTierLanesFromBranches(branches){
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
 function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
-  tierLanes = withGroundedMerge(tierLanes);
+  tierLanes = promoteGroupFilters(withGroundedMerge(tierLanes));
   const stack = document.createElement("div");
   stack.className = "tier-stack";
   const hoisted = hoistedTokensFor(tierLanes, moonName, noun === "entrance" ? undefined : 2);
