@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2859,6 +2859,9 @@
    0 = never show it (the logo still sits at the top right). Files live in assets/boot/.
    BOOT_AUDIO_FILE: played once during the intro ("" = none). Browsers may block autoplay until the
    first click/key press, so it starts on the first interaction in that case. */
+/* MASTER SWITCH: 1 = everything below works as described, 0 = ALL of it is off: no boot intro, no logo in the
+   corner, no boot sound and no page sounds. */
+const BOOT_ENABLED = 1;
 const BOOT_INTRO_ENABLED = 1;
 const BOOT_HOLD_MS = 3000;
 const BOOT_AUDIO_FILE = "assets/boot/audio/bootSound.wav";
@@ -2874,7 +2877,7 @@ const PAGE_SOUNDS_ENABLED = 1;
   window.pageSnd = {
     play: function(name){
       try{
-        if(!PAGE_SOUNDS_ENABLED || !FILES[name]) return;
+        if(!BOOT_ENABLED || !PAGE_SOUNDS_ENABLED || !FILES[name]) return;
         var a = cache[name] || (cache[name] = new Audio(DIR + FILES[name]));
         a.onerror = function(){ cache[name] = null; };
         a.currentTime = 0;
@@ -2885,6 +2888,7 @@ const PAGE_SOUNDS_ENABLED = 1;
   try{ Object.keys(FILES).forEach(function(k){ var a = new Audio(DIR + FILES[k]); a.preload = "auto"; cache[k] = a; }); }catch(e){}
 })();
 (function(){
+  if(!BOOT_ENABLED) return;
   var icon = document.querySelector('link[rel="icon"]');
   var ver = icon ? icon.getAttribute("href") : "";
   var boot = !!BOOT_INTRO_ENABLED;
