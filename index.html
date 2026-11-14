@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -148,12 +148,12 @@
   #videoToggle, #raiseToggle{ display:none !important; }
   #debugPanel{ gap:12px !important; }
   .dbg-item{ position:relative; display:block; }
-  #debugPanel .dbg-item .corner-btn{ width:auto; min-width:168px; height:48px; padding:0 16px 0 10px; justify-content:flex-start; gap:10px; font-size:12px; }
-  #debugPanel .btn-txt{ display:flex; flex-direction:column; align-items:flex-start; line-height:1.15; text-align:left; }
-  #debugPanel .btn-txt b{ font-size:12.5px; font-weight:400; letter-spacing:.06em; text-transform:uppercase; }
-  #debugPanel .btn-txt small{ font-size:10.5px; letter-spacing:.03em; opacity:.75; text-transform:none; }
-  #debugPanel .btn-txt small::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:5px; border-radius:50%; background:currentColor; opacity:.55; vertical-align:1px; }
-  #debugPanel .corner-btn.active .btn-txt small::before{ opacity:1; }
+  #debugPanel .dbg-item .corner-btn, #filterSideBtns .dbg-item .corner-btn{ width:auto; min-width:168px; height:48px; padding:0 16px 0 10px; justify-content:flex-start; gap:10px; font-size:12px; }
+  #debugPanel .btn-txt, #filterSideBtns .btn-txt{ display:flex; flex-direction:column; align-items:flex-start; line-height:1.15; text-align:left; }
+  #debugPanel .btn-txt b, #filterSideBtns .btn-txt b{ font-size:12.5px; font-weight:400; letter-spacing:.06em; text-transform:uppercase; }
+  #debugPanel .btn-txt small, #filterSideBtns .btn-txt small{ font-size:10.5px; letter-spacing:.03em; opacity:.75; text-transform:none; }
+  #debugPanel .btn-txt small::before, #filterSideBtns .btn-txt small::before{ content:""; display:inline-block; width:6px; height:6px; margin-right:5px; border-radius:50%; background:currentColor; opacity:.55; vertical-align:1px; }
+  #debugPanel .corner-btn.active .btn-txt small::before, #filterSideBtns .corner-btn.active .btn-txt small::before{ opacity:1; }
   .btn-ic{ width:30px; height:30px; min-width:30px; object-fit:contain; display:block !important; flex:none; }
   .btn-ic-fb{ display:flex !important; align-items:center; justify-content:center; font-size:20px; line-height:1; }
   .dbg-tip{
@@ -2264,6 +2264,11 @@
   .icon-wrap.any-normaljump::after{ color:#fff; }
   .icon-wrap.any-classic{ --any-acc:#e0862f; }
   .icon-wrap.any-classic::after{ color:#fff; }
+  .icon-wrap.any-torture{ --any-acc:#d6455a; }
+  .icon-wrap.any-torture::after{ color:#fff; }
+  .icon-wrap.any-annoying{ --any-acc:#e2c13a; }
+  .icon-wrap.any-trick{ --any-acc:#b98cff; }
+  .icon-wrap.any-shop{ --any-acc:#f0c040; }
   /* Three overlapped icons (Neutral Throw + Vault + Dive): top-left, centre, bottom-right. */
   .cycle-frame.pair.trio > :nth-child(1){ width:58%; height:58%; top:0; left:0; right:auto; bottom:auto; z-index:1; }
   .cycle-frame.pair.trio > :nth-child(2){ width:58%; height:58%; top:21%; left:21%; right:auto; bottom:auto; z-index:2; box-shadow:-1px -1px 0 var(--bg-panel); }
@@ -2755,8 +2760,8 @@
   #ssReturnHint{ padding-left:0; text-align:center; }
 
   /* ===== Classic Viewing: shorter debug buttons (right side) ===== */
-  #debugPanel .dbg-item .corner-btn{ min-width:0 !important; width:auto !important; padding:0 12px 0 8px !important; gap:8px !important; }
-  #debugPanel .btn-txt small{ white-space:nowrap; }
+  #debugPanel .dbg-item .corner-btn, #filterSideBtns .dbg-item .corner-btn{ min-width:0 !important; width:auto !important; padding:0 12px 0 8px !important; gap:8px !important; }
+  #debugPanel .btn-txt small, #filterSideBtns .btn-txt small{ white-space:nowrap; }
 
   /* ===== Lazy moon cards (Classic Viewing) ===== */
   .lazy-card{ padding-bottom:14px; }
@@ -2792,10 +2797,34 @@
   /* Settings button (bottom-left), Jump Group Filters row, nav-rail Access node */
   #debugToggle{ position:fixed !important; left:24px !important; bottom:24px !important; right:auto !important; top:auto !important; margin:0 !important; padding:7px 12px !important; z-index:21; }
   #debugToggle.active, #debugToggle[aria-expanded="true"]{ background:var(--red); border-color:#a52530; color:#fff; }
-  .jumpgroup-row{ margin-top:18px; padding:8px 12px 12px; border:2px dashed rgba(166,216,42,0.6); background:rgba(166,216,42,0.09); }
-  .jumpgroup-row .filter-section-heading{ margin:0 0 8px; }
-  .jumpgroup-row[hidden]{ display:none; }
-  #jumpGroupGrid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; }
+  /* Exempt Levels + Group Filters buttons: hang under the Filter button while the Filters section is open. */
+  #filterSideBtns{ position:absolute; left:24px; top:112px; z-index:20; display:none; flex-direction:column; gap:10px; }
+  #filterToggle.active ~ #filterSideBtns{ display:flex; }
+  #filterSideBtns .corner-btn{ position:static; margin:0; }
+  @media (max-width:640px){ #filterSideBtns{ left:12px; top:100px; } }
+  body.ss-mode #filterSideBtns{ display:none !important; }
+
+  /* ---- Group Filters panel ---- */
+  .groupfilters{ margin-top:20px; padding:0 0 12px; border:2px solid #2f8f83; border-top-width:4px;
+    background:linear-gradient(180deg, rgba(25,184,166,0.16), rgba(25,184,166,0.04) 70%), var(--bg-panel);
+    clip-path:polygon(var(--cut-sm) 0,100% 0,100% calc(100% - var(--cut-sm)),calc(100% - var(--cut-sm)) 100%,0 100%,0 var(--cut-sm)); }
+  .groupfilters[hidden]{ display:none; }
+  .gf-head{ display:flex; align-items:center; gap:10px; margin:0 0 10px; padding:7px 14px; background:#14383a; border-bottom:2px solid #2f8f83;
+    font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#7be0d2; }
+  .gf-head::before{ content:""; width:10px; height:10px; background:#19b8a6; transform:rotate(45deg); flex:none; }
+  .gf-head small{ margin-left:auto; font-size:10.5px; letter-spacing:.04em; text-transform:none; color:var(--text-dim); }
+  .gf-body{ padding:0 14px; display:flex; flex-direction:column; gap:14px; }
+  .gf-split{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:14px 24px; }
+  .gf-split .gf-row{ flex:0 1 auto; }
+  .gf-row{ --gf:#19b8a6; position:relative; padding:12px 12px 12px; background:rgba(0,0,0,0.22); border:1px solid color-mix(in srgb, var(--gf) 45%, transparent); border-left:4px solid var(--gf); }
+  .gf-row[hidden]{ display:none; }
+  .gf-row.gf-jumps{ --gf:#a6d82a; }
+  .gf-row.gf-vaults{ --gf:#f0a020; }
+  .gf-row.gf-extras{ --gf:#b98cff; }
+  .gf-label{ position:absolute; top:-9px; left:10px; padding:1px 8px; background:var(--gf); color:#14161a; font-family:"Fredoka One",'Segoe UI',system-ui,sans-serif; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+    clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px); }
+  .gf-grid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; padding-top:4px; }
+  .gf-vaults .gf-grid, .gf-extras .gf-grid{ justify-content:flex-start; }
   #jumpGroupToggle.active{ background:#3f9d3f; border-color:#2c7a2c; color:#fff; }
   /* Moon-style grouped icons: native moon size so the chips match the main filter chips */
   .filter-option-icon.moon-icon{ overflow:visible; clip-path:none; border:none; box-shadow:none !important; }
@@ -2865,6 +2894,33 @@
   <span>Filter</span>
 </button>
 
+<div id="filterSideBtns" aria-label="Filter options">
+<div class="dbg-item">
+  <button class="corner-btn" id="exemptLevelsToggle" type="button" role="switch" aria-label="Exempt Levels: Fold Up or Separate">
+    <img class="btn-ic" src="icon/AbilityGPJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#8645;</span>'">
+    <span class="btn-txt"><b>Exempt Levels</b><small id="exemptLevelsBtnState">Fold Up</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip">
+    <b>Exempt Levels</b>
+    <span><b style="font-size:12px">Separate</b> &mdash; Every logic level stays listed.</span>
+    <span><b style="font-size:12px">Fold Up</b> &mdash; Harder levels are hidden once an easier one is Free.</span>
+    <em>Currently: <span id="exemptLevelsStateTip">Fold Up</span> &middot; click to toggle</em>
+  </div>
+</div>
+
+<div class="dbg-item">
+  <button class="corner-btn" id="jumpGroupToggle" type="button" aria-label="Show Group Filters in the Ability filters">
+    <img class="btn-ic" src="icon/AbilityJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9776;</span>'">
+    <span class="btn-txt"><b>Group Filters</b><small id="jumpGroupBtnState">Off</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip">
+    <b>Group Filters</b>
+    <span>Adds the Jumps, Vaults and Extras group tiles to the Ability filters.</span>
+    <em>Currently: <span id="jumpGroupStateTip">Off</span> &middot; click to toggle</em>
+  </div>
+</div>
+</div>
+
 <div id="debugPanel" role="menu" aria-label="Debug options">
 <div class="dbg-item">
   <button class="corner-btn" id="unmarkedToggle" type="button" aria-label="NO LOGIC? - show only unmarked logic moons">
@@ -2889,30 +2945,6 @@
   </div>
 </div>
 
-<div class="dbg-item">
-  <button class="corner-btn" id="exemptLevelsToggle" type="button" role="switch" aria-label="Exempt Levels: Fold Up or Separate">
-    <img class="btn-ic" src="icon/AbilityGPJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#8645;</span>'">
-    <span class="btn-txt"><b>Exempt Levels</b><small id="exemptLevelsBtnState">Fold Up</small></span>
-  </button>
-  <div class="dbg-tip" role="tooltip">
-    <b>Exempt Levels</b>
-    <span><b style="font-size:12px">Separate</b> &mdash; Every logic level stays listed.</span>
-    <span><b style="font-size:12px">Fold Up</b> &mdash; Harder levels are hidden once an easier one is Free.</span>
-    <em>Currently: <span id="exemptLevelsStateTip">Fold Up</span> &middot; click to toggle</em>
-  </div>
-</div>
-
-<div class="dbg-item">
-  <button class="corner-btn" id="jumpGroupToggle" type="button" aria-label="Show Jump Group Filters in the Ability filters">
-    <img class="btn-ic" src="icon/AbilityJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9776;</span>'">
-    <span class="btn-txt"><b>Jump Group Filters</b><small id="jumpGroupBtnState">Off</small></span>
-  </button>
-  <div class="dbg-tip" role="tooltip">
-    <b>Jump Group Filters</b>
-    <span>Adds the Any Grounded tiles to the Ability filters.</span>
-    <em>Currently: <span id="jumpGroupStateTip">Off</span> &middot; click to toggle</em>
-  </div>
-</div>
 
 <button id="videoToggle" type="button" hidden aria-hidden="true"><span id="videoToggleLabel">Video: All</span></button>
 <button class="corner-btn" id="approveToggle" type="button" aria-label="Approve videos" style="display:none;"><span>Approve Videos</span></button>
@@ -3026,9 +3058,15 @@
           <div class="filter-bar-grid" id="bonusRightGrid"></div>
         </div>
       </div>
-      <div class="jumpgroup-row" id="jumpGroupRow" hidden>
-        <div class="filter-section-heading">Jump Group Filters</div>
-        <div id="jumpGroupGrid"></div>
+      <div class="groupfilters" id="jumpGroupRow" hidden>
+        <div class="gf-head">Group Filters<small>moons that show this exact grouped icon</small></div>
+        <div class="gf-body">
+          <div class="gf-row gf-jumps" id="gfJumpsRow"><span class="gf-label">Jumps</span><div class="gf-grid" id="gfJumpsGrid"></div></div>
+          <div class="gf-split">
+            <div class="gf-row gf-vaults"><span class="gf-label">Vaults</span><div class="gf-grid" id="gfVaultsGrid"></div></div>
+            <div class="gf-row gf-extras"><span class="gf-label">Extras</span><div class="gf-grid" id="gfExtrasGrid"></div></div>
+          </div>
+        </div>
       </div>
       <div class="filter-section-heading">Captures</div>
       <input type="text" class="filter-bar-search" id="captureFilterSearch" placeholder="Search captures…" autocomplete="off">
@@ -3380,6 +3418,10 @@ let ICON_MANIFEST = {
   AnyThrow: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw", color:"#34406e", category:"Movement", tokenType:"ability" },
   // Display-only merge of every grounded-height method (see GH_* below).
   GroundedHeight: { filenames:["AbilityJump.png"], label:"Any Grounded Height", color:"#0f8f84", category:"Movement", tokenType:"ability" },
+  TortureCapJump: { filenames:["AbilityVault.png"], label:"Torture Cap Jumps", color:"#d6455a", category:"Movement", tokenType:"ability" },
+  AnnoyingCapJump: { filenames:["AbilityVault.png"], label:"Annoying Cap Jumps", color:"#e2c13a", category:"Movement", tokenType:"ability" },
+  Trickjumping: { filenames:["AbilityRollBoost.png"], label:"Trickjumping", color:"#b98cff", category:"Movement", tokenType:"ability" },
+  ShopMoons: { filenames:["AbilityWallet.png"], label:"Shop Moons", color:"#f0c040", category:"Movement", tokenType:"ability" },
   ClassicCapJump: { filenames:["AbilityVault.png"], label:"Classic Cap Jump", color:"#e0862f", category:"Movement", tokenType:"ability" },
   NormalJump: { filenames:["AbilityJump.png"], label:"Normal Jump", color:"#e0679a", category:"Movement", tokenType:"ability" },
   GroundedNormal: { filenames:["AbilityJump.png"], label:"Any Grounded Normal Jump", color:"#5aa9e6", category:"Movement", tokenType:"ability" },
@@ -3480,7 +3522,7 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Nut: true,
   Seed: true,
   GroundedHeight: true, GroundedNormal: true, GroundedHigh: true, // display-only merges; never filter tiles
-  GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true, GroundedJumpCT: true, NormalJump: true, ClassicCapJump: true,
+  GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true, GroundedJumpCT: true, NormalJump: true, ClassicCapJump: true, TortureCapJump: true, AnnoyingCapJump: true, Trickjumping: true, ShopMoons: true,
   AnyVault: true, AnyCapThrowJump: true, GroundedNoCRJ: true,
   // AnyThrow is a real filter tile now (shown next to the four Cap throws); selecting it acts like selecting all four.
 };
@@ -3531,8 +3573,16 @@ const GH_TIERS = [
     methods: [_SJ, _LJ, _BF, _SP, _SF] },
   { token: "NormalJump", label: "Normal Jump", cls: "any-normaljump", cycle: "static", badge: "JUMP", seconds: 2.5, iconPair: [["SingleJump", "CapReturnJump"]],
     methods: [_SJ, _CRJ] },
-  { token: "ClassicCapJump", label: "Classic Cap Jump", cls: "any-classic", cycle: "static", badge: "CLASSIC", seconds: 2.5, iconPair: [["NeutralThrow", "Vault", "Dive"]],
+  { token: "ClassicCapJump", label: "Classic Cap Jump", cls: "any-classic", cycle: "static", badge: "CLASSIC", seconds: 2.5, iconPair: [["NeutralThrow", "Vault", "Dive"]], row: "vaults",
     methods: [["NeutralThrow", "Vault", "Dive"]] },
+  { token: "TortureCapJump", label: "Torture Cap Jumps", cls: "any-torture", cycle: "static", badge: "TORTURE", seconds: 2.5, iconPair: [["UpThrow", "Vault"]], row: "vaults",
+    methods: [["UpThrow", "Vault"]] },
+  { token: "AnnoyingCapJump", label: "Annoying Cap Jumps", cls: "any-annoying", cycle: "static", badge: "ANNOYING", seconds: 2.5, iconPair: [["DownThrow", "Vault"]], row: "vaults",
+    methods: [["DownThrow", "Vault"]] },
+  { token: "Trickjumping", label: "Trickjumping", cls: "any-trick", cycle: "static", badge: "TRICK", seconds: 2.5, iconPair: [["RollBoost"]], row: "extras",
+    methods: [["Dive", "GroundPound", "NeutralThrow", "RollBoost", "Vault"]] },
+  { token: "ShopMoons", label: "Shop Moons", cls: "any-shop", cycle: "static", badge: "SHOP", seconds: 2.5, iconPair: [["Wallet"]], row: "extras",
+    methods: [["NpcTalk", "Wallet"]] },
   { token: "AnyVault", label: "Any Vault", cls: "any-vault", cycle: "cycle-2", badge: "VAULT", seconds: 2.5,
     methods: [_NV, _DV] },
   { token: "AnyCapThrowJump", label: "Any Cap Throw Jump", cls: "any-capthrow", cycle: "cycle-3", badge: "CAP", seconds: 3.75,
@@ -3552,6 +3602,10 @@ const JUMP_GROUP_ENABLED = {
   GroundedJump:     1,   // Any Grounded Jump (No Cap Throw)
   NormalJump:       1,   // Normal Jump (Jump + Cap Return Jump)
   ClassicCapJump:   1,   // Classic Cap Jump (Neutral Throw + Vault + Dive)
+  TortureCapJump:   1,   // Torture Cap Jumps (Up Throw + Vault)
+  AnnoyingCapJump:  1,   // Annoying Cap Jumps (Down Throw + Vault)
+  Trickjumping:     1,   // Trickjumping (Dive + Ground Pound + Neutral Throw + Roll Boost + Vault)
+  ShopMoons:        1,   // Shop Moons (NPC Talking + Wallet)
   AnyVault:         1,   // Any Vault
   AnyCapThrowJump:  0,   // Any Cap Throw Jump
   GroundedNoCRJ:    0,   // Any Grounded Height without Cap Return Jump
@@ -3562,7 +3616,7 @@ for(let i = GH_TIERS.length - 1; i >= 0; i--){
 GH_TIERS.forEach(t => { t.allTokens = Array.from(new Set(t.methods.reduce((a, m) => a.concat(m), []))); });
 // Merge order: the largest grouping first (ties keep the order above), so the moves a bigger grouping
 // covers are used up before a smaller one is tried and a lane never gets two chips for the same moves.
-const GH_MERGE_ORDER = GH_TIERS.map((t, i) => ({ t, i })).sort((a, b) => (b.t.methods.length - a.t.methods.length) || (a.i - b.i)).map(x => x.t);
+const GH_MERGE_ORDER = GH_TIERS.map((t, i) => ({ t, i })).sort((a, b) => (b.t.methods.length - a.t.methods.length) || (Math.max(...b.t.methods.map(m => m.length)) - Math.max(...a.t.methods.map(m => m.length))) || (a.i - b.i)).map(x => x.t);
 const GH_METHODS = GH_TIERS.find(t => t.token === GH_TOKEN).methods; // kept for older references
 function ghTier(token){ return GH_TIERS.find(t => t.token === token) || null; }
 function isGhToken(token){ return !!ghTier(token); }
@@ -7747,7 +7801,7 @@ function showAnyPop(anchor, token){
   el.className = "any-pop " + (isThrow ? "pop-throw" : "pop-grounded");
   const title = document.createElement("div");
   title.className = "any-pop-title";
-  title.textContent = (isThrow ? "Any Cap Throw" : ghT.label) + " \u2014 any one of:";
+  title.textContent = (isThrow ? "Any Cap Throw" : ghT.label) + (options.length > 1 ? " \u2014 any one of:" : " \u2014 needs:");
   el.appendChild(title);
   if(ghT && ghT.desc){
     const d = document.createElement("div");
@@ -10019,16 +10073,20 @@ function applyFilterMatchHighlight(){
     // option the player actually selected to reach it.
     const foldedTok = ABILITY_FILTER_FOLD_TOKENS[tok] || tok;
     const viaThrowTile = throwViaAnyTile(tok) && !selectedAbilities.has(tok);
-    if((tok === ANY_THROW_TOKEN && anyThrowSelected()) || (isGhToken(tok) && selectedAbilities.has(tok))
-      || (isCapReturnToken(tok) && anyThrowSelected()) || viaThrowTile
-      || selectedAbilities.has(tok) || selectedCaptures.has(tok)
-      || selectedAbilities.has(foldedTok) || selectedCaptures.has(foldedTok)){
+    // A Group Filter chip rings ONLY when that exact group is selected; never because a member move is.
+    const ringIt = isGhToken(tok)
+      ? selectedAbilities.has(tok)
+      : ((tok === ANY_THROW_TOKEN && anyThrowSelected())
+        || (isCapReturnToken(tok) && anyThrowSelected()) || viaThrowTile
+        || selectedAbilities.has(tok) || selectedCaptures.has(tok)
+        || selectedAbilities.has(foldedTok) || selectedCaptures.has(foldedTok));
+    if(ringIt){
       el.classList.add("filter-match");
       // A specific throw lit only because the Any Cap Throw tile is selected: slightly darker gold.
       if(viaThrowTile) el.classList.add("filter-match-alt");
     }
     // Merged groupings: ring the individual frame that matches (e.g. its Cap Return Jump frame).
-    if(isGhToken(tok)) el.querySelectorAll(".cycle-frame[data-toks]").forEach(fr => {
+    if(isGhToken(tok) && !GH_TIERS.some(t => selectedAbilities.has(t.token))) el.querySelectorAll(".cycle-frame[data-toks]").forEach(fr => {
       { const tl = fr.dataset.toks.split("+"); if(tok === "NormalJump" ? tl.some(x => tokenIsSelected(x)) : tl.every(x => tokenIsSelected(x))) fr.classList.add("frame-match"); }
     });
   });
@@ -10557,12 +10615,21 @@ function setupMergedFilterBar(tokens){
     renderOptions("ability", right, selectedAbilities, bonusRightEl, abilitySearchEl.value);
     [bonusLeftEl, bonusRightEl].forEach(el => el.querySelectorAll(".filter-bar-none").forEach(n => n.remove()));
     bonusRowEl.hidden = !bonusLeftEl.children.length && !bonusRightEl.children.length;
-    const jgRow = document.getElementById("jumpGroupRow"), jgGrid = document.getElementById("jumpGroupGrid");
+    const jgRow = document.getElementById("jumpGroupRow");
     if(jgRow){
       jgRow.hidden = !window.__jumpGroupMode;
       if(window.__jumpGroupMode){
-        renderOptions("ability", GH_TIERS.map(t => t.token).filter(t => ICON_MANIFEST[t]), selectedAbilities, jgGrid, abilitySearchEl.value);
-        jgGrid.querySelectorAll(".filter-bar-none").forEach(n => n.remove());
+        const kName = KINGDOM_ORDER[currentKingdomIndex];
+        // The JUMPS row is hidden on kingdoms where Jump or Cap Return Jump is still Incomplete (the grouped icons themselves still show on moons).
+        const jumpsOk = ghKingdomActive(kName, { allTokens: ["SingleJump", "CapReturnJump"] });
+        [["jumps", "gfJumpsGrid"], ["vaults", "gfVaultsGrid"], ["extras", "gfExtrasGrid"]].forEach(([row, gid]) => {
+          const grid = document.getElementById(gid); if(!grid) return;
+          const toks = GH_TIERS.filter(t => (t.row || "jumps") === row).map(t => t.token).filter(t => ICON_MANIFEST[t]);
+          renderOptions("ability", toks, selectedAbilities, grid, abilitySearchEl.value);
+          grid.querySelectorAll(".filter-bar-none").forEach(n => n.remove());
+          const box = grid.closest(".gf-row");
+          if(box) box.hidden = !grid.children.length || (row === "jumps" && !jumpsOk);
+        });
       }
     }
   }
