@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3415,15 +3415,18 @@ function squash(str){
    First token = the main requirement, the rest follow in "(& ...)". Display only for now:
    file lookups still use videoAutoName() until the video integration switches over. */
 function videoTokenLabel(t){
+  if(isGhToken(t)) return ghTier(t).label;
   const k = ghTokenKey(t);
   const m = ICON_MANIFEST[k] || ICON_MANIFEST[t];
   return (m && m.label) ? m.label : String(t);
 }
-function videoTitleFor(moon, tierKey, group){
+function videoTitleFor(moon, tierKey, group, opts){
   const kingdom = (moon && moon.kingdom) || "";
   let nm = String((moon && (moon.name || moon.label)) || "").trim();
   if(kingdom && nm.toLowerCase().indexOf(kingdom.toLowerCase()) === 0) nm = nm.slice(kingdom.length).replace(/^[\s:\-\u2013\u2014]+/, "");
-  const raw = (group || []).filter(t => t !== "" && t != null && !isGhToken(t)); // Group Filters never appear in a title
+  // Built titles never contain Group Filters (they expand to the member moves); hover titles (opts.showGroups) keep them.
+  const _all = (group || []).filter(t => t !== "" && t != null);
+  const raw = _all.filter(t => !isGhToken(t)).concat((opts && opts.showGroups) ? _all.filter(t => isGhToken(t)) : []);
   const isCap = t => { const m = ICON_MANIFEST[ghTokenKey(t)] || ICON_MANIFEST[t]; return !!(m && m.tokenType === "capture"); };
   const isThrow = t => ghTokenKey(t) === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(ghTokenKey(t)) !== -1;
   let req = "Free";
@@ -3446,6 +3449,12 @@ function videoTitleFor(moon, tierKey, group){
   return [head, nm, lvl, req].filter(Boolean).join(" - ");
 }
 // A merged Group Filter chip has no title of its own: it offers each member method's title to pick from.
+// Hover text: Group Filters shown by name (e.g. "Requires Any Grounded Height"), plus what it expands to when built.
+function videoHoverTitle(moon, tierKey, group){
+  const t = videoTitleFor(moon, tierKey, group, { showGroups: true });
+  if(group && group.ghMethods && group.methodSlots) return t + "\nBuilds as: " + group.ghMethods.map(m => m.map(videoTokenLabel).join(" + ")).join(" / ");
+  return t;
+}
 function videoOptionsFor(moon, tierKey, group){
   if(!group || !group.methodSlots || !group.ghMethods) return null;
   const extras = group.slice(1).filter(t => !isGhToken(t));
@@ -8939,6 +8948,11 @@ function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse){
 // of movement options doesn't change based on which view is showing it —
 // checkpoint is one field per moon (its from_node_id), not per-branch.
 function buildMovementOptions(moon, boxed){
+  const el = buildMovementOptions_impl(moon, boxed);
+  if(el && el.dataset){ el.dataset.vtMoon = "1"; el._vtMoon = moon; }
+  return el;
+}
+function buildMovementOptions_impl(moon, boxed){
   if(!moon.tierLanes || moon.tierLanes.length === 0){
     const row = document.createElement("div");
     row.className = "options-row";
@@ -9010,7 +9024,7 @@ function buildMovementOptions(moon, boxed){
         chip.className = "option-chip free-chip";
         chip.textContent = (hoistSet.size && preHoistGroup.length > 0) ? "Nothing else" : "Free";
         chip.dataset.slot = slotOf(andGroup, i);
-        { const vo = videoOptionsFor(moon, lane.tier, andGroup); chip.dataset.videoTitle = vo ? "Pick one:\n" + vo.map(o => "\u2022 " + o.title).join("\n") : videoTitleFor(moon, lane.tier, andGroup); }
+        chip.dataset.videoTitle = videoHoverTitle(moon, lane.tier, andGroup);
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
         attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
         if(andGroup.origin && !sharedOrigin){
@@ -9045,7 +9059,7 @@ function buildMovementOptions(moon, boxed){
       const chip = document.createElement("div");
       chip.className = "option-chip";
       chip.dataset.slot = slotOf(andGroup, i);
-      { const vo = videoOptionsFor(moon, lane.tier, andGroup); chip.dataset.videoTitle = vo ? "Pick one:\n" + vo.map(o => "\u2022 " + o.title).join("\n") : videoTitleFor(moon, lane.tier, andGroup); }
+      chip.dataset.videoTitle = videoHoverTitle(moon, lane.tier, andGroup);
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
       attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
       appendAndGroupIcons(chip, displayGroup, { hoistedPipe2D: hoistSet.has("Pipe2D") });
@@ -10669,8 +10683,57 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     place(e);
   });
   document.addEventListener("scroll", () => { tip.style.display = "none"; }, true);
+  // ---- Moon / Access Point menu (only while Video Titles is on) ----
+  const closeMenu = () => { const o = document.getElementById("vtMenuOverlay"); if(o) o.remove(); };
+  const mk = (tag, css, txt) => { const e = document.createElement(tag); if(css) e.style.cssText = css; if(txt != null) e.textContent = txt; return e; };
+  const titleRow = (title, sub) => {
+    const r = mk("button", "display:block;width:100%;text-align:left;padding:7px 9px;margin:3px 0;border:0;border-radius:6px;background:#242424;color:#fff;font:inherit;cursor:pointer;");
+    r.type = "button"; r.appendChild(mk("div", "", title));
+    if(sub) r.appendChild(mk("div", "opacity:.5;font-size:11px;margin-top:2px;", sub));
+    r.addEventListener("mouseenter", () => { r.style.background = "#343446"; });
+    r.addEventListener("mouseleave", () => { r.style.background = "#242424"; });
+    r.addEventListener("click", ev => { ev.stopPropagation(); try{ navigator.clipboard.writeText(title); }catch(e){} r.style.background = "#2d4a2d"; });
+    return r;
+  };
+  const openMoonMenu = (moons) => {
+    closeMenu();
+    const ov = mk("div", "position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;");
+    ov.id = "vtMenuOverlay";
+    const box = mk("div", "width:min(780px,94vw);max-height:84vh;overflow:auto;border-radius:10px;background:#161616;color:#fff;border:1px solid #777;box-shadow:0 6px 20px rgba(0,0,0,.6);font:600 12px/1.35 system-ui,sans-serif;padding:12px 14px;");
+    box.appendChild(mk("div", "opacity:.6;margin-bottom:6px;", "Video titles \u2014 click a title to copy it"));
+    moons.forEach(moon => {
+      box.appendChild(mk("div", "font-size:15px;margin:8px 0 4px;", (moon.name || moon.label || "") + (moon.kingdom ? "  \u00B7  " + moon.kingdom : "")));
+      let lanes = [];
+      try{ lanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes || [], moon.kingdom)) || []; if(hideAdvanced || hideExpert) lanes = visLanes(lanes); }catch(e){}
+      if(!lanes.length){ box.appendChild(titleRow(videoTitleFor(moon, "free", []), videoAutoName(moon.name, "free", 1))); return; }
+      lanes.forEach(lane => {
+        box.appendChild(mk("div", "margin:8px 0 2px;opacity:.55;text-transform:uppercase;letter-spacing:.04em;font-size:11px;", (lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier)));
+        lane.groups.forEach((g, i) => {
+          const vo = videoOptionsFor(moon, lane.tier, g);
+          if(vo){
+            box.appendChild(mk("div", "margin:4px 0 0 2px;color:#19b8a6;", "Group Filter: " + videoTitleFor(moon, lane.tier, g, { showGroups: true }).split(" - ").pop()));
+            vo.forEach(o => box.appendChild(titleRow(o.title, videoAutoName(moon.name, lane.tier, o.slot))));
+          } else box.appendChild(titleRow(videoTitleFor(moon, lane.tier, g), videoAutoName(moon.name, lane.tier, slotOf(g, i))));
+        });
+      });
+    });
+    ov.appendChild(box); document.body.appendChild(ov);
+    ov.addEventListener("mousedown", ev => { if(ev.target === ov) closeMenu(); });
+    document.addEventListener("keydown", function esc(ev){ if(ev.key === "Escape"){ closeMenu(); document.removeEventListener("keydown", esc); } });
+  };
+  document.addEventListener("click", e => {
+    if(!on || !e.target.closest) return;
+    if(e.target.closest("#vtMenuOverlay, button, a, input, select, textarea, .checkpoint-info, #videoPicker")) return;
+    const card = e.target.closest(".moon-card, .cp-req");
+    if(!card) return;
+    const moons = Array.from(card.querySelectorAll("[data-vt-moon]")).map(x => x._vtMoon).filter(Boolean);
+    if(!moons.length) return;
+    e.stopPropagation(); e.preventDefault();
+    openMoonMenu(moons);
+  }, true);
   b.addEventListener("click", () => {
     on = !on;
+    if(!on) closeMenu();
     try{ localStorage.setItem("videoTitleDbgV1", on ? "1" : "0"); }catch(e){}
     paint();
   });
@@ -11706,7 +11769,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
         otag.title = "This route starts from the " + andGroup.origin + " node";
         chip.appendChild(otag);
       }
-      if(moonName) chip.dataset.videoTitle = videoTitleFor({ name: moonName, kingdom: KINGDOM_ORDER[currentKingdomIndex] }, lane.tier, andGroup);
+      if(moonName) chip.dataset.videoTitle = videoHoverTitle({ name: moonName, kingdom: KINGDOM_ORDER[currentKingdomIndex] }, lane.tier, andGroup);
       if(andGroup[0] === "GroundedJump") chip.dataset.gj = "1";
       optsEl.appendChild(chip);
     });
