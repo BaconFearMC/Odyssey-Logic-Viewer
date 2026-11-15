@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3423,7 +3423,7 @@ function videoTitleFor(moon, tierKey, group){
   const kingdom = (moon && moon.kingdom) || "";
   let nm = String((moon && (moon.name || moon.label)) || "").trim();
   if(kingdom && nm.toLowerCase().indexOf(kingdom.toLowerCase()) === 0) nm = nm.slice(kingdom.length).replace(/^[\s:\-\u2013\u2014]+/, "");
-  const raw = (group || []).filter(t => t !== "" && t != null);
+  const raw = (group || []).filter(t => t !== "" && t != null && !isGhToken(t)); // Group Filters never appear in a title
   const isCap = t => { const m = ICON_MANIFEST[ghTokenKey(t)] || ICON_MANIFEST[t]; return !!(m && m.tokenType === "capture"); };
   const isThrow = t => ghTokenKey(t) === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(ghTokenKey(t)) !== -1;
   let req = "Free";
@@ -3438,6 +3438,12 @@ function videoTitleFor(moon, tierKey, group){
         + others.map(t => " & " + videoTokenLabel(t)).join("");
   }
   return [kingdom, nm, req].filter(Boolean).join(" - ");
+}
+// A merged Group Filter chip has no title of its own: it offers each member method's title to pick from.
+function videoOptionsFor(moon, tierKey, group){
+  if(!group || !group.methodSlots || !group.ghMethods) return null;
+  const extras = group.slice(1).filter(t => !isGhToken(t));
+  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, m.concat(extras)), slot: group.methodSlots[si] }));
 }
 function videoAutoName(moonName, tierKey, indexInTier){
   // The number in a moon's own name is part of its identity ("Sand Kingdom
@@ -3951,7 +3957,7 @@ function mergeGroundedTier(tierLanes, tier){
       if(Object.keys(picked).length !== GH_METHODS.length) return;
       const all = [].concat(...Object.values(picked));
       all.forEach(x => used.add(x));
-      merges.push({ all, extras: c.extras, first: lane.groups[all[0]] });
+      merges.push({ all, extras: c.extras, first: lane.groups[all[0]], picks: GH_METHODS.map((m, si) => picked[si][0]) });
     });
     // Fallback "*" merge: every method is present in a cluster, but a few of them need
     // something EXTRA (typically Long Jump + Any Throw). Merge anyway, flagged with a star.
@@ -3995,7 +4001,7 @@ function mergeGroundedTier(tierLanes, tier){
     const at = {}, drop = new Set();
     merges.forEach(mg => {
       const slots = mg.all.filter(i => !lane.groups[i].implied).map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
-      const merged = Object.assign([tier.token].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null });
+      const merged = Object.assign([tier.token].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null, methodSlots: mg.picks ? mg.picks.map(i => slotOf(lane.groups[i], i)) : null, ghMethods: tier.methods });
       at[Math.min(...mg.all)] = merged;
       mg.all.forEach(i => drop.add(i));
     });
@@ -8998,7 +9004,7 @@ function buildMovementOptions(moon, boxed){
         chip.className = "option-chip free-chip";
         chip.textContent = (hoistSet.size && preHoistGroup.length > 0) ? "Nothing else" : "Free";
         chip.dataset.slot = slotOf(andGroup, i);
-        chip.dataset.videoTitle = videoTitleFor(moon, lane.tier, andGroup);
+        { const vo = videoOptionsFor(moon, lane.tier, andGroup); chip.dataset.videoTitle = vo ? "Pick one:\n" + vo.map(o => "\u2022 " + o.title).join("\n") : videoTitleFor(moon, lane.tier, andGroup); }
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
         attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
         if(andGroup.origin && !sharedOrigin){
@@ -9033,7 +9039,7 @@ function buildMovementOptions(moon, boxed){
       const chip = document.createElement("div");
       chip.className = "option-chip";
       chip.dataset.slot = slotOf(andGroup, i);
-      chip.dataset.videoTitle = videoTitleFor(moon, lane.tier, andGroup);
+      { const vo = videoOptionsFor(moon, lane.tier, andGroup); chip.dataset.videoTitle = vo ? "Pick one:\n" + vo.map(o => "\u2022 " + o.title).join("\n") : videoTitleFor(moon, lane.tier, andGroup); }
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
       attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
       appendAndGroupIcons(chip, displayGroup, { hoistedPipe2D: hoistSet.has("Pipe2D") });
@@ -10652,7 +10658,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     if(!on) return;
     const el = e.target.closest && e.target.closest("[data-video-title]");
     if(!el){ tip.style.display = "none"; return; }
-    tip.textContent = el.dataset.videoTitle;
+    tip.textContent = el.dataset.videoTitle; tip.style.whiteSpace = "pre-line";
     tip.style.display = "block";
     place(e);
   });
@@ -11896,7 +11902,40 @@ function attachVideoBadge(nodeEl, moon, tierKey, indexInTier, slots){
 // Entry point for every clickable requirement branch. Checks for a real
 // clip first; opens the overlay only if one is found, otherwise pops the
 // toast and leaves the overlay untouched.
-function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier){
+let _lastClickXY = { x: 40, y: 40 };
+document.addEventListener("click", e => { _lastClickXY = { x: e.clientX, y: e.clientY }; }, true);
+function openVideoPicker(moon, tierKey, tierLabel, andGroup){
+  const opts = videoOptionsFor(moon, tierKey, andGroup);
+  if(!opts) return false;
+  const old = document.getElementById("videoPicker"); if(old) old.remove();
+  const box = document.createElement("div");
+  box.id = "videoPicker";
+  box.style.cssText = "position:fixed;z-index:100000;max-width:440px;max-height:60vh;overflow:auto;padding:6px;border-radius:10px;background:#161616;color:#fff;border:1px solid #777;box-shadow:0 6px 20px rgba(0,0,0,.6);font:600 12px/1.3 system-ui,sans-serif;";
+  const head = document.createElement("div");
+  head.style.cssText = "padding:4px 8px;opacity:.65;font-size:11px;";
+  head.textContent = "Pick a method";
+  box.appendChild(head);
+  opts.forEach(o => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = o.title;
+    b.style.cssText = "display:block;width:100%;text-align:left;padding:7px 8px;margin:2px 0;border:0;border-radius:6px;background:#242424;color:inherit;font:inherit;cursor:pointer;";
+    b.addEventListener("mouseenter", () => { b.style.background = "#343434"; });
+    b.addEventListener("mouseleave", () => { b.style.background = "#242424"; });
+    b.addEventListener("click", ev => { ev.stopPropagation(); box.remove(); handleNodeClick(moon, tierKey, tierLabel, andGroup, o.slot, o.slot); });
+    box.appendChild(b);
+  });
+  document.body.appendChild(box);
+  box.style.left = Math.max(6, Math.min(innerWidth - box.offsetWidth - 6, _lastClickXY.x)) + "px";
+  box.style.top = Math.max(6, Math.min(innerHeight - box.offsetHeight - 6, _lastClickXY.y + 10)) + "px";
+  const close = ev => { if(!box.contains(ev.target)){ box.remove(); document.removeEventListener("mousedown", close, true); } };
+  setTimeout(() => document.addEventListener("mousedown", close, true), 0);
+  return true;
+}
+function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier, pickedSlot){
+  if(!pickedSlot && andGroup && andGroup.methodSlots && (submitMode ? (isSubmittable(moon) && tierKey !== "unrated") : VIDEOS_ENABLED)){
+    if(openVideoPicker(moon, tierKey, tierLabel, andGroup)) return;
+  }
+  if(pickedSlot) indexInTier = pickedSlot;
   if(submitMode){
     if(!isSubmittable(moon) || tierKey === "unrated") return; // Unrated routes can't take clips
     Promise.race([logicVideoExists(videoAutoName(moon.name, tierKey, indexInTier)), new Promise(r => setTimeout(() => r(false), 1500))]).then(has => {
@@ -11907,7 +11946,7 @@ function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier){
   }
   if(!VIDEOS_ENABLED) return;
   const myToken = ++videoCheckToken;
-  const slots = (andGroup && andGroup.mergedSlots) ? andGroup.mergedSlots.slice() : [indexInTier];
+  const slots = (!pickedSlot && andGroup && andGroup.mergedSlots) ? andGroup.mergedSlots.slice() : [indexInTier];
   const tryNext = () => {
     const baseName = videoAutoName(moon.name, tierKey, slots.shift());
     findLogicVideo(baseName, (mediaEl) => {
