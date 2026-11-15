@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -6752,7 +6752,7 @@ function computeNodeSourceReqsRaw(kingdomName, nodeId, scopeMoon, data){
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
 // disableCollapse is forwarded straight through to renderReachTierLanes/
 // wrapOptionsIfCollapsible — see the note there.
-function renderEntranceReqs(list, className, disableCollapse, moonName){
+function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoon){
   const wrap = document.createElement("div");
   wrap.className = className || "entrance-reqs";
   list.forEach(r => {
@@ -6769,7 +6769,7 @@ function renderEntranceReqs(list, className, disableCollapse, moonName){
       const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; row.appendChild(t);
       if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); row.appendChild(ot); }
     } else {
-      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName));
+      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName, titleMoon));
     }
     wrap.appendChild(row);
   });
@@ -8440,7 +8440,7 @@ function buildPyramidBlock(moon, startOpen){
   t.appendChild(hint);
   t.addEventListener("click", (e) => { e.stopPropagation(); box.classList.toggle("collapsed"); });
   box.appendChild(t);
-  const rows = renderEntranceReqs(py.rows, "entrance-reqs pyramid-reqs", undefined, moon.name);
+  const rows = renderEntranceReqs(py.rows, "entrance-reqs pyramid-reqs", undefined, moon.name, moon);
   rows.style.borderTop = "none"; rows.style.marginTop = "0"; rows.style.paddingTop = "0";
   box.appendChild(rows);
   return box;
@@ -8452,7 +8452,7 @@ function buildMoonRequirements(moon, boxed, opts){
   const py = moon._pyramid;
   if(!py){
     if(moon.entranceReqs){
-      const rows = renderEntranceReqs(moon.entranceReqs, undefined, undefined, moon.name);
+      const rows = renderEntranceReqs(moon.entranceReqs, undefined, undefined, moon.name, moon);
       rows.style.borderTop = "none"; rows.style.marginTop = "0"; rows.style.paddingTop = "0";
       return rows;
     }
@@ -8483,8 +8483,8 @@ function customNodeRoutesFor(moon){
   // always counts; a plain Checkpoint counts unless the moon is in a subarea.
   if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && moon.checkpointNodeId
      && (moon.checkpointType === "custom_place" || !moon.subarea))
-    nodes.push({ id: moon.checkpointNodeId, kingdom: moon.kingdom, kind: moon.checkpointType === "custom_place" ? "custom" : "checkpoint", name: moon.checkpoint.replace(/\s*Checkpoint\s*$/i, "") });
-  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name)).forEach(x => nodes.push({ id: x.id, kingdom: x.kingdom || moon.kingdom, kind: "custom", name: x.name }));
+    nodes.push({ id: moon.checkpointNodeId, kingdom: moon.kingdom, kind: moon.checkpointType === "custom_place" ? "custom" : "checkpoint", name: moon.checkpoint.replace(/\s*Checkpoint\s*$/i, ""), titleNode: moon.checkpoint });
+  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name)).forEach(x => nodes.push({ id: x.id, kingdom: x.kingdom || moon.kingdom, kind: "custom", name: x.name, titleNode: x.name }));
   if(!nodes.length) return null;
   const own = ownBranchesFromTierLanes(moon._baseTierLanes || moon.tierLanes);
   const out = [];
@@ -8497,7 +8497,7 @@ function customNodeRoutesFor(moon){
     const shown = (typeof glitchMode !== "undefined" && glitchMode === "hide") ? crossed.filter(b => b.tier !== "glitched") : crossed;
     if(!shown.length && crossed.length) out.push({ kind: n.kind, impossible: true, hidden: true });
     else {
-      const route = Object.assign({ kind: n.kind }, summarizeBranches(shown, n.kingdom));
+      const route = Object.assign({ kind: n.kind, titleNode: n.titleNode }, summarizeBranches(shown, n.kingdom));
       // Several ways INTO the node (e.g. from the Stone Bridge vs. from anywhere via the
       // Odyssey): split them into one labelled row per source so it is clear which is which.
       if(!route.impossible){
@@ -8775,15 +8775,18 @@ function buildMoonCard(moon, opts){
       else if(hint) hint.textContent = "";
       const body = document.createElement("div");
       body.className = "node-route-body";
+      // Same moon + same starting node the moon-card chips use, so the title (and the video lookup) is identical.
+      const routeMoon = Object.assign({}, moon, { checkpoint: r.titleNode || moon.checkpoint });
       if(r.impossible){
         const t = document.createElement("span"); t.className = "impossible-tag"; t.textContent = "Impossible"; body.appendChild(t);
       } else if(r.rows){
-        body.appendChild(renderEntranceReqs(r.rows, "entrance-reqs", false, moon.name));
+        body.appendChild(renderEntranceReqs(r.rows, "entrance-reqs", false, moon.name, routeMoon));
       } else if(r.free){
         const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; body.appendChild(t);
+        t.dataset.videoTitle = videoTitleFor(routeMoon, "free", []); attachYtBadge(t, routeMoon, "free", []);
         if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); body.appendChild(ot); }
       } else {
-        body.appendChild(renderReachTierLanes(r.lanes, false, "entrance", moon.name));
+        body.appendChild(renderReachTierLanes(r.lanes, false, "entrance", moon.name, routeMoon));
       }
       block.appendChild(body);
       wrap.appendChild(block);
@@ -11922,7 +11925,7 @@ function buildTierLanesFromBranches(branches){
 // .tier-stack/.tier-lane/.tier-pill/.option-chip classes the moon cards
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
-function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
+function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleMoon){
   if(hideAdvanced || hideExpert){ tierLanes = visLanes(tierLanes); if(!tierLanes.length) return document.createElement("div"); }
   tierLanes = promoteGroupFilters(withGroundedMerge(tierLanes));
   const stack = document.createElement("div");
@@ -11977,7 +11980,10 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
         otag.title = "This route starts from the " + andGroup.origin + " node";
         chip.appendChild(otag);
       }
-      if(moonName) chip.dataset.videoTitle = videoHoverTitle({ name: moonName, kingdom: KINGDOM_ORDER[currentKingdomIndex] }, lane.tier, andGroup);
+      if(titleMoon){
+        // Moon-card route chip: same title builder + same badge check as every other method chip.
+        chip.dataset.videoTitle = videoHoverTitle(titleMoon, lane.tier, andGroup); attachYtBadge(chip, titleMoon, lane.tier, andGroup);
+      } else if(moonName) chip.dataset.videoTitle = videoHoverTitle({ name: moonName, kingdom: KINGDOM_ORDER[currentKingdomIndex] }, lane.tier, andGroup);
       if(andGroup[0] === "GroundedJump") chip.dataset.gj = "1";
       optsEl.appendChild(chip);
     });
