@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1732,6 +1732,7 @@
     filter:grayscale(1);
   }
   .filter-option.greyed-out{ opacity:0.4; cursor:not-allowed; }
+  #filterHoverTip{ position:fixed; z-index:10050; display:none; pointer-events:none; max-width:260px; padding:6px 10px; border-radius:6px; font-size:13px; line-height:1.3; background:#111; color:#fff; border:1px solid rgba(255,255,255,.25); box-shadow:0 4px 14px rgba(0,0,0,.4); }
   .filter-option.greyed-out:hover{ background:none; }
   .filter-option.greyed-out .filter-option-icon{ filter:grayscale(1); }
   .not-implemented-toast{
@@ -10393,6 +10394,27 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   });
 })();
 
+// ---- Instant hover tip for greyed-out filter tiles (works even when the grid re-renders under the mouse) ----
+(function(){
+  const tip = document.createElement("div");
+  tip.id = "filterHoverTip";
+  document.body.appendChild(tip);
+  function place(e){
+    const x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+    const y = Math.min(e.clientY + 18, window.innerHeight - tip.offsetHeight - 8);
+    tip.style.left = Math.max(4, x) + "px"; tip.style.top = Math.max(4, y) + "px";
+  }
+  document.addEventListener("mouseover", e => {
+    const t = e.target.closest && e.target.closest(".filter-option[data-tip]");
+    if(!t){ tip.style.display = "none"; return; }
+    tip.textContent = t.dataset.tip;
+    tip.style.display = "block";
+    place(e);
+  });
+  document.addEventListener("mousemove", e => { if(tip.style.display === "block"){ if(!(e.target.closest && e.target.closest(".filter-option[data-tip]"))) tip.style.display = "none"; else place(e); } });
+  document.addEventListener("scroll", () => { tip.style.display = "none"; }, true);
+})();
+
 // ---- Disable Useless Filtering toggle (Filters setting) ----
 (function(){
   const b = document.getElementById("uselessFilterToggle"); if(!b) return;
@@ -10957,7 +10979,7 @@ function setupMergedFilterBar(tokens){
         + (notImplemented ? " not-implemented" : "")
         + (incomplete ? " incomplete" : "")
         + (greyedOut ? " greyed-out" : "");
-      if(greyedOut) btn.title = wrongPage ? "Only Available on Moon Kingdom(s)" : "Barely used (Disable Useless Filtering is on)";
+      if(greyedOut) btn.dataset.tip = wrongPage ? "Only Available on Moon Kingdom(s)" : "Barely used (Disable Useless Filtering is on)";
       const iconWrap = document.createElement("div");
       iconWrap.className = "filter-option-icon";
       iconWrap.appendChild(makeFilterIconEl(token, ""));
