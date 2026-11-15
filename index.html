@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityUpThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10759,93 +10759,130 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       + ".vt-result{animation:vtIn .35s both}";
     document.head.appendChild(st);
   }
-  if(!document.getElementById("vtMenuCss2")){
-    const st = document.createElement("style"); st.id = "vtMenuCss2";
-    st.textContent = "#vtMenuOverlay .icon-wrap{width:100%;height:100%;margin:0}#vtMenuOverlay .icon-wrap img,#vtMenuOverlay .icon-wrap .icon,#vtMenuOverlay .icon-wrap .icon-fallback,#vtMenuOverlay .icon-wrap svg{width:100%;height:100%;max-width:none}#vtMenuOverlay .icon-tooltip{display:none!important}"
-      + ".vt-card{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 10px;margin:5px 0;border:1px solid #333;border-radius:8px;background:#222;color:#fff;font:inherit;cursor:pointer;transition:transform .12s,background .12s}.vt-card:hover{background:#2c2c3a;transform:translateX(2px)}"
-      + ".vt-icons{display:flex;flex:none;gap:4px;align-items:center}.vt-x{border:0;background:none;color:#aaa;font-size:20px;cursor:pointer}.vt-x:hover{color:#ff5c6c}";
+  if(!document.getElementById("vtMenuCss3")){
+    const st = document.createElement("style"); st.id = "vtMenuCss3";
+    st.textContent = `
+@keyframes vmIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes vmSlide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes vmPop{0%{transform:scale(1)}35%{transform:scale(1.035);box-shadow:0 0 0 0 rgba(230,194,0,.65)}100%{transform:scale(1);box-shadow:0 0 0 16px rgba(230,194,0,0)}}
+#vtMenuOverlay{position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:16px}
+#vtMenuOverlay .vm{position:relative;width:min(1120px,100%);max-height:92vh;display:flex;flex-direction:column;background:var(--bg-panel);color:var(--text);border:2px solid var(--gold);box-shadow:var(--shadow-hover);clip-path:polygon(var(--cut-md) 0,100% 0,100% calc(100% - var(--cut-md)),calc(100% - var(--cut-md)) 100%,0 100%,0 var(--cut-md));animation:vmIn .3s cubic-bezier(.2,.9,.3,1.15)}
+#vtMenuOverlay .vm-head{display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:2px solid var(--border)}
+#vtMenuOverlay .vm-title{flex:1;font-size:22px;font-weight:800;letter-spacing:.02em}
+#vtMenuOverlay .vm-title small{display:block;font-size:12px;font-weight:600;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase}
+#vtMenuOverlay .vm-x{border:0;background:none;color:var(--text-dim);font-size:28px;line-height:1;cursor:pointer;transition:transform .2s,color .2s}
+#vtMenuOverlay .vm-x:hover{color:var(--red);transform:rotate(90deg)}
+#vtMenuOverlay .vm-cols{display:flex;min-height:0;flex:1}
+#vtMenuOverlay .vm-left{flex:0 0 40%;overflow:auto;padding:18px 20px;border-right:2px solid var(--border)}
+#vtMenuOverlay .vm-right{flex:1;overflow:auto;padding:18px 24px}
+#vtMenuOverlay .vm-label{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+#vtMenuOverlay .vm-label::before{content:"";width:9px;height:9px;background:currentColor;transform:rotate(45deg)}
+#vtMenuOverlay .vm-left .vm-label{color:var(--gold)}#vtMenuOverlay .vm-right .vm-label{color:var(--red)}
+#vtMenuOverlay .vm-tier{display:flex;align-items:center;gap:8px;margin:16px 0 6px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
+#vtMenuOverlay .vm-tier i{width:11px;height:11px;border-radius:50%;background:var(--tier-casual)}
+#vtMenuOverlay .vm-card{display:flex;align-items:center;gap:16px;width:100%;margin:8px 0;padding:14px 16px;text-align:left;font:inherit;font-size:17px;font-weight:700;color:var(--text);background:var(--bg-chip);border:2px solid var(--border);border-left:5px solid var(--gold);cursor:pointer;transition:transform .12s,border-color .12s,background .12s}
+#vtMenuOverlay .vm-card:hover{transform:translateX(3px);border-color:var(--gold);background:rgba(230,194,0,.08)}
+#vtMenuOverlay .vm-card.sel{border-color:var(--gold);background:rgba(230,194,0,.16)}
+#vtMenuOverlay .vm-right .vm-card{border-left-color:var(--red);font-size:19px;padding:16px 18px;animation:vmSlide .28s both}
+#vtMenuOverlay .vm-right .vm-card:hover{border-color:var(--red);background:rgba(255,77,94,.09)}
+#vtMenuOverlay .vm-right .vm-card.sel{border-color:var(--red);background:rgba(255,77,94,.17)}
+#vtMenuOverlay .vm-pop{animation:vmPop .55s ease-out}
+#vtMenuOverlay .vm-icons{display:flex;flex:none;align-items:center;gap:6px}
+#vtMenuOverlay .vm-txt{flex:1;min-width:0;line-height:1.25}
+#vtMenuOverlay .vm-hint{display:block;margin-top:3px;font-size:12px;font-weight:700;color:var(--red);letter-spacing:.06em;text-transform:uppercase}
+#vtMenuOverlay .vm-vid{flex:none;padding:4px 10px;font-size:12px;font-weight:800;color:#fff;background:var(--red);letter-spacing:.06em}
+#vtMenuOverlay .vm-watch{margin-top:20px;animation:vmIn .35s both}
+#vtMenuOverlay .vm-watch h3{margin:0 0 4px;font-size:20px;line-height:1.3;color:var(--gold)}
+#vtMenuOverlay .vm-file{margin-bottom:10px;font-size:12px;color:var(--text-dim)}
+#vtMenuOverlay .vm-btn{margin-top:8px;margin-right:8px;padding:8px 14px;font:inherit;font-size:13px;font-weight:800;color:var(--text);background:var(--bg-chip);border:2px solid var(--border);cursor:pointer}
+#vtMenuOverlay .vm-btn:hover{border-color:var(--gold);color:var(--gold)}
+#vtMenuOverlay .vm-empty{padding:18px 0;color:var(--text-dim);font-size:15px}
+#vtMenuOverlay .vm-ico{display:inline-flex;flex:none;pointer-events:none}
+#vtMenuOverlay .icon-wrap{width:100%;height:100%;margin:0}#vtMenuOverlay .icon-wrap img,#vtMenuOverlay .icon-wrap .icon,#vtMenuOverlay .icon-wrap .icon-fallback,#vtMenuOverlay .icon-wrap svg{width:100%;height:100%;max-width:none}#vtMenuOverlay .icon-tooltip{display:none!important}
+@media(max-width:760px){#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}`;
     document.head.appendChild(st);
   }
   const ico = (tok, sz) => {
-    const w = mk("span", "display:inline-flex;flex:none;width:" + sz + "px;height:" + sz + "px;pointer-events:none;");
+    const w = mk("span", "width:" + sz + "px;height:" + sz + "px;"); w.className = "vm-ico";
     try{ const i = makeIcon(tok); i.tabIndex = -1; w.appendChild(i); }catch(e){ w.textContent = String(tok).slice(0, 2); }
     return w;
   };
-  const iconStrip = (toks, sz) => { const d = mk("span"); d.className = "vt-icons"; toks.forEach(t => d.appendChild(ico(t, sz))); return d; };
-  const cardBtn = (iconsEl, text, sub) => {
-    const b = mk("button", ""); b.type = "button"; b.className = "vt-card";
+  const strip = (toks, sz) => { const d = mk("span"); d.className = "vm-icons"; toks.forEach((t, i) => { if(i) d.appendChild(mk("span", "opacity:.5;font-size:20px;", "+")); d.appendChild(ico(t, sz)); }); return d; };
+  const card = (iconsEl, text, hint) => {
+    const b = mk("button"); b.type = "button"; b.className = "vm-card";
     if(iconsEl) b.appendChild(iconsEl);
-    const t = mk("div", "flex:1;min-width:0;"); t.appendChild(mk("div", "", text)); if(sub) t.appendChild(mk("div", "opacity:.5;font-size:11px;margin-top:2px;", sub));
+    const t = mk("span"); t.className = "vm-txt"; t.appendChild(document.createTextNode(text));
+    if(hint){ const h = mk("span"); h.className = "vm-hint"; h.textContent = hint; t.appendChild(h); }
     b.appendChild(t); return b;
   };
+  const pop = el => { el.classList.remove("vm-pop"); void el.offsetWidth; el.classList.add("vm-pop"); };
   const openMoonMenu = (moons, pre) => {
     closeMenu();
-    const ov = mk("div", "position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;");
-    ov.id = "vtMenuOverlay";
-    const box = mk("div", "width:min(1020px,95vw);max-height:88vh;display:flex;flex-direction:column;border-radius:12px;background:#161616;color:#fff;border:1px solid #777;box-shadow:0 6px 24px rgba(0,0,0,.6);font:600 12px/1.35 system-ui,sans-serif;overflow:hidden;");
-    box.className = "vt-box";
-    const head = mk("div", "display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #333;background:#1c1c20;");
-    head.appendChild(mk("div", "flex:1;font-size:14px;", moons.map(m => m.name || m.label).join(" / ")));
-    head.appendChild(mk("div", "opacity:.55;", "Fixed requirements \u25C2 \u25B8 Variations"));
-    const x = mk("button", "", "\u2715"); x.type = "button"; x.className = "vt-x"; x.addEventListener("click", closeMenu); head.appendChild(x);
-    box.appendChild(head);
-    const cols = mk("div", "display:flex;min-height:0;flex:1;");
-    const left = mk("div", "flex:1 1 38%;overflow:auto;padding:8px;border-right:1px solid #333;");
-    const right = mk("div", "flex:1 1 62%;overflow:auto;padding:8px 14px;");
-    cols.append(left, right); box.append(cols);
+    const ov = mk("div"); ov.id = "vtMenuOverlay";
+    const box = mk("div"); box.className = "vm";
+    const head = mk("div"); head.className = "vm-head";
+    const ttl = mk("div"); ttl.className = "vm-title";
+    ttl.appendChild(document.createTextNode(moons.map(m => m.name || m.label).join(" / ")));
+    const kg = moons[0] && moons[0].kingdom; if(kg){ const sm = mk("small", "", kg); ttl.insertBefore(sm, ttl.firstChild); }
+    const x = mk("button", "", "\u00D7"); x.type = "button"; x.className = "vm-x"; x.addEventListener("click", closeMenu);
+    head.append(ttl, x); box.appendChild(head);
+    const cols = mk("div"); cols.className = "vm-cols";
+    const left = mk("div"); left.className = "vm-left"; const right = mk("div"); right.className = "vm-right";
+    cols.append(left, right); box.appendChild(cols);
+    left.appendChild(Object.assign(mk("div"), { className: "vm-label", textContent: "Requirements" }));
     const items = [];
-    const hd = (t, tier) => { const d = mk("div", "display:flex;align-items:center;gap:6px;padding:8px 4px 2px;opacity:.85;font-size:11px;text-transform:uppercase;letter-spacing:.05em;");
-      d.appendChild(mk("span", "width:9px;height:9px;border-radius:50%;background:var(--tier-" + tier + ",#888);")); d.appendChild(mk("span", "", t)); return d; };
-    const showRight = (it) => {
-      items.forEach(x => x.el.classList.toggle("vt-sel", x === it));
+    const watch = (host, it, o) => {
+      host.innerHTML = ""; host.className = "vm-watch";
+      host.appendChild(mk("h3", "", o.title));
+      host.appendChild(mk("div", "", videoAutoName(it.moon.name, it.lane.tier, o.slot))).className = "vm-file";
+      const yt = mk("div"); host.appendChild(yt); ytShow(yt, o.title);
+      const cp = mk("button", "", "Copy title"); cp.type = "button"; cp.className = "vm-btn";
+      cp.addEventListener("click", ev => { ev.stopPropagation(); try{ navigator.clipboard.writeText(o.title); }catch(e){} cp.textContent = "Copied \u2713"; });
+      host.appendChild(cp);
+    };
+    const showRight = it => {
+      items.forEach(x => x.el.classList.toggle("sel", x === it));
       right.innerHTML = "";
       const g = it.g, vo = videoOptionsFor(it.moon, it.lane.tier, g), gh = g.find && g.find(isGhToken);
-      const rh = mk("div", "display:flex;align-items:center;gap:8px;margin-bottom:6px;");
-      if(gh) rh.appendChild(ico(gh, 34));
-      rh.appendChild(mk("div", "font-size:12px;opacity:.7;text-transform:uppercase;letter-spacing:.05em;", vo ? "Pick the variation \u2014 " + videoTokenLabel(gh) : "Video title"));
-      right.appendChild(rh);
-      const result = mk("div", "margin-top:10px;");
-      const fixed = g.filter(t => !isGhToken(t));
-      const opts = vo || [{ title: videoTitleFor(it.moon, it.lane.tier, g), slot: slotOf(g, it.i), tokens: fixed }];
-      const choose = (o, b) => {
-        right.querySelectorAll(".vt-opt").forEach(x => x.classList.remove("vt-sel", "vt-pop"));
-        b.classList.add("vt-sel"); void b.offsetWidth; b.classList.add("vt-pop");
-        result.innerHTML = ""; result.className = "vt-result";
-        result.appendChild(mk("div", "padding:10px;border-radius:8px;background:#1d2b2a;border:1px solid #19b8a6;font-size:13px;", o.title));
-        result.appendChild(mk("div", "opacity:.5;font-size:11px;margin:4px 0 8px;", videoAutoName(it.moon.name, it.lane.tier, o.slot)));
-        try{ navigator.clipboard.writeText(o.title); }catch(e){}
-        const host = mk("div"); result.appendChild(host); ytShow(host, o.title);
-      };
-      opts.forEach((o, k) => {
-        const b = cardBtn(iconStrip(fixed.length && !vo ? fixed : (o.tokens || []), 30), o.title);
-        b.classList.add("vt-opt"); b.style.animationDelay = (k * 40) + "ms";
-        window.ytVideoIdFor(o.title).then(id => { if(id){ const dot = mk("span", "flex:none;padding:2px 7px;border-radius:9px;background:#ff3b3b;color:#fff;font-size:10px;", "\u25B6 Video"); b.appendChild(dot); } });
-        b.addEventListener("click", ev => { ev.stopPropagation(); choose(o, b); });
-        right.appendChild(b); o._b = b;
-      });
-      right.appendChild(result);
-      if(opts.length === 1) choose(opts[0], opts[0]._b);
+      const host = mk("div");
+      if(vo){
+        const lab = mk("div"); lab.className = "vm-label"; lab.textContent = "Pick the variation"; right.appendChild(lab);
+        if(gh){ const gc = mk("div", "display:flex;align-items:center;gap:14px;margin:0 0 10px;font-size:18px;font-weight:800;"); gc.appendChild(ico(gh, 64)); gc.appendChild(mk("span", "", videoTokenLabel(gh))); right.appendChild(gc); }
+        vo.forEach((o, k) => {
+          const c = card(strip(o.tokens || [], 56), (o.tokens || []).map(videoTokenLabel).join(" + "));
+          c.style.animationDelay = (k * 45) + "ms";
+          window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(Object.assign(mk("span"), { className: "vm-vid", textContent: "\u25B6 VIDEO" })); });
+          c.addEventListener("click", ev => { ev.stopPropagation(); right.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); });
+          right.appendChild(c);
+        });
+        right.appendChild(host);
+        host.className = "vm-empty"; host.textContent = "Choose a variation to watch its video.";
+      } else {
+        const lab = mk("div"); lab.className = "vm-label"; lab.textContent = "Video"; right.appendChild(lab);
+        right.appendChild(host); watch(host, it, { title: videoTitleFor(it.moon, it.lane.tier, g), slot: slotOf(g, it.i) });
+      }
     };
     moons.forEach(moon => {
       let lanes = [];
       try{ lanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes || [], moon.kingdom)) || []; if(hideAdvanced || hideExpert) lanes = visLanes(lanes); }catch(e){}
       if(!lanes.length) lanes = [{ tier: "free", label: "Free", groups: [[]] }];
-      if(moons.length > 1) left.appendChild(mk("div", "font-size:14px;margin:8px 4px 2px;", (moon.name || moon.label || "") + (moon.kingdom ? "  \u00B7  " + moon.kingdom : "")));
+      if(moons.length > 1) left.appendChild(mk("div", "font-size:17px;font-weight:800;margin:14px 0 2px;", moon.name || moon.label));
       lanes.forEach(lane => {
-        left.appendChild(hd((lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier), lane.tier));
+        const th = mk("div"); th.className = "vm-tier";
+        const dot = mk("i"); dot.style.background = "var(--tier-" + lane.tier + ", var(--text-dim))";
+        th.append(dot, document.createTextNode((lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier)));
+        left.appendChild(th);
         lane.groups.forEach((g, i) => {
           const gh = g.find && g.find(isGhToken), fixed = g.filter(t => !isGhToken(t));
-          const strip = mk("span"); strip.className = "vt-icons";
-          fixed.forEach(t => strip.appendChild(ico(t, 30)));
-          if(gh){ if(fixed.length) strip.appendChild(mk("span", "opacity:.6;", "+")); strip.appendChild(ico(gh, 30)); }
-          const el = cardBtn(g.length ? strip : null, fixed.length ? fixed.map(videoTokenLabel).join(" + ") : (gh ? "Nothing else" : "Free"), gh ? videoTokenLabel(gh) + " \u25B8" : null);
+          const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
+          const el = card(fixed.length ? strip(fixed, 48) : null, fixed.length ? fixed.map(videoTokenLabel).join(" + ") : (gh ? "Nothing else" : "Free"), nVar ? "\u25B8 " + nVar + " variations" : null);
           const it = { moon, lane, g, i, el }; items.push(it);
-          el.addEventListener("click", ev => { ev.stopPropagation(); el.classList.remove("vt-pop"); void el.offsetWidth; el.classList.add("vt-pop"); showRight(it); });
+          el.addEventListener("click", ev => { ev.stopPropagation(); pop(el); showRight(it); });
           left.appendChild(el);
         });
       });
     });
-    right.appendChild(mk("div", "opacity:.5;padding:8px 0;", "Select a requirement on the left."));
+    right.appendChild(Object.assign(mk("div"), { className: "vm-empty", textContent: "Select a requirement on the left." }));
     ov.appendChild(box); document.body.appendChild(ov);
     ov.addEventListener("mousedown", ev => { if(ev.target === ov) closeMenu(); });
     document.addEventListener("keydown", function esc(ev){ if(ev.key === "Escape"){ closeMenu(); document.removeEventListener("keydown", esc); } });
