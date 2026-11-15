@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10830,6 +10830,13 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-right .vm-card:hover{border-color:var(--red);background:rgba(255,77,94,.09)}
 #vtMenuOverlay .vm-right .vm-card.sel{border-color:var(--red);background:rgba(255,77,94,.17)}
 #vtMenuOverlay .vm-pop{animation:vmPop .55s ease-out}
+#vtMenuOverlay .vm-card.vm-col{flex-direction:column;align-items:flex-start;gap:8px}
+#vtMenuOverlay .vm-labeled{flex-wrap:wrap;align-items:flex-start;gap:4px 6px}
+#vtMenuOverlay .vm-cell{display:flex;flex-direction:column;align-items:center;gap:4px;width:60px}
+#vtMenuOverlay .vm-cell .vm-ico{margin:0}
+#vtMenuOverlay .vm-cap{font-size:10.5px;font-weight:700;line-height:1.15;text-align:center;color:var(--text-dim);overflow-wrap:anywhere}
+#vtMenuOverlay .vm-plus{margin-top:8px}
+#vtMenuOverlay .vm-card.vm-col .vm-txt{flex:none}
 #vtMenuOverlay .vm-icons{display:flex;flex:none;align-items:center;gap:6px}
 #vtMenuOverlay .vm-txt{flex:1;min-width:0;line-height:1.25}
 #vtMenuOverlay .vm-hint{display:block;margin-top:3px;font-size:12px;font-weight:700;color:var(--red);letter-spacing:.06em;text-transform:uppercase}
@@ -10850,13 +10857,16 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     try{ const i = makeIcon(tok); i.tabIndex = -1; i.style.zoom = String(sz / 48.6); w.appendChild(i); }catch(e){ w.textContent = String(tok).slice(0, 2); }
     return w;
   };
-  const strip = (toks, sz) => { const d = mk("span"); d.className = "vm-icons"; toks.forEach((t, i) => { if(i) d.appendChild(mk("span", "opacity:.5;font-size:20px;", "+")); d.appendChild(ico(t, sz)); }); return d; };
+  const strip = (toks, sz, labeled) => { const d = mk("span"); d.className = "vm-icons" + (labeled ? " vm-labeled" : ""); toks.forEach((t, i) => { if(i){ const pl = mk("span", "opacity:.5;font-size:20px;", "+"); if(labeled) pl.className = "vm-plus"; d.appendChild(pl); } if(labeled){ const c = mk("span"); c.className = "vm-cell"; c.appendChild(ico(t, sz)); const l = mk("span"); l.className = "vm-cap"; l.textContent = videoTokenLabel(t); c.appendChild(l); d.appendChild(c); } else d.appendChild(ico(t, sz)); }); return d; };
   const card = (iconsEl, text, hint) => {
     const b = mk("button"); b.type = "button"; b.className = "vm-card";
-    if(iconsEl) b.appendChild(iconsEl);
-    const t = mk("span"); t.className = "vm-txt"; t.appendChild(document.createTextNode(text));
-    if(hint){ const h = mk("span"); h.className = "vm-hint"; h.textContent = hint; t.appendChild(h); }
-    b.appendChild(t); return b;
+    if(iconsEl){ b.appendChild(iconsEl); if(iconsEl.classList.contains("vm-labeled")) b.classList.add("vm-col"); }
+    if(text || hint){
+      const t = mk("span"); t.className = "vm-txt"; if(text) t.appendChild(document.createTextNode(text));
+      if(hint){ const h = mk("span"); h.className = "vm-hint"; h.textContent = hint; t.appendChild(h); }
+      b.appendChild(t);
+    }
+    return b;
   };
   const pop = el => { el.classList.remove("vm-pop"); void el.offsetWidth; el.classList.add("vm-pop"); };
   const openMoonMenu = (moons, pre) => {
@@ -10915,7 +10925,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         const lab = mk("div"); lab.className = "vm-label"; lab.textContent = "Pick the variation"; side.appendChild(lab);
         if(gh){ const gc = mk("div", "display:flex;align-items:center;gap:12px;margin:0 0 10px;font-size:18px;font-weight:800;"); gc.appendChild(ico(gh, 56)); gc.appendChild(mk("span", "", videoTokenLabel(gh))); side.appendChild(gc); }
         vo.forEach((o, k) => {
-          const c = card(strip(o.tokens || [], 44), (o.tokens || []).map(videoTokenLabel).join(" + "));
+          const c = card(strip(o.tokens || [], 44, true), (o.tokens && o.tokens.length) ? "" : "Free");
           c.style.animationDelay = (k * 45) + "ms";
           window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(Object.assign(mk("span"), { className: "vm-vid", textContent: "\u25B6 VIDEO" })); });
           const pick = () => { side.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); };
@@ -10945,7 +10955,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         lane.groups.forEach((g, i) => {
           const gh = g.find && g.find(isGhToken), fixed = g.filter(t => !isGhToken(t));
           const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
-          const el = card(fixed.length ? strip(fixed, 40) : null, fixed.length ? fixed.map(videoTokenLabel).join(" + ") : (gh ? "Nothing else" : "Free"), nVar ? "\u25B8 " + nVar + " variations" : null);
+          const el = card(fixed.length ? strip(fixed, 40, true) : null, fixed.length ? "" : (gh ? "Nothing else" : "Free"), nVar ? "\u25B8 " + nVar + " variations" : null);
           const it = { moon, lane, g, i, el }; items.push(it);
           el.addEventListener("click", ev => { ev.stopPropagation(); pop(el); showRight(it); });
           left.appendChild(el);
