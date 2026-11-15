@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDeath.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1470,9 +1470,9 @@
      clip yet. The overlay never opens in that case at all. */
   .nothing-yet-toast{
     position:fixed;
-    right:24px;
+    left:50%;
     bottom:24px;
-    z-index:200;
+    z-index:200000;
     background:#1c1c20;
     color:var(--text-dim);
     border:2px solid var(--border);
@@ -1481,13 +1481,13 @@
     font-size:13px;
     font-weight:600;
     filter: drop-shadow(2px 3px 0 var(--ink));
-    transform:translateY(140%);
+    transform:translate(-50%,140%);
     opacity:0;
     transition:transform 0.28s cubic-bezier(.2,.9,.3,1.1), opacity 0.28s ease;
     pointer-events:none;
   }
   .nothing-yet-toast.show{
-    transform:translateY(0);
+    transform:translate(-50%,0);
     opacity:1;
   }
   /* Small "has a video" badge pinned to the top-right corner of a node
@@ -1504,6 +1504,8 @@
     animation: videoBadgeIn 0.25s cubic-bezier(.34,1.56,.4,1) both;
   }
   .has-video-badge svg{ width:7px; height:7px; margin-left:1px; display:block; }
+  .option-chip, .free-tag, .free-chip{ position:relative; }
+  .option-chip > .has-video-badge, .free-tag > .has-video-badge, .free-chip > .has-video-badge{ top:auto; bottom:3px; right:3px; width:16px; height:16px; background:#ff3b3b; color:#fff; }
   @keyframes videoBadgeIn{ from{ transform:scale(0); opacity:0; } to{ transform:scale(1); opacity:1; } }
   /* Hover affordance so it's clear a requirement branch is clickable. */
   .option-chip, .free-chip{ cursor:pointer; transition:transform 0.12s ease, box-shadow 0.12s ease; }
@@ -10757,29 +10759,54 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       + ".vt-result{animation:vtIn .35s both}";
     document.head.appendChild(st);
   }
-  const btnCss = "display:block;width:100%;text-align:left;padding:8px 10px;margin:4px 0;border:1px solid #333;border-radius:6px;background:#242424;color:#fff;font:inherit;cursor:pointer;";
-  const openMoonMenu = (moons) => {
+  if(!document.getElementById("vtMenuCss2")){
+    const st = document.createElement("style"); st.id = "vtMenuCss2";
+    st.textContent = "#vtMenuOverlay .icon-wrap{width:100%;height:100%;margin:0}#vtMenuOverlay .icon-wrap img,#vtMenuOverlay .icon-wrap .icon,#vtMenuOverlay .icon-wrap .icon-fallback,#vtMenuOverlay .icon-wrap svg{width:100%;height:100%;max-width:none}#vtMenuOverlay .icon-tooltip{display:none!important}"
+      + ".vt-card{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 10px;margin:5px 0;border:1px solid #333;border-radius:8px;background:#222;color:#fff;font:inherit;cursor:pointer;transition:transform .12s,background .12s}.vt-card:hover{background:#2c2c3a;transform:translateX(2px)}"
+      + ".vt-icons{display:flex;flex:none;gap:4px;align-items:center}.vt-x{border:0;background:none;color:#aaa;font-size:20px;cursor:pointer}.vt-x:hover{color:#ff5c6c}";
+    document.head.appendChild(st);
+  }
+  const ico = (tok, sz) => {
+    const w = mk("span", "display:inline-flex;flex:none;width:" + sz + "px;height:" + sz + "px;pointer-events:none;");
+    try{ const i = makeIcon(tok); i.tabIndex = -1; w.appendChild(i); }catch(e){ w.textContent = String(tok).slice(0, 2); }
+    return w;
+  };
+  const iconStrip = (toks, sz) => { const d = mk("span"); d.className = "vt-icons"; toks.forEach(t => d.appendChild(ico(t, sz))); return d; };
+  const cardBtn = (iconsEl, text, sub) => {
+    const b = mk("button", ""); b.type = "button"; b.className = "vt-card";
+    if(iconsEl) b.appendChild(iconsEl);
+    const t = mk("div", "flex:1;min-width:0;"); t.appendChild(mk("div", "", text)); if(sub) t.appendChild(mk("div", "opacity:.5;font-size:11px;margin-top:2px;", sub));
+    b.appendChild(t); return b;
+  };
+  const openMoonMenu = (moons, pre) => {
     closeMenu();
     const ov = mk("div", "position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;");
     ov.id = "vtMenuOverlay";
-    const box = mk("div", "width:min(980px,95vw);max-height:88vh;display:flex;flex-direction:column;border-radius:10px;background:#161616;color:#fff;border:1px solid #777;box-shadow:0 6px 24px rgba(0,0,0,.6);font:600 12px/1.35 system-ui,sans-serif;");
+    const box = mk("div", "width:min(1020px,95vw);max-height:88vh;display:flex;flex-direction:column;border-radius:12px;background:#161616;color:#fff;border:1px solid #777;box-shadow:0 6px 24px rgba(0,0,0,.6);font:600 12px/1.35 system-ui,sans-serif;overflow:hidden;");
     box.className = "vt-box";
-    box.appendChild(mk("div", "padding:10px 14px;border-bottom:1px solid #333;opacity:.75;", "Video titles \u2014 pick the fixed requirements on the left, then the variation on the right"));
+    const head = mk("div", "display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #333;background:#1c1c20;");
+    head.appendChild(mk("div", "flex:1;font-size:14px;", moons.map(m => m.name || m.label).join(" / ")));
+    head.appendChild(mk("div", "opacity:.55;", "Fixed requirements \u25C2 \u25B8 Variations"));
+    const x = mk("button", "", "\u2715"); x.type = "button"; x.className = "vt-x"; x.addEventListener("click", closeMenu); head.appendChild(x);
+    box.appendChild(head);
     const cols = mk("div", "display:flex;min-height:0;flex:1;");
     const left = mk("div", "flex:1 1 38%;overflow:auto;padding:8px;border-right:1px solid #333;");
-    const right = mk("div", "flex:1 1 62%;overflow:auto;padding:8px 12px;");
+    const right = mk("div", "flex:1 1 62%;overflow:auto;padding:8px 14px;");
     cols.append(left, right); box.append(cols);
-    const items = []; // { moon, lane, g, i, el }
-    const hd = t => mk("div", "padding:6px 4px 2px;opacity:.5;font-size:11px;text-transform:uppercase;letter-spacing:.04em;", t);
-    const lblOf = g => { const m = g.filter(t => !isGhToken(t)).map(videoTokenLabel); return m.length ? m.join(" + ") : "Nothing else"; };
-    const showRight = (it, selIdx) => {
+    const items = [];
+    const hd = (t, tier) => { const d = mk("div", "display:flex;align-items:center;gap:6px;padding:8px 4px 2px;opacity:.85;font-size:11px;text-transform:uppercase;letter-spacing:.05em;");
+      d.appendChild(mk("span", "width:9px;height:9px;border-radius:50%;background:var(--tier-" + tier + ",#888);")); d.appendChild(mk("span", "", t)); return d; };
+    const showRight = (it) => {
       items.forEach(x => x.el.classList.toggle("vt-sel", x === it));
       right.innerHTML = "";
-      const g = it.g, vo = videoOptionsFor(it.moon, it.lane.tier, g);
-      right.appendChild(mk("div", "font-size:11px;opacity:.55;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;",
-        vo ? "Pick the " + videoTokenLabel(g.find(isGhToken) || g[0]) : "Video title"));
+      const g = it.g, vo = videoOptionsFor(it.moon, it.lane.tier, g), gh = g.find && g.find(isGhToken);
+      const rh = mk("div", "display:flex;align-items:center;gap:8px;margin-bottom:6px;");
+      if(gh) rh.appendChild(ico(gh, 34));
+      rh.appendChild(mk("div", "font-size:12px;opacity:.7;text-transform:uppercase;letter-spacing:.05em;", vo ? "Pick the variation \u2014 " + videoTokenLabel(gh) : "Video title"));
+      right.appendChild(rh);
       const result = mk("div", "margin-top:10px;");
-      const opts = vo || [{ title: videoTitleFor(it.moon, it.lane.tier, g), slot: slotOf(g, it.i) }];
+      const fixed = g.filter(t => !isGhToken(t));
+      const opts = vo || [{ title: videoTitleFor(it.moon, it.lane.tier, g), slot: slotOf(g, it.i), tokens: fixed }];
       const choose = (o, b) => {
         right.querySelectorAll(".vt-opt").forEach(x => x.classList.remove("vt-sel", "vt-pop"));
         b.classList.add("vt-sel"); void b.offsetWidth; b.classList.add("vt-pop");
@@ -10790,27 +10817,28 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         const host = mk("div"); result.appendChild(host); ytShow(host, o.title);
       };
       opts.forEach((o, k) => {
-        const b = mk("button", btnCss + "animation-delay:" + (k * 40) + "ms;", o.title); b.type = "button"; b.className = "vt-opt";
+        const b = cardBtn(iconStrip(fixed.length && !vo ? fixed : (o.tokens || []), 30), o.title);
+        b.classList.add("vt-opt"); b.style.animationDelay = (k * 40) + "ms";
+        window.ytVideoIdFor(o.title).then(id => { if(id){ const dot = mk("span", "flex:none;padding:2px 7px;border-radius:9px;background:#ff3b3b;color:#fff;font-size:10px;", "\u25B6 Video"); b.appendChild(dot); } });
         b.addEventListener("click", ev => { ev.stopPropagation(); choose(o, b); });
-        right.appendChild(b);
+        right.appendChild(b); o._b = b;
       });
       right.appendChild(result);
-      if(opts.length === 1) choose(opts[0], right.querySelector(".vt-opt"));
+      if(opts.length === 1) choose(opts[0], opts[0]._b);
     };
     moons.forEach(moon => {
-      left.appendChild(mk("div", "font-size:14px;margin:6px 4px 2px;", (moon.name || moon.label || "") + (moon.kingdom ? "  \u00B7  " + moon.kingdom : "")));
       let lanes = [];
       try{ lanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes || [], moon.kingdom)) || []; if(hideAdvanced || hideExpert) lanes = visLanes(lanes); }catch(e){}
       if(!lanes.length) lanes = [{ tier: "free", label: "Free", groups: [[]] }];
+      if(moons.length > 1) left.appendChild(mk("div", "font-size:14px;margin:8px 4px 2px;", (moon.name || moon.label || "") + (moon.kingdom ? "  \u00B7  " + moon.kingdom : "")));
       lanes.forEach(lane => {
-        left.appendChild(hd((lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier)));
+        left.appendChild(hd((lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier), lane.tier));
         lane.groups.forEach((g, i) => {
-          const gh = g.find && g.find(isGhToken);
-          const el = mk("button", btnCss, null); el.type = "button";
-          el.appendChild(mk("span", "", g.length ? lblOf(g) : "Free"));
-          if(gh && videoOptionsFor(moon, lane.tier, g)){
-            const tag = mk("span", "float:right;padding:1px 7px;border-radius:9px;background:#0f4d46;color:#7ff0e0;font-size:10px;", videoTokenLabel(gh) + " \u25B8"); el.appendChild(tag);
-          }
+          const gh = g.find && g.find(isGhToken), fixed = g.filter(t => !isGhToken(t));
+          const strip = mk("span"); strip.className = "vt-icons";
+          fixed.forEach(t => strip.appendChild(ico(t, 30)));
+          if(gh){ if(fixed.length) strip.appendChild(mk("span", "opacity:.6;", "+")); strip.appendChild(ico(gh, 30)); }
+          const el = cardBtn(g.length ? strip : null, fixed.length ? fixed.map(videoTokenLabel).join(" + ") : (gh ? "Nothing else" : "Free"), gh ? videoTokenLabel(gh) + " \u25B8" : null);
           const it = { moon, lane, g, i, el }; items.push(it);
           el.addEventListener("click", ev => { ev.stopPropagation(); el.classList.remove("vt-pop"); void el.offsetWidth; el.classList.add("vt-pop"); showRight(it); });
           left.appendChild(el);
@@ -10821,7 +10849,17 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     ov.appendChild(box); document.body.appendChild(ov);
     ov.addEventListener("mousedown", ev => { if(ev.target === ov) closeMenu(); });
     document.addEventListener("keydown", function esc(ev){ if(ev.key === "Escape"){ closeMenu(); document.removeEventListener("keydown", esc); } });
-    if(items.length) showRight(items[0]);
+    let start = items[0];
+    if(pre){ const f = items.find(x => x.lane.tier === pre.tier && (x.g === pre.g || (x.g.slot && x.g.slot === pre.g.slot && x.g[0] === pre.g[0]))); if(f) start = f; }
+    if(start){ showRight(start); start.el.scrollIntoView({ block: "nearest" }); }
+  };
+  // Click on a method: open the menu if a YouTube video exists for it, otherwise "Nothing yet...".
+  window.ytOpenFor = async (moon, tier, group) => {
+    const vo = videoOptionsFor(moon, tier, group);
+    const titles = vo ? vo.map(o => o.title) : [videoTitleFor(moon, tier, group || [])];
+    const ids = await Promise.all(titles.map(t => window.ytVideoIdFor(t).catch(() => null)));
+    if(!ids.some(Boolean)){ showNothingYetToast("Nothing yet\u2026"); return; }
+    openMoonMenu([moon], { tier, g: group });
   };
   document.addEventListener("click", e => {
     if(!on || !e.target.closest) return;
@@ -12142,6 +12180,7 @@ function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier, picked
     });
     return;
   }
+  if(window.ytOpenFor) window.ytOpenFor(moon, tierKey, andGroup || []);
 }
 
 // Tries assets/logicvideos/<baseName>.mp4, then .webp, then gives up.
