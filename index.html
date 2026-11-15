@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityUpThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3462,6 +3462,14 @@ function videoOptionsFor(moon, tierKey, group){
   const extras = group.slice(1).filter(t => !isGhToken(t));
   return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: group.origin || null })), slot: group.methodSlots[si], tokens: m }));
 }
+function addYtBadge(nodeEl){
+  if(nodeEl.querySelector(":scope > .has-video-badge")) return;
+  const badge = document.createElement("span");
+  badge.className = "has-video-badge";
+  badge.title = "Has a YouTube video";
+  badge.innerHTML = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0.5 L9.5 5 L1 9.5 Z" fill="currentColor"/></svg>';
+  nodeEl.appendChild(badge);
+}
 // "Has video" badge: shown only when a matching video exists on the SMO Randomizer Logic YouTube channel.
 function attachYtBadge(nodeEl, moon, tierKey, group){
   nodeEl._ytArgs = [moon, tierKey, group];
@@ -3469,12 +3477,7 @@ function attachYtBadge(nodeEl, moon, tierKey, group){
     const vo = videoOptionsFor(moon, tierKey, group);
     const titles = vo ? vo.map(o => o.title) : [videoTitleFor(moon, tierKey, group || [])];
     Promise.all(titles.map(t => window.ytVideoIdFor(t).catch(() => null))).then(r => {
-      if(!r.some(Boolean) || nodeEl.querySelector(":scope > .has-video-badge")) return;
-      const badge = document.createElement("span");
-      badge.className = "has-video-badge";
-      badge.title = "Has a YouTube video";
-      badge.innerHTML = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0.5 L9.5 5 L1 9.5 Z" fill="currentColor"/></svg>';
-      nodeEl.appendChild(badge);
+      if(r.some(Boolean)) addYtBadge(nodeEl);
     });
   };
   if(window.ytVideoIdFor) run(); else (window.__ytQ = window.__ytQ || []).push(run);
@@ -10740,6 +10743,19 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     }
     return m;
   })());
+  // Safety net: badge ANY method on screen from the exact title its hover shows (first line), so a method
+  // never misses its badge because of how/when it was built, cloned or re-rendered.
+  const ytSweep = () => document.querySelectorAll("[data-video-title]").forEach(el => {
+    const key = el.dataset.videoTitle;
+    if(el._ytKey === key && el.querySelector(":scope > .has-video-badge")) return;
+    if(el._ytKey === key) return;
+    el._ytKey = key;
+    if(el._ytArgs){ attachYtBadge(el, ...el._ytArgs); return; }
+    window.ytVideoIdFor(String(key).split("\n")[0]).then(id => { if(id) addYtBadge(el); }).catch(() => {});
+  });
+  let _ytSweepT = null;
+  new MutationObserver(() => { clearTimeout(_ytSweepT); _ytSweepT = setTimeout(ytSweep, 150); }).observe(document.body, { childList: true, subtree: true });
+  ytIndex().then(ytSweep);
   // Once the index is in, (re)badge every method already on screen, so timing never leaves one without its badge.
   ytIndex().then(() => document.querySelectorAll(".option-chip, .free-tag, .free-chip").forEach(el => { if(el._ytArgs) attachYtBadge(el, ...el._ytArgs); }));
   ytIndex().then(m => console.info("[YouTube index] " + Object.keys(m).length + " videos loaded" + (Object.keys(m).length ? "" : " - badges need assets/youtube-index.json (run the Update YouTube index Action) or a reachable channel feed")));
