@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10844,8 +10844,9 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-right .vm-card:hover{border-color:var(--red);background:rgba(255,77,94,.09)}
 #vtMenuOverlay .vm-right .vm-card.sel{border-color:var(--red);background:rgba(255,77,94,.17)}
 #vtMenuOverlay .vm-pop{animation:vmPop .55s ease-out}
-#vtMenuOverlay .vm-card.vm-col{flex-direction:column;align-items:flex-start;gap:8px}
-#vtMenuOverlay .vm-labeled{flex-wrap:wrap;align-items:flex-start;gap:4px 6px}
+#vtMenuOverlay .vm-card.vm-col{flex-direction:column;align-items:center;gap:8px}
+#vtMenuOverlay .vm-labeled{flex-direction:column;align-items:center;gap:10px;width:100%}
+#vtMenuOverlay .vm-row{display:flex;justify-content:center;align-items:flex-start;gap:6px;width:100%}
 #vtMenuOverlay .vm-cell{display:flex;flex-direction:column;align-items:center;gap:4px;width:60px}
 #vtMenuOverlay .vm-cell .vm-ico{margin:0}
 #vtMenuOverlay .vm-cap{font-size:10.5px;font-weight:700;line-height:1.15;text-align:center;color:var(--text-dim);overflow-wrap:anywhere}
@@ -10871,7 +10872,38 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     try{ const i = makeIcon(tok); i.tabIndex = -1; i.style.zoom = String(sz / 48.6); w.appendChild(i); }catch(e){ w.textContent = String(tok).slice(0, 2); }
     return w;
   };
-  const strip = (toks, sz, labeled) => { const d = mk("span"); d.className = "vm-icons" + (labeled ? " vm-labeled" : ""); toks.forEach((t, i) => { if(i){ const pl = mk("span", "opacity:.5;font-size:20px;", "+"); if(labeled) pl.className = "vm-plus"; d.appendChild(pl); } if(labeled){ const c = mk("span"); c.className = "vm-cell"; c.appendChild(ico(t, sz)); const l = mk("span"); l.className = "vm-cap"; l.textContent = videoTokenLabel(t); c.appendChild(l); d.appendChild(c); } else d.appendChild(ico(t, sz)); }); return d; };
+  const strip = (toks, sz, labeled) => {
+    const d = mk("span"); d.className = "vm-icons" + (labeled ? " vm-labeled" : "");
+    if(!labeled){ toks.forEach((t, i) => { if(i) d.appendChild(mk("span", "opacity:.5;font-size:20px;", "+")); d.appendChild(ico(t, sz)); }); return d; }
+    // Same layout rules as the moon-card chips: hide moves already shown as a progression icon, sort for display,
+    // then balanced rows of at most ICON_ROW_MAX (4 -> 2+2, 5 -> 3+2, 7 -> 3+2+2).
+    let show = toks.slice();
+    try{
+      const covered = new Set();
+      toks.forEach(t => (ABILITY_PROGRESSION[t] || []).forEach(pt => covered.add(pt)));
+      toks.forEach(t => { const c = dynamicProgChain(t, toks); if(c) c.forEach(pt => { if(pt !== ANY_THROW_TOKEN) covered.add(pt); }); });
+      const vis = toks.filter(t => !covered.has(t));
+      show = sortedTokensForDisplay(vis.length ? vis : toks);
+    }catch(e){ show = toks.slice(); }
+    const rows = balancedRowCounts(show.length, 3);
+    const twoD = toks.indexOf("SingleJump") !== -1 && toks.indexOf("Pipe2D") !== -1;
+    let idx = 0;
+    rows.forEach(n => {
+      const row = mk("span"); row.className = "vm-row";
+      for(let k = 0; k < n; k++, idx++){
+        const t = show[idx];
+        if(k){ const pl = mk("span", "opacity:.5;font-size:20px;", "+"); pl.className = "vm-plus"; row.appendChild(pl); }
+        const c = mk("span"); c.className = "vm-cell";
+        const w = mk("span", "width:" + sz + "px;height:" + sz + "px;"); w.className = "vm-ico";
+        try{ const ic = makeIcon(t, { twoDJump: twoD && t === "SingleJump", progChain: dynamicProgChain(t, toks) }); ic.tabIndex = -1; ic.style.zoom = String(sz / 48.6); w.appendChild(ic); }catch(e){ w.textContent = String(t).slice(0, 2); }
+        c.appendChild(w);
+        const l = mk("span"); l.className = "vm-cap"; l.textContent = videoTokenLabel(t); c.appendChild(l);
+        row.appendChild(c);
+      }
+      d.appendChild(row);
+    });
+    return d;
+  };
   const card = (iconsEl, text, hint) => {
     const b = mk("button"); b.type = "button"; b.className = "vm-card";
     if(iconsEl){ b.appendChild(iconsEl); if(iconsEl.classList.contains("vm-labeled")) b.classList.add("vm-col"); }
