@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10695,31 +10695,117 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     r.addEventListener("click", ev => { ev.stopPropagation(); try{ navigator.clipboard.writeText(title); }catch(e){} r.style.background = "#2d4a2d"; });
     return r;
   };
+  // ---- YouTube: videos come from the SMO Randomizer Logic channel ----
+  const YT_CHANNEL = "UCN3jvHO5bS9PoEopGKsi0bg", YT_UPLOADS = "UUN3jvHO5bS9PoEopGKsi0bg";
+  const YT_ID_OVERRIDES = {}; // exact built title -> YouTube video id, for any clip you want to pin by hand
+  const ytNorm = t => String(t).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  let _ytIdx = null;
+  const ytIndex = () => _ytIdx || (_ytIdx = (async () => {
+    const feed = "https://www.youtube.com/feeds/videos.xml?channel_id=" + YT_CHANNEL;
+    for(const u of [feed, "https://api.allorigins.win/raw?url=" + encodeURIComponent(feed)]){
+      try{
+        const r = await fetch(u); if(!r.ok) continue;
+        const x = new DOMParser().parseFromString(await r.text(), "text/xml"), m = {};
+        x.querySelectorAll("entry").forEach(en => {
+          const t = en.querySelector("title"), id = en.getElementsByTagNameNS("http://www.youtube.com/xml/schemas/2015", "videoId")[0];
+          if(t && id) m[ytNorm(t.textContent)] = id.textContent;
+        });
+        if(Object.keys(m).length) return m;
+      }catch(e){}
+    }
+    return {};
+  })());
+  const ytShow = async (host, title) => {
+    host.innerHTML = ""; host.appendChild(mk("div", "opacity:.6;padding:8px 0;", "Looking for this video on the channel\u2026"));
+    const idx = await ytIndex();
+    const id = YT_ID_OVERRIDES[title] || idx[ytNorm(title)];
+    host.innerHTML = "";
+    const f = document.createElement("iframe");
+    f.src = "https://www.youtube.com/embed/" + (id ? id : "videoseries?list=" + YT_UPLOADS);
+    f.allow = "accelerometer; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen = true;
+    f.style.cssText = "width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#000;";
+    host.appendChild(f);
+    const a = mk("a", "display:inline-block;margin-top:6px;color:#19b8a6;", id ? "Open on YouTube" : "No exact match yet \u2014 showing channel uploads. Search the channel for this title");
+    a.target = "_blank"; a.rel = "noopener";
+    a.href = id ? "https://www.youtube.com/watch?v=" + id : "https://www.youtube.com/@SMORandomizerLogic/search?query=" + encodeURIComponent(title);
+    host.appendChild(a);
+  };
+  if(!document.getElementById("vtMenuCss")){
+    const st = document.createElement("style"); st.id = "vtMenuCss";
+    st.textContent = "@keyframes vtIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}"
+      + "@keyframes vtPop{0%{transform:scale(1)}40%{transform:scale(1.045);box-shadow:0 0 0 0 rgba(25,184,166,.7)}100%{transform:scale(1);box-shadow:0 0 0 14px rgba(25,184,166,0)}}"
+      + "@keyframes vtSlide{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}"
+      + "@keyframes vtGlow{0%{background:#1f6f66}100%{background:#17332f}}"
+      + ".vt-box{animation:vtIn .28s cubic-bezier(.2,.9,.3,1.2)}.vt-opt{animation:vtSlide .26s both}"
+      + ".vt-sel{border-color:#19b8a6!important;background:#1d2b2a!important}.vt-pop{animation:vtPop .55s ease-out,vtGlow .55s ease-out forwards}"
+      + ".vt-result{animation:vtIn .35s both}";
+    document.head.appendChild(st);
+  }
+  const btnCss = "display:block;width:100%;text-align:left;padding:8px 10px;margin:4px 0;border:1px solid #333;border-radius:6px;background:#242424;color:#fff;font:inherit;cursor:pointer;";
   const openMoonMenu = (moons) => {
     closeMenu();
     const ov = mk("div", "position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;");
     ov.id = "vtMenuOverlay";
-    const box = mk("div", "width:min(780px,94vw);max-height:84vh;overflow:auto;border-radius:10px;background:#161616;color:#fff;border:1px solid #777;box-shadow:0 6px 20px rgba(0,0,0,.6);font:600 12px/1.35 system-ui,sans-serif;padding:12px 14px;");
-    box.appendChild(mk("div", "opacity:.6;margin-bottom:6px;", "Video titles \u2014 click a title to copy it"));
+    const box = mk("div", "width:min(980px,95vw);max-height:88vh;display:flex;flex-direction:column;border-radius:10px;background:#161616;color:#fff;border:1px solid #777;box-shadow:0 6px 24px rgba(0,0,0,.6);font:600 12px/1.35 system-ui,sans-serif;");
+    box.className = "vt-box";
+    box.appendChild(mk("div", "padding:10px 14px;border-bottom:1px solid #333;opacity:.75;", "Video titles \u2014 pick the fixed requirements on the left, then the variation on the right"));
+    const cols = mk("div", "display:flex;min-height:0;flex:1;");
+    const left = mk("div", "flex:1 1 38%;overflow:auto;padding:8px;border-right:1px solid #333;");
+    const right = mk("div", "flex:1 1 62%;overflow:auto;padding:8px 12px;");
+    cols.append(left, right); box.append(cols);
+    const items = []; // { moon, lane, g, i, el }
+    const hd = t => mk("div", "padding:6px 4px 2px;opacity:.5;font-size:11px;text-transform:uppercase;letter-spacing:.04em;", t);
+    const lblOf = g => { const m = g.filter(t => !isGhToken(t)).map(videoTokenLabel); return m.length ? m.join(" + ") : "Nothing else"; };
+    const showRight = (it, selIdx) => {
+      items.forEach(x => x.el.classList.toggle("vt-sel", x === it));
+      right.innerHTML = "";
+      const g = it.g, vo = videoOptionsFor(it.moon, it.lane.tier, g);
+      right.appendChild(mk("div", "font-size:11px;opacity:.55;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;",
+        vo ? "Pick the " + videoTokenLabel(g.find(isGhToken) || g[0]) : "Video title"));
+      const result = mk("div", "margin-top:10px;");
+      const opts = vo || [{ title: videoTitleFor(it.moon, it.lane.tier, g), slot: slotOf(g, it.i) }];
+      const choose = (o, b) => {
+        right.querySelectorAll(".vt-opt").forEach(x => x.classList.remove("vt-sel", "vt-pop"));
+        b.classList.add("vt-sel"); void b.offsetWidth; b.classList.add("vt-pop");
+        result.innerHTML = ""; result.className = "vt-result";
+        result.appendChild(mk("div", "padding:10px;border-radius:8px;background:#1d2b2a;border:1px solid #19b8a6;font-size:13px;", o.title));
+        result.appendChild(mk("div", "opacity:.5;font-size:11px;margin:4px 0 8px;", videoAutoName(it.moon.name, it.lane.tier, o.slot)));
+        try{ navigator.clipboard.writeText(o.title); }catch(e){}
+        const host = mk("div"); result.appendChild(host); ytShow(host, o.title);
+      };
+      opts.forEach((o, k) => {
+        const b = mk("button", btnCss + "animation-delay:" + (k * 40) + "ms;", o.title); b.type = "button"; b.className = "vt-opt";
+        b.addEventListener("click", ev => { ev.stopPropagation(); choose(o, b); });
+        right.appendChild(b);
+      });
+      right.appendChild(result);
+      if(opts.length === 1) choose(opts[0], right.querySelector(".vt-opt"));
+    };
     moons.forEach(moon => {
-      box.appendChild(mk("div", "font-size:15px;margin:8px 0 4px;", (moon.name || moon.label || "") + (moon.kingdom ? "  \u00B7  " + moon.kingdom : "")));
+      left.appendChild(mk("div", "font-size:14px;margin:6px 4px 2px;", (moon.name || moon.label || "") + (moon.kingdom ? "  \u00B7  " + moon.kingdom : "")));
       let lanes = [];
       try{ lanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes || [], moon.kingdom)) || []; if(hideAdvanced || hideExpert) lanes = visLanes(lanes); }catch(e){}
-      if(!lanes.length){ box.appendChild(titleRow(videoTitleFor(moon, "free", []), videoAutoName(moon.name, "free", 1))); return; }
+      if(!lanes.length) lanes = [{ tier: "free", label: "Free", groups: [[]] }];
       lanes.forEach(lane => {
-        box.appendChild(mk("div", "margin:8px 0 2px;opacity:.55;text-transform:uppercase;letter-spacing:.04em;font-size:11px;", (lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier)));
+        left.appendChild(hd((lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier)));
         lane.groups.forEach((g, i) => {
-          const vo = videoOptionsFor(moon, lane.tier, g);
-          if(vo){
-            box.appendChild(mk("div", "margin:4px 0 0 2px;color:#19b8a6;", "Group Filter: " + videoTitleFor(moon, lane.tier, g, { showGroups: true }).split(" - ").pop()));
-            vo.forEach(o => box.appendChild(titleRow(o.title, videoAutoName(moon.name, lane.tier, o.slot))));
-          } else box.appendChild(titleRow(videoTitleFor(moon, lane.tier, g), videoAutoName(moon.name, lane.tier, slotOf(g, i))));
+          const gh = g.find && g.find(isGhToken);
+          const el = mk("button", btnCss, null); el.type = "button";
+          el.appendChild(mk("span", "", g.length ? lblOf(g) : "Free"));
+          if(gh && videoOptionsFor(moon, lane.tier, g)){
+            const tag = mk("span", "float:right;padding:1px 7px;border-radius:9px;background:#0f4d46;color:#7ff0e0;font-size:10px;", videoTokenLabel(gh) + " \u25B8"); el.appendChild(tag);
+          }
+          const it = { moon, lane, g, i, el }; items.push(it);
+          el.addEventListener("click", ev => { ev.stopPropagation(); el.classList.remove("vt-pop"); void el.offsetWidth; el.classList.add("vt-pop"); showRight(it); });
+          left.appendChild(el);
         });
       });
     });
+    right.appendChild(mk("div", "opacity:.5;padding:8px 0;", "Select a requirement on the left."));
     ov.appendChild(box); document.body.appendChild(ov);
     ov.addEventListener("mousedown", ev => { if(ev.target === ov) closeMenu(); });
     document.addEventListener("keydown", function esc(ev){ if(ev.key === "Escape"){ closeMenu(); document.removeEventListener("keydown", esc); } });
+    if(items.length) showRight(items[0]);
   };
   document.addEventListener("click", e => {
     if(!on || !e.target.closest) return;
