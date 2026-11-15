@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1486,6 +1486,20 @@
     transition:transform 0.28s cubic-bezier(.2,.9,.3,1.1), opacity 0.28s ease;
     pointer-events:none;
   }
+  .nothing-yet-pop{
+    position:fixed; z-index:200001; pointer-events:none;
+    background:#1c1c20; color:var(--text);
+    border:2px solid var(--gold);
+    padding:7px 14px; font-size:13px; font-weight:800; white-space:nowrap;
+    filter: drop-shadow(2px 3px 0 var(--ink));
+    transform-origin:50% 100%;
+    animation:nyPopIn .2s cubic-bezier(.3,1.6,.5,1) both;
+  }
+  .nothing-yet-pop.above{ transform:translate(-50%,-100%); }
+  .nothing-yet-pop.below{ transform:translate(-50%,0); transform-origin:50% 0; }
+  .nothing-yet-pop.out{ animation:nyPopOut .2s ease-in both; }
+  @keyframes nyPopIn{ from{ opacity:0; scale:.4; } to{ opacity:1; scale:1; } }
+  @keyframes nyPopOut{ from{ opacity:1; scale:1; } to{ opacity:0; scale:.4; } }
   .nothing-yet-toast.show{
     transform:translate(-50%,0);
     opacity:1;
@@ -10929,7 +10943,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
           c.style.animationDelay = (k * 45) + "ms";
           window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(Object.assign(mk("span"), { className: "vm-vid", textContent: "\u25B6 VIDEO" })); });
           const pick = () => { side.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); };
-          c.addEventListener("click", ev => { ev.stopPropagation(); pick(); });
+          c.addEventListener("click", async ev => { ev.stopPropagation(); const id = await window.ytVideoIdFor(o.title).catch(() => null); if(!id){ nodeNothingYet(c); return; } pick(); });
           picks.push({ o, pick });
           side.appendChild(c);
         });
@@ -10957,7 +10971,14 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
           const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
           const el = card(fixed.length ? strip(fixed, 40, true) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
           const it = { moon, lane, g, i, el }; items.push(it);
-          el.addEventListener("click", ev => { ev.stopPropagation(); pop(el); showRight(it); });
+          el.addEventListener("click", async ev => {
+            ev.stopPropagation();
+            const vo2 = videoOptionsFor(moon, lane.tier, g);
+            const titles = vo2 ? vo2.map(o => o.title) : [videoTitleFor(moon, lane.tier, g)];
+            const ids = await Promise.all(titles.map(t => window.ytVideoIdFor(t).catch(() => null)));
+            if(!ids.some(Boolean)){ nodeNothingYet(el); return; }
+            pop(el); showRight(it);
+          });
           left.appendChild(el);
         });
       });
@@ -10985,7 +11006,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     const vo = videoOptionsFor(moon, tier, group);
     const titles = vo ? vo.map(o => o.title) : [videoTitleFor(moon, tier, group || [])];
     const ids = await Promise.all(titles.map(t => window.ytVideoIdFor(t).catch(() => null)));
-    if(!ids.some(Boolean)){ showNothingYetToast("Nothing yet\u2026"); return; }
+    if(!ids.some(Boolean)){ nodeNothingYet(); return; }
     openMoonMenu([moon], { tier, g: group });
   };
   document.addEventListener("click", e => {
@@ -12228,7 +12249,8 @@ function logicVideoExists(baseName){
 // clip first; opens the overlay only if one is found, otherwise pops the
 // toast and leaves the overlay untouched.
 let _lastClickXY = { x: 40, y: 40 };
-document.addEventListener("click", e => { _lastClickXY = { x: e.clientX, y: e.clientY }; }, true);
+let _lastClickEl = null;
+document.addEventListener("click", e => { _lastClickXY = { x: e.clientX, y: e.clientY }; _lastClickEl = e.target; }, true);
 function videoMethodLabel(group){
   // Left-pane label: the main method, with any Group Filter shown as [Group].
   const main = group.filter(t => !isGhToken(t)).map(videoTokenLabel);
@@ -12356,6 +12378,37 @@ function showNothingYetToast(text){
     nothingYetToast.classList.remove("show");
     nothingYetTimer = null;
   }, 2200);
+}
+
+// "Nothing yet…" bubble that pops in on the clicked node, then pops out after 1 second.
+let _nyPopEl = null, _nyPopTimer = null;
+function nodeNothingYet(anchor){
+  try{
+    if(_nyPopEl){ _nyPopEl.remove(); _nyPopEl = null; }
+    if(_nyPopTimer){ clearTimeout(_nyPopTimer); _nyPopTimer = null; }
+    let a = anchor || _lastClickEl;
+    if(a && a.closest) a = a.closest(".vm-card, .option-chip, .free-tag, .free-chip, .checkpoint-info, .cp-req-name") || a;
+    const r = (a && a.getBoundingClientRect && a.isConnected) ? a.getBoundingClientRect() : null;
+    const el = document.createElement("div");
+    el.className = "nothing-yet-pop";
+    el.textContent = "Nothing yet\u2026";
+    document.body.appendChild(el);
+    const w = el.offsetWidth, h = el.offsetHeight;
+    let x = r ? r.left + r.width / 2 : _lastClickXY.x;
+    let y = r ? r.top - 8 : _lastClickXY.y - 8;
+    let below = false;
+    if(y - h < 6){ y = r ? r.bottom + 8 : _lastClickXY.y + 16; below = true; }
+    x = Math.max(w / 2 + 6, Math.min(innerWidth - w / 2 - 6, x));
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.classList.add(below ? "below" : "above");
+    _nyPopEl = el;
+    _nyPopTimer = setTimeout(() => {
+      el.classList.add("out");
+      setTimeout(() => { el.remove(); if(_nyPopEl === el) _nyPopEl = null; }, 200);
+      _nyPopTimer = null;
+    }, 1000);
+  }catch(e){ showNothingYetToast("Nothing yet\u2026"); }
 }
 
 function openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl){
