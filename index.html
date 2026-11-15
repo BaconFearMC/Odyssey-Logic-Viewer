@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10953,9 +10953,9 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         th.append(dot, document.createTextNode((lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier)));
         left.appendChild(th);
         lane.groups.forEach((g, i) => {
-          const gh = g.find && g.find(isGhToken), fixed = g.filter(t => !isGhToken(t));
+          const gh = g.find && g.find(isGhToken), fixed = g.slice();
           const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
-          const el = card(fixed.length ? strip(fixed, 40, true) : null, fixed.length ? "" : (gh ? "Nothing else" : "Free"), nVar ? "\u25B8 " + nVar + " variations" : null);
+          const el = card(fixed.length ? strip(fixed, 40, true) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
           const it = { moon, lane, g, i, el }; items.push(it);
           el.addEventListener("click", ev => { ev.stopPropagation(); pop(el); showRight(it); });
           left.appendChild(el);
