@@ -10779,8 +10779,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       const id = YT_ID_OVERRIDES[title] || idx[ytNorm(title)];
       host.innerHTML = "";
       const f = document.createElement("iframe");
-      f.src = "https://www.youtube.com/embed/" + (id ? id : "videoseries?list=" + YT_UPLOADS);
-      f.allow = "accelerometer; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen = true;
+      f.src = "https://www.youtube.com/embed/" + (id ? id + "?autoplay=1&playsinline=1" : "videoseries?list=" + YT_UPLOADS);
+      f.allow = "autoplay; accelerometer; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen = true;
       f.style.cssText = "width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#000;display:block;";
       host.appendChild(f);
       const a = mk("a", "display:inline-block;margin-top:6px;color:var(--gold);", id ? "Open on YouTube" : (Object.keys(idx).length ? "No match for this title yet \u2014 showing channel uploads. Search the channel for it" : "Couldn't load the YouTube index (run the \u201CUpdate YouTube index\u201D Action) \u2014 showing channel uploads. Search the channel for this title"));
