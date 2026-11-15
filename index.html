@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -8962,7 +8962,6 @@ function buildMovementOptions_impl(moon, boxed){
     free.style.cursor = "pointer";
     free.dataset.videoTitle = videoTitleFor(moon, "free", []);
     free.addEventListener("click", () => handleNodeClick(moon, "free", "Free", [], 1));
-    attachVideoBadge(free, moon, "free", 1);
     row.appendChild(free);
     if(moon._freeFrom && moon._freeFrom.length){
       const ot = document.createElement("span"); ot.className = "origin-tag";
@@ -9026,7 +9025,6 @@ function buildMovementOptions_impl(moon, boxed){
         chip.dataset.slot = slotOf(andGroup, i);
         chip.dataset.videoTitle = videoHoverTitle(moon, lane.tier, andGroup);
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
-        attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
         if(andGroup.origin && !sharedOrigin){
           const otag = document.createElement("span");
           otag.className = "origin-tag";
@@ -9061,7 +9059,6 @@ function buildMovementOptions_impl(moon, boxed){
       chip.dataset.slot = slotOf(andGroup, i);
       chip.dataset.videoTitle = videoHoverTitle(moon, lane.tier, andGroup);
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
-      attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
       appendAndGroupIcons(chip, displayGroup, { hoistedPipe2D: hoistSet.has("Pipe2D") });
       appendGhStar(chip, andGroup);
       // Scenario Data: this branch's own scenario restriction (option b —
@@ -11999,7 +11996,6 @@ const TIER_PILL_LABEL = { free: "Free" };
 
 // Guards against a slow check from an earlier click resolving after a
 // newer click has already fired — only the most recent request may act.
-let videoCheckToken = 0;
 let nothingYetTimer = null;
 
 // Cache of baseName -> Promise<boolean> so each clip is only probed once,
@@ -12039,20 +12035,6 @@ function logicVideoExists(baseName){
 }
 
 // Adds a small play-icon badge to the top-right of a node if it has a clip.
-function attachVideoBadge(nodeEl, moon, tierKey, indexInTier, slots){
-  const probe = slots && slots.length > 1
-    ? Promise.all(slots.map(sl => logicVideoExists(videoAutoName(moon.name, tierKey, sl)))).then(r => r.some(Boolean))
-    : logicVideoExists(videoAutoName(moon.name, tierKey, indexInTier));
-  probe.then(found => {
-    if(!found || nodeEl.querySelector(":scope > .has-video-badge")) return;
-    nodeEl.classList.add("has-video");
-    const badge = document.createElement("span");
-    badge.className = "has-video-badge";
-    badge.title = "Has video";
-    badge.innerHTML = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0.5 L9.5 5 L1 9.5 Z" fill="currentColor"/></svg>';
-    nodeEl.appendChild(badge);
-  });
-}
 
 // Entry point for every clickable requirement branch. Checks for a real
 // clip first; opens the overlay only if one is found, otherwise pops the
@@ -12129,7 +12111,7 @@ function openVideoPicker(moon, tierKey, tierLabel, andGroup){
   return true;
 }
 function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier, pickedSlot){
-  if(!pickedSlot && andGroup && andGroup.methodSlots && (submitMode ? (isSubmittable(moon) && tierKey !== "unrated") : VIDEOS_ENABLED)){
+  if(!pickedSlot && andGroup && andGroup.methodSlots && (submitMode && isSubmittable(moon) && tierKey !== "unrated")){
     if(openVideoPicker(moon, tierKey, tierLabel, andGroup)) return;
   }
   if(pickedSlot) indexInTier = pickedSlot;
@@ -12141,23 +12123,6 @@ function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier, picked
     });
     return;
   }
-  if(!VIDEOS_ENABLED) return;
-  const myToken = ++videoCheckToken;
-  const slots = (!pickedSlot && andGroup && andGroup.mergedSlots) ? andGroup.mergedSlots.slice() : [indexInTier];
-  const tryNext = () => {
-    const baseName = videoAutoName(moon.name, tierKey, slots.shift());
-    findLogicVideo(baseName, (mediaEl) => {
-      if(myToken !== videoCheckToken) return; // superseded by a newer click
-      if(mediaEl){
-        openLogicVideo(moon, tierKey, tierLabel, andGroup, mediaEl);
-      } else if(slots.length){
-        tryNext(); // merged chip: try the next member's clip
-      } else {
-        showNothingYetToast();
-      }
-    });
-  };
-  tryNext();
 }
 
 // Tries assets/logicvideos/<baseName>.mp4, then .webp, then gives up.
