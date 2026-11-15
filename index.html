@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -9252,14 +9252,14 @@ function withTiersHidden(moon){
 }
 // Cap Return Jump is covered by an "Any Cap Throw" method listed at a higher logic level: show icons only.
 function laneHasAnyThrow(l){
-  if(l.groups.some(g => g.length === 1 && g[0] === ANY_THROW_TOKEN)) return true;
-  return ANY_THROW_MEMBERS.every(t => l.groups.some(g => g.length === 1 && g[0] === t));
+  // Any Cap Throw, or any single plain throw, listed on its own: a Cap Return Jump works off any throw.
+  return l.groups.some(g => g.length === 1 && (ghTokenKey(g[0]) === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(ghTokenKey(g[0])) !== -1));
 }
 function crjListedHigherNote(lanes, lane){
   if(!lanes || !lane || !(lane.groups || []).length) return null;
   const listsCRJ = g => g.some(t => isCapReturnToken(t) || (isGhToken(t) && ghTier(t).allTokens.indexOf("CapReturnJump") !== -1));
   if(lane.groups.some(listsCRJ)) return null;
-  const li = TIER_ORDER.indexOf(lane.tier);
+  const li = lane.tier === "unrated" ? 0 : TIER_ORDER.indexOf(lane.tier); // Unrated displays as Casual
   let src = null;
   lanes.forEach(l => {
     const ti = TIER_ORDER.indexOf(l.tier);
