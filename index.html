@@ -3052,6 +3052,22 @@ const PAGE_SOUNDS_ENABLED = 1;
 </div>
 
 <div class="dbg-item">
+  <button class="corner-btn" id="hideAdvToggle" type="button" aria-label="Hide Advanced">
+    <span class="btn-ic btn-ic-fb" aria-hidden="true">&#9760;</span>
+    <span class="btn-txt"><b>Hide Advanced</b><small id="hideAdvToggleState">Off</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip"><b>Hide Advanced</b><span>Hides the Advanced logic level. This hides Expert as well.</span></div>
+</div>
+
+<div class="dbg-item">
+  <button class="corner-btn" id="hideExpToggle" type="button" aria-label="Hide Expert">
+    <span class="btn-ic btn-ic-fb" aria-hidden="true">&#9760;</span>
+    <span class="btn-txt"><b>Hide Expert</b><small id="hideExpToggleState">Off</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip"><b>Hide Expert</b><span>Hides the Expert logic level only.</span></div>
+</div>
+
+<div class="dbg-item">
   <button class="corner-btn" id="uselessFilterToggle" type="button" aria-label="Disable Useless Filtering">
     <img class="btn-ic" src="icon/AbilityDeath.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#8856;</span>'">
     <span class="btn-txt"><b>Disable Useless Filtering</b><small id="uselessFilterBtnState">Off</small></span>
@@ -3798,11 +3814,53 @@ function ghSpecIndex(group){
 }
 // Returns a copy of `tierLanes` where, in any lane holding all merged methods
 // (same scenarios + origin), they are replaced by one merged group.
+// "Any Grounded Jump (No Cap Throw) + Capture": a Capture needs a Cap Throw, so Cap Return Jump is implied
+// and the method really is "Any Grounded Jump + Capture". Adds the missing Cap Return Jump branch so the
+// Any Grounded Jump grouping can merge; any leftover implied branch is stripped again afterwards.
+function addImpliedCapReturn(tierLanes){
+  if(!GH_TIERS.some(t => t.token === "GroundedJumpCT")) return tierLanes;
+  const M = [["SingleJump"], ["LongJump"], ["Backflip"], ["Spin"], ["SideFlip"]];
+  const isThrowish = t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1 || isCapReturnToken(t);
+  let changed = false;
+  const out = tierLanes.map(lane => {
+    const clusters = {}, hasCRJ = {};
+    lane.groups.forEach((g, pos) => {
+      const keys = g.map(ghTokenKey);
+      const w = (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || "");
+      if(keys.indexOf("CapReturnJump") !== -1){
+        const ex = g.filter((t, k) => keys[k] !== "CapReturnJump").sort().join("+");
+        hasCRJ[ex + "|" + w] = true;
+      }
+      M.forEach((m, si) => {
+        if(!m.every(t => keys.indexOf(t) !== -1)) return;
+        const extras = g.filter((t, k) => m.indexOf(keys[k]) === -1);
+        const key = extras.slice().sort().join("+") + "|" + w;
+        const c = clusters[key] || (clusters[key] = { extras, g, byMethod: {} });
+        c.byMethod[si] = true;
+      });
+    });
+    const add = [];
+    Object.keys(clusters).forEach(key => {
+      const c = clusters[key];
+      if(Object.keys(c.byMethod).length !== M.length || hasCRJ[key]) return;
+      if(!c.extras.some(t => ICON_MANIFEST[t] && ICON_MANIFEST[t].tokenType === "capture") || c.extras.some(isThrowish)) return;
+      add.push(Object.assign(["CapReturnJump"].concat(c.extras), { scenarios: c.g.scenarios || null, origin: c.g.origin || null, slot: slotOf(c.g, 0), implied: true }));
+    });
+    if(!add.length) return lane;
+    changed = true;
+    return Object.assign({}, lane, { groups: lane.groups.concat(add) });
+  });
+  return changed ? out : tierLanes;
+}
+function stripImpliedGroups(tierLanes){
+  if(!tierLanes.some(l => l.groups.some(g => g.implied))) return tierLanes;
+  return tierLanes.map(l => l.groups.some(g => g.implied) ? Object.assign({}, l, { groups: l.groups.filter(g => !g.implied) }) : l);
+}
 function withGroundedMerge(tierLanes, kingdomName){
   if(!tierLanes || submitMode) return tierLanes;
-  let cur = tierLanes;
+  let cur = addImpliedCapReturn(tierLanes);
   GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t); });
-  return cur;
+  return stripImpliedGroups(cur);
 }
 // A selected Group Filter (Trickjumping, Any Vault, ...) moves its merged chip to the front of its lane.
 // Only the display order changes: each group keeps its own slot, so video lookups are unaffected.
@@ -3885,7 +3943,7 @@ function mergeGroundedTier(tierLanes, tier){
     if(!merges.length) return lane;
     const at = {}, drop = new Set();
     merges.forEach(mg => {
-      const slots = mg.all.map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
+      const slots = mg.all.filter(i => !lane.groups[i].implied).map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
       const merged = Object.assign([tier.token].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null });
       at[Math.min(...mg.all)] = merged;
       mg.all.forEach(i => drop.add(i));
@@ -5126,6 +5184,20 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
   if(SCENARIO_DATA_HIDDEN_MOONS.has(row.moon_name)){
     scenarios = scenarios.map(() => null);
     existScenarios = null;
+  }
+  // A moon only acknowledges the scenarios it exists in: branches that only apply outside them are
+  // dropped, the rest are trimmed to them, and a branch covering every existing scenario needs no tag.
+  if(existScenarios && existScenarios.length){
+    const keep = [];
+    scenarios.forEach((sc, i) => { if(!sc || sc.some(n => existScenarios.includes(n))) keep.push(i); });
+    if(keep.length && keep.length < scenarios.length){
+      dnf = keep.map(i => dnf[i]); tiers = keep.map(i => tiers[i]); scenarios = keep.map(i => scenarios[i]);
+    }
+    scenarios = scenarios.map(sc => {
+      if(!sc) return null;
+      const t = sc.filter(n => existScenarios.includes(n));
+      return (!t.length || existScenarios.every(n => t.includes(n))) ? null : t;
+    });
   }
   // LOGIC_LEVEL_OVERRIDES: forces every branch of a listed moon to the
   // given tier, overriding whatever tiersForGroups computed from the CSV's
@@ -8932,6 +9004,8 @@ function buildMovementOptions(moon, boxed){
       optsEl.appendChild(subNote);
       if(lane.groups.every(g => exemptHides(lane, g) || exemptSubsumedBy(mLanes, lane, g))) laneEl.classList.add("subsidized");
     }
+    const crjNote = crjListedHigherNote(mLanes, lane);
+    if(crjNote) optsEl.appendChild(crjNote);
     laneEl.appendChild(optsEl);
     stack.appendChild(laneEl);
   });
@@ -9142,6 +9216,36 @@ let unmarkedMode = false;
 const GLITCH_MODES = ["all", "hide", "only"];
 const GLITCH_LABELS = { all: "Glitch Bible [WIP]: All", hide: "Glitch Bible [WIP]: Hidden", only: "Glitch Bible [WIP]: Only" };
 let glitchMode = "hide";
+// ---- Hide Advanced / Hide Expert (Filters setting). Hiding Advanced hides Expert too, not the other way round. ----
+let hideAdvanced = false, hideExpert = false;
+try{ hideAdvanced = localStorage.getItem("hideAdvancedV1") === "1"; hideExpert = localStorage.getItem("hideExpertV1") === "1"; }catch(e){}
+function tierIsHidden(t){ return (t === "advanced" && hideAdvanced) || (t === "expert" && (hideAdvanced || hideExpert)); }
+// Drops hidden-tier lanes from a moon. A moon with nothing left at the visible levels is hidden (returns null).
+function withTiersHidden(moon){
+  if(!moon || (!hideAdvanced && !hideExpert) || !moon.tierLanes || !moon.tierLanes.length) return moon;
+  const keep = moon.tierLanes.filter(l => !tierIsHidden(l.tier));
+  if(keep.length === moon.tierLanes.length) return moon;
+  if(!keep.length) return null;
+  return Object.assign({}, moon, { tierLanes: keep, orGroups: keep.reduce((a, l) => a.concat(l.groups.map(g => g.slice())), []) });
+}
+// Cap Return Jump is covered by an "Any Cap Throw" method listed at a higher logic level: say so.
+function crjListedHigherNote(lanes, lane){
+  if(!lanes || !lane || !(lane.groups || []).length) return null;
+  const listsCRJ = g => g.some(t => isCapReturnToken(t) || (isGhToken(t) && ghTier(t).allTokens.indexOf("CapReturnJump") !== -1));
+  if(lane.groups.some(listsCRJ)) return null;
+  const li = TIER_ORDER.indexOf(lane.tier);
+  let src = null;
+  lanes.forEach(l => {
+    const ti = TIER_ORDER.indexOf(l.tier);
+    if(ti <= li || ti > TIER_ORDER.indexOf("expert") || tierIsHidden(l.tier)) return;
+    if(l.groups.some(g => g.length === 1 && g[0] === ANY_THROW_TOKEN) && (!src || ti < TIER_ORDER.indexOf(src.tier))) src = l;
+  });
+  if(!src) return null;
+  const note = document.createElement("div");
+  note.className = "exempt-note";
+  note.textContent = "Cap Return Jump also works here, but Any Cap Throw is listed in " + (src.label || TIER_LABEL[src.tier]) + ", so it is covered there.";
+  return note;
+}
 
 // Video filter (debug menu): "all" -> "has" (only routes that have a clip) -> "none"
 // (only routes still missing a clip). Works per requirement branch, using the same
@@ -9590,9 +9694,9 @@ function filterNodeMoon(m){
   return m;
 }
 function glitchFilterNodeMoon(m){
-  if(glitchMode === "hide") return isFullyGlitched(m) ? null : withGlitchedLanesStripped(m);
-  if(glitchMode === "only") return hasGlitchedLane(m) ? m : null;
-  return m;
+  if(glitchMode === "hide") return isFullyGlitched(m) ? null : withTiersHidden(withGlitchedLanesStripped(m));
+  if(glitchMode === "only") return hasGlitchedLane(m) ? withTiersHidden(m) : null;
+  return withTiersHidden(m);
 }
 function collectNodeMoons(name){
   const out = [];
@@ -9672,6 +9776,7 @@ function renderGrid(){
   // glitched lane off everything else so the legit routes still show.
   if(glitchMode === "hide") moons = moons.filter(m => !isFullyGlitched(m)).map(withGlitchedLanesStripped);
   else if(glitchMode === "only") moons = moons.filter(hasGlitchedLane);
+  if(hideAdvanced || hideExpert) moons = moons.map(withTiersHidden).filter(Boolean);
   // "Exempt!" never hides a moon — it only strips selected tokens back out
   // of the requirement chips at render time (see exemptedDisplayGroup) — so
   // only the "unlocks" tab actually filters which moons show up here.
@@ -9988,6 +10093,9 @@ function renderPaintingReqs_impl(kingdomName){
   if(glitchMode === "hide"){
     list = list.map(p => ({ ...p, variants: p.variants.map(v => ({ ...v, moon: withGlitchedLanesStripped(v.moon) })) }));
   }
+  if(hideAdvanced || hideExpert){
+    list = list.map(p => ({ ...p, variants: p.variants.map(v => { const m = withTiersHidden(v.moon); return m ? { ...v, moon: m } : null; }).filter(Boolean) })).filter(p => p.variants.length);
+  }
   if(nodeFiltersActive()){
     list = list.filter(p => p.nodeId).map(p => ({ ...p, variants: p.variants.map(v => { const m = filterNodeMoon(v.moon); return m ? { ...v, moon: m } : null; }).filter(Boolean) })).filter(p => p.variants.length);
     if(!list.length){ root.style.display = "none"; return; }
@@ -10183,6 +10291,9 @@ function renderCheckpointReqs_impl(kingdomName, nodeType){
   }
   if(nodeFiltersActive()){
     list = list.map(cp => ({ ...cp, variants: cp.variants.map(v => { const m = filterNodeMoon(v.moon); return m ? { ...v, moon: m } : null; }).filter(Boolean) }));
+  }
+  if(hideAdvanced || hideExpert){
+    list = list.map(cp => ({ ...cp, variants: cp.variants.map(v => { const m = withTiersHidden(v.moon); return m ? { ...v, moon: m } : null; }).filter(Boolean) }));
   }
   list = list.filter(cp => cp.variants.length);
 
@@ -10413,6 +10524,26 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   });
   document.addEventListener("mousemove", e => { if(tip.style.display === "block"){ if(!(e.target.closest && e.target.closest(".filter-option[data-tip]"))) tip.style.display = "none"; else place(e); } });
   document.addEventListener("scroll", () => { tip.style.display = "none"; }, true);
+})();
+
+// ---- Hide Advanced / Hide Expert toggles ----
+(function(){
+  const a = document.getElementById("hideAdvToggle"), x = document.getElementById("hideExpToggle");
+  if(!a || !x) return;
+  const paint = () => {
+    a.classList.toggle("active", hideAdvanced);
+    x.classList.toggle("active", hideAdvanced || hideExpert);
+    document.getElementById("hideAdvToggleState").textContent = hideAdvanced ? "On" : "Off";
+    document.getElementById("hideExpToggleState").textContent = hideAdvanced ? "On (via Advanced)" : (hideExpert ? "On" : "Off");
+  };
+  const apply = () => {
+    try{ localStorage.setItem("hideAdvancedV1", hideAdvanced ? "1" : "0"); localStorage.setItem("hideExpertV1", hideExpert ? "1" : "0"); }catch(e){}
+    paint();
+    try{ renderKingdom(KINGDOM_ORDER[currentKingdomIndex]); }catch(e){ console.error(e); }
+  };
+  a.addEventListener("click", () => { hideAdvanced = !hideAdvanced; apply(); });
+  x.addEventListener("click", () => { if(hideAdvanced) return; hideExpert = !hideExpert; apply(); });
+  paint();
 })();
 
 // ---- Disable Useless Filtering toggle (Filters setting) ----
@@ -11451,6 +11582,8 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
       optsEl.appendChild(subNote);
       if(lane.groups.every(g => exemptHides(lane, g) || exemptSubsumedBy(tierLanes, lane, g))) laneEl.classList.add("subsidized");
     }
+    const crjNote = crjListedHigherNote(tierLanes, lane);
+    if(crjNote) optsEl.appendChild(crjNote);
     laneEl.appendChild(optsEl);
     stack.appendChild(laneEl);
   });
