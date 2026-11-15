@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3464,6 +3464,7 @@ function videoOptionsFor(moon, tierKey, group){
 }
 // "Has video" badge: shown only when a matching video exists on the SMO Randomizer Logic YouTube channel.
 function attachYtBadge(nodeEl, moon, tierKey, group){
+  nodeEl._ytArgs = [moon, tierKey, group];
   const run = () => {
     const vo = videoOptionsFor(moon, tierKey, group);
     const titles = vo ? vo.map(o => o.title) : [videoTitleFor(moon, tierKey, group || [])];
@@ -10739,6 +10740,9 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     }
     return m;
   })());
+  // Once the index is in, (re)badge every method already on screen, so timing never leaves one without its badge.
+  ytIndex().then(() => document.querySelectorAll(".option-chip, .free-tag, .free-chip").forEach(el => { if(el._ytArgs) attachYtBadge(el, ...el._ytArgs); }));
+  ytIndex().then(m => console.info("[YouTube index] " + Object.keys(m).length + " videos loaded" + (Object.keys(m).length ? "" : " - badges need assets/youtube-index.json (run the Update YouTube index Action) or a reachable channel feed")));
   window.ytVideoIdFor = async t => YT_ID_OVERRIDES[t] || (await ytIndex())[ytNorm(t)] || null;
   (window.__ytQ || []).forEach(f => f()); window.__ytQ = [];
   const ytShow = async (host, title) => {
@@ -10806,8 +10810,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-btn:hover{border-color:var(--gold);color:var(--gold)}
 #vtMenuOverlay .vm-empty{padding:18px 0;color:var(--text-dim);font-size:15px}
 #vtMenuOverlay .vm-ico{display:inline-flex;flex:none;pointer-events:none}
-#vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-row{display:flex;gap:26px;align-items:flex-start}#vtMenuOverlay .vm-videocol{flex:1;min-width:0}#vtMenuOverlay .vm-varcol{flex:0 0 320px;min-width:0}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
-@media(max-width:760px){#vtMenuOverlay .vm-row{flex-direction:column-reverse}#vtMenuOverlay .vm-varcol{flex:none;width:100%}#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}`;
+#vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-wrap{display:flex;gap:18px;align-items:flex-start;justify-content:center;width:100%;max-height:92vh}#vtMenuOverlay .vm-wrap>.vm{width:auto}#vtMenuOverlay .vm-wrap>.vm:first-child{flex:1 1 auto;min-width:0;max-width:940px}#vtMenuOverlay .vm-side{flex:0 0 350px;width:350px;overflow:auto;padding:18px 20px 22px;border-color:var(--red)}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
+@media(max-width:900px){#vtMenuOverlay .vm-wrap{flex-direction:column;align-items:stretch;overflow:auto}#vtMenuOverlay .vm-wrap>.vm:first-child{max-width:none}#vtMenuOverlay .vm-side{flex:none;width:auto}}@media(max-width:760px){#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}`;
     document.head.appendChild(st);
   }
   const ico = (tok, sz) => {
@@ -10828,6 +10832,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     closeMenu();
     const ov = mk("div"); ov.id = "vtMenuOverlay";
     const box = mk("div"); box.className = "vm";
+    const side = mk("div"); side.className = "vm vm-side"; side.style.display = "none";
     const head = mk("div"); head.className = "vm-head";
     const ttl = mk("div"); ttl.className = "vm-title";
     ttl.appendChild(document.createTextNode(moons.map(m => m.name || m.label).join(" / ")));
@@ -10852,25 +10857,23 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       items.forEach(x => x.el.classList.toggle("sel", x === it));
       right.innerHTML = "";
       const g = it.g, vo = videoOptionsFor(it.moon, it.lane.tier, g), gh = g.find && g.find(isGhToken);
-      const row = mk("div"); row.className = "vm-row";
-      const vcol = mk("div"); vcol.className = "vm-videocol";
-      const vlab = mk("div"); vlab.className = "vm-label"; vlab.textContent = "Video"; vcol.appendChild(vlab);
-      const host = mk("div"); vcol.appendChild(host);
-      row.appendChild(vcol); right.appendChild(row);
+      const vlab = mk("div"); vlab.className = "vm-label"; vlab.textContent = "Video"; right.appendChild(vlab);
+      const host = mk("div"); right.appendChild(host);
+      side.innerHTML = "";
       if(vo){
-        const rcol = mk("div"); rcol.className = "vm-varcol";
-        const lab = mk("div"); lab.className = "vm-label"; lab.textContent = "Pick the variation"; rcol.appendChild(lab);
-        if(gh){ const gc = mk("div", "display:flex;align-items:center;gap:12px;margin:0 0 10px;font-size:18px;font-weight:800;"); gc.appendChild(ico(gh, 56)); gc.appendChild(mk("span", "", videoTokenLabel(gh))); rcol.appendChild(gc); }
+        side.style.display = ""; side.style.animation = "none"; void side.offsetWidth; side.style.animation = "";
+        const lab = mk("div"); lab.className = "vm-label"; lab.textContent = "Pick the variation"; side.appendChild(lab);
+        if(gh){ const gc = mk("div", "display:flex;align-items:center;gap:12px;margin:0 0 10px;font-size:18px;font-weight:800;"); gc.appendChild(ico(gh, 56)); gc.appendChild(mk("span", "", videoTokenLabel(gh))); side.appendChild(gc); }
         vo.forEach((o, k) => {
           const c = card(strip(o.tokens || [], 44), (o.tokens || []).map(videoTokenLabel).join(" + "));
           c.style.animationDelay = (k * 45) + "ms";
           window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(Object.assign(mk("span"), { className: "vm-vid", textContent: "\u25B6 VIDEO" })); });
-          c.addEventListener("click", ev => { ev.stopPropagation(); rcol.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); });
-          rcol.appendChild(c);
+          c.addEventListener("click", ev => { ev.stopPropagation(); side.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); });
+          side.appendChild(c);
         });
-        row.appendChild(rcol);
         host.className = "vm-empty"; host.textContent = "Choose a variation to watch its video.";
       } else {
+        side.style.display = "none";
         watch(host, it, { title: videoTitleFor(it.moon, it.lane.tier, g), slot: slotOf(g, it.i) });
       }
     };
@@ -10895,7 +10898,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       });
     });
     right.appendChild(Object.assign(mk("div"), { className: "vm-empty", textContent: "Select a requirement on the left." }));
-    ov.appendChild(box); document.body.appendChild(ov);
+    const wrap = mk("div"); wrap.className = "vm-wrap"; wrap.append(box, side); ov.appendChild(wrap); document.body.appendChild(ov);
     ov.addEventListener("mousedown", ev => { if(ev.target === ov) closeMenu(); });
     document.addEventListener("keydown", function esc(ev){ if(ev.key === "Escape"){ closeMenu(); document.removeEventListener("keydown", esc); } });
     let start = items[0];
