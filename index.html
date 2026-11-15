@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3437,13 +3437,19 @@ function videoTitleFor(moon, tierKey, group){
         + thr.map(t => " (& " + videoTokenLabel(t) + ")").join("")
         + others.map(t => " & " + videoTokenLabel(t)).join("");
   }
-  return [kingdom, nm, req].filter(Boolean).join(" - ");
+  // Node the route starts from: the method's own origin, else the checkpoint/custom node the moon is tracked from.
+  const node = (group && group.origin) || (moon && !moon.isCheckpointNode && !moon.isAccessPoint && moon.checkpoint) || "";
+  const head = kingdom ? kingdom + (node ? " (from " + String(node).replace(/^from\s+/i, "") + ")" : "") : "";
+  // Logic level (Unrated shows as Casual, like on the cards; "free" routes have no level).
+  let lvl = "";
+  if(tierKey && tierKey !== "free") lvl = (tierKey === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (TIER_LABEL[tierKey] || tierKey);
+  return [head, nm, lvl, req].filter(Boolean).join(" - ");
 }
 // A merged Group Filter chip has no title of its own: it offers each member method's title to pick from.
 function videoOptionsFor(moon, tierKey, group){
   if(!group || !group.methodSlots || !group.ghMethods) return null;
   const extras = group.slice(1).filter(t => !isGhToken(t));
-  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, extras.concat(m)), slot: group.methodSlots[si], tokens: m }));
+  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: group.origin || null })), slot: group.methodSlots[si], tokens: m }));
 }
 function videoAutoName(moonName, tierKey, indexInTier){
   // The number in a moon's own name is part of its identity ("Sand Kingdom
