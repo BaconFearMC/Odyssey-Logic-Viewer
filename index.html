@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10732,21 +10732,26 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       const r = await fetch("assets/youtube-index.json?t=" + Date.now(), { cache: "no-store" });
       if(r.ok) (await r.json()).forEach(v => { if(v && v.id && v.title) m[ytNorm(v.title)] = v.id; });
     }catch(e){}
-    // 2) The channel's live feed (newest uploads) fills the gap between Action runs.
-    const feed = "https://www.youtube.com/feeds/videos.xml?channel_id=" + YT_CHANNEL;
-    for(const u of [feed, "https://api.allorigins.win/raw?url=" + encodeURIComponent(feed), "https://corsproxy.io/?" + encodeURIComponent(feed), "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(feed)]){
-      try{
-        const r = await fetch(u); if(!r.ok) continue;
-        const x = new DOMParser().parseFromString(await r.text(), "text/xml");
-        const ents = x.querySelectorAll("entry"); if(!ents.length) continue;
-        ents.forEach(en => {
-          const t = en.querySelector("title"), id = en.getElementsByTagNameNS("http://www.youtube.com/xml/schemas/2015", "videoId")[0];
-          if(t && id) m[ytNorm(t.textContent)] = id.textContent;
-        });
-        break;
-      }catch(e){}
-    }
-    _ytIdxVal = m;
+    _ytIdxVal = m; // usable right now: nothing below blocks lookups, badges or the player
+    // 2) The channel's live feed (newest uploads) fills the gap between Action runs. It runs in the
+    //    background with a timeout per attempt, adds to the same map, then re-badges what is on screen.
+    (async () => {
+      const feed = "https://www.youtube.com/feeds/videos.xml?channel_id=" + YT_CHANNEL;
+      for(const u of [feed, "https://api.allorigins.win/raw?url=" + encodeURIComponent(feed), "https://corsproxy.io/?" + encodeURIComponent(feed), "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(feed)]){
+        const ac = new AbortController(), to = setTimeout(() => ac.abort(), 4000);
+        try{
+          const r = await fetch(u, { signal: ac.signal }); if(!r.ok) continue;
+          const x = new DOMParser().parseFromString(await r.text(), "text/xml");
+          const ents = x.querySelectorAll("entry"); if(!ents.length) continue;
+          ents.forEach(en => {
+            const t = en.querySelector("title"), id = en.getElementsByTagNameNS("http://www.youtube.com/xml/schemas/2015", "videoId")[0];
+            if(t && id) m[ytNorm(t.textContent)] = id.textContent;
+          });
+          document.querySelectorAll("[data-video-title]").forEach(el => { if(el._ytArgs) attachYtBadge(el, ...el._ytArgs); });
+          break;
+        }catch(e){} finally{ clearTimeout(to); }
+      }
+    })();
     return m;
   })());
   // Safety net: badge ANY method on screen from the exact title its hover shows (first line), so a method
@@ -10877,7 +10882,14 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       if(!inner){ inner = mk("div"); inner.className = "vm-fit"; p.appendChild(inner); }
       Array.from(p.childNodes).forEach(n => { if(n !== inner) inner.appendChild(n); });
       inner.style.zoom = "";
-      const cs = getComputedStyle(p), avail = p.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom), need = inner.offsetHeight;
+      const fr = inner.querySelector("iframe"); if(fr){ fr.style.width = "100%"; fr.style.margin = "0"; }
+      const cs = getComputedStyle(p), avail = p.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      let need = inner.offsetHeight;
+      if(need > avail && avail > 0 && fr){
+        const full = fr.offsetWidth, other = need - fr.offsetHeight;
+        const w = Math.max(240, Math.min(full, Math.floor((avail - other) * 16 / 9)));
+        fr.style.width = w + "px"; fr.style.margin = "0 auto"; need = inner.offsetHeight;
+      }
       if(need > avail && avail > 0) inner.style.zoom = Math.max(0.4, avail / need);
     };
     const fitAll = () => { fitPanel(left); fitPanel(right); fitPanel(side); };
