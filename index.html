@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1505,7 +1505,7 @@
   }
   .has-video-badge svg{ width:7px; height:7px; margin-left:1px; display:block; }
   .option-chip, .free-tag, .free-chip{ position:relative; }
-  .option-chip > .has-video-badge, .free-tag > .has-video-badge, .free-chip > .has-video-badge{ top:auto; bottom:3px; right:3px; width:16px; height:16px; background:#ff3b3b; color:#fff; }
+  .option-chip > .has-video-badge, .free-tag > .has-video-badge, .free-chip > .has-video-badge{ top:auto; bottom:6px; right:-8px; width:16px; height:16px; background:#ff3b3b; color:#fff; }
   @keyframes videoBadgeIn{ from{ transform:scale(0); opacity:0; } to{ transform:scale(1); opacity:1; } }
   /* Hover affordance so it's clear a requirement branch is clickable. */
   .option-chip, .free-chip{ cursor:pointer; transition:transform 0.12s ease, box-shadow 0.12s ease; }
@@ -8784,6 +8784,7 @@ function buildMoonCard(moon, opts){
       } else if(r.free){
         const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; body.appendChild(t);
         t.dataset.videoTitle = videoTitleFor(routeMoon, "free", []); attachYtBadge(t, routeMoon, "free", []);
+        t.style.cursor = "pointer"; t.addEventListener("click", () => handleNodeClick(routeMoon, "free", "Free", [], 1));
         if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); body.appendChild(ot); }
       } else {
         body.appendChild(renderReachTierLanes(r.lanes, false, "entrance", moon.name, routeMoon));
@@ -10829,8 +10830,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-btn:hover{border-color:var(--gold);color:var(--gold)}
 #vtMenuOverlay .vm-empty{padding:18px 0;color:var(--text-dim);font-size:15px}
 #vtMenuOverlay .vm-ico{display:inline-flex;flex:none;pointer-events:none}
-#vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-wrap{display:flex;gap:18px;align-items:flex-start;justify-content:center;width:100%;max-height:92vh}#vtMenuOverlay .vm-wrap>.vm{width:auto}#vtMenuOverlay .vm-wrap>.vm:first-child{flex:1 1 auto;min-width:0;max-width:940px}#vtMenuOverlay .vm-side{flex:0 0 350px;width:350px;overflow:auto;padding:18px 20px 22px;border-color:var(--red)}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
-@media(max-width:900px){#vtMenuOverlay .vm-wrap{flex-direction:column;align-items:stretch;overflow:auto}#vtMenuOverlay .vm-wrap>.vm:first-child{max-width:none}#vtMenuOverlay .vm-side{flex:none;width:auto}}@media(max-width:760px){#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}`;
+#vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-wrap{display:flex;gap:18px;align-items:flex-start;justify-content:flex-start;width:100%;max-width:1900px;max-height:92vh}#vtMenuOverlay .vm-wrap>.vm{width:auto}#vtMenuOverlay .vm-wrap>.vm-main{flex:1 1 auto;min-width:0}#vtMenuOverlay .vm-reqs{flex:0 0 340px;width:340px;overflow:auto}#vtMenuOverlay .vm-reqs .vm-left{flex:none;border-right:0;padding:18px 20px}#vtMenuOverlay .vm-side{flex:0 0 350px;width:350px;overflow:auto;padding:18px 20px 22px;border-color:var(--red)}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
+@media(max-width:900px){#vtMenuOverlay .vm-wrap{flex-direction:column;align-items:stretch;overflow:auto}#vtMenuOverlay .vm-reqs{flex:none;width:auto}#vtMenuOverlay .vm-side{flex:none;width:auto}}@media(max-width:760px){#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}`;
     document.head.appendChild(st);
   }
   const ico = (tok, sz) => {
@@ -10850,7 +10851,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   const openMoonMenu = (moons, pre) => {
     closeMenu();
     const ov = mk("div"); ov.id = "vtMenuOverlay";
-    const box = mk("div"); box.className = "vm";
+    const box = mk("div"); box.className = "vm vm-main";
+    const reqs = mk("div"); reqs.className = "vm vm-reqs";
     const side = mk("div"); side.className = "vm vm-side"; side.style.display = "none";
     const head = mk("div"); head.className = "vm-head";
     const ttl = mk("div"); ttl.className = "vm-title";
@@ -10860,7 +10862,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     head.append(ttl, x); box.appendChild(head);
     const cols = mk("div"); cols.className = "vm-cols";
     const left = mk("div"); left.className = "vm-left"; const right = mk("div"); right.className = "vm-right";
-    cols.append(left, right); box.appendChild(cols);
+    cols.append(right); box.appendChild(cols); reqs.appendChild(left);
     left.appendChild(Object.assign(mk("div"), { className: "vm-label", textContent: "Requirements" }));
     const items = [];
     const watch = (host, it, o) => {
@@ -10917,7 +10919,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       });
     });
     right.appendChild(Object.assign(mk("div"), { className: "vm-empty", textContent: "Select a requirement on the left." }));
-    const wrap = mk("div"); wrap.className = "vm-wrap"; wrap.append(box, side); ov.appendChild(wrap); document.body.appendChild(ov);
+    const wrap = mk("div"); wrap.className = "vm-wrap"; wrap.append(reqs, box, side); ov.appendChild(wrap); document.body.appendChild(ov);
     ov.addEventListener("mousedown", ev => { if(ev.target === ov) closeMenu(); });
     document.addEventListener("keydown", function esc(ev){ if(ev.key === "Escape"){ closeMenu(); document.removeEventListener("keydown", esc); } });
     let start = items[0];
@@ -11983,6 +11985,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleM
       if(titleMoon){
         // Moon-card route chip: same title builder + same badge check as every other method chip.
         chip.dataset.videoTitle = videoHoverTitle(titleMoon, lane.tier, andGroup); attachYtBadge(chip, titleMoon, lane.tier, andGroup);
+        chip.addEventListener("click", () => handleNodeClick(titleMoon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
       } else if(moonName) chip.dataset.videoTitle = videoHoverTitle({ name: moonName, kingdom: KINGDOM_ORDER[currentKingdomIndex] }, lane.tier, andGroup);
       if(andGroup[0] === "GroundedJump") chip.dataset.gj = "1";
       optsEl.appendChild(chip);
