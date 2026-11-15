@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -8386,7 +8386,7 @@ function buildPyramidBlock(moon, startOpen){
   t.appendChild(hint);
   t.addEventListener("click", (e) => { e.stopPropagation(); box.classList.toggle("collapsed"); });
   box.appendChild(t);
-  const rows = renderEntranceReqs(py.rows, "entrance-reqs pyramid-reqs");
+  const rows = renderEntranceReqs(py.rows, "entrance-reqs pyramid-reqs", undefined, moon.name);
   rows.style.borderTop = "none"; rows.style.marginTop = "0"; rows.style.paddingTop = "0";
   box.appendChild(rows);
   return box;
@@ -8398,7 +8398,7 @@ function buildMoonRequirements(moon, boxed, opts){
   const py = moon._pyramid;
   if(!py){
     if(moon.entranceReqs){
-      const rows = renderEntranceReqs(moon.entranceReqs);
+      const rows = renderEntranceReqs(moon.entranceReqs, undefined, undefined, moon.name);
       rows.style.borderTop = "none"; rows.style.marginTop = "0"; rows.style.paddingTop = "0";
       return rows;
     }
@@ -8923,6 +8923,7 @@ function buildMovementOptions(moon, boxed){
     free.className = "free-tag";
     free.textContent = "Free";
     free.style.cursor = "pointer";
+    free.dataset.videoTitle = videoTitleFor(moon, "free", []);
     free.addEventListener("click", () => handleNodeClick(moon, "free", "Free", [], 1));
     attachVideoBadge(free, moon, "free", 1);
     row.appendChild(free);
@@ -11682,6 +11683,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
         otag.title = "This route starts from the " + andGroup.origin + " node";
         chip.appendChild(otag);
       }
+      if(moonName) chip.dataset.videoTitle = videoTitleFor({ name: moonName, kingdom: KINGDOM_ORDER[currentKingdomIndex] }, lane.tier, andGroup);
       if(andGroup[0] === "GroundedJump") chip.dataset.gj = "1";
       optsEl.appendChild(chip);
     });
