@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -814,7 +814,7 @@
      even scrolled away from its tier-pill label. */
   #hideAdvToggle.active{ background:#e2c13a !important; border-color:#b89a1c !important; color:#1a1500 !important; }
   #hideExpToggle.active{ background:#d6455a !important; border-color:#a82d40 !important; color:#fff !important; }
-  .crj-note{ font-size:11px !important; font-style:italic; opacity:.75; padding:0 !important; background:none !important; border:0 !important; }
+  .crj-note{ display:flex; align-items:center; gap:2px; margin:-2px 0 0 8px; font-size:11px !important; opacity:.9; padding:0 !important; background:none !important; border:0 !important; }
   .exempt-note{
     font-size:10px; font-style:italic; color:var(--text-dim, #8a8a8a);
     padding:3px 8px; border:1px dashed var(--border, #555); border-radius:6px;
@@ -6672,6 +6672,7 @@ function renderEntranceReqs(list, className, disableCollapse, moonName){
   const wrap = document.createElement("div");
   wrap.className = className || "entrance-reqs";
   list.forEach(r => {
+    if(!r.free && !r.impossible && (hideAdvanced || hideExpert) && r.lanes && r.lanes.length && !visLanes(r.lanes).length) return;
     const row = document.createElement("div");
     row.className = "entrance-req-row";
     const lab = document.createElement("span");
@@ -8908,6 +8909,11 @@ function buildMovementOptions(moon, boxed){
   // tier still chain together with "or"; different tiers never mix in the
   // same lane, so it's always clear which routes are casual vs. which
   // require advanced or expert tech.
+  if(hideAdvanced || hideExpert){
+    const vis = visLanes(moon.tierLanes);
+    if(!vis.length) return document.createElement("div");
+    if(vis.length !== moon.tierLanes.length) moon = Object.assign({}, moon, { tierLanes: vis });
+  }
   const stack = document.createElement("div");
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
   // Darker Side moons never use the shared "This moon requires X. Beyond this…" header.
@@ -9010,6 +9016,7 @@ function buildMovementOptions(moon, boxed){
         otag.title = "This route starts from the " + andGroup.origin + " node";
         chip.appendChild(otag);
       }
+      if(andGroup[0] === "GroundedJump") chip.dataset.gj = "1";
       optsEl.appendChild(chip);
     });
 
@@ -9019,7 +9026,7 @@ function buildMovementOptions(moon, boxed){
       if(lane.groups.every(g => exemptHides(lane, g) || exemptSubsumedBy(mLanes, lane, g))) laneEl.classList.add("subsidized");
     }
     const crjNote = crjListedHigherNote(mLanes, lane);
-    if(crjNote) optsEl.appendChild(crjNote);
+    placeCrjNote(optsEl, crjNote);
     laneEl.appendChild(optsEl);
     stack.appendChild(laneEl);
   });
@@ -9233,6 +9240,7 @@ let glitchMode = "hide";
 // ---- Hide Advanced / Hide Expert (Filters setting). Hiding Advanced hides Expert too, not the other way round. ----
 let hideAdvanced = false, hideExpert = false;
 try{ hideAdvanced = localStorage.getItem("hideAdvancedV1") === "1"; hideExpert = localStorage.getItem("hideExpertV1") === "1"; }catch(e){}
+function visLanes(lanes){ return (hideAdvanced || hideExpert) ? (lanes || []).filter(l => !tierIsHidden(l.tier)) : lanes; }
 function tierIsHidden(t){ return (t === "advanced" && hideAdvanced) || (t === "expert" && (hideAdvanced || hideExpert)); }
 // Drops hidden-tier lanes from a moon. A moon with nothing left at the visible levels is hidden (returns null).
 function withTiersHidden(moon){
@@ -9242,7 +9250,11 @@ function withTiersHidden(moon){
   if(!keep.length) return null;
   return Object.assign({}, moon, { tierLanes: keep, orGroups: keep.reduce((a, l) => a.concat(l.groups.map(g => g.slice())), []) });
 }
-// Cap Return Jump is covered by an "Any Cap Throw" method listed at a higher logic level: say so.
+// Cap Return Jump is covered by an "Any Cap Throw" method listed at a higher logic level: show icons only.
+function laneHasAnyThrow(l){
+  if(l.groups.some(g => g.length === 1 && g[0] === ANY_THROW_TOKEN)) return true;
+  return ANY_THROW_MEMBERS.every(t => l.groups.some(g => g.length === 1 && g[0] === t));
+}
 function crjListedHigherNote(lanes, lane){
   if(!lanes || !lane || !(lane.groups || []).length) return null;
   const listsCRJ = g => g.some(t => isCapReturnToken(t) || (isGhToken(t) && ghTier(t).allTokens.indexOf("CapReturnJump") !== -1));
@@ -9252,13 +9264,26 @@ function crjListedHigherNote(lanes, lane){
   lanes.forEach(l => {
     const ti = TIER_ORDER.indexOf(l.tier);
     if(ti <= li || ti > TIER_ORDER.indexOf("expert") || tierIsHidden(l.tier)) return;
-    if(l.groups.some(g => g.length === 1 && g[0] === ANY_THROW_TOKEN) && (!src || ti < TIER_ORDER.indexOf(src.tier))) src = l;
+    if(laneHasAnyThrow(l) && (!src || ti < TIER_ORDER.indexOf(src.tier))) src = l;
   });
   if(!src) return null;
   const note = document.createElement("div");
   note.className = "exempt-note crj-note";
-  note.textContent = "Cap Return Jump also works (see " + (src.label || TIER_LABEL[src.tier]) + ")";
+  note.title = "Cap Return Jump also works (see " + (src.label || TIER_LABEL[src.tier]) + ")";
+  note.appendChild(document.createTextNode("\u21B3 "));
+  try{ appendAndGroupIcons(note, ["CapReturnJump"], {}); }catch(e){ note.appendChild(document.createTextNode("CRJ")); }
+  const dot = document.createElement("span");
+  dot.className = "tier-pill " + src.tier;
+  dot.style.cssText = "padding:0 5px;font-size:10px;margin-left:4px;";
+  dot.textContent = (TIER_LABEL[src.tier] || src.tier).charAt(0);
+  note.appendChild(dot);
   return note;
+}
+// Puts the note directly under the "Any Grounded Jump (No Cap Throw)" chip (else at the end of the lane).
+function placeCrjNote(optsEl, note){
+  if(!note) return;
+  const gj = optsEl.querySelector("[data-gj]");
+  if(gj) gj.after(note); else optsEl.appendChild(note);
 }
 
 // Video filter (debug menu): "all" -> "has" (only routes that have a clip) -> "none"
@@ -11535,6 +11560,7 @@ function buildTierLanesFromBranches(branches){
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
 function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
+  if(hideAdvanced || hideExpert){ tierLanes = visLanes(tierLanes); if(!tierLanes.length) return document.createElement("div"); }
   tierLanes = promoteGroupFilters(withGroundedMerge(tierLanes));
   const stack = document.createElement("div");
   stack.className = "tier-stack";
@@ -11588,6 +11614,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
         otag.title = "This route starts from the " + andGroup.origin + " node";
         chip.appendChild(otag);
       }
+      if(andGroup[0] === "GroundedJump") chip.dataset.gj = "1";
       optsEl.appendChild(chip);
     });
 
@@ -11597,7 +11624,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName){
       if(lane.groups.every(g => exemptHides(lane, g) || exemptSubsumedBy(tierLanes, lane, g))) laneEl.classList.add("subsidized");
     }
     const crjNote = crjListedHigherNote(tierLanes, lane);
-    if(crjNote) optsEl.appendChild(crjNote);
+    placeCrjNote(optsEl, crjNote);
     laneEl.appendChild(optsEl);
     stack.appendChild(laneEl);
   });
