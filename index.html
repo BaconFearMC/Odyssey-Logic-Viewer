@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3423,9 +3423,20 @@ function videoTitleFor(moon, tierKey, group){
   const kingdom = (moon && moon.kingdom) || "";
   let nm = String((moon && (moon.name || moon.label)) || "").trim();
   if(kingdom && nm.toLowerCase().indexOf(kingdom.toLowerCase()) === 0) nm = nm.slice(kingdom.length).replace(/^[\s:\-\u2013\u2014]+/, "");
-  const toks = (group || []).filter(t => t !== "" && t != null).map(videoTokenLabel);
+  const raw = (group || []).filter(t => t !== "" && t != null);
+  const isCap = t => { const m = ICON_MANIFEST[ghTokenKey(t)] || ICON_MANIFEST[t]; return !!(m && m.tokenType === "capture"); };
+  const isThrow = t => ghTokenKey(t) === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(ghTokenKey(t)) !== -1;
   let req = "Free";
-  if(toks.length) req = "Requires " + toks[0] + (toks.length > 1 ? " (& " + toks.slice(1).join(" & ") + ")" : "");
+  if(raw.length){
+    // Parentheses only mark the progressive throw a Capture brings with it; every other ability is plain "& X".
+    const first = raw[0];
+    const rest = raw.slice(1);
+    const thr = isCap(first) ? rest.filter(isThrow) : [];
+    const others = rest.filter(t => thr.indexOf(t) === -1);
+    req = "Requires " + videoTokenLabel(first)
+        + thr.map(t => " (& " + videoTokenLabel(t) + ")").join("")
+        + others.map(t => " & " + videoTokenLabel(t)).join("");
+  }
   return [kingdom, nm, req].filter(Boolean).join(" - ");
 }
 function videoAutoName(moonName, tierKey, indexInTier){
