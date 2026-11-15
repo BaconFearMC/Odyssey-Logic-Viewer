@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3443,7 +3443,7 @@ function videoTitleFor(moon, tierKey, group){
 function videoOptionsFor(moon, tierKey, group){
   if(!group || !group.methodSlots || !group.ghMethods) return null;
   const extras = group.slice(1).filter(t => !isGhToken(t));
-  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, m.concat(extras)), slot: group.methodSlots[si] }));
+  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, extras.concat(m)), slot: group.methodSlots[si], tokens: m }));
 }
 function videoAutoName(moonName, tierKey, indexInTier){
   // The number in a moon's own name is part of its identity ("Sand Kingdom
@@ -11904,28 +11904,70 @@ function attachVideoBadge(nodeEl, moon, tierKey, indexInTier, slots){
 // toast and leaves the overlay untouched.
 let _lastClickXY = { x: 40, y: 40 };
 document.addEventListener("click", e => { _lastClickXY = { x: e.clientX, y: e.clientY }; }, true);
+function videoMethodLabel(group){
+  // Left-pane label: the main method, with any Group Filter shown as [Group].
+  const main = group.filter(t => !isGhToken(t)).map(videoTokenLabel);
+  const gh = group.filter(t => isGhToken(t)).map(t => "[" + videoTokenLabel(t) + "]");
+  return main.concat(gh).join(" + ") || "Free";
+}
 function openVideoPicker(moon, tierKey, tierLabel, andGroup){
-  const opts = videoOptionsFor(moon, tierKey, andGroup);
-  if(!opts) return false;
+  if(!videoOptionsFor(moon, tierKey, andGroup)) return false;
   const old = document.getElementById("videoPicker"); if(old) old.remove();
+  const lanes = withGroundedMerge(moon.tierLanes || [], moon.kingdom);
+  const lane = lanes.find(l => l.tier === tierKey);
+  const groups = lane ? lane.groups : [andGroup];
+  let cur = groups.findIndex(g => g === andGroup || (g.slot && g.slot === andGroup.slot && g[0] === andGroup[0]));
+  if(cur < 0){ cur = 0; }
   const box = document.createElement("div");
   box.id = "videoPicker";
-  box.style.cssText = "position:fixed;z-index:100000;max-width:440px;max-height:60vh;overflow:auto;padding:6px;border-radius:10px;background:#161616;color:#fff;border:1px solid #777;box-shadow:0 6px 20px rgba(0,0,0,.6);font:600 12px/1.3 system-ui,sans-serif;";
+  box.style.cssText = "position:fixed;z-index:100000;width:min(760px,94vw);max-height:70vh;display:flex;flex-direction:column;border-radius:10px;background:#161616;color:#fff;border:1px solid #777;box-shadow:0 6px 20px rgba(0,0,0,.6);font:600 12px/1.3 system-ui,sans-serif;";
   const head = document.createElement("div");
-  head.style.cssText = "padding:4px 8px;opacity:.65;font-size:11px;";
-  head.textContent = "Pick a method";
-  box.appendChild(head);
-  opts.forEach(o => {
+  head.style.cssText = "padding:8px 12px;border-bottom:1px solid #333;opacity:.8;";
+  head.textContent = (moon.name || "") + " \u2014 " + (tierLabel || tierKey);
+  const cols = document.createElement("div");
+  cols.style.cssText = "display:flex;min-height:0;flex:1;";
+  const left = document.createElement("div"), right = document.createElement("div");
+  left.style.cssText = "flex:1 1 50%;overflow:auto;padding:6px;border-right:1px solid #333;";
+  right.style.cssText = "flex:1 1 50%;overflow:auto;padding:6px;";
+  const colHead = (t) => { const h = document.createElement("div"); h.style.cssText = "padding:4px 8px;opacity:.55;font-size:11px;text-transform:uppercase;letter-spacing:.04em;"; h.textContent = t; return h; };
+  const btn = (text, active) => {
     const b = document.createElement("button");
-    b.type = "button"; b.textContent = o.title;
-    b.style.cssText = "display:block;width:100%;text-align:left;padding:7px 8px;margin:2px 0;border:0;border-radius:6px;background:#242424;color:inherit;font:inherit;cursor:pointer;";
-    b.addEventListener("mouseenter", () => { b.style.background = "#343434"; });
-    b.addEventListener("mouseleave", () => { b.style.background = "#242424"; });
-    b.addEventListener("click", ev => { ev.stopPropagation(); box.remove(); handleNodeClick(moon, tierKey, tierLabel, andGroup, o.slot, o.slot); });
-    box.appendChild(b);
-  });
+    b.type = "button"; b.textContent = text;
+    const bg = active ? "#3a3a52" : "#242424";
+    b.style.cssText = "display:block;width:100%;text-align:left;padding:7px 8px;margin:2px 0;border:0;border-radius:6px;background:" + bg + ";color:inherit;font:inherit;cursor:pointer;";
+    b.addEventListener("mouseenter", () => { b.style.background = "#343446"; });
+    b.addEventListener("mouseleave", () => { b.style.background = bg; });
+    return b;
+  };
+  const choose = slot => { box.remove(); handleNodeClick(moon, tierKey, tierLabel, andGroup, slot, slot); };
+  const renderRight = () => {
+    right.innerHTML = "";
+    const g = groups[cur];
+    const opts = videoOptionsFor(moon, tierKey, g);
+    if(opts){
+      right.appendChild(colHead("Pick the " + videoTokenLabel(g[0])));
+      opts.forEach(o => { const b = btn(o.title, false); b.addEventListener("click", ev => { ev.stopPropagation(); choose(o.slot); }); right.appendChild(b); });
+    } else {
+      right.appendChild(colHead("Video title"));
+      const b = btn(videoTitleFor(moon, tierKey, g), false);
+      b.addEventListener("click", ev => { ev.stopPropagation(); choose(slotOf(g, cur)); });
+      right.appendChild(b);
+    }
+  };
+  const renderLeft = () => {
+    left.innerHTML = "";
+    left.appendChild(colHead("Methods"));
+    groups.forEach((g, i) => {
+      const b = btn(videoMethodLabel(g) + (videoOptionsFor(moon, tierKey, g) ? "  \u25B8" : ""), i === cur);
+      b.addEventListener("click", ev => { ev.stopPropagation(); cur = i; renderLeft(); renderRight(); });
+      left.appendChild(b);
+    });
+  };
+  renderLeft(); renderRight();
+  cols.appendChild(left); cols.appendChild(right);
+  box.appendChild(head); box.appendChild(cols);
   document.body.appendChild(box);
-  box.style.left = Math.max(6, Math.min(innerWidth - box.offsetWidth - 6, _lastClickXY.x)) + "px";
+  box.style.left = Math.max(6, Math.min(innerWidth - box.offsetWidth - 6, _lastClickXY.x - 40)) + "px";
   box.style.top = Math.max(6, Math.min(innerHeight - box.offsetHeight - 6, _lastClickXY.y + 10)) + "px";
   const close = ev => { if(!box.contains(ev.target)){ box.remove(); document.removeEventListener("mousedown", close, true); } };
   setTimeout(() => document.addEventListener("mousedown", close, true), 0);
