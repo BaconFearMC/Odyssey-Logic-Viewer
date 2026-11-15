@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDeath.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2588,7 +2588,7 @@
   @media (max-width:900px){ #navRail{ right:6px; } .nr-node .nr-name{ display:none; } .nr-readout{ right:20px; } }
   @media (prefers-reduced-motion:reduce){ .nr-puck, .nr-line, #navRail *{ animation:none !important; transition:none !important; } }
 
-  html.videos-off #videoToggle, html.videos-off .has-video-badge{ display:none !important; }
+  html.videos-off #videoToggle{ display:none !important; }
   html.videos-off .option-chip, html.videos-off .free-tag{ cursor:default; }
   /* Checkpoint cards: let text wrap instead of cramming onto one line */
   .cp-reqs-grid-compact{ grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); }
@@ -3459,6 +3459,22 @@ function videoOptionsFor(moon, tierKey, group){
   if(!group || !group.methodSlots || !group.ghMethods) return null;
   const extras = group.slice(1).filter(t => !isGhToken(t));
   return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: group.origin || null })), slot: group.methodSlots[si], tokens: m }));
+}
+// "Has video" badge: shown only when a matching video exists on the SMO Randomizer Logic YouTube channel.
+function attachYtBadge(nodeEl, moon, tierKey, group){
+  const run = () => {
+    const vo = videoOptionsFor(moon, tierKey, group);
+    const titles = vo ? vo.map(o => o.title) : [videoTitleFor(moon, tierKey, group || [])];
+    Promise.all(titles.map(t => window.ytVideoIdFor(t).catch(() => null))).then(r => {
+      if(!r.some(Boolean) || nodeEl.querySelector(":scope > .has-video-badge")) return;
+      const badge = document.createElement("span");
+      badge.className = "has-video-badge";
+      badge.title = "Has a YouTube video";
+      badge.innerHTML = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0.5 L9.5 5 L1 9.5 Z" fill="currentColor"/></svg>';
+      nodeEl.appendChild(badge);
+    });
+  };
+  if(window.ytVideoIdFor) run(); else (window.__ytQ = window.__ytQ || []).push(run);
 }
 function videoAutoName(moonName, tierKey, indexInTier){
   // The number in a moon's own name is part of its identity ("Sand Kingdom
@@ -8961,6 +8977,7 @@ function buildMovementOptions_impl(moon, boxed){
     free.textContent = "Free";
     free.style.cursor = "pointer";
     free.dataset.videoTitle = videoTitleFor(moon, "free", []);
+    attachYtBadge(free, moon, "free", []);
     free.addEventListener("click", () => handleNodeClick(moon, "free", "Free", [], 1));
     row.appendChild(free);
     if(moon._freeFrom && moon._freeFrom.length){
@@ -9023,7 +9040,7 @@ function buildMovementOptions_impl(moon, boxed){
         chip.className = "option-chip free-chip";
         chip.textContent = (hoistSet.size && preHoistGroup.length > 0) ? "Nothing else" : "Free";
         chip.dataset.slot = slotOf(andGroup, i);
-        chip.dataset.videoTitle = videoHoverTitle(moon, lane.tier, andGroup);
+        chip.dataset.videoTitle = videoHoverTitle(moon, lane.tier, andGroup); attachYtBadge(chip, moon, lane.tier, andGroup);
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
         if(andGroup.origin && !sharedOrigin){
           const otag = document.createElement("span");
@@ -9057,7 +9074,7 @@ function buildMovementOptions_impl(moon, boxed){
       const chip = document.createElement("div");
       chip.className = "option-chip";
       chip.dataset.slot = slotOf(andGroup, i);
-      chip.dataset.videoTitle = videoHoverTitle(moon, lane.tier, andGroup);
+      chip.dataset.videoTitle = videoHoverTitle(moon, lane.tier, andGroup); attachYtBadge(chip, moon, lane.tier, andGroup);
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
       appendAndGroupIcons(chip, displayGroup, { hoistedPipe2D: hoistSet.has("Pipe2D") });
       appendGhStar(chip, andGroup);
@@ -10712,6 +10729,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     }
     return {};
   })());
+  window.ytVideoIdFor = async t => YT_ID_OVERRIDES[t] || (await ytIndex())[ytNorm(t)] || null;
+  (window.__ytQ || []).forEach(f => f()); window.__ytQ = [];
   const ytShow = async (host, title) => {
     host.innerHTML = ""; host.appendChild(mk("div", "opacity:.6;padding:8px 0;", "Looking for this video on the channel\u2026"));
     const idx = await ytIndex();
