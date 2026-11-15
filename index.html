@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -812,6 +812,9 @@
   /* Difficulty is carried by the chip itself via a solid left accent bar
      (flat tint, no diagonal gradient wash) so a route reads at a glance
      even scrolled away from its tier-pill label. */
+  #hideAdvToggle.active{ background:#e2c13a !important; border-color:#b89a1c !important; color:#1a1500 !important; }
+  #hideExpToggle.active{ background:#d6455a !important; border-color:#a82d40 !important; color:#fff !important; }
+  .crj-note{ font-size:11px !important; font-style:italic; opacity:.75; padding:0 !important; background:none !important; border:0 !important; }
   .exempt-note{
     font-size:10px; font-style:italic; color:var(--text-dim, #8a8a8a);
     padding:3px 8px; border:1px dashed var(--border, #555); border-radius:6px;
@@ -3053,7 +3056,7 @@ const PAGE_SOUNDS_ENABLED = 1;
 
 <div class="dbg-item">
   <button class="corner-btn" id="hideAdvToggle" type="button" aria-label="Hide Advanced">
-    <span class="btn-ic btn-ic-fb" aria-hidden="true">&#9760;</span>
+    <img class="btn-ic" src="icon/AbilitySwing.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9650;</span>'">
     <span class="btn-txt"><b>Hide Advanced</b><small id="hideAdvToggleState">Off</small></span>
   </button>
   <div class="dbg-tip" role="tooltip"><b>Hide Advanced</b><span>Hides the Advanced logic level. This hides Expert as well.</span></div>
@@ -3061,7 +3064,7 @@ const PAGE_SOUNDS_ENABLED = 1;
 
 <div class="dbg-item">
   <button class="corner-btn" id="hideExpToggle" type="button" aria-label="Hide Expert">
-    <span class="btn-ic btn-ic-fb" aria-hidden="true">&#9760;</span>
+    <img class="btn-ic" src="icon/AbilityDive.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9650;</span>'">
     <span class="btn-txt"><b>Hide Expert</b><small id="hideExpToggleState">Off</small></span>
   </button>
   <div class="dbg-tip" role="tooltip"><b>Hide Expert</b><span>Hides the Expert logic level only.</span></div>
@@ -3853,8 +3856,15 @@ function addImpliedCapReturn(tierLanes){
   return changed ? out : tierLanes;
 }
 function stripImpliedGroups(tierLanes){
-  if(!tierLanes.some(l => l.groups.some(g => g.implied))) return tierLanes;
-  return tierLanes.map(l => l.groups.some(g => g.implied) ? Object.assign({}, l, { groups: l.groups.filter(g => !g.implied) }) : l);
+  const isCapExtra = t => ICON_MANIFEST[t] && ICON_MANIFEST[t].tokenType === "capture";
+  const needsUp = g => g[0] === "GroundedJump" && g.slice(1).some(isCapExtra);
+  const ctOn = GH_TIERS.some(t => t.token === "GroundedJumpCT");
+  if(!tierLanes.some(l => l.groups.some(g => g.implied || (ctOn && needsUp(g))))) return tierLanes;
+  return tierLanes.map(l => Object.assign({}, l, { groups: l.groups.filter(g => !g.implied).map(g => {
+    // A Capture needs a Cap Throw, so "(No Cap Throw)" + Capture is really plain "Any Grounded Jump".
+    if(ctOn && needsUp(g)){ const n = Object.assign(g.slice(), g); n[0] = "GroundedJumpCT"; return n; }
+    return g;
+  }) }));
 }
 function withGroundedMerge(tierLanes, kingdomName){
   if(!tierLanes || submitMode) return tierLanes;
@@ -5176,12 +5186,16 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
   // option_scenarios (exprToScenarioDNF drops the tags of a Free moon, so the
   // tagged branches can't be trusted for that). Any untagged entry = every scenario.
   let existScenarios = null;
+  // Code-only list of moons that only exist in some Scenarios (the data doesn't always say). Add more as
+  // "Moon Name": [1,2,3,4]. These override whatever option_scenarios implies.
+  const EXISTS_ONLY = { "Our First Power Moon": [1, 2, 3, 4] };
   {
     const ents = String(row.option_scenarios || "").split(";").map(x => parseScenarioList(x));
     if(ents.length && ents.every(l => l && l.length))
       existScenarios = Array.from(new Set([].concat(...ents))).sort((a, b) => a - b);
   }
-  if(SCENARIO_DATA_HIDDEN_MOONS.has(row.moon_name)){
+  if(EXISTS_ONLY[row.moon_name]) existScenarios = EXISTS_ONLY[row.moon_name].slice();
+  if(SCENARIO_DATA_HIDDEN_MOONS.has(row.moon_name) && !EXISTS_ONLY[row.moon_name]){
     scenarios = scenarios.map(() => null);
     existScenarios = null;
   }
@@ -9242,8 +9256,8 @@ function crjListedHigherNote(lanes, lane){
   });
   if(!src) return null;
   const note = document.createElement("div");
-  note.className = "exempt-note";
-  note.textContent = "Cap Return Jump also works here, but Any Cap Throw is listed in " + (src.label || TIER_LABEL[src.tier]) + ", so it is covered there.";
+  note.className = "exempt-note crj-note";
+  note.textContent = "Cap Return Jump also works (see " + (src.label || TIER_LABEL[src.tier]) + ")";
   return note;
 }
 
