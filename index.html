@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3107,6 +3107,18 @@ const PAGE_SOUNDS_ENABLED = 1;
   </div>
 </div>
 
+<div class="dbg-item">
+  <button class="corner-btn" id="videoTitleDbgToggle" type="button" aria-label="Video title debugger">
+    <img class="btn-ic" src="icon/AbilityCapReturnJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9654;</span>'">
+    <span class="btn-txt"><b>Video Titles</b><small id="videoTitleDbgState">Off</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip">
+    <b>Video Title Debugger</b>
+    <span>Hover a method to see the title its video will have.</span>
+    <em>Currently: <span id="videoTitleDbgTip">Off</span> &middot; click to toggle</em>
+  </div>
+</div>
+
 
 <button id="videoToggle" type="button" hidden aria-hidden="true"><span id="videoToggleLabel">Video: All</span></button>
 <button class="corner-btn" id="approveToggle" type="button" aria-label="Approve videos" style="display:none;"><span>Approve Videos</span></button>
@@ -3398,6 +3410,24 @@ function squash(str){
    e.g. "Sand Kingdom Timer Challenge 3"'s 2nd casual branch ->
    "sandkingdomtimerchallenge3casual2"
    ========================================================= */
+/* Human-readable video title for one method:
+   "Cap Kingdom - Frog Jumping Above the Fog - Requires Frog (& Any Throw)"
+   First token = the main requirement, the rest follow in "(& ...)". Display only for now:
+   file lookups still use videoAutoName() until the video integration switches over. */
+function videoTokenLabel(t){
+  const k = ghTokenKey(t);
+  const m = ICON_MANIFEST[k] || ICON_MANIFEST[t];
+  return (m && m.label) ? m.label : String(t);
+}
+function videoTitleFor(moon, tierKey, group){
+  const kingdom = (moon && moon.kingdom) || "";
+  let nm = String((moon && (moon.name || moon.label)) || "").trim();
+  if(kingdom && nm.toLowerCase().indexOf(kingdom.toLowerCase()) === 0) nm = nm.slice(kingdom.length).replace(/^[\s:\-\u2013\u2014]+/, "");
+  const toks = (group || []).filter(t => t !== "" && t != null).map(videoTokenLabel);
+  let req = "Free";
+  if(toks.length) req = "Requires " + toks[0] + (toks.length > 1 ? " (& " + toks.slice(1).join(" & ") + ")" : "");
+  return [kingdom, nm, req].filter(Boolean).join(" - ");
+}
 function videoAutoName(moonName, tierKey, indexInTier){
   // The number in a moon's own name is part of its identity ("Sand Kingdom
   // Timer Challenge 3" is a different moon from "... 1"), so it stays in the
@@ -8956,6 +8986,7 @@ function buildMovementOptions(moon, boxed){
         chip.className = "option-chip free-chip";
         chip.textContent = (hoistSet.size && preHoistGroup.length > 0) ? "Nothing else" : "Free";
         chip.dataset.slot = slotOf(andGroup, i);
+        chip.dataset.videoTitle = videoTitleFor(moon, lane.tier, andGroup);
         chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
         attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
         if(andGroup.origin && !sharedOrigin){
@@ -8990,6 +9021,7 @@ function buildMovementOptions(moon, boxed){
       const chip = document.createElement("div");
       chip.className = "option-chip";
       chip.dataset.slot = slotOf(andGroup, i);
+      chip.dataset.videoTitle = videoTitleFor(moon, lane.tier, andGroup);
       chip.addEventListener("click", () => handleNodeClick(moon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
       attachVideoBadge(chip, moon, lane.tier, slotOf(andGroup, i), andGroup.mergedSlots);
       appendAndGroupIcons(chip, displayGroup, { hoistedPipe2D: hoistSet.has("Pipe2D") });
@@ -10582,6 +10614,42 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   };
   a.addEventListener("click", () => { hideAdvanced = !hideAdvanced; apply(); });
   x.addEventListener("click", () => { if(hideAdvanced) return; hideExpert = !hideExpert; apply(); });
+  paint();
+})();
+
+// ---- Video Title debugger (Settings): hover a method to see its video title ----
+(function(){
+  const b = document.getElementById("videoTitleDbgToggle"); if(!b) return;
+  let on = false;
+  try{ on = localStorage.getItem("videoTitleDbgV1") === "1"; }catch(e){}
+  const tip = document.createElement("div");
+  tip.style.cssText = "position:fixed;z-index:99999;display:none;pointer-events:none;max-width:420px;padding:8px 10px;border-radius:8px;background:#111;color:#fff;border:1px solid #666;font:600 12px/1.35 system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.5);";
+  document.body.appendChild(tip);
+  const paint = () => {
+    b.classList.toggle("active", on);
+    document.getElementById("videoTitleDbgState").textContent = on ? "On" : "Off";
+    const t = document.getElementById("videoTitleDbgTip"); if(t) t.textContent = on ? "On" : "Off";
+    if(!on) tip.style.display = "none";
+  };
+  const place = e => {
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    tip.style.left = Math.max(4, Math.min(window.innerWidth - w - 4, e.clientX + 14)) + "px";
+    tip.style.top = (e.clientY + 18 + h > window.innerHeight ? e.clientY - h - 12 : e.clientY + 18) + "px";
+  };
+  document.addEventListener("mousemove", e => {
+    if(!on) return;
+    const el = e.target.closest && e.target.closest("[data-video-title]");
+    if(!el){ tip.style.display = "none"; return; }
+    tip.textContent = el.dataset.videoTitle;
+    tip.style.display = "block";
+    place(e);
+  });
+  document.addEventListener("scroll", () => { tip.style.display = "none"; }, true);
+  b.addEventListener("click", () => {
+    on = !on;
+    try{ localStorage.setItem("videoTitleDbgV1", on ? "1" : "0"); }catch(e){}
+    paint();
+  });
   paint();
 })();
 
