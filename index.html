@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityUpThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3089,18 +3089,6 @@ const PAGE_SOUNDS_ENABLED = 1;
 </div>
 
 <div class="dbg-item">
-  <button class="corner-btn" id="nyClicksBtn" type="button" aria-label="Click Override">
-    <img class="btn-ic" src="icon/AbilityCapReturnJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9654;</span>'">
-    <span class="btn-txt"><b>Click Override</b><small id="nyClicksState">5 clicks</small></span>
-  </button>
-  <div class="dbg-tip" role="tooltip">
-    <b>Click Override</b>
-    <span>Clicking a node that has no video this many times in a row opens the video player anyway.</span>
-    <em>Currently: <span id="nyClicksTip">5 clicks</span> &middot; click to change (Off / 3 / 5 / 7 / 10 / 15)</em>
-  </div>
-</div>
-
-<div class="dbg-item">
   <button class="corner-btn" id="uselessFilterToggle" type="button" aria-label="Disable Useless Filtering">
     <img class="btn-ic" src="icon/AbilityDeath.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#8856;</span>'">
     <span class="btn-txt"><b>Disable Useless Filtering</b><small id="uselessFilterBtnState">Off</small></span>
@@ -3456,7 +3444,9 @@ function videoTitleFor(moon, tierKey, group, opts){
   if(kingdom && nm.toLowerCase().indexOf(kingdom.toLowerCase()) === 0) nm = nm.slice(kingdom.length).replace(/^[\s:\-\u2013\u2014]+/, "");
   // Built titles never contain Group Filters (they expand to the member moves); hover titles (opts.showGroups) keep them.
   const _all = (group || []).filter(t => t !== "" && t != null);
-  const raw = _all.filter(t => !isGhToken(t)).concat((opts && opts.showGroups) ? _all.filter(t => isGhToken(t)) : []);
+  let raw = _all.filter(t => !isGhToken(t)).concat((opts && opts.showGroups) ? _all.filter(t => isGhToken(t)) : []);
+  // A Group Filter with a single method has no variations: it simply builds as that method.
+  if(!(opts && opts.showGroups) && group && group.methodSlots && group.ghMethods && group.ghMethods.length === 1) raw = raw.concat(group.ghMethods[0].filter(t => raw.indexOf(t) === -1));
   const isCap = t => { const m = ICON_MANIFEST[ghTokenKey(t)] || ICON_MANIFEST[t]; return !!(m && m.tokenType === "capture"); };
   const isThrow = t => ghTokenKey(t) === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(ghTokenKey(t)) !== -1;
   let req = "Free";
@@ -3486,7 +3476,7 @@ function videoHoverTitle(moon, tierKey, group){
   return t;
 }
 function videoOptionsFor(moon, tierKey, group){
-  if(!group || !group.methodSlots || !group.ghMethods) return null;
+  if(!group || !group.methodSlots || !group.ghMethods || group.ghMethods.length < 2) return null; // one method = no variations
   const extras = group.slice(1).filter(t => !isGhToken(t));
   // Methods that were only implied (e.g. a Cap Return Jump branch that is not in the node's logic) are not listed.
   return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: group.origin || null })), slot: group.methodSlots[si], tokens: m, implied: !!(group.methodImplied && group.methodImplied[si]) })).filter(o => !o.implied);
@@ -11215,18 +11205,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   paint();
 })();
 
-// ---- Click Override (video-less node): how many clicks open the player anyway ----
-(function(){
-  const OPTS = [0, 3, 5, 7, 10, 15], KEY = "nyClicksV1";
-  let n = 5;
-  try{ const v = parseInt(localStorage.getItem(KEY), 10); if(OPTS.indexOf(v) !== -1) n = v; }catch(e){}
-  window.__nyClicks = () => n;
-  const b = document.getElementById("nyClicksBtn"); if(!b) return;
-  const st = document.getElementById("nyClicksState"), tp = document.getElementById("nyClicksTip");
-  const paint = () => { const t = n ? n + " clicks" : "Off"; b.classList.toggle("active", !!n); st.textContent = t; tp.textContent = t; };
-  paint();
-  b.addEventListener("click", () => { n = OPTS[(OPTS.indexOf(n) + 1) % OPTS.length]; try{ localStorage.setItem(KEY, String(n)); }catch(e){} paint(); });
-})();
+// ---- Click Override (video-less node): how many clicks open the player anyway. Code-only setting: 0 = off ----
+window.__nyClicks = () => 5;
 
 // ---- Disable Useless Filtering toggle (Filters setting) ----
 (function(){
