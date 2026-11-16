@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilityNeutralThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1495,6 +1495,8 @@
     transform-origin:50% 100%;
     animation:nyPopIn .2s cubic-bezier(.3,1.6,.5,1) both;
   }
+  .nothing-yet-pop{ text-align:center; }
+  .nothing-yet-pop .ny-sub{ margin-top:2px; font-size:11px; font-weight:700; color:var(--gold); letter-spacing:.04em; }
   .nothing-yet-pop.above{ transform:translate(-50%,-100%); }
   .nothing-yet-pop.below{ transform:translate(-50%,0); transform-origin:50% 0; }
   .nothing-yet-pop.out{ animation:nyPopOut .2s ease-in both; }
@@ -11034,11 +11036,23 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     if(!window._vtResizeFit){ window._vtResizeFit = 1; window.addEventListener("resize", () => { const o = document.getElementById("vtMenuOverlay"); if(o && o._fit) o._fit(); }); }
   };
   // Click on a method: open the menu if a YouTube video exists for it, otherwise "Nothing yet...".
+  const NY_CLICKS = 10, NY_GAP_MS = 4000; let _nyKey = null, _nyCount = 0, _nyLast = 0;
   window.ytOpenFor = async (moon, tier, group) => {
     const vo = videoOptionsFor(moon, tier, group);
     const titles = vo ? vo.map(o => o.title) : [videoTitleFor(moon, tier, group || [])];
     const ids = await Promise.all(titles.map(t => window.ytVideoIdFor(t).catch(() => null)));
-    if(!ids.some(Boolean)){ nodeNothingYet(); return; }
+    if(!ids.some(Boolean)){
+      // Persistent clicking forces the menu open anyway; the last 3 clicks show a countdown.
+      const key = (moon.kingdom || "") + "|" + (moon.name || moon.label) + "|" + titles.join("|");
+      const now = Date.now();
+      if(_nyKey !== key || now - _nyLast > NY_GAP_MS) _nyCount = 0;
+      _nyKey = key; _nyLast = now; _nyCount++;
+      const left = NY_CLICKS - _nyCount;
+      if(left <= 0){ _nyCount = 0; _nyKey = null; openMoonMenu([moon], { tier, g: group }); return; }
+      nodeNothingYet(null, left <= 3 ? (left + (left === 1 ? " more click" : " more clicks")) : "");
+      return;
+    }
+    _nyCount = 0; _nyKey = null;
     openMoonMenu([moon], { tier, g: group });
   };
   document.addEventListener("click", e => {
@@ -12414,7 +12428,7 @@ function showNothingYetToast(text){
 
 // "Nothing yet…" bubble that pops in on the clicked node, then pops out after 1 second.
 let _nyPopEl = null, _nyPopTimer = null;
-function nodeNothingYet(anchor){
+function nodeNothingYet(anchor, sub){
   try{
     if(_nyPopEl){ _nyPopEl.remove(); _nyPopEl = null; }
     if(_nyPopTimer){ clearTimeout(_nyPopTimer); _nyPopTimer = null; }
@@ -12424,6 +12438,7 @@ function nodeNothingYet(anchor){
     const el = document.createElement("div");
     el.className = "nothing-yet-pop";
     el.textContent = "Nothing yet\u2026";
+    if(sub){ const sb = document.createElement("div"); sb.className = "ny-sub"; sb.textContent = sub; el.appendChild(sb); }
     document.body.appendChild(el);
     const w = el.offsetWidth, h = el.offsetHeight;
     let x = r ? r.left + r.width / 2 : _lastClickXY.x;
