@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10904,7 +10904,26 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-empty{padding:18px 0;color:var(--text-dim);font-size:15px}
 #vtMenuOverlay .vm-ico{display:inline-flex;flex:none;pointer-events:none}
 #vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-wrap{display:flex;gap:18px;align-items:flex-start;justify-content:flex-start;width:100%;max-width:1900px;max-height:92vh}#vtMenuOverlay .vm-wrap>.vm{width:auto}#vtMenuOverlay .vm-wrap>.vm-main{flex:1 1 auto;min-width:0}#vtMenuOverlay .vm-reqs{flex:0 0 440px;width:440px;overflow:hidden}#vtMenuOverlay .vm-reqs .vm-left{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;border-right:0;padding:18px 20px;scrollbar-width:thin;scrollbar-color:var(--border-hi,#555) transparent}#vtMenuOverlay .vm-side{flex:0 0 350px;width:350px;overflow:hidden;padding:18px 20px 22px;border-color:var(--red)}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
-@media(max-width:900px){#vtMenuOverlay .vm-left,#vtMenuOverlay .vm-right,#vtMenuOverlay .vm-side,#vtMenuOverlay .vm-reqs{overflow:auto}#vtMenuOverlay .vm-wrap{flex-direction:column;align-items:stretch;overflow:auto}#vtMenuOverlay .vm-reqs{flex:none;width:auto;align-self:auto}#vtMenuOverlay .vm-side{flex:none;width:auto}}@media(max-width:760px){#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}`;
+@media(max-width:900px){#vtMenuOverlay .vm-left,#vtMenuOverlay .vm-right,#vtMenuOverlay .vm-side,#vtMenuOverlay .vm-reqs{overflow:auto}#vtMenuOverlay .vm-wrap{flex-direction:column;align-items:stretch;overflow:auto}#vtMenuOverlay .vm-reqs{flex:none;width:auto;align-self:auto}#vtMenuOverlay .vm-side{flex:none;width:auto}}@media(max-width:760px){#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}
+@keyframes vmFizzle{0%{opacity:0;transform:translateY(-16px) scale(.9);filter:blur(8px) brightness(2.4)}45%{opacity:1;filter:blur(1.5px) brightness(1.6)}100%{opacity:1;transform:none;filter:none}}
+@keyframes vmSideIn{from{opacity:0;transform:translateX(80px)}to{opacity:1;transform:none}}
+@keyframes vmLand{0%{box-shadow:0 0 0 0 rgba(230,194,0,.85)}100%{box-shadow:0 0 0 24px rgba(230,194,0,0)}}
+@keyframes vmCell{from{opacity:0;transform:scale(.35) rotate(-14deg)}to{opacity:1;transform:none}}
+@media(min-width:901px){#vtMenuOverlay .vm-wrap{align-items:center}#vtMenuOverlay .vm-wrap>.vm-main,#vtMenuOverlay .vm-wrap>.vm-side{align-self:center}#vtMenuOverlay .vm-reqs{align-self:stretch;min-height:min(620px,88vh)}}
+#vtMenuOverlay .vm-reqs .vm-left.picking>:first-child{margin-top:0}
+#vtMenuOverlay .vm-pk .vm-card,#vtMenuOverlay .vm-ghost-pk .vm-card{margin:5px 0;padding:8px 10px;font-size:14px;border-left-width:4px}
+#vtMenuOverlay .vm-pk .vm-card{animation:vmSlide .3s both;animation-delay:calc(var(--i,0)*28ms)}
+#vtMenuOverlay .vm-pk .vm-cell,#vtMenuOverlay .vm-ghost-pk .vm-cell{width:68px;gap:4px}
+#vtMenuOverlay .vm-pk .vm-cap,#vtMenuOverlay .vm-ghost-pk .vm-cap{font-size:9px}
+#vtMenuOverlay .vm-pk .vm-plus,#vtMenuOverlay .vm-ghost-pk .vm-plus{margin-top:18px;font-size:18px}
+#vtMenuOverlay .vm-pk .vm-labeled,#vtMenuOverlay .vm-ghost-pk .vm-labeled{gap:8px}
+#vtMenuOverlay .vm-pk .vm-hint,#vtMenuOverlay .vm-ghost-pk .vm-hint{font-size:10px;margin-top:2px}
+#vtMenuOverlay .vm-side .vm-card{animation:vmFizzle .6s both}
+#vtMenuOverlay .vm-side .vm-card.vm-pop{animation:vmPop .55s ease-out}
+#vtMenuOverlay .vm-curcard.vm-landing{animation:vmLand .7s ease-out}
+#vtMenuOverlay .vm-curcard.vm-landing .vm-cell{animation:vmCell .42s cubic-bezier(.2,1.6,.4,1) both}
+#vtMenuOverlay .vm-ghost{position:fixed;z-index:100003;pointer-events:none;transform-origin:0 0;box-sizing:border-box}
+#vtMenuOverlay .vm-ghost>*{margin:0!important;width:100%!important;height:100%!important;box-sizing:border-box;animation:none!important;transition:none!important}`;
     document.head.appendChild(st);
   }
   const ico = (tok, sz) => {
@@ -10958,6 +10977,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   const pop = el => { el.classList.remove("vm-pop"); void el.offsetWidth; el.classList.add("vm-pop"); };
   const openMoonMenu = (moons, pre) => {
     closeMenu();
+    let src0 = null; const lc = window.__vtSrc; window.__vtSrc = null;
+    if(lc && Date.now() - lc.t < 2500 && lc.el && lc.el.isConnected){ const r0 = lc.el.getBoundingClientRect(); if(r0.width) src0 = { el: lc.el, rect: r0, first: true }; }
     const ov = mk("div"); ov.id = "vtMenuOverlay";
     const box = mk("div"); box.className = "vm vm-main";
     const reqs = mk("div"); reqs.className = "vm vm-reqs";
@@ -10973,22 +10994,34 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     cols.append(right); box.appendChild(cols); reqs.appendChild(left);
     left.appendChild(Object.assign(mk("div"), { className: "vm-label", textContent: "Requirements" }));
     const items = [];
-    let curIt = null;
+    let curIt = null, flyHide = false, curCard = null;
     const cur = mk("div"); cur.className = "vm-cur";
     const chg = mk("button"); chg.type = "button"; chg.className = "vm-change";
     const pk = mk("div"); pk.className = "vm-pk"; pk.style.display = "none";
     left.append(cur, chg); reqs.appendChild(pk);
     const laneLabel = lane => (lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier);
-    const closePk = () => {
+    const flip = fn => {
+      const els = [left.firstElementChild, cur, chg].filter(e => e && e.style.display !== "none");
+      const b = els.map(e => e.getBoundingClientRect().top);
+      fn();
+      els.forEach((e, i) => { const d = b[i] - e.getBoundingClientRect().top; if(d) e.animate([{ transform: "translateY(" + d + "px)" }, { transform: "none" }], { duration: 440, easing: "cubic-bezier(.2,.9,.25,1.08)" }); });
+    };
+    const hidePk = () => { pk.style.display = "none"; pk.classList.remove("out"); chg.classList.remove("open"); };
+    const closePk = instant => {
+      if(instant === true){ left.classList.remove("picking"); hidePk(); return; }
       if(pk.style.display === "none" || pk.classList.contains("out")) return;
-      pk.classList.add("out");
-      setTimeout(() => { pk.style.display = "none"; pk.classList.remove("out"); chg.classList.remove("open"); }, 160);
+      pk.style.animationDelay = "0ms"; pk.classList.add("out");
+      flip(() => left.classList.remove("picking"));
+      setTimeout(hidePk, 160);
     };
     const openPk = () => {
       if(pk.style.display !== "none") return closePk();
-      pk.style.top = (chg.getBoundingClientRect().bottom - reqs.getBoundingClientRect().top + 8) + "px";
+      flip(() => {
+        left.classList.add("picking");
+        pk.style.top = (chg.getBoundingClientRect().bottom - reqs.getBoundingClientRect().top + 10) + "px";
+      });
       pk.style.display = "block"; pk.classList.remove("out"); chg.classList.add("open");
-      pk.style.animation = "none"; void pk.offsetWidth; pk.style.animation = "";
+      pk.style.animation = "none"; void pk.offsetWidth; pk.style.animation = ""; pk.style.animationDelay = "120ms"; pk.scrollTop = 0;
     };
     chg.addEventListener("click", ev => { ev.stopPropagation(); openPk(); });
     reqs.addEventListener("mousedown", ev => { if(!pk.contains(ev.target) && !chg.contains(ev.target) && !cur.contains(ev.target)) closePk(); });
@@ -11002,7 +11035,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       th.append(dot, document.createTextNode(laneLabel(it.lane))); h.appendChild(th);
       const c = it.mk(84); c.classList.add("vm-curcard"); if(it.hasV) c.appendChild(vidIcon());
       c.addEventListener("click", ev => { ev.stopPropagation(); if(items.length > 1) openPk(); });
-      cur.append(h, c);
+      cur.append(h, c); curCard = c; if(flyHide) c.style.opacity = "0";
       chg.style.display = items.length > 1 ? "" : "none";
       chg.textContent = "\u21C5 Change method (" + (items.length - 1) + " more)";
     };
@@ -11032,22 +11065,47 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       cp.addEventListener("click", ev => { ev.stopPropagation(); try{ navigator.clipboard.writeText(o.title); }catch(e){} cp.textContent = "Copied \u2713"; });
       host.appendChild(cp);
     };
-    const showRight = it => {
+    const land = c => { c.classList.add("vm-landing"); c.querySelectorAll(".vm-cell").forEach((x, i) => { x.style.animationDelay = (i * 70) + "ms"; }); setTimeout(() => c.classList.remove("vm-landing"), 950); };
+    const flyIn = (srcEl, rect) => {
+      const end = () => { flyHide = false; if(curCard){ curCard.style.opacity = ""; land(curCard); } };
+      const tgt = curCard;
+      if(!tgt || !tgt.isConnected){ end(); return; }
+      const tr = tgt.getBoundingClientRect();
+      if(!srcEl || !rect || !rect.width || !tr.width){
+        flyHide = false; tgt.style.opacity = "";
+        tgt.animate([{ transform: "translateX(-70px)", opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 480, easing: "cubic-bezier(.2,.9,.3,1.1)" });
+        land(tgt); return;
+      }
+      const g = mk("div"); g.className = "vm-ghost" + ((srcEl.closest && srcEl.closest(".vm-pk")) ? " vm-ghost-pk" : "");
+      const cl = srcEl.cloneNode(true); cl.removeAttribute("id"); g.appendChild(cl);
+      g.style.left = rect.left + "px"; g.style.top = rect.top + "px"; g.style.width = rect.width + "px"; g.style.height = rect.height + "px";
+      ov.appendChild(g);
+      const T = "translate(" + (tr.left - rect.left) + "px," + (tr.top - rect.top) + "px) scale(" + (tr.width / rect.width) + "," + (tr.height / rect.height) + ")";
+      const a = g.animate([
+        { transform: "none", opacity: 1, filter: "drop-shadow(0 0 0 rgba(230,194,0,0))" },
+        { transform: T, opacity: 1, filter: "drop-shadow(0 0 14px rgba(230,194,0,.9))", offset: .8 },
+        { transform: T, opacity: 0, filter: "drop-shadow(0 0 14px rgba(230,194,0,.9))" }
+      ], { duration: 700, easing: "cubic-bezier(.25,.8,.25,1)", fill: "forwards" });
+      setTimeout(end, 560);
+      a.onfinish = a.oncancel = () => g.remove();
+    };
+    const showRight = (it, from) => {
       items.forEach(x => x.el.classList.toggle("sel", x === it));
-      curIt = it; renderCur(it); closePk();
+      curIt = it; closePk(true); flyHide = !!(from && from.rect); renderCur(it);
       right.innerHTML = "";
+      if(!(from && from.first)) right.animate([{ opacity: 0, transform: "translateX(26px)" }, { opacity: 1, transform: "none" }], { duration: 400, easing: "cubic-bezier(.2,.9,.3,1)" });
       const g = it.g, vo = videoOptionsFor(it.moon, it.lane.tier, g), gh = g.find && g.find(isGhToken);
       const vlab = mk("div"); vlab.className = "vm-label"; vlab.textContent = "Video"; right.appendChild(vlab);
       const host = mk("div"); right.appendChild(host);
       side.innerHTML = "";
       const picks = [];
       if(vo){
-        side.style.display = ""; side.style.animation = "none"; void side.offsetWidth; side.style.animation = "";
+        side.style.display = ""; side.style.animation = "none"; void side.offsetWidth; side.style.animation = (from && from.first) ? "vmSideIn .5s cubic-bezier(.2,.9,.3,1.1) both" : "";
         const lab = mk("div"); lab.className = "vm-label"; lab.textContent = "Pick the variation"; side.appendChild(lab);
         if(gh){ const gc = mk("div", "display:flex;align-items:center;gap:12px;margin:0 0 10px;font-size:18px;font-weight:800;"); gc.appendChild(ico(gh, 56)); gc.appendChild(mk("span", "", videoTokenLabel(gh))); side.appendChild(gc); }
         vo.forEach((o, k) => {
           const c = card(strip(o.tokens || [], 44, true), (o.tokens && o.tokens.length) ? "" : "Free");
-          c.style.animationDelay = (k * 45) + "ms";
+          c.style.animationDelay = (k * 80 + 120) + "ms";
           window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(vidIcon()); });
           const pick = () => { side.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); };
           c.addEventListener("click", ev => { ev.stopPropagation(); pick(); });
@@ -11061,7 +11119,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         side.style.display = "none";
         watch(host, it, { title: videoTitleFor(it.moon, it.lane.tier, g), slot: slotOf(g, it.i) });
       }
-      requestAnimationFrame(fitAll);
+      requestAnimationFrame(() => { fitAll(); requestAnimationFrame(() => flyIn(from && from.el, from && from.rect)); });
     };
     moons.forEach(moon => {
       let lanes = [];
@@ -11078,7 +11136,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
           const gh = g.find && g.find(isGhToken), fixed = g.slice();
           const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
           const mkCard = sz => card(fixed.length ? strip(fixed, sz, true) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
-          const el = mkCard(40);
+          const el = mkCard(30); el.style.setProperty("--i", String(Math.min(items.length, 14)));
           const it = { moon, lane, g, i, el, mk: mkCard }; items.push(it);
           const hasVid = async () => {
             const vo2 = videoOptionsFor(moon, lane.tier, g);
@@ -11088,7 +11146,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
           };
           el.addEventListener("click", async ev => {
             ev.stopPropagation();
-            pop(el); showRight(it);
+            showRight(it, { el, rect: el.getBoundingClientRect() });
           });
           hasVid().then(ok => { if(ok){ el.appendChild(vidIcon()); it.hasV = true; if(curIt === it) renderCur(it); } });
           sec.appendChild(el);
@@ -11109,13 +11167,14 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         if(f2) start = f2;
       }
     }
-    if(start){ showRight(start); }
+    if(start){ showRight(start, src0 || { first: true }); }
     requestAnimationFrame(fitAll);
     if(!window._vtResizeFit){ window._vtResizeFit = 1; window.addEventListener("resize", () => { const o = document.getElementById("vtMenuOverlay"); if(o && o._fit) o._fit(); }); }
   };
   // Click on a method: open the menu if a YouTube video exists for it, otherwise "Nothing yet...".
   const NY_GAP_MS = 4000; // clicks must come within this gap to count as one streak
   const nyClicks = () => { try{ return window.__nyClicks ? window.__nyClicks() : 5; }catch(e){ return 5; } }; // 0 = override off let _nyKey = null, _nyCount = 0, _nyLast = 0;
+  document.addEventListener("click", e => { const t = e.target; if(!t || !t.closest || t.closest("#vtMenuOverlay")) return; const el = t.closest(".option-chip, .free-tag, .free-chip, .cp-req-name, .moon-card, .cp-req"); window.__vtSrc = el ? { el, t: Date.now() } : null; }, true);
   window.ytOpenFor = async (moon, tier, group) => {
     const vo = videoOptionsFor(moon, tier, group);
     const titles = vo ? vo.map(o => o.title) : [videoTitleFor(moon, tier, group || [])];
