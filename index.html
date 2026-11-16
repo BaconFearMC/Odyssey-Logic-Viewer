@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityNeutralThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10865,7 +10865,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-btn:hover{border-color:var(--gold);color:var(--gold)}
 #vtMenuOverlay .vm-empty{padding:18px 0;color:var(--text-dim);font-size:15px}
 #vtMenuOverlay .vm-ico{display:inline-flex;flex:none;pointer-events:none}
-#vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-wrap{display:flex;gap:18px;align-items:flex-start;justify-content:flex-start;width:100%;max-width:1900px;max-height:92vh}#vtMenuOverlay .vm-wrap>.vm{width:auto}#vtMenuOverlay .vm-wrap>.vm-main{flex:1 1 auto;min-width:0}#vtMenuOverlay .vm-reqs{flex:0 0 340px;width:340px;overflow:hidden}#vtMenuOverlay .vm-reqs .vm-left{flex:none;border-right:0;padding:18px 20px}#vtMenuOverlay .vm-side{flex:0 0 350px;width:350px;overflow:hidden;padding:18px 20px 22px;border-color:var(--red)}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
+#vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-wrap{display:flex;gap:18px;align-items:flex-start;justify-content:flex-start;width:100%;max-width:1900px;max-height:92vh}#vtMenuOverlay .vm-wrap>.vm{width:auto}#vtMenuOverlay .vm-wrap>.vm-main{flex:1 1 auto;min-width:0}#vtMenuOverlay .vm-reqs{flex:0 0 340px;width:340px;overflow:hidden}#vtMenuOverlay .vm-reqs .vm-left{flex:1 1 auto;min-height:0;border-right:0;padding:18px 20px}#vtMenuOverlay .vm-side{flex:0 0 350px;width:350px;overflow:hidden;padding:18px 20px 22px;border-color:var(--red)}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
 @media(max-width:900px){#vtMenuOverlay .vm-left,#vtMenuOverlay .vm-right,#vtMenuOverlay .vm-side,#vtMenuOverlay .vm-reqs{overflow:auto}#vtMenuOverlay .vm-wrap{flex-direction:column;align-items:stretch;overflow:auto}#vtMenuOverlay .vm-reqs{flex:none;width:auto}#vtMenuOverlay .vm-side{flex:none;width:auto}}@media(max-width:760px){#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}`;
     document.head.appendChild(st);
   }
@@ -10948,7 +10948,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         const w = Math.max(240, Math.min(full, Math.floor((avail - other) * 16 / 9)));
         fr.style.width = w + "px"; fr.style.margin = "0 auto"; need = inner.offsetHeight;
       }
-      if(need > avail && avail > 0) inner.style.zoom = Math.max(0.4, avail / need);
+      if(need > avail && avail > 0) inner.style.zoom = Math.max(0.25, avail / need);
     };
     const fitAll = () => { fitPanel(left); fitPanel(right); fitPanel(side); };
     ov._fit = fitAll;
@@ -10975,7 +10975,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         vo.forEach((o, k) => {
           const c = card(strip(o.tokens || [], 44, true), (o.tokens && o.tokens.length) ? "" : "Free");
           c.style.animationDelay = (k * 45) + "ms";
-          window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(Object.assign(mk("span"), { className: "vm-vid", textContent: "\u25B6 VIDEO" })); });
+          window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(Object.assign(mk("span"), { className: "vm-vid", textContent: "\u25B6 VIDEO" })); requestAnimationFrame(fitAll); });
           const pick = () => { side.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); };
           c.addEventListener("click", async ev => { ev.stopPropagation(); const id = await window.ytVideoIdFor(o.title).catch(() => null); if(!id){ nodeNothingYet(c); return; } pick(); });
           picks.push({ o, pick });
