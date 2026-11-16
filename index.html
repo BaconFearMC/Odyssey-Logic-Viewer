@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -7981,6 +7981,7 @@ let ICON_ROW_MAX = 3; // icons per row inside a requirement chip (Access Point c
 // "Any Grounded High Jump*": one or more of the merged methods needs something extra
 // (e.g. Long Jump also needs Any Throw). Adds the star + a plain-language note to the chip.
 function appendGhStar(chip, andGroup){
+  return; // disabled: no "*" and no "X method needs Y" note on merged Group Filter chips
   if(!andGroup || !andGroup.ghStar || !andGroup.ghStar.length) return;
   const lab = toks => toks.map(t => (typeof filterLabelFor === "function" ? filterLabelFor(t) : t) || t).join(" + ");
   const iconKey = t => ICON_MANIFEST[t] ? t : (Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t);
