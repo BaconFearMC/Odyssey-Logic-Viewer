@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3470,13 +3470,14 @@ function videoTitleFor(moon, tierKey, group, opts){
 // Hover text: Group Filters shown by name (e.g. "Requires Any Grounded Height"), plus what it expands to when built.
 function videoHoverTitle(moon, tierKey, group){
   const t = videoTitleFor(moon, tierKey, group, { showGroups: true });
-  if(group && group.ghMethods && group.methodSlots) return t + "\nBuilds as: " + group.ghMethods.map(m => m.map(videoTokenLabel).join(" + ")).join(" / ");
+  if(group && group.ghMethods && group.methodSlots) return t + "\nBuilds as: " + group.ghMethods.filter((m, si) => !(group.methodImplied && group.methodImplied[si])).map(m => m.map(videoTokenLabel).join(" + ")).join(" / ");
   return t;
 }
 function videoOptionsFor(moon, tierKey, group){
   if(!group || !group.methodSlots || !group.ghMethods) return null;
   const extras = group.slice(1).filter(t => !isGhToken(t));
-  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: group.origin || null })), slot: group.methodSlots[si], tokens: m }));
+  // Methods that were only implied (e.g. a Cap Return Jump branch that is not in the node's logic) are not listed.
+  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: group.origin || null })), slot: group.methodSlots[si], tokens: m, implied: !!(group.methodImplied && group.methodImplied[si]) })).filter(o => !o.implied);
 }
 function addYtBadge(nodeEl){
   if(nodeEl.querySelector(":scope > .has-video-badge")) return;
@@ -4054,7 +4055,7 @@ function mergeGroundedTier(tierLanes, tier){
     const at = {}, drop = new Set();
     merges.forEach(mg => {
       const slots = mg.all.filter(i => !lane.groups[i].implied).map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
-      const merged = Object.assign([tier.token].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null, methodSlots: mg.picks ? mg.picks.map(i => slotOf(lane.groups[i], i)) : null, ghMethods: tier.methods });
+      const merged = Object.assign([tier.token].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null, methodSlots: mg.picks ? mg.picks.map(i => slotOf(lane.groups[i], i)) : null, ghMethods: tier.methods, methodImplied: mg.picks ? mg.picks.map(i => !!lane.groups[i].implied) : null });
       at[Math.min(...mg.all)] = merged;
       mg.all.forEach(i => drop.add(i));
     });
@@ -10794,6 +10795,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     const draw = idx => {
       const id = YT_ID_OVERRIDES[title] || idx[ytNorm(title)];
       host.innerHTML = "";
+      if(!id){ host.appendChild(ytShell("No video for this method yet")); ytRefit(); return; }
       const f = document.createElement("iframe");
       f.src = "https://www.youtube.com/embed/" + (id ? id + "?autoplay=1&playsinline=1" : "videoseries?list=" + YT_UPLOADS);
       f.allow = "autoplay; accelerometer; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen = true;
@@ -10860,6 +10862,16 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-icons{display:flex;flex:none;align-items:center;gap:6px}
 #vtMenuOverlay .vm-txt{flex:1;min-width:0;line-height:1.25}
 #vtMenuOverlay .vm-hint{display:block;margin-top:3px;font-size:12px;font-weight:700;color:var(--red);letter-spacing:.06em;text-transform:uppercase}
+#vtMenuOverlay .vm-reqs{position:relative}
+#vtMenuOverlay .vm-cur .vm-nodehead{margin:0 0 8px;color:var(--gold);font-size:16px;font-weight:800}
+#vtMenuOverlay .vm-curcard{width:100%}
+#vtMenuOverlay .vm-change{margin-top:12px;align-self:flex-start;padding:6px 12px;font-size:12px;font-weight:800;letter-spacing:.03em;color:var(--text);background:transparent;border:2px solid var(--border);cursor:pointer;transition:transform .12s,border-color .12s,color .12s}
+#vtMenuOverlay .vm-change:hover,#vtMenuOverlay .vm-change.open{border-color:var(--gold);color:var(--gold);transform:translateY(-1px)}
+#vtMenuOverlay .vm-pk{position:absolute;left:10px;right:10px;bottom:10px;z-index:5;overflow-y:auto;overflow-x:hidden;padding:10px;background:#1c1c20;border:2px solid var(--gold);box-shadow:4px 5px 0 rgba(0,0,0,.55);transform-origin:20px 0;animation:vmPkIn .28s cubic-bezier(.3,1.5,.5,1) both;scrollbar-width:thin}
+#vtMenuOverlay .vm-pk.out{animation:vmPkOut .16s ease-in both}
+@keyframes vmPkIn{from{opacity:0;transform:translateY(-10px) scale(.82)}to{opacity:1;transform:none}}
+@keyframes vmPkOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-8px) scale(.9)}}
+#vtMenuOverlay .vm-pk .vm-node{margin-bottom:10px}
 #vtMenuOverlay .vm-card{position:relative}#vtMenuOverlay .vm-vid{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:var(--red);box-shadow:0 1px 0 rgba(0,0,0,.4);pointer-events:none}#vtMenuOverlay .vm-vid svg{width:10px;height:10px;margin-left:1px}
 #vtMenuOverlay .vm-watch{margin-top:12px}
 #vtMenuOverlay .vm-watch h3{margin:0 0 4px;font-size:20px;line-height:1.3;color:var(--gold)}
@@ -10938,6 +10950,40 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     cols.append(right); box.appendChild(cols); reqs.appendChild(left);
     left.appendChild(Object.assign(mk("div"), { className: "vm-label", textContent: "Requirements" }));
     const items = [];
+    let curIt = null;
+    const cur = mk("div"); cur.className = "vm-cur";
+    const chg = mk("button"); chg.type = "button"; chg.className = "vm-change";
+    const pk = mk("div"); pk.className = "vm-pk"; pk.style.display = "none";
+    left.append(cur, chg); reqs.appendChild(pk);
+    const laneLabel = lane => (lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier);
+    const closePk = () => {
+      if(pk.style.display === "none" || pk.classList.contains("out")) return;
+      pk.classList.add("out");
+      setTimeout(() => { pk.style.display = "none"; pk.classList.remove("out"); chg.classList.remove("open"); }, 160);
+    };
+    const openPk = () => {
+      if(pk.style.display !== "none") return closePk();
+      pk.style.top = (chg.getBoundingClientRect().bottom - reqs.getBoundingClientRect().top + 8) + "px";
+      pk.style.display = "block"; pk.classList.remove("out"); chg.classList.add("open");
+      pk.style.animation = "none"; void pk.offsetWidth; pk.style.animation = "";
+    };
+    chg.addEventListener("click", ev => { ev.stopPropagation(); openPk(); });
+    reqs.addEventListener("mousedown", ev => { if(!pk.contains(ev.target) && !chg.contains(ev.target) && !cur.contains(ev.target)) closePk(); });
+    const renderCur = it => {
+      cur.innerHTML = "";
+      if(!it) return;
+      const h = mk("div"); h.className = "vm-curhead";
+      if(moons.length > 1){ const n = mk("div"); n.className = "vm-nodehead"; n.textContent = it.moon.name || it.moon.label; h.appendChild(n); }
+      const th = mk("div"); th.className = "vm-tier";
+      const dot = mk("i"); dot.style.background = "var(--tier-" + it.lane.tier + ", var(--text-dim))";
+      th.append(dot, document.createTextNode(laneLabel(it.lane))); h.appendChild(th);
+      const c = it.el.cloneNode(true); c.classList.remove("sel", "vm-pop"); c.classList.add("vm-curcard");
+      c.querySelectorAll(".vm-vid").forEach(n => n.remove()); if(it.hasV) c.appendChild(vidIcon());
+      c.addEventListener("click", ev => { ev.stopPropagation(); if(items.length > 1) openPk(); });
+      cur.append(h, c);
+      chg.style.display = items.length > 1 ? "" : "none";
+      chg.textContent = "\u21C5 Change method (" + (items.length - 1) + " more)";
+    };
     const fitPanel = p => {
       if(window.innerWidth <= 900 || !p.clientHeight) return;
       let inner = p.querySelector(":scope > .vm-fit");
@@ -10966,6 +11012,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     };
     const showRight = it => {
       items.forEach(x => x.el.classList.toggle("sel", x === it));
+      curIt = it; renderCur(it); closePk();
       right.innerHTML = "";
       const g = it.g, vo = videoOptionsFor(it.moon, it.lane.tier, g), gh = g.find && g.find(isGhToken);
       const vlab = mk("div"); vlab.className = "vm-label"; vlab.textContent = "Video"; right.appendChild(vlab);
@@ -10981,7 +11028,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
           c.style.animationDelay = (k * 45) + "ms";
           window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(vidIcon()); });
           const pick = () => { side.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); };
-          c.addEventListener("click", async ev => { ev.stopPropagation(); const id = await window.ytVideoIdFor(o.title).catch(() => null); if(!id) return; pick(); });
+          c.addEventListener("click", ev => { ev.stopPropagation(); pick(); });
           picks.push({ o, pick });
           side.appendChild(c);
         });
@@ -10998,7 +11045,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       let lanes = [];
       try{ lanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes || [], moon.kingdom)) || []; if(hideAdvanced || hideExpert) lanes = visLanes(lanes); }catch(e){}
       if(!lanes.length) lanes = [{ tier: "free", label: "Free", groups: [[]] }];
-      const sec = mk("div"); sec.className = "vm-node"; left.appendChild(sec);
+      const sec = mk("div"); sec.className = "vm-node"; pk.appendChild(sec);
       if(moons.length > 1){ const nh = mk("div"); nh.className = "vm-nodehead"; nh.textContent = moon.name || moon.label; sec.appendChild(nh); }
       lanes.forEach(lane => {
         const th = mk("div"); th.className = "vm-tier";
@@ -11018,10 +11065,9 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
           };
           el.addEventListener("click", async ev => {
             ev.stopPropagation();
-            if(!(await hasVid())) return;
             pop(el); showRight(it);
           });
-          hasVid().then(ok => { if(ok) el.appendChild(vidIcon()); });
+          hasVid().then(ok => { if(ok){ el.appendChild(vidIcon()); it.hasV = true; if(curIt === it) renderCur(it); } });
           sec.appendChild(el);
         });
       });
@@ -11045,6 +11091,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     if(!window._vtResizeFit){ window._vtResizeFit = 1; window.addEventListener("resize", () => { const o = document.getElementById("vtMenuOverlay"); if(o && o._fit) o._fit(); }); }
   };
   // Click on a method: open the menu if a YouTube video exists for it, otherwise "Nothing yet...".
+  const NY_LOCK_ENABLED = 0; // 1 = clicking a video-less node 10 times opens the menu anyway (currently off)
   const NY_CLICKS = 10, NY_GAP_MS = 4000; let _nyKey = null, _nyCount = 0, _nyLast = 0;
   window.ytOpenFor = async (moon, tier, group) => {
     const vo = videoOptionsFor(moon, tier, group);
@@ -11052,6 +11099,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     const ids = await Promise.all(titles.map(t => window.ytVideoIdFor(t).catch(() => null)));
     if(!ids.some(Boolean)){
       // Persistent clicking forces the menu open anyway; the last 3 clicks show a countdown.
+      if(!NY_LOCK_ENABLED){ nodeNothingYet(); return; }
       const key = (moon.kingdom || "") + "|" + (moon.name || moon.label) + "|" + titles.join("|");
       const now = Date.now();
       if(_nyKey !== key || now - _nyLast > NY_GAP_MS) _nyCount = 0;
