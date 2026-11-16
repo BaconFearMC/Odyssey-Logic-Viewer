@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3086,6 +3086,18 @@ const PAGE_SOUNDS_ENABLED = 1;
     <span class="btn-txt"><b>Hide Expert</b><small id="hideExpToggleState">Off</small></span>
   </button>
   <div class="dbg-tip" role="tooltip"><b>Hide Expert</b><span>Hides the Expert logic level only.</span></div>
+</div>
+
+<div class="dbg-item">
+  <button class="corner-btn" id="nyClicksBtn" type="button" aria-label="Click Override">
+    <img class="btn-ic" src="icon/AbilityCapReturnJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9654;</span>'">
+    <span class="btn-txt"><b>Click Override</b><small id="nyClicksState">5 clicks</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip">
+    <b>Click Override</b>
+    <span>Clicking a node that has no video this many times in a row opens the video player anyway.</span>
+    <em>Currently: <span id="nyClicksTip">5 clicks</span> &middot; click to change (Off / 3 / 5 / 7 / 10 / 15)</em>
+  </div>
 </div>
 
 <div class="dbg-item">
@@ -10862,9 +10874,20 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-icons{display:flex;flex:none;align-items:center;gap:6px}
 #vtMenuOverlay .vm-txt{flex:1;min-width:0;line-height:1.25}
 #vtMenuOverlay .vm-hint{display:block;margin-top:3px;font-size:12px;font-weight:700;color:var(--red);letter-spacing:.06em;text-transform:uppercase}
-#vtMenuOverlay .vm-reqs{position:relative}
+#vtMenuOverlay .vm-reqs{position:relative;align-self:stretch}
 #vtMenuOverlay .vm-cur .vm-nodehead{margin:0 0 8px;color:var(--gold);font-size:16px;font-weight:800}
-#vtMenuOverlay .vm-curcard{width:100%}
+#vtMenuOverlay .vm-reqs .vm-left{display:flex;flex-direction:column;align-items:center;text-align:center}
+#vtMenuOverlay .vm-reqs .vm-left>:first-child{margin-top:auto}
+#vtMenuOverlay .vm-reqs .vm-left>:last-child{margin-bottom:auto}
+#vtMenuOverlay .vm-cur{width:100%;display:flex;flex-direction:column;align-items:center}
+#vtMenuOverlay .vm-cur .vm-tier{justify-content:center;font-size:15px}
+#vtMenuOverlay .vm-curcard{width:100%;padding:18px 12px}
+#vtMenuOverlay .vm-curcard .vm-cell{width:104px;gap:8px}
+#vtMenuOverlay .vm-curcard .vm-cap{font-size:14px;line-height:1.2}
+#vtMenuOverlay .vm-curcard .vm-plus{margin-top:30px;font-size:26px}
+#vtMenuOverlay .vm-curcard .vm-labeled{gap:16px}
+#vtMenuOverlay .vm-curcard .vm-hint{font-size:13px;margin-top:6px}
+#vtMenuOverlay .vm-change{align-self:center}
 #vtMenuOverlay .vm-change{margin-top:12px;align-self:flex-start;padding:6px 12px;font-size:12px;font-weight:800;letter-spacing:.03em;color:var(--text);background:transparent;border:2px solid var(--border);cursor:pointer;transition:transform .12s,border-color .12s,color .12s}
 #vtMenuOverlay .vm-change:hover,#vtMenuOverlay .vm-change.open{border-color:var(--gold);color:var(--gold);transform:translateY(-1px)}
 #vtMenuOverlay .vm-pk{position:absolute;left:10px;right:10px;bottom:10px;z-index:5;overflow-y:auto;overflow-x:hidden;padding:10px;background:#1c1c20;border:2px solid var(--gold);box-shadow:4px 5px 0 rgba(0,0,0,.55);transform-origin:20px 0;animation:vmPkIn .28s cubic-bezier(.3,1.5,.5,1) both;scrollbar-width:thin}
@@ -10880,8 +10903,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-btn:hover{border-color:var(--gold);color:var(--gold)}
 #vtMenuOverlay .vm-empty{padding:18px 0;color:var(--text-dim);font-size:15px}
 #vtMenuOverlay .vm-ico{display:inline-flex;flex:none;pointer-events:none}
-#vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-wrap{display:flex;gap:18px;align-items:flex-start;justify-content:flex-start;width:100%;max-width:1900px;max-height:92vh}#vtMenuOverlay .vm-wrap>.vm{width:auto}#vtMenuOverlay .vm-wrap>.vm-main{flex:1 1 auto;min-width:0}#vtMenuOverlay .vm-reqs{flex:0 0 340px;width:340px;overflow:hidden}#vtMenuOverlay .vm-reqs .vm-left{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;border-right:0;padding:18px 20px;scrollbar-width:thin;scrollbar-color:var(--border-hi,#555) transparent}#vtMenuOverlay .vm-side{flex:0 0 350px;width:350px;overflow:hidden;padding:18px 20px 22px;border-color:var(--red)}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
-@media(max-width:900px){#vtMenuOverlay .vm-left,#vtMenuOverlay .vm-right,#vtMenuOverlay .vm-side,#vtMenuOverlay .vm-reqs{overflow:auto}#vtMenuOverlay .vm-wrap{flex-direction:column;align-items:stretch;overflow:auto}#vtMenuOverlay .vm-reqs{flex:none;width:auto}#vtMenuOverlay .vm-side{flex:none;width:auto}}@media(max-width:760px){#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}`;
+#vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-wrap{display:flex;gap:18px;align-items:flex-start;justify-content:flex-start;width:100%;max-width:1900px;max-height:92vh}#vtMenuOverlay .vm-wrap>.vm{width:auto}#vtMenuOverlay .vm-wrap>.vm-main{flex:1 1 auto;min-width:0}#vtMenuOverlay .vm-reqs{flex:0 0 440px;width:440px;overflow:hidden}#vtMenuOverlay .vm-reqs .vm-left{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;border-right:0;padding:18px 20px;scrollbar-width:thin;scrollbar-color:var(--border-hi,#555) transparent}#vtMenuOverlay .vm-side{flex:0 0 350px;width:350px;overflow:hidden;padding:18px 20px 22px;border-color:var(--red)}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
+@media(max-width:900px){#vtMenuOverlay .vm-left,#vtMenuOverlay .vm-right,#vtMenuOverlay .vm-side,#vtMenuOverlay .vm-reqs{overflow:auto}#vtMenuOverlay .vm-wrap{flex-direction:column;align-items:stretch;overflow:auto}#vtMenuOverlay .vm-reqs{flex:none;width:auto;align-self:auto}#vtMenuOverlay .vm-side{flex:none;width:auto}}@media(max-width:760px){#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}`;
     document.head.appendChild(st);
   }
   const ico = (tok, sz) => {
@@ -10977,8 +11000,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       const th = mk("div"); th.className = "vm-tier";
       const dot = mk("i"); dot.style.background = "var(--tier-" + it.lane.tier + ", var(--text-dim))";
       th.append(dot, document.createTextNode(laneLabel(it.lane))); h.appendChild(th);
-      const c = it.el.cloneNode(true); c.classList.remove("sel", "vm-pop"); c.classList.add("vm-curcard");
-      c.querySelectorAll(".vm-vid").forEach(n => n.remove()); if(it.hasV) c.appendChild(vidIcon());
+      const c = it.mk(84); c.classList.add("vm-curcard"); if(it.hasV) c.appendChild(vidIcon());
       c.addEventListener("click", ev => { ev.stopPropagation(); if(items.length > 1) openPk(); });
       cur.append(h, c);
       chg.style.display = items.length > 1 ? "" : "none";
@@ -11055,8 +11077,9 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         lane.groups.forEach((g, i) => {
           const gh = g.find && g.find(isGhToken), fixed = g.slice();
           const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
-          const el = card(fixed.length ? strip(fixed, 40, true) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
-          const it = { moon, lane, g, i, el }; items.push(it);
+          const mkCard = sz => card(fixed.length ? strip(fixed, sz, true) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
+          const el = mkCard(40);
+          const it = { moon, lane, g, i, el, mk: mkCard }; items.push(it);
           const hasVid = async () => {
             const vo2 = videoOptionsFor(moon, lane.tier, g);
             const titles = vo2 ? vo2.map(o => o.title) : [videoTitleFor(moon, lane.tier, g)];
@@ -11091,15 +11114,16 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     if(!window._vtResizeFit){ window._vtResizeFit = 1; window.addEventListener("resize", () => { const o = document.getElementById("vtMenuOverlay"); if(o && o._fit) o._fit(); }); }
   };
   // Click on a method: open the menu if a YouTube video exists for it, otherwise "Nothing yet...".
-  const NY_LOCK_ENABLED = 0; // 1 = clicking a video-less node 10 times opens the menu anyway (currently off)
-  const NY_CLICKS = 10, NY_GAP_MS = 4000; let _nyKey = null, _nyCount = 0, _nyLast = 0;
+  const NY_GAP_MS = 4000; // clicks must come within this gap to count as one streak
+  const nyClicks = () => { try{ return window.__nyClicks ? window.__nyClicks() : 5; }catch(e){ return 5; } }; // 0 = override off let _nyKey = null, _nyCount = 0, _nyLast = 0;
   window.ytOpenFor = async (moon, tier, group) => {
     const vo = videoOptionsFor(moon, tier, group);
     const titles = vo ? vo.map(o => o.title) : [videoTitleFor(moon, tier, group || [])];
     const ids = await Promise.all(titles.map(t => window.ytVideoIdFor(t).catch(() => null)));
     if(!ids.some(Boolean)){
       // Persistent clicking forces the menu open anyway; the last 3 clicks show a countdown.
-      if(!NY_LOCK_ENABLED){ nodeNothingYet(); return; }
+      const NY_CLICKS = nyClicks();
+      if(!NY_CLICKS){ nodeNothingYet(); return; }
       const key = (moon.kingdom || "") + "|" + (moon.name || moon.label) + "|" + titles.join("|");
       const now = Date.now();
       if(_nyKey !== key || now - _nyLast > NY_GAP_MS) _nyCount = 0;
@@ -11129,6 +11153,19 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     paint();
   });
   paint();
+})();
+
+// ---- Click Override (video-less node): how many clicks open the player anyway ----
+(function(){
+  const OPTS = [0, 3, 5, 7, 10, 15], KEY = "nyClicksV1";
+  let n = 5;
+  try{ const v = parseInt(localStorage.getItem(KEY), 10); if(OPTS.indexOf(v) !== -1) n = v; }catch(e){}
+  window.__nyClicks = () => n;
+  const b = document.getElementById("nyClicksBtn"); if(!b) return;
+  const st = document.getElementById("nyClicksState"), tp = document.getElementById("nyClicksTip");
+  const paint = () => { const t = n ? n + " clicks" : "Off"; b.classList.toggle("active", !!n); st.textContent = t; tp.textContent = t; };
+  paint();
+  b.addEventListener("click", () => { n = OPTS[(OPTS.indexOf(n) + 1) % OPTS.length]; try{ localStorage.setItem(KEY, String(n)); }catch(e){} paint(); });
 })();
 
 // ---- Disable Useless Filtering toggle (Filters setting) ----
