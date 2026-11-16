@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDeath.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10837,6 +10837,9 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-label{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
 #vtMenuOverlay .vm-label::before{content:"";width:9px;height:9px;background:currentColor;transform:rotate(45deg)}
 #vtMenuOverlay .vm-left .vm-label{color:var(--gold)}#vtMenuOverlay .vm-right .vm-label{color:var(--red)}
+#vtMenuOverlay .vm-node{margin:0 0 14px;padding:4px 12px 8px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-top:3px solid var(--gold)}
+#vtMenuOverlay .vm-node:last-child{margin-bottom:0}
+#vtMenuOverlay .vm-nodehead{margin:6px 0 0;padding-bottom:6px;font-size:16px;font-weight:800;line-height:1.25;color:var(--gold);border-bottom:1px dashed var(--border);overflow-wrap:anywhere}
 #vtMenuOverlay .vm-tier{display:flex;align-items:center;gap:8px;margin:16px 0 6px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
 #vtMenuOverlay .vm-tier i{width:11px;height:11px;border-radius:50%;background:var(--tier-casual)}
 #vtMenuOverlay .vm-card{display:flex;align-items:center;gap:16px;width:100%;margin:8px 0;padding:14px 16px;text-align:left;font:inherit;font-size:17px;font-weight:700;color:var(--text);background:var(--bg-chip);border:2px solid var(--border);border-left:5px solid var(--gold);cursor:pointer;transition:transform .12s,border-color .12s,background .12s}
@@ -10865,7 +10868,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 #vtMenuOverlay .vm-btn:hover{border-color:var(--gold);color:var(--gold)}
 #vtMenuOverlay .vm-empty{padding:18px 0;color:var(--text-dim);font-size:15px}
 #vtMenuOverlay .vm-ico{display:inline-flex;flex:none;pointer-events:none}
-#vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-wrap{display:flex;gap:18px;align-items:flex-start;justify-content:flex-start;width:100%;max-width:1900px;max-height:92vh}#vtMenuOverlay .vm-wrap>.vm{width:auto}#vtMenuOverlay .vm-wrap>.vm-main{flex:1 1 auto;min-width:0}#vtMenuOverlay .vm-reqs{flex:0 0 340px;width:340px;overflow:hidden}#vtMenuOverlay .vm-reqs .vm-left{flex:1 1 auto;min-height:0;border-right:0;padding:18px 20px}#vtMenuOverlay .vm-side{flex:0 0 350px;width:350px;overflow:hidden;padding:18px 20px 22px;border-color:var(--red)}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
+#vtMenuOverlay .icon-wrap{margin:0}#vtMenuOverlay .icon-tooltip{display:none!important}#vtMenuOverlay .vm-wrap{display:flex;gap:18px;align-items:flex-start;justify-content:flex-start;width:100%;max-width:1900px;max-height:92vh}#vtMenuOverlay .vm-wrap>.vm{width:auto}#vtMenuOverlay .vm-wrap>.vm-main{flex:1 1 auto;min-width:0}#vtMenuOverlay .vm-reqs{flex:0 0 340px;width:340px;overflow:hidden}#vtMenuOverlay .vm-reqs .vm-left{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;border-right:0;padding:18px 20px;scrollbar-width:thin;scrollbar-color:var(--border-hi,#555) transparent}#vtMenuOverlay .vm-side{flex:0 0 350px;width:350px;overflow:hidden;padding:18px 20px 22px;border-color:var(--red)}#vtMenuOverlay .vm-ico{margin:6px 8px 0 0}
 @media(max-width:900px){#vtMenuOverlay .vm-left,#vtMenuOverlay .vm-right,#vtMenuOverlay .vm-side,#vtMenuOverlay .vm-reqs{overflow:auto}#vtMenuOverlay .vm-wrap{flex-direction:column;align-items:stretch;overflow:auto}#vtMenuOverlay .vm-reqs{flex:none;width:auto}#vtMenuOverlay .vm-side{flex:none;width:auto}}@media(max-width:760px){#vtMenuOverlay .vm-cols{flex-direction:column;overflow:auto}#vtMenuOverlay .vm-left{flex:none;border-right:0;border-bottom:2px solid var(--border)}}`;
     document.head.appendChild(st);
   }
@@ -10951,7 +10954,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       }
       if(need > avail && avail > 0) inner.style.zoom = Math.max(0.25, avail / need);
     };
-    const fitAll = () => { fitPanel(left); fitPanel(right); fitPanel(side); };
+    const fitAll = () => { fitPanel(right); fitPanel(side); };
     ov._fit = fitAll;
     const watch = (host, it, o) => {
       host.innerHTML = ""; host.className = "vm-watch";
@@ -10995,12 +10998,13 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       let lanes = [];
       try{ lanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes || [], moon.kingdom)) || []; if(hideAdvanced || hideExpert) lanes = visLanes(lanes); }catch(e){}
       if(!lanes.length) lanes = [{ tier: "free", label: "Free", groups: [[]] }];
-      if(moons.length > 1) left.appendChild(mk("div", "font-size:17px;font-weight:800;margin:14px 0 2px;", moon.name || moon.label));
+      const sec = mk("div"); sec.className = "vm-node"; left.appendChild(sec);
+      if(moons.length > 1){ const nh = mk("div"); nh.className = "vm-nodehead"; nh.textContent = moon.name || moon.label; sec.appendChild(nh); }
       lanes.forEach(lane => {
         const th = mk("div"); th.className = "vm-tier";
         const dot = mk("i"); dot.style.background = "var(--tier-" + lane.tier + ", var(--text-dim))";
         th.append(dot, document.createTextNode((lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier)));
-        left.appendChild(th);
+        sec.appendChild(th);
         lane.groups.forEach((g, i) => {
           const gh = g.find && g.find(isGhToken), fixed = g.slice();
           const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
@@ -11018,7 +11022,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
             pop(el); showRight(it);
           });
           hasVid().then(ok => { if(ok) el.appendChild(vidIcon()); });
-          left.appendChild(el);
+          sec.appendChild(el);
         });
       });
     });
