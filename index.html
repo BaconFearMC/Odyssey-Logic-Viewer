@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -4015,9 +4015,13 @@ function mergeGroundedTier(tierLanes, tier){
       all.forEach(x => used.add(x));
       merges.push({ all, extras: c.extras, first: lane.groups[all[0]], picks: GH_METHODS.map((m, si) => picked[si][0]) });
     });
+    // Set to true to bring back the condensed "*" merge. Off: methods that need something extra stay listed
+    // on their own, so every requirement still shows in the logic (just less condensed).
+    const STAR_MERGE_ENABLED = false;
     // Fallback "*" merge: every method is present in a cluster, but a few of them need
     // something EXTRA (typically Long Jump + Any Throw). Merge anyway, flagged with a star.
     Object.keys(clusters).sort((a, b) => clusters[a].extras.length - clusters[b].extras.length).forEach(key => {
+      if(!STAR_MERGE_ENABLED) return;
       const c = clusters[key];
       const kq = key.split("|"), scKey = kq[1], orKey = kq[2];
       const picked = {};
