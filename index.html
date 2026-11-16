@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3456,17 +3456,18 @@ function videoTitleFor(moon, tierKey, group, opts){
     const rest = raw.slice(1);
     const thr = isCap(first) ? rest.filter(isThrow) : [];
     const others = rest.filter(t => thr.indexOf(t) === -1);
-    req = "Requires " + videoTokenLabel(first)
+    req = videoTokenLabel(first)
         + thr.map(t => " (& " + videoTokenLabel(t) + ")").join("")
         + others.map(t => " & " + videoTokenLabel(t)).join("");
   }
   // Node the route starts from: the method's own origin, else the checkpoint/custom node the moon is tracked from.
   const node = (group && group.origin) || (moon && !moon.isCheckpointNode && !moon.isAccessPoint && moon.checkpoint) || "";
-  const head = kingdom ? kingdom + (node ? " (from " + String(node).replace(/^from\s+/i, "") + ")" : "") : "";
+  // Short title: no "Kingdom" suffix, "Checkpoint" -> "CP".
+  const head = kingdom ? kingdom.replace(/\s+Kingdom$/i, "") + (node ? " (from " + String(node).replace(/^from\s+/i, "").replace(/\bCheckpoint\b/gi, "CP") + ")" : "") : "";
   // Logic level (Unrated shows as Casual, like on the cards; "free" routes have no level).
   let lvl = "";
   if(tierKey && tierKey !== "free") lvl = (tierKey === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (TIER_LABEL[tierKey] || tierKey);
-  return [head, nm, lvl, req].filter(Boolean).join(" - ");
+  return [head, nm, req].filter(Boolean).join(" - "); // logic level intentionally left out of titles
 }
 // A merged Group Filter chip has no title of its own: it offers each member method's title to pick from.
 // Hover text: Group Filters shown by name (e.g. "Requires Any Grounded Height"), plus what it expands to when built.
