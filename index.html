@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityUpThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10911,6 +10911,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 @keyframes vmCell{from{opacity:0;transform:scale(.35) rotate(-14deg)}to{opacity:1;transform:none}}
 @media(min-width:901px){#vtMenuOverlay .vm-wrap{align-items:center}#vtMenuOverlay .vm-wrap>.vm-main,#vtMenuOverlay .vm-wrap>.vm-side{align-self:center}#vtMenuOverlay .vm-reqs{align-self:stretch;min-height:min(620px,88vh)}}
 #vtMenuOverlay .vm-reqs .vm-left.picking>:first-child{margin-top:0}
+#vtMenuOverlay .vm-reqs .vm-left.single{justify-content:center!important}#vtMenuOverlay .vm-reqs .vm-left.single>*{margin-top:0!important;margin-bottom:0!important}#vtMenuOverlay .vm-reqs .vm-left.single>.vm-label{margin-bottom:10px!important}
 #vtMenuOverlay .vm-pk .vm-card,#vtMenuOverlay .vm-ghost-pk .vm-card{margin:5px 0;padding:8px 10px;font-size:14px;border-left-width:4px}
 #vtMenuOverlay .vm-pk .vm-card{animation:vmSlide .3s both;animation-delay:calc(var(--i,0)*28ms)}
 #vtMenuOverlay .vm-pk .vm-cell,#vtMenuOverlay .vm-ghost-pk .vm-cell{width:68px;gap:4px}
@@ -10998,7 +10999,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     const cur = mk("div"); cur.className = "vm-cur";
     const chg = mk("button"); chg.type = "button"; chg.className = "vm-change";
     const pk = mk("div"); pk.className = "vm-pk"; pk.style.display = "none";
-    left.append(cur, chg); reqs.appendChild(pk);
+    left.append(cur, chg); reqs.appendChild(pk); left.classList.add("single");
     const laneLabel = lane => (lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier);
     const flip = fn => {
       const els = [left.firstElementChild, cur, chg].filter(e => e && e.style.display !== "none");
@@ -11036,7 +11037,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       const c = it.mk(84); c.classList.add("vm-curcard"); if(it.hasV) c.appendChild(vidIcon());
       c.addEventListener("click", ev => { ev.stopPropagation(); if(items.length > 1) openPk(); });
       cur.append(h, c); curCard = c; if(flyHide) c.style.opacity = "0";
-      chg.style.display = items.length > 1 ? "" : "none";
+      chg.style.display = items.length > 1 ? "" : "none"; left.classList.toggle("single", items.length <= 1);
       chg.textContent = "\u21C5 Change method (" + (items.length - 1) + " more)";
     };
     const fitPanel = p => {
