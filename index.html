@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3449,7 +3449,25 @@ function videoTokenLabel(t){
 }
 // "<Moon> Free" custom nodes are bookkeeping, not places: a video title must name the real checkpoint (or the kingdom
 // start) that the node hangs off. Walks back through custom nodes to that anchor; null when it is not unambiguous.
+const __freeAnchorCache = new Map();
 function videoFreeNodeAnchor(moon, name, group){
+  // Memoized: this runs a graph walk and is asked for every route chip on every card. Same kingdom + node + held
+  // moves always gives the same answer, so compute it once.
+  let ck = null;
+  try{
+    if(moon && name && /(^|\s)free\s*$/i.test(String(name))){
+      const toks = [];
+      (group || []).forEach(t => toks.push(ghTokenKey(t)));
+      if(group && group.ghMethods) group.ghMethods.forEach(m => m.forEach(t => toks.push(ghTokenKey(t))));
+      ck = (moon.kingdom || "") + "|" + (moon.checkpointNodeId || "") + "|" + String(name) + "|" + (group ? "g" : "n") + "|" + Array.from(new Set(toks)).sort().join("+");
+      if(__freeAnchorCache.has(ck)) return __freeAnchorCache.get(ck);
+    }
+  }catch(e){ ck = null; }
+  const r = __videoFreeNodeAnchorImpl(moon, name, group);
+  if(ck !== null) __freeAnchorCache.set(ck, r);
+  return r;
+}
+function __videoFreeNodeAnchorImpl(moon, name, group){
   try{
     if(!moon || !name || !/(^|\s)free\s*$/i.test(String(name))) return null;
     const data = (typeof KINGDOM_NODE_DATA !== "undefined") && KINGDOM_NODE_DATA[moon.kingdom];
@@ -3466,19 +3484,24 @@ function videoFreeNodeAnchor(moon, name, group){
     (group || []).forEach(t => have.add(ghTokenKey(t)));
     if(group && group.ghMethods) group.ghMethods.forEach(m => m.forEach(t => have.add(ghTokenKey(t))));
     const found = [];
+    let budget = 3000;   // hard cap on graph-walk steps so a dense custom-node web can never freeze the page
     const dfs = (id, acc, seen, depth) => {
-      if(depth > 6) return;
+      if(depth > 6 || --budget < 0) return;
       directedInbound(data, id).forEach(({ e, src }) => {
+        if(budget < 0) return;
         if(seen.has(src)) return;
         const n = data.nodeMap[src]; if(!n) return;
         const next = crossBranches(acc, edgeBranches(e));
         if(!next.length) return;
+        budget -= next.length;   // branch lists multiply along a path; charge for them so a blow-up stops the walk early
+        if(next.length > 400){ budget = -1; return; }
         if(n.node_type === "checkpoint" || n.node_type === "stage_start"){ found.push({ n, br: next }); return; }
         const s2 = new Set(seen); s2.add(src);
         dfs(src, next, s2, depth + 1);
       });
     };
     dfs(start, [{ group: [], scenarios: null, tier: "casual" }], new Set([start]), 0);
+    if(budget < 0) return null;   // walk was cut short: answer would be unreliable, so fall back to the plain node name
     let best = -1, winners = new Map();
     found.forEach(({ n, br }) => br.forEach(b => {
       if(group && !b.group.every(t => have.has(ghTokenKey(t)))) return;
@@ -3962,7 +3985,25 @@ function ghIconFrames(t){
   const i = t.methods.findIndex(m => m.length === 1 && m[0] === t.iconFirst);
   return i > 0 ? [t.methods[i]].concat(t.methods.slice(0, i), t.methods.slice(i + 1)) : t.methods;
 }
-function ghTokenKey(t){ return /cap\s*_?return/i.test(String(t)) ? "CapReturnJump" : t; }
+const __ghKeyCache = new Map();
+function ghTokenKey(t){
+  if(typeof t !== "string") return /cap\s*_?return/i.test(String(t)) ? "CapReturnJump" : t;
+  let r = __ghKeyCache.get(t);
+  if(r === undefined){ r = /cap\s*_?return/i.test(t) ? "CapReturnJump" : t; __ghKeyCache.set(t, r); }
+  return r;
+}
+// Reverse lookup (ghTokenKey(manifestKey) -> manifestKey), rebuilt only when the manifest grows. Replaces
+// Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t), which was O(manifest) per token and ran millions of times.
+let __ghRevN = -1, __ghRev = null;
+function manifestKeyForGh(t){
+  const keys = Object.keys(ICON_MANIFEST);
+  if(__ghRevN !== keys.length){
+    __ghRev = new Map();
+    for(const k of keys){ const g = ghTokenKey(k); if(!__ghRev.has(g)) __ghRev.set(g, k); }
+    __ghRevN = keys.length;
+  }
+  return __ghRev.get(t);
+}
 // True when picking things in the filters satisfies at least one merged method of the tier.
 function ghSatisfied(tier){
   const t = tier || ghTier(GH_TOKEN);
@@ -7304,9 +7345,7 @@ function pruneDominatedBranches(br){
   // A branch only makes another pointless if it's available from the same
   // place: an un-tagged branch (no origin) dominates anything, but a branch
   // tagged "from <node>" can't hide a route that comes from somewhere else.
-  const sameWhere = (a, b) => !a.origin || a.origin === b.origin;
-  return br.filter((b, i) => !br.some((a, j) => j !== i
-    && sameWhere(a, b) && pyramidDominates(a, b) && (!(sameWhere(b, a) && pyramidDominates(b, a)) || j < i)));
+  return __fastPrune(br, true);
 }
 
 function applyMergedBranchesToMoon(moon, branches, kingdomName){
@@ -7806,6 +7845,34 @@ function pyramidBranchCovers(a, b){ // does a's scenario coverage include all of
   if(!a.scenarios) return true;
   return !!b.scenarios && b.scenarios.every(n => a.scenarios.includes(n));
 }
+// ---- Fast dominance pruning (same results as the old all-pairs filter, without the O(n^2) blow-up on big kingdoms) ----
+// Exact duplicates (same origin, tier, token set, scenario set) are collapsed to their first occurrence up front; the
+// remaining all-pairs check then uses precomputed token Sets and rejects on size / tier before touching scenarios.
+function __brKey(b, withOrigin){
+  return (withOrigin ? (b.origin || "") + "#" : "") + b.tier + "|" + Array.from(new Set(b.group)).sort().join("+") + "|" + (b.scenarios ? b.scenarios.slice().sort((x, y) => x - y).join(",") : "*");
+}
+function __fastPrune(list, withOrigin){
+  const seen = new Set(), uniq = [];
+  for(const b of list){ const k = __brKey(b, withOrigin); if(seen.has(k)) continue; seen.add(k); uniq.push(b); }
+  const info = uniq.map(b => ({ b, set: new Set(b.group), n: new Set(b.group).size, rank: TIER_RANK[b.tier] || 0 }));
+  const dom = (x, y) => {                      // x dominates y
+    if(x.n > y.n || x.rank > y.rank) return false;
+    for(const t of x.set) if(!y.set.has(t)) return false;
+    return pyramidBranchCovers(x.b, y.b);
+  };
+  const sameWhere = (x, y) => !withOrigin || !x.b.origin || x.b.origin === y.b.origin;
+  const out = [];
+  for(let i = 0; i < info.length; i++){
+    const y = info[i]; let drop = false;
+    for(let j = 0; j < info.length && !drop; j++){
+      if(j === i) continue;
+      const x = info[j];
+      if(sameWhere(x, y) && dom(x, y) && (!(sameWhere(y, x) && dom(y, x)) || j < i)) drop = true;
+    }
+    if(!drop) out.push(y.b);
+  }
+  return out;
+}
 function pyramidDominates(a, b){ // a is at least as good as b everywhere -> b is redundant
   return a.group.every(t => b.group.includes(t))
     && (TIER_RANK[a.tier] || 0) <= (TIER_RANK[b.tier] || 0)
@@ -7819,7 +7886,7 @@ function pyramidCleanBranches(list, kingdomName){
 }
 function pyramidPrune(list, kingdomName){
   const c = pyramidCleanBranches(list, kingdomName);
-  const kept = c.filter((b, j) => !c.some((a, i) => i !== j && pyramidDominates(a, b) && (!pyramidDominates(b, a) || i < j)));
+  const kept = __fastPrune(c, false);
   // Same tokens + same tier but different scenario lists -> one branch with the scenarios joined.
   const merged = [], idx = {};
   kept.forEach(b => {
@@ -8152,7 +8219,7 @@ function appendGhStar(chip, andGroup){
   return; // disabled: no "*" and no "X method needs Y" note on merged Group Filter chips
   if(!andGroup || !andGroup.ghStar || !andGroup.ghStar.length) return;
   const lab = toks => toks.map(t => (typeof filterLabelFor === "function" ? filterLabelFor(t) : t) || t).join(" + ");
-  const iconKey = t => ICON_MANIFEST[t] ? t : (Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t);
+  const iconKey = t => ICON_MANIFEST[t] ? t : (manifestKeyForGh(t) || t);
   const iconRow = toks => {
     const r = document.createElement("span");
     r.className = "gh-star-icons";
@@ -8353,7 +8420,7 @@ function showAnyPop(anchor, token){
     el.appendChild(d);
   }
   options.forEach(toks => {
-    const keys = toks.map(t => ICON_MANIFEST[t] ? t : (Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t));
+    const keys = toks.map(t => ICON_MANIFEST[t] ? t : (manifestKeyForGh(t) || t));
     const row = document.createElement("div");
     row.className = "any-pop-row" + (keys.every(k => tokenIsSelected(k)) ? " on" : "");
     const icons = document.createElement("span");
@@ -8406,7 +8473,7 @@ function buildCycleFrames(wrap, frames, seconds, cls, crjChip){
       fr.style.animationDelay = (-k).toFixed(3) + "s";
     }
     toks.forEach(t => {
-      const tk = ICON_MANIFEST[t] ? t : Object.keys(ICON_MANIFEST).find(x => ghTokenKey(x) === t) || t;
+      const tk = ICON_MANIFEST[t] ? t : manifestKeyForGh(t) || t;
       const mInfo = ICON_MANIFEST[tk];
       const names = mInfo && mInfo.filenames && mInfo.filenames.length ? mInfo.filenames : ["Ability" + t + ".png"];
       const label = mInfo ? mInfo.label : t;
