@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityTripleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2307,8 +2307,8 @@
   .icon-wrap.any-sand::after{ color:#fff; }
   .gh-kingdom-badge{ position:absolute; right:-9px; bottom:-9px; width:22px; height:22px; z-index:4; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
   .gh-kingdom-badge img{ width:100%; height:100%; object-fit:contain; display:block; }
-  .gh-cap-badge{ position:absolute; bottom:-8px; z-index:4; width:20px; height:20px; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
-  .gh-cap-badge .prog-icon, .gh-cap-badge .prog-fallback{ width:20px; height:20px; margin:0; border-width:2px; border-radius:5px; }
+  .gh-cap-badge{ position:absolute; top:-10px; z-index:4; width:26px; height:26px; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
+  .gh-cap-badge .prog-icon, .gh-cap-badge .prog-fallback{ width:26px; height:26px; margin:0; border:0; border-radius:0; background:transparent; object-fit:contain; }
   .icon-wrap.any-jump::after, .icon-wrap.any-jump-ct::after, .icon-wrap.any-nocrj::after{ color:#fff; }
   .prog-badge.prog-plus .prog-icon{ border-color:var(--any-amber); }
   .prog-badge.prog-plus .prog-arrow{ background:var(--any-amber); font-size:14px; }
@@ -3563,11 +3563,25 @@ function videoTitleFor(moon, tierKey, group, opts){
 // A merged Group Filter chip has no title of its own: it offers each member method's title to pick from.
 // Hover text: Group Filters shown by name (e.g. "Requires Any Grounded Height"), plus what it expands to when built.
 function videoHoverTitle(moon, tierKey, group){
-  const t = videoTitleFor(moon, tierKey, group, { showGroups: true });
+  let t = videoTitleFor(moon, tierKey, group, { showGroups: true });
+  if(group && group.mergedEntrances && group.mergedEntrances.length > 1) t += "\nEntrances: " + group.mergedEntrances.map(e => e.name).join(" / ");
   if(group && group.ghMethods && group.methodSlots) return t + "\nBuilds as: " + group.ghMethods.filter((m, si) => !(group.methodImplied && group.methodImplied[si])).map(m => m.map(videoTokenLabel).join(" + ")).join(" / ");
   return t;
 }
-function videoOptionsFor(moon, tierKey, group){
+function videoOptionsFor(moon, tierKey, group, skipEntrances){
+  const ents = (!skipEntrances && group && group.mergedEntrances && group.mergedEntrances.length > 1) ? group.mergedEntrances : null;
+  if(!ents) return videoMethodOptionsFor(moon, tierKey, group);
+  // Merged entrances (CUSTOM_NODES_MERGE_ENTRANCES): one option per entrance, titled with that entrance's Checkpoint.
+  const out = [];
+  ents.forEach(e => {
+    const g2 = Object.assign(group.slice(), group, { origin: null, titleOrigin: e.title, mergedEntrances: null });
+    const mo = videoMethodOptionsFor(moon, tierKey, g2);
+    if(mo) mo.forEach(o => out.push(Object.assign({}, o, { entrance: e.name, label: e.name + " \u00B7 " + (o.tokens || []).map(videoTokenLabel).join(" + ") })));
+    else out.push({ title: videoTitleFor(moon, tierKey, g2), slot: null, tokens: group.filter(t => !isGhToken(t)), entrance: e.name, label: e.name, implied: false });
+  });
+  return out;
+}
+function videoMethodOptionsFor(moon, tierKey, group){
   if(!group || !group.methodSlots || !group.ghMethods || group.ghMethods.length < 2) return null; // one method = no variations
   const extras = group.slice(1).filter(t => !isGhToken(t));
   // Methods that were only implied (e.g. a Cap Return Jump branch that is not in the node's logic) are not listed.
@@ -3923,7 +3937,7 @@ const GH_TIERS = [
   // ---- KINGDOM-SPECIFIC GROUP FILTERS ----------------------------------------------------------------------
   // Same as any other group, plus:  kingdom  -> only merges / shows on that kingdom's page
   //                                 fromNode -> only for routes starting from a node matching this pattern
-  //                                 capBadges -> capture icons drawn tilted on the bottom-left of the icon (names resolved
+  //                                 capBadges -> capture icons drawn tilted on the top-left of the icon (no frame/background) (names resolved
   //                                              against the loaded tokens; they are also real members of `methods`)
   //                                 iconMethods -> frames the icon cycles through (defaults to `methods`)
   // To add another one, copy this entry, change kingdom/fromNode/methods and add its colour class in the CSS.
@@ -6927,6 +6941,15 @@ function entranceReqFullSignature(r){
     g.slice().sort().join("+") + "@" + ((g.scenarios && g.scenarios.length) ? g.scenarios.slice().sort().join(",") : "") + "#" + (g.origin || "")
   ).sort().join("|")).sort().join(";");
 }
+// Name used in VIDEO TITLES for an entrance: a Checkpoint is named as the checkpoint ("Courtyard CP"), not as the
+// Custom Node it leads into. (videoTitleFor shortens "Checkpoint" to "CP"; "<x> Free" custom nodes resolve to their checkpoint there.)
+function entranceTitleName(data, nodeId, fallback){
+  const n = data && data.nodeMap && nodeId ? data.nodeMap[nodeId] : null;
+  if(!n) return fallback;
+  const dn = String(n.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").trim() || fallback;
+  if(n.node_type === "checkpoint") return /checkpoint\s*$/i.test(dn) ? dn : dn + " CP";
+  return dn;
+}
 // rows: [{ label: "From X", entrance: "X", ...requirement }] -> same shape, identical requirements merged
 // (first-appearance order kept; label lists every entrance).
 function mergeIdenticalEntranceRows(rows){
@@ -6934,11 +6957,12 @@ function mergeIdenticalEntranceRows(rows){
   rows.forEach(r => {
     const sig = entranceReqFullSignature(r);
     let g = bySig.get(sig);
-    if(!g){ g = { row: r, names: [] }; bySig.set(sig, g); groups.push(g); }
+    if(!g){ g = { row: r, names: [], ents: [] }; bySig.set(sig, g); groups.push(g); }
     const nm = r.entrance != null ? r.entrance : String(r.label || "").replace(/^From\s+/, "");
-    if(g.names.indexOf(nm) < 0) g.names.push(nm);
+    if(g.names.indexOf(nm) < 0){ g.names.push(nm); g.ents.push({ name: nm, title: r.entranceTitle || nm }); }
   });
-  return groups.map(g => g.names.length < 2 ? g.row : Object.assign({}, g.row, { label: "From " + g.names.join(", "), entrance: g.names.join(", ") }));
+  // `entrances` lets the video menu offer each merged entrance separately (see videoOptionsFor).
+  return groups.map(g => g.names.length < 2 ? g.row : Object.assign({}, g.row, { label: "From " + g.names.join(", "), entrance: g.names.join(", "), entrances: g.ents }));
 }
 
 function computeNodeSourceReqs(kingdomName, nodeId, scopeMoon){
@@ -6960,7 +6984,7 @@ function computeNodeSourceReqsRaw(kingdomName, nodeId, scopeMoon, data){
     const srcNode = data.nodeMap[src];
     const rawLabel = (srcNode && srcNode.display_name) || src;
     const label = subareaSourceLabel(data, srcNode) || rawLabel.replace(/\s*\([^)]*\)\s*$/, "");
-    rows.push(Object.assign({ label: "From " + label, entrance: label }, summarizeBranches(scopeBranchesToMoon(r.branches, scopeMoon), kingdomName)));
+    rows.push(Object.assign({ label: "From " + label, entrance: label, entranceTitle: entranceTitleName(data, src, label) }, summarizeBranches(scopeBranchesToMoon(r.branches, scopeMoon), kingdomName)));
   });
   if(rows.length < 2 && !anyFolded) return null; // plain single-source case: flat reach path handles it
   const trimmed = rows.filter(r => !r.impossible);
@@ -6996,7 +7020,7 @@ function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoo
       }
       if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); row.appendChild(ot); }
     } else {
-      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName, titleMoon, /^(Entrance|Exit) Pipe\b/.test(String(r.label || "")) ? String(r.label) : null));
+      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName, titleMoon, /^(Entrance|Exit) Pipe\b/.test(String(r.label || "")) ? String(r.label) : null, r.entrances));
     }
     wrap.appendChild(row);
   });
@@ -8605,7 +8629,7 @@ function makeIcon(token, opts){
     (ghT.capBadges || []).forEach((cb, i) => {
       const k = cb.token || resolveCaptureToken(cb.name); if(!k) return;
       const b = document.createElement("span"); b.className = "gh-cap-badge"; b.title = (ICON_MANIFEST[k] && ICON_MANIFEST[k].label) || cb.name;
-      b.style.left = (-9 + i * 15) + "px"; b.style.transform = "rotate(" + cb.tilt + "deg)";
+      b.style.left = (-10 + i * 21) + "px"; b.style.transform = "rotate(" + cb.tilt + "deg)"; // top-left, tilted, slightly overlapping
       b.appendChild(makeProgImg(k)); wrap.appendChild(b);
     });
     if(ghT.plusGP){
@@ -8823,7 +8847,8 @@ function customNodeRoutesFor(moon){
         if(keys.length >= 2){
           keys.sort((a, b) => (a === "" ? -1 : b === "" ? 1 : a.localeCompare(b)));
           route.rows = keys.map(k => Object.assign(
-            { label: k ? "From " + k : "From anywhere (Odyssey)", entrance: k || "anywhere (Odyssey)" },
+            { label: k ? "From " + k : "From anywhere (Odyssey)", entrance: k || "anywhere (Odyssey)",
+              entranceTitle: (() => { const fb = pruned.find(b => (b.origin || "") === k && b.fromNodeId); return fb ? entranceTitleName(data, fb.fromNodeId, k) : (k || "anywhere (Odyssey)"); })() },
             summarizeBranches(pruned.filter(b => (b.origin || "") === k).map(b => Object.assign({}, b, { origin: null })), n.kingdom)));
           // Opt-in (CUSTOM_NODES_MERGE_ENTRANCES): fold entrances with identical requirements into one row.
           if(n.kind === "custom" && customNodeMergesEntrances(n.kingdom, n.id)) route.rows = mergeIdenticalEntranceRows(route.rows);
@@ -11547,11 +11572,11 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       const picks = [];
       if(vo){
         side.style.display = ""; side.style.animation = "none"; void side.offsetWidth; side.style.animation = (from && from.first) ? "vmSideIn .5s cubic-bezier(.2,.9,.3,1.1) both" : "";
-        const lab = mk("div"); lab.className = "vm-label"; lab.textContent = "Pick the variation"; side.appendChild(lab);
+        const lab = mk("div"); lab.className = "vm-label"; lab.textContent = vo.some(o => o.entrance) ? "Pick the entrance" : "Pick the variation"; side.appendChild(lab);
         if(gh){ const gc = mk("div", "display:flex;align-items:center;gap:12px;margin:0 0 10px;font-size:18px;font-weight:800;"); gc.appendChild(ico(gh, 56)); gc.appendChild(mk("span", "", videoTokenLabel(gh))); side.appendChild(gc); }
         if(g.capStar) side.appendChild(mk("div", "margin:0 0 10px;font-size:12px;font-weight:600;color:var(--text-dim);line-height:1.35;", "* " + g.capStar.note));
         vo.forEach((o, k) => {
-          const c = card(strip(o.tokens || [], 44, true, hoistOf.get(it.moon)), (o.tokens && o.tokens.length) ? "" : "Free");
+          const c = card(strip(o.tokens || [], 44, true, hoistOf.get(it.moon)), o.label || ((o.tokens && o.tokens.length) ? "" : "Free"));
           c.style.animationDelay = (k * 80 + 120) + "ms";
           window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(vidIcon()); });
           const pick = () => { side.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); };
@@ -11596,7 +11621,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         sec.appendChild(th);
         lane.groups.forEach((g, i) => {
           const gh = g.find && g.find(isGhToken), sp = splitInfo(g), fixed = sp ? sp.toks : g.slice();
-          const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
+          const nVar = (gh || g.mergedEntrances) ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
           const mkCard = sz => card(fixed.length ? strip(fixed, sz, true, hoistOf.get(moon)) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
           const el = mkCard(60); el.style.setProperty("--i", String(Math.min(items.length, 14)));
           const it = { moon, lane, g, i, el, mk: mkCard, split: sp }; items.push(it);
@@ -12676,7 +12701,7 @@ function buildTierLanesFromBranches(branches){
 // .tier-stack/.tier-lane/.tier-pill/.option-chip classes the moon cards
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
-function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleMoon, pipeTitleOrigin){
+function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleMoon, pipeTitleOrigin, mergedEntrances){
   if(hideAdvanced || hideExpert){ tierLanes = visLanes(tierLanes); if(!tierLanes.length) return document.createElement("div"); }
   tierLanes = promoteGroupFilters(withGroundedMerge(tierLanes));
   const stack = document.createElement("div");
@@ -12731,6 +12756,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleM
         otag.title = "This route starts from the " + andGroup.origin + " node";
         chip.appendChild(otag);
       }
+      if(mergedEntrances && mergedEntrances.length > 1) andGroup.mergedEntrances = mergedEntrances; // video menu: pick which merged entrance
       if(pipeTitleOrigin && !andGroup.origin) andGroup.titleOrigin = pipeTitleOrigin; // title only: names the pipe without adding a "From" tag
       if(titleMoon){
         // Moon-card route chip: same title builder + same badge check as every other method chip.
@@ -12933,7 +12959,7 @@ function videoMethodLabel(group){
   return main.concat(gh).join(" + ") || "Free";
 }
 function openVideoPicker(moon, tierKey, tierLabel, andGroup){
-  if(!videoOptionsFor(moon, tierKey, andGroup)) return false;
+  if(!videoOptionsFor(moon, tierKey, andGroup, true)) return false;
   const old = document.getElementById("videoPicker"); if(old) old.remove();
   const lanes = withGroundedMerge(moon.tierLanes || [], moon.kingdom, moon);
   const lane = lanes.find(l => l.tier === tierKey);
@@ -12965,7 +12991,7 @@ function openVideoPicker(moon, tierKey, tierLabel, andGroup){
   const renderRight = () => {
     right.innerHTML = "";
     const g = groups[cur];
-    const opts = videoOptionsFor(moon, tierKey, g);
+    const opts = videoOptionsFor(moon, tierKey, g, true);
     if(opts){
       right.appendChild(colHead("Pick the " + videoTokenLabel(g[0])));
       opts.forEach(o => { const b = btn(o.title, false); b.addEventListener("click", ev => { ev.stopPropagation(); choose(o.slot); }); right.appendChild(b); });
@@ -12980,7 +13006,7 @@ function openVideoPicker(moon, tierKey, tierLabel, andGroup){
     left.innerHTML = "";
     left.appendChild(colHead("Methods"));
     groups.forEach((g, i) => {
-      const b = btn(videoMethodLabel(g) + (videoOptionsFor(moon, tierKey, g) ? "  \u25B8" : ""), i === cur);
+      const b = btn(videoMethodLabel(g) + (videoOptionsFor(moon, tierKey, g, true) ? "  \u25B8" : ""), i === cur);
       b.addEventListener("click", ev => { ev.stopPropagation(); cur = i; renderLeft(); renderRight(); });
       left.appendChild(b);
     });
