@@ -12,7 +12,7 @@ edge_user_0019,Sand Kingdom,subarea,SandWorldSphinxExStage::entrance::aaa::sub_n
 edge_user_0020,Sand Kingdom,subarea,SandWorldSphinxExStage::entrance::aaa::sub_near,SandWorldSphinxExStage::entrance::run00return::sub_far,Jaxi,,human_route,casual,false,editor,Created in graph editor.,,
 edge_user_0021,Sand Kingdom,subarea,SandWorldSphinxExStage::entrance::run00return::sub_far,SandWorldSphinxExStage::entrance::aaa::sub_near,impossible,,human_route,casual,false,editor,Reverse of edge_user_0020.,,
 edge_user_0024,Sand Kingdom,subarea,MeganeLiftExStage::entrance::meganelift01::sub_near,MeganeLiftExStage::entrance::meganelift02::sub_far,free,,human_route,casual,false,editor,Created in graph editor.,,
-edge_user_0025,Sand Kingdom,subarea,MeganeLiftExStage::entrance::meganelift02::sub_far,MeganeLiftExStage::entrance::meganelift01::sub_near,free,,human_route,expert,false,editor,Reverse of edge_user_0024.,,
+edge_user_0025,Sand Kingdom,subarea,MeganeLiftExStage::entrance::meganelift02::sub_far,MeganeLiftExStage::entrance::meganelift01::sub_near,CapReturnJump,,human_route,glitched,false,editor,Reverse of edge_user_0024.,,
 edge_user_0053,Sand Kingdom,subarea,SandWorldRotateExStage::entrance::birureturn::sub_far,SandWorldRotateExStage::place::new_place,free,,human_route,casual,false,editor,Created in graph editor.,,
 edge_user_0078,Sand Kingdom,subarea,SandWorldRotateExStage::place::new_place,SandWorldRotateExStage::entrance::birureturn::sub_far,BazookaElectric,,human_route,casual,false,editor,Reverse of edge_user_0053.,,
 edge_user_0022,Sand Kingdom,subarea,SandWorldRotateExStage::entrance::biru::sub_near,SandWorldRotateExStage::place::new_place,Scarecrow | (NeutralThrow & Vault & Dive),,human_route,casual;advanced,false,editor,Created in graph editor.,,
