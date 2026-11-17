@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityUpThrow.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -8900,7 +8900,7 @@ function buildMoonCard(moon, opts){
 // ===== SETTING: Classic Viewing lazy loading =====
 // true  = moon cards / node panels are only built when you click their dropdown arrow (much less lag)
 // false = everything is built up front like the original (slow, but all content is immediately present)
-const LAZY_CLASSIC_NODES = false;
+const LAZY_CLASSIC_NODES = true;
 const LAZY_OPEN = new Set();
 function buildLazyMoonCard(moon){
   const key = moon.kingdom + "|" + moon.name;
@@ -10554,11 +10554,17 @@ function renderCheckpointReqs_impl(kingdomName, nodeType){
   grid.className = "cp-reqs-grid";
   const freeGrid = document.createElement("div");
   freeGrid.className = "cp-reqs-grid cp-reqs-grid-compact";
-  list.forEach(cp => {
+  // A Checkpoint with a single, plain-Free route becomes a compact one-line card (still its own card).
+  const isCompact = cp => cp.variants.length === 1 && (!cp.variants[0].moon.tierLanes || cp.variants[0].moon.tierLanes.length === 0);
+  const nCompact = list.filter(isCompact).length;
+  const cap = t => { const c = document.createElement("div"); c.className = "cp-reqs-caption"; c.textContent = t; return c; };
+  const both = (list.length - nCompact) && nCompact;
+  if(list.length - nCompact){ if(both) root.appendChild(cap("Needs something")); root.appendChild(grid); }
+  if(nCompact){ if(both) root.appendChild(cap("Free to reach")); root.appendChild(freeGrid); }
+  const buildCard = cp => {
     const card = document.createElement("div");
     card.className = "cp-req";
-    // A Checkpoint with a single, plain-Free route becomes a compact one-line card (still its own card).
-    const compact = cp.variants.length === 1 && (!cp.variants[0].moon.tierLanes || cp.variants[0].moon.tierLanes.length === 0);
+    const compact = isCompact(cp);
     if(compact) card.classList.add("cp-req-compact");
     card.dataset.submittable = "1";
     card.dataset.checkpointNode = cp.nodeId;
@@ -10580,12 +10586,29 @@ function renderCheckpointReqs_impl(kingdomName, nodeType){
       card.appendChild(wrap);
     });
     (compact ? freeGrid : grid).appendChild(card);
-  });
-  const cap = t => { const c = document.createElement("div"); c.className = "cp-reqs-caption"; c.textContent = t; return c; };
-  const both = grid.children.length && freeGrid.children.length;
-  if(grid.children.length){ if(both) root.appendChild(cap("Needs something")); root.appendChild(grid); }
-  if(freeGrid.children.length){ if(both) root.appendChild(cap("Free to reach")); root.appendChild(freeGrid); }
-  measureOptionsCollapsiblesIn(root);
+  };
+  // Big kingdoms (Cascade) have a lot of cards: build the first few right away, then the rest in small
+  // batches per frame so the page never freezes. A newer render of this panel cancels the old one.
+  const token = (root.__fillToken = (root.__fillToken || 0) + 1);
+  const FIRST = 8, BATCH = 6;
+  const prevRow = ICON_ROW_MAX;
+  let i = 0;
+  const step = n => {
+    ICON_ROW_MAX = 3;
+    try{ for(const end = Math.min(list.length, i + n); i < end; i++) buildCard(list[i]); }
+    finally { ICON_ROW_MAX = prevRow; }
+    measureOptionsCollapsiblesIn(root);
+    applyFilterMatchHighlight();
+  };
+  step(FIRST);
+  if(i < list.length){
+    const next = () => {
+      if(root.__fillToken !== token || !root.isConnected) return;
+      step(BATCH);
+      if(i < list.length) requestAnimationFrame(next);
+    };
+    requestAnimationFrame(next);
+  }
 }
 
 function applyFilterMatchHighlight(){
