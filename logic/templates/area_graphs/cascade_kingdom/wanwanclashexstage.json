@@ -108,6 +108,25 @@
       "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
       "notes": "Connected from WaterfallWorldHomeStage. StageData anchor UnitConfigName=DokanStageChange.",
       "status": ""
+    },
+    {
+      "node_id": "WanwanClashExStage::place::new_place",
+      "kingdom": "Cascade Kingdom",
+      "stage": "WanwanClashExStage",
+      "stage_display_name": "Nice Shots with Chain Chomps",
+      "area_scope": "subarea",
+      "node_type": "custom_place",
+      "source": "editor",
+      "entrance_id": "",
+      "side": "",
+      "obj_id": "",
+      "display_name": "Nice Shot with the Chain Chomp Free",
+      "x": "",
+      "y": "",
+      "z": "",
+      "scenario_indices": "",
+      "notes": "Human-authored logic place.",
+      "status": ""
     }
   ],
   "edges": [
@@ -117,10 +136,10 @@
       "area_scope": "subarea",
       "from_node_id": "WanwanClashExStage::entrance::WanwanExStart::sub_near",
       "to_node_id": "WanwanClashExStage::entrance::WanwanExGoal::sub_far",
-      "requirement_expr": "Wanwan",
+      "requirement_expr": "(Wanwan & SingleJump) | (Wanwan & CapReturnJump) | (Wanwan & Backflip) | (Wanwan & GroundPoundJump) | (Wanwan & LongJump) | (Wanwan & SideFlip) | (Wanwan & Spin) | (Wanwan & NeutralThrow & Vault) | (Wanwan & DownThrow & Vault)",
       "requirement_notes": "",
       "edge_type": "human_route",
-      "difficulty": "casual",
+      "difficulty": "casual;casual;casual;advanced;casual;casual;casual;casual;casual",
       "bidirectional": "false",
       "source": "editor",
       "notes": "Created in graph editor.",
@@ -142,6 +161,70 @@
       "notes": "Reverse of edge_user_0009.",
       "option_scenarios": "",
       "status": ""
+    },
+    {
+      "edge_id": "edge_user_1330",
+      "kingdom": "Cascade Kingdom",
+      "area_scope": "subarea",
+      "from_node_id": "WanwanClashExStage::entrance::WanwanExStart::sub_near",
+      "to_node_id": "WanwanClashExStage::place::new_place",
+      "requirement_expr": "(Wanwan & GroundPoundJump)",
+      "requirement_notes": "",
+      "edge_type": "human_route",
+      "difficulty": "advanced",
+      "bidirectional": "false",
+      "source": "editor",
+      "notes": "Created in graph editor.",
+      "option_scenarios": "",
+      "status": ""
+    },
+    {
+      "edge_id": "edge_user_1331",
+      "kingdom": "Cascade Kingdom",
+      "area_scope": "subarea",
+      "from_node_id": "WanwanClashExStage::entrance::WanwanExGoal::sub_far",
+      "to_node_id": "WanwanClashExStage::place::new_place",
+      "requirement_expr": "SingleJump | CapReturnJump | Backflip | LongJump | SideFlip | Spin | (NeutralThrow & Vault) | (DownThrow & Vault)",
+      "requirement_notes": "",
+      "edge_type": "human_route",
+      "difficulty": "casual",
+      "bidirectional": "false",
+      "source": "editor",
+      "notes": "Created in graph editor.",
+      "option_scenarios": "1,2,3,4",
+      "status": ""
+    },
+    {
+      "edge_id": "edge_user_1332",
+      "kingdom": "Cascade Kingdom",
+      "area_scope": "subarea",
+      "from_node_id": "WanwanClashExStage::place::new_place",
+      "to_node_id": "WanwanClashExStage::entrance::WanwanExGoal::sub_far",
+      "requirement_expr": "impossible",
+      "requirement_notes": "",
+      "edge_type": "human_route",
+      "difficulty": "casual",
+      "bidirectional": "false",
+      "source": "editor",
+      "notes": "Reverse of edge_user_1331.",
+      "option_scenarios": "1,2,3,4",
+      "status": ""
+    },
+    {
+      "edge_id": "edge_user_1333",
+      "kingdom": "Cascade Kingdom",
+      "area_scope": "subarea",
+      "from_node_id": "WanwanClashExStage::place::new_place",
+      "to_node_id": "WanwanClashExStage::entrance::WanwanExStart::sub_near",
+      "requirement_expr": "impossible",
+      "requirement_notes": "",
+      "edge_type": "human_route",
+      "difficulty": "advanced",
+      "bidirectional": "false",
+      "source": "editor",
+      "notes": "Reverse of edge_user_1330.",
+      "option_scenarios": "",
+      "status": ""
     }
   ],
   "moons": [
@@ -156,7 +239,7 @@
       "obj_id": "371",
       "uid": "225",
       "flags": "ShineFlag_None",
-      "from_node_id": "WanwanClashExStage::entrance::WanwanExGoal::sub_far",
+      "from_node_id": "WanwanClashExStage::place::new_place",
       "state_requirement_expr": "",
       "requirement_expr": "free",
       "world_peace_token": "WorldPeace_Cascade",
@@ -190,7 +273,7 @@
       "shine_info_scenario_name": "\u30ef\u30f3\u30ef\u30f3 \u30ca\u30a4\u30b9\u30b7\u30e7\u30c3\u30c8\uff01",
       "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
       "difficulty": "casual",
-      "option_scenarios": ""
+      "option_scenarios": "1,2,3,4"
     },
     {
       "moon_id": "WanwanClashExStage:504:226",
@@ -205,7 +288,7 @@
       "flags": "ShineFlag_None",
       "from_node_id": "WanwanClashExStage::entrance::WanwanExGoal::sub_far",
       "state_requirement_expr": "",
-      "requirement_expr": "Wanwan",
+      "requirement_expr": "(Wanwan & SingleJump) | (Wanwan & CapReturnJump) | (Wanwan & Backflip) | (Wanwan & LongJump) | (Wanwan & SideFlip) | (Wanwan & Spin) | (Wanwan & NeutralThrow & Vault) | (Wanwan & DownThrow & Vault)",
       "world_peace_token": "WorldPeace_Cascade",
       "moon_rock_token": "MoonRockActive_Cascade",
       "access_type": "primary",
@@ -237,7 +320,7 @@
       "shine_info_scenario_name": "\u30ef\u30f3\u30ef\u30f3 \u30d9\u30ea\u30fc\u30ca\u30a4\u30b9\u30b7\u30e7\u30c3\u30c8\uff01",
       "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
       "difficulty": "casual",
-      "option_scenarios": ""
+      "option_scenarios": "1,2,3,4"
     }
   ],
   "anchors": [

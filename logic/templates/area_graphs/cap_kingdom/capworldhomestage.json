@@ -2367,6 +2367,38 @@
       "notes": "Reverse of edge_user_1228.",
       "option_scenarios": "",
       "status": ""
+    },
+    {
+      "edge_id": "edge_user_1234",
+      "kingdom": "Cap Kingdom",
+      "area_scope": "overworld",
+      "from_node_id": "CapWorldHomeStage::entrance::rollingstart::home_in",
+      "to_node_id": "CapWorldHomeStage::start",
+      "requirement_expr": "free",
+      "requirement_notes": "",
+      "edge_type": "human_route",
+      "difficulty": "casual",
+      "bidirectional": "false",
+      "source": "editor",
+      "notes": "Created in graph editor.",
+      "option_scenarios": "",
+      "status": ""
+    },
+    {
+      "edge_id": "edge_user_1235",
+      "kingdom": "Cap Kingdom",
+      "area_scope": "overworld",
+      "from_node_id": "CapWorldHomeStage::start",
+      "to_node_id": "CapWorldHomeStage::entrance::rollingstart::home_in",
+      "requirement_expr": "impossible",
+      "requirement_notes": "",
+      "edge_type": "human_route",
+      "difficulty": "casual",
+      "bidirectional": "false",
+      "source": "editor",
+      "notes": "Reverse of edge_user_1234.",
+      "option_scenarios": "",
+      "status": ""
     }
   ],
   "moons": [
@@ -2947,7 +2979,7 @@
       "flags": "ShineFlag_Extra",
       "from_node_id": "CapWorldHomeStage::checkpoint::obj2497",
       "state_requirement_expr": "",
-      "requirement_expr": "(Scarecrow & SingleJump & AnyThrow) | (Scarecrow & SideFlip & AnyThrow) | (AnyThrow & Spin & Scarecrow) | (NeutralThrow & WallJump & Dive & KuriboWing & Scarecrow) | (DownThrow & WallJump & Dive & KuriboWing & Scarecrow) | (UpThrow & WallJump & Dive & KuriboWing & Scarecrow)",
+      "requirement_expr": "(Scarecrow & SingleJump & AnyThrow) | (Scarecrow & SideFlip & AnyThrow) | (AnyThrow & Spin & Scarecrow) | (NeutralThrow & WallJump & Dive & KuriboWing & Scarecrow) | (DownThrow & WallJump & Dive & KuriboWing & Scarecrow) | (UpThrow & WallJump & Dive & KuriboWing & Scarecrow) | (AnyThrow & Backflip & Scarecrow)",
       "world_peace_token": "WorldPeace_Cap",
       "moon_rock_token": "MoonRockActive_Cap",
       "access_type": "primary",
@@ -2978,7 +3010,7 @@
       "shine_info_object_name": "\u9375\u4ed8\u304d\u5b9d\u7bb1",
       "shine_info_scenario_name": "\u5e3d\u5b50\u306e\u56fd\u3067 \u30c1\u30af\u30bf\u30af\u30fb\u30a2\u30b9\u30ec\u30c1\u30c3\u30af \uff12",
       "notes": "Use placement_stage_map_indices for StageMap availability and requirement_expr for local ability/capture needs. placement_scenario_no_values is the raw object ScenarioNo field.",
-      "difficulty": "casual;expert;expert;expert;expert;expert",
+      "difficulty": "casual;expert;expert;expert;expert;expert;expert",
       "option_scenarios": "4"
     },
     {
