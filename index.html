@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityUpThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3444,27 +3444,48 @@ function videoTokenLabel(t){
 }
 // "<Moon> Free" custom nodes are bookkeeping, not places: a video title must name the real checkpoint (or the kingdom
 // start) that the node hangs off. Walks back through custom nodes to that anchor; null when it is not unambiguous.
-function videoFreeNodeAnchor(moon, name){
+function videoFreeNodeAnchor(moon, name, group){
   try{
     if(!moon || !name || !/(^|\s)free\s*$/i.test(String(name))) return null;
     const data = (typeof KINGDOM_NODE_DATA !== "undefined") && KINGDOM_NODE_DATA[moon.kingdom];
     if(!data || !data.nodeMap) return null;
-    const clean = x => String(x || "").replace(/\s*\([^)]*\)\s*$/, "").trim();
-    let start = (moon.checkpointNodeId && data.nodeMap[moon.checkpointNodeId] && clean(data.nodeMap[moon.checkpointNodeId].display_name) === clean(name)) ? moon.checkpointNodeId : null;
-    if(!start){ const hit = (data.nodes || []).find(n => n.node_type === "custom_place" && clean(n.display_name) === clean(name)); start = hit ? hit.node_id : null; }
+    const clean = x => String(x || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, "").trim().toLowerCase();
+    const want = clean(name);
+    let start = (moon.checkpointNodeId && data.nodeMap[moon.checkpointNodeId] && clean(data.nodeMap[moon.checkpointNodeId].display_name) === want) ? moon.checkpointNodeId : null;
+    if(!start){
+      const hit = (data.nodes || []).find(n => n.node_type === "custom_place" && clean(n.display_name) === want);
+      start = hit ? hit.node_id : null;
+    }
     if(!start) return null;
-    const seen = new Set([start]), found = [];
-    const walk = id => directedInbound(data, id).forEach(({ src }) => {
-      if(seen.has(src)) return; seen.add(src);
-      const n = data.nodeMap[src]; if(!n) return;
-      if(n.node_type === "checkpoint" || n.node_type === "stage_start") found.push(n);
-      else if(n.node_type === "custom_place") walk(src);
-    });
-    walk(start);
-    const cps = found.filter(n => n.node_type === "checkpoint");
-    const pick = cps.length === 1 ? cps[0] : (found.length === 1 ? found[0] : null);
-    if(!pick) return null;
-    return pick.node_type === "stage_start" ? "Kingdom Start" : clean(pick.display_name);
+    const have = new Set();
+    (group || []).forEach(t => have.add(ghTokenKey(t)));
+    if(group && group.ghMethods) group.ghMethods.forEach(m => m.forEach(t => have.add(ghTokenKey(t))));
+    const found = [];
+    const dfs = (id, acc, seen, depth) => {
+      if(depth > 6) return;
+      directedInbound(data, id).forEach(({ e, src }) => {
+        if(seen.has(src)) return;
+        const n = data.nodeMap[src]; if(!n) return;
+        const next = crossBranches(acc, edgeBranches(e));
+        if(!next.length) return;
+        if(n.node_type === "checkpoint" || n.node_type === "stage_start"){ found.push({ n, br: next }); return; }
+        const s2 = new Set(seen); s2.add(src);
+        dfs(src, next, s2, depth + 1);
+      });
+    };
+    dfs(start, [{ group: [], scenarios: null, tier: "casual" }], new Set([start]), 0);
+    let best = -1, winners = new Map();
+    found.forEach(({ n, br }) => br.forEach(b => {
+      if(group && !b.group.every(t => have.has(ghTokenKey(t)))) return;
+      const score = b.group.length;
+      if(score > best){ best = score; winners = new Map(); }
+      if(score === best) winners.set(n.node_id, n);
+    }));
+    if(winners.size !== 1) return null;
+    const pick = Array.from(winners.values())[0];
+    if(pick.node_type === "stage_start") return "Kingdom Start";
+    const dn = String(pick.display_name || "").replace(/\s*\([^)]*\)\s*$/, "").trim();
+    return /checkpoint\s*$/i.test(dn) ? dn : dn + " CP";
   }catch(e){ return null; }
 }
 function videoTitleFor(moon, tierKey, group, opts){
@@ -3499,7 +3520,7 @@ function videoTitleFor(moon, tierKey, group, opts){
   }
   // Node the route starts from: the method's own origin, else the checkpoint/custom node the moon is tracked from.
   let node = (group && group.origin) || (moon && !moon.isCheckpointNode && !moon.isAccessPoint && moon.checkpoint) || "";
-  if(node && /(^|\s)free\s*$/i.test(String(node))) node = videoFreeNodeAnchor(moon, node) || node;
+  if(node && /(^|\s)free\s*$/i.test(String(node))) node = videoFreeNodeAnchor(moon, node, group) || node;
   // Short title: no "Kingdom" suffix, "Checkpoint" -> "CP".
   const head = kingdom ? kingdom.replace(/\s+Kingdom$/i, "") + (node ? " (from " + String(node).replace(/^from\s+/i, "").replace(/\bCheckpoint\b/gi, "CP") + ")" : "") : "";
   // Logic level (Unrated shows as Casual, like on the cards; "free" routes have no level).
