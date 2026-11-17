@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpin.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3522,7 +3522,7 @@ function videoTitleFor(moon, tierKey, group, opts){
   let node = (group && group.origin) || (moon && !moon.isCheckpointNode && !moon.isAccessPoint && moon.checkpoint) || "";
   if(node && /(^|\s)free\s*$/i.test(String(node))) node = videoFreeNodeAnchor(moon, node, group) || node;
   // Short title: no "Kingdom" suffix, "Checkpoint" -> "CP".
-  const head = kingdom ? kingdom.replace(/\s+Kingdom$/i, "") + (node ? " (from " + String(node).replace(/^from\s+/i, "").replace(/\bCheckpoint\b/gi, "CP") + ")" : "") : "";
+  const head = kingdom ? kingdom.replace(/\s+Kingdom$/i, "") + (node ? " (from " + String(node).replace(/^from\s+/i, "").replace(/\bCheckpoint\b/gi, "CP").replace(/\b(Entrance|Exit)(\s+Pipe)?(\s*\([^)]*\))?\s*$/i, (m, k, pipe, id) => (/^entrance$/i.test(k) ? "In" : "Out") + (pipe ? " Pipe" : "") + (id || "")) + ")" : "") : "";
   // Logic level (Unrated shows as Casual, like on the cards; "free" routes have no level).
   let lvl = "";
   if(tierKey && tierKey !== "free") lvl = (tierKey === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (TIER_LABEL[tierKey] || tierKey);
@@ -11003,13 +11003,13 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 @media(min-width:901px){#vtMenuOverlay .vm-wrap{align-items:center}#vtMenuOverlay .vm-wrap>.vm-main,#vtMenuOverlay .vm-wrap>.vm-side{align-self:center}#vtMenuOverlay .vm-reqs{align-self:stretch;min-height:min(620px,88vh)}}
 #vtMenuOverlay .vm-reqs .vm-left.picking>:first-child{margin-top:0}
 #vtMenuOverlay .vm-reqs .vm-left.single{justify-content:center!important}#vtMenuOverlay .vm-reqs .vm-left.single>*{margin-top:0!important;margin-bottom:0!important}#vtMenuOverlay .vm-reqs .vm-left.single>.vm-label{margin-bottom:10px!important}
-#vtMenuOverlay .vm-pk .vm-card,#vtMenuOverlay .vm-ghost-pk .vm-card{margin:5px 0;padding:8px 10px;font-size:14px;border-left-width:4px}
+#vtMenuOverlay .vm-pk .vm-card,#vtMenuOverlay .vm-ghost-pk .vm-card{margin:6px 0;padding:10px 12px;font-size:15px;border-left-width:4px}
 #vtMenuOverlay .vm-pk .vm-card{animation:vmSlide .3s both;animation-delay:calc(var(--i,0)*28ms)}
-#vtMenuOverlay .vm-pk .vm-cell,#vtMenuOverlay .vm-ghost-pk .vm-cell{width:68px;gap:4px}
-#vtMenuOverlay .vm-pk .vm-cap,#vtMenuOverlay .vm-ghost-pk .vm-cap{font-size:9px}
-#vtMenuOverlay .vm-pk .vm-plus,#vtMenuOverlay .vm-ghost-pk .vm-plus{margin-top:18px;font-size:18px}
-#vtMenuOverlay .vm-pk .vm-labeled,#vtMenuOverlay .vm-ghost-pk .vm-labeled{gap:8px}
-#vtMenuOverlay .vm-pk .vm-hint,#vtMenuOverlay .vm-ghost-pk .vm-hint{font-size:10px;margin-top:2px}
+#vtMenuOverlay .vm-pk .vm-cell,#vtMenuOverlay .vm-ghost-pk .vm-cell{width:84px;gap:5px}
+#vtMenuOverlay .vm-pk .vm-cap,#vtMenuOverlay .vm-ghost-pk .vm-cap{font-size:11px}
+#vtMenuOverlay .vm-pk .vm-plus,#vtMenuOverlay .vm-ghost-pk .vm-plus{margin-top:24px;font-size:22px}
+#vtMenuOverlay .vm-pk .vm-labeled,#vtMenuOverlay .vm-ghost-pk .vm-labeled{gap:12px}
+#vtMenuOverlay .vm-pk .vm-hint,#vtMenuOverlay .vm-ghost-pk .vm-hint{font-size:11px;margin-top:3px}
 #vtMenuOverlay .vm-side .vm-card{animation:vmFizzle .6s both}
 #vtMenuOverlay .vm-side .vm-card.vm-pop{animation:vmPop .55s ease-out}
 #vtMenuOverlay .vm-curcard.vm-landing{animation:vmLand .7s ease-out}
@@ -11298,7 +11298,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
           const gh = g.find && g.find(isGhToken), sp = splitInfo(g), fixed = sp ? sp.toks : g.slice();
           const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
           const mkCard = sz => card(fixed.length ? strip(fixed, sz, true, hoistOf.get(moon)) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
-          const el = mkCard(30); el.style.setProperty("--i", String(Math.min(items.length, 14)));
+          const el = mkCard(44); el.style.setProperty("--i", String(Math.min(items.length, 14)));
           const it = { moon, lane, g, i, el, mk: mkCard, split: sp }; items.push(it);
           const hasVid = async () => {
             const vo2 = videoOptionsFor(moon, lane.tier, g);
