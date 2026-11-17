@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityNeutralThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3472,6 +3472,14 @@ function videoTitleFor(moon, tierKey, group, opts){
   let raw = _all.filter(t => !isGhToken(t)).concat((opts && opts.showGroups) ? _all.filter(t => isGhToken(t)) : []);
   // A Group Filter with a single method has no variations: it simply builds as that method.
   if(!(opts && opts.showGroups) && group && group.methodSlots && group.ghMethods && group.ghMethods.length === 1) raw = raw.concat(group.ghMethods[0].filter(t => raw.indexOf(t) === -1));
+  // A move shown only as the progression chip of a later move (Ground Pound on Dive, Crouch on Roll Boost, ...) is
+  // implied by it and never listed in a title.
+  if(raw.length > 1){
+    const cov = new Set();
+    raw.forEach(t => (ABILITY_PROGRESSION[t] || []).forEach(pt => cov.add(pt)));
+    const kept = raw.filter(t => !cov.has(t));
+    if(kept.length) raw = kept;
+  }
   const isCap = t => { const m = ICON_MANIFEST[ghTokenKey(t)] || ICON_MANIFEST[t]; return !!(m && m.tokenType === "capture"); };
   const isThrow = t => ghTokenKey(t) === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(ghTokenKey(t)) !== -1;
   let req = "Free";
