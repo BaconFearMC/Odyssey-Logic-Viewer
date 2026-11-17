@@ -109,3 +109,5 @@ edge_user_1230,Cap Kingdom,subarea,RollingExStage::entrance::rollinggoal::sub_fa
 edge_user_1231,Cap Kingdom,subarea,RollingExStage::place::new_place,RollingExStage::entrance::rollinggoal::sub_far,impossible,,human_route,casual,false,editor,Reverse of edge_user_1230.,,
 edge_user_1232,Cap Kingdom,subarea,RollingExStage::entrance::rollingstart::sub_near,RollingExStage::place::new_place,free,,human_route,casual,false,editor,Created in graph editor.,,
 edge_user_1233,Cap Kingdom,subarea,RollingExStage::place::new_place,RollingExStage::entrance::rollingstart::sub_near,impossible,,human_route,casual,false,editor,Reverse of edge_user_1232.,,
+edge_user_1234,Cap Kingdom,overworld,CapWorldHomeStage::entrance::rollingstart::home_in,CapWorldHomeStage::start,free,,human_route,casual,false,editor,Created in graph editor.,,
+edge_user_1235,Cap Kingdom,overworld,CapWorldHomeStage::start,CapWorldHomeStage::entrance::rollingstart::home_in,impossible,,human_route,casual,false,editor,Reverse of edge_user_1234.,,
