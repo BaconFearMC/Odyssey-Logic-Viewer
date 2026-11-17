@@ -6978,48 +6978,6 @@
         "match_mode": "any",
         "minimum_count": "",
         "notes": "Bootstrapped identity gate; review object reachability"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_816_Frog",
-        "kind": "logic",
-        "kingdom": "Cap Kingdom",
-        "logic_stage": "CapWorldHomeStage",
-        "target_id": "moon_local_816",
-        "capture_token": "Frog",
-        "extra_requirement_expr": "",
-        "difficulty": "",
-        "option_scenarios": "",
-        "match_mode": "any",
-        "minimum_count": "",
-        "notes": "Bootstrapped identity gate; review object reachability"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_1018_Frog",
-        "kind": "logic",
-        "kingdom": "Cap Kingdom",
-        "logic_stage": "CapWorldHomeStage",
-        "target_id": "moon_local_1018",
-        "capture_token": "Frog",
-        "extra_requirement_expr": "",
-        "difficulty": "",
-        "option_scenarios": "",
-        "match_mode": "any",
-        "minimum_count": "",
-        "notes": "Bootstrapped identity gate; review object reachability"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_1156_Frog",
-        "kind": "logic",
-        "kingdom": "Cap Kingdom",
-        "logic_stage": "CapWorldHomeStage",
-        "target_id": "moon_local_1156",
-        "capture_token": "Frog",
-        "extra_requirement_expr": "",
-        "difficulty": "",
-        "option_scenarios": "",
-        "match_mode": "any",
-        "minimum_count": "",
-        "notes": "Bootstrapped identity gate; review object reachability"
       }
     ],
     "captureRequirementObjects": [
@@ -7530,66 +7488,6 @@
       },
       {
         "requirement_id": "cr_CapWorldHomeStage_moon_local_815_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2701"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_816_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2184"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_816_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2185"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_816_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2700"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_816_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2701"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_1018_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2184"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_1018_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2185"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_1018_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2700"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_1018_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2701"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_1156_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2184"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_1156_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2185"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_1156_Frog",
-        "placement_stage": "CapWorldHomeStage",
-        "object_id": "obj2700"
-      },
-      {
-        "requirement_id": "cr_CapWorldHomeStage_moon_local_1156_Frog",
         "placement_stage": "CapWorldHomeStage",
         "object_id": "obj2701"
       }

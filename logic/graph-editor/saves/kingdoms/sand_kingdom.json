@@ -3424,6 +3424,150 @@
         "notes": "Vanilla door SandWorldHomeStage<->SandWorldPyramid001Stage (fixed)."
       },
       {
+        "node_id": "SandWorldHomeStage::stage_change::pyramid02::raw",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "stage_change",
+        "source": "StageData",
+        "entrance_id": "pyramid02",
+        "side": "raw",
+        "obj_id": "obj1035",
+        "display_name": "Stage Change pyramid02",
+        "x": "-20787.371",
+        "y": "3900.000",
+        "z": "-21612.705",
+        "scenario_indices": "0;7;8",
+        "notes": "Raw UnitConfigName=DokanStageChange2D. Target=SandWorldPyramid000Stage."
+      },
+      {
+        "node_id": "SandWorldHomeStage::stage_change::pyramid03::raw",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "stage_change",
+        "source": "StageData",
+        "entrance_id": "pyramid03",
+        "side": "raw",
+        "obj_id": "obj2829",
+        "display_name": "Stage Change pyramid03",
+        "x": "-20698.324",
+        "y": "3900.000",
+        "z": "-28835.100",
+        "scenario_indices": "0;7;8",
+        "notes": "Raw UnitConfigName=DokanStageChange2D. Target=SandWorldPyramid001Stage."
+      },
+      {
+        "node_id": "SandWorldHomeStage::entrance::pyramid02::home_in",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "home_entrance",
+        "source": "EntranceDB",
+        "entrance_id": "pyramid02",
+        "side": "home_in",
+        "obj_id": "obj1035;obj6866",
+        "display_name": "Home entrance: pyramid02",
+        "x": "-20787.371",
+        "y": "3900.000",
+        "z": "-21612.705",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9",
+        "notes": "Vanilla door SandWorldHomeStage<->SandWorldPyramid000Stage (fixed): 2D pipe on the pyramid's outer wall."
+      },
+      {
+        "node_id": "SandWorldHomeStage::entrance::pyramid02::home_out",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "home_entrance",
+        "source": "EntranceDB",
+        "entrance_id": "pyramid02",
+        "side": "home_out",
+        "obj_id": "obj1035;obj6866",
+        "display_name": "Home return: pyramid02",
+        "x": "-20787.371",
+        "y": "3900.000",
+        "z": "-21612.705",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9",
+        "notes": "Vanilla door SandWorldHomeStage<->SandWorldPyramid000Stage (fixed): 2D pipe on the pyramid's outer wall."
+      },
+      {
+        "node_id": "SandWorldHomeStage::entrance::pyramid03::home_in",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "home_entrance",
+        "source": "EntranceDB",
+        "entrance_id": "pyramid03",
+        "side": "home_in",
+        "obj_id": "obj2829;obj6867",
+        "display_name": "Home entrance: pyramid03",
+        "x": "-20698.324",
+        "y": "3900.000",
+        "z": "-28835.100",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9",
+        "notes": "Vanilla door SandWorldHomeStage<->SandWorldPyramid001Stage (fixed): 2D pipe on the pyramid's outer wall."
+      },
+      {
+        "node_id": "SandWorldHomeStage::entrance::pyramid03::home_out",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldHomeStage",
+        "stage_display_name": "Sand Kingdom",
+        "area_scope": "overworld",
+        "node_type": "home_entrance",
+        "source": "EntranceDB",
+        "entrance_id": "pyramid03",
+        "side": "home_out",
+        "obj_id": "obj2829;obj6867",
+        "display_name": "Home return: pyramid03",
+        "x": "-20698.324",
+        "y": "3900.000",
+        "z": "-28835.100",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9",
+        "notes": "Vanilla door SandWorldHomeStage<->SandWorldPyramid001Stage (fixed): 2D pipe on the pyramid's outer wall."
+      },
+      {
+        "node_id": "SandWorldPyramid000Stage::entrance::pyramid02::sub_near",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldPyramid000Stage",
+        "stage_display_name": "Inverted Pyramid: Lower Interior",
+        "area_scope": "subarea",
+        "node_type": "substage_entrance",
+        "source": "EntranceDB",
+        "entrance_id": "pyramid02",
+        "side": "sub_near",
+        "obj_id": "obj76",
+        "display_name": "Substage near side: pyramid02",
+        "x": "7000.000",
+        "y": "2900.000",
+        "z": "-4600.000",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "notes": "Vanilla door SandWorldHomeStage<->SandWorldPyramid000Stage (fixed): 2D pipe on the pyramid's outer wall."
+      },
+      {
+        "node_id": "SandWorldPyramid001Stage::entrance::pyramid03::sub_far",
+        "kingdom": "Sand Kingdom",
+        "stage": "SandWorldPyramid001Stage",
+        "stage_display_name": "Inverted Pyramid: Upper Interior",
+        "area_scope": "subarea",
+        "node_type": "substage_entrance",
+        "source": "EntranceDB",
+        "entrance_id": "pyramid03",
+        "side": "sub_far",
+        "obj_id": "obj112",
+        "display_name": "Substage far side: pyramid03",
+        "x": "-850.000",
+        "y": "1350.000",
+        "z": "-19850.000",
+        "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+        "notes": "Vanilla door SandWorldHomeStage<->SandWorldPyramid001Stage (fixed): 2D pipe on the pyramid's outer wall."
+      },
+      {
         "node_id": "SandWorldPyramid001Stage::entrance::pyramid04::sub_near",
         "kingdom": "Sand Kingdom",
         "stage": "SandWorldPyramid001Stage",
@@ -4231,7 +4375,7 @@
         "y": "2900.000",
         "z": "-4600.000",
         "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "notes": "One-way transition from the lower interior to the Sand Kingdom overworld 2D section. StageData anchor UnitConfigName=DokanStageChange2D."
+        "notes": "2D pipe from the lower interior out onto the pyramid's outer wall (SandWorldHomeStage pyramid02). StageData anchor UnitConfigName=DokanStageChange2D."
       },
       {
         "node_id": "SandWorldPyramid001Stage::entrance::pyramid03::sub_near",
@@ -4249,7 +4393,7 @@
         "y": "1350.000",
         "z": "-19850.000",
         "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-        "notes": "One-way transition from the Sand Kingdom overworld 2D section into the upper interior. StageData anchor UnitConfigName=DokanStageChange2D."
+        "notes": "2D pipe from the pyramid's outer wall (SandWorldHomeStage pyramid03) into the upper interior. StageData anchor UnitConfigName=DokanStageChange2D."
       },
       {
         "node_id": "SandWorldHomeStage::place::new_place_24",
@@ -15207,6 +15351,22 @@
       "moon:SandWorldHomeStage:2876:1114": {
         "x": 2313.810994124212,
         "y": 2811.999947684152
+      },
+      "SandWorldHomeStage::entrance::pyramid02::home_in": {
+        "x": 3888.548557126611,
+        "y": 415.81962919100545
+      },
+      "SandWorldHomeStage::entrance::pyramid03::home_in": {
+        "x": 4408.548557126611,
+        "y": 415.81962919100545
+      },
+      "SandWorldPyramid000Stage::entrance::pyramid02::sub_near": {
+        "x": 1850,
+        "y": 260
+      },
+      "SandWorldPyramid001Stage::entrance::pyramid03::sub_far": {
+        "x": 350,
+        "y": 260
       }
     }
   }
