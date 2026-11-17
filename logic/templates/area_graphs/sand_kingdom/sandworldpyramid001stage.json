@@ -72,6 +72,25 @@
       "status": ""
     },
     {
+      "node_id": "SandWorldPyramid001Stage::entrance::pyramid03::sub_far",
+      "kingdom": "Sand Kingdom",
+      "stage": "SandWorldPyramid001Stage",
+      "stage_display_name": "Inverted Pyramid: Upper Interior",
+      "area_scope": "subarea",
+      "node_type": "substage_entrance",
+      "source": "EntranceDB",
+      "entrance_id": "pyramid03",
+      "side": "sub_far",
+      "obj_id": "obj112",
+      "display_name": "Substage far side: pyramid03",
+      "x": "-850.000",
+      "y": "1350.000",
+      "z": "-19850.000",
+      "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+      "notes": "Vanilla door SandWorldHomeStage<->SandWorldPyramid001Stage (fixed): 2D pipe on the pyramid's outer wall.",
+      "status": ""
+    },
+    {
       "node_id": "SandWorldPyramid001Stage::entrance::pyramid04::sub_near",
       "kingdom": "Sand Kingdom",
       "stage": "SandWorldPyramid001Stage",
@@ -163,7 +182,7 @@
       "y": "1350.000",
       "z": "-19850.000",
       "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-      "notes": "One-way transition from the Sand Kingdom overworld 2D section into the upper interior. StageData anchor UnitConfigName=DokanStageChange2D.",
+      "notes": "2D pipe from the pyramid's outer wall (SandWorldHomeStage pyramid03) into the upper interior. StageData anchor UnitConfigName=DokanStageChange2D.",
       "status": ""
     }
   ],
@@ -315,6 +334,23 @@
       "y": "",
       "z": "",
       "source": "generated",
+      "status": "",
+      "notes": "Runtime/stable anchor for graph initialization or event checks."
+    },
+    {
+      "anchor_id": "SandWorldPyramid001Stage::entrance::pyramid03::sub_far",
+      "node_id": "SandWorldPyramid001Stage::entrance::pyramid03::sub_far",
+      "anchor_kind": "entrance_side",
+      "kingdom": "Sand Kingdom",
+      "stage": "SandWorldPyramid001Stage",
+      "area_scope": "subarea",
+      "change_stage_id": "pyramid03",
+      "entrance_side": "sub_far",
+      "obj_id": "obj112",
+      "x": "-850.000",
+      "y": "1350.000",
+      "z": "-19850.000",
+      "source": "EntranceDB",
       "status": "",
       "notes": "Runtime/stable anchor for graph initialization or event checks."
     },

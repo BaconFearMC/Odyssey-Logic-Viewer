@@ -110,6 +110,25 @@
       "status": ""
     },
     {
+      "node_id": "SandWorldPyramid000Stage::entrance::pyramid02::sub_near",
+      "kingdom": "Sand Kingdom",
+      "stage": "SandWorldPyramid000Stage",
+      "stage_display_name": "Inverted Pyramid: Lower Interior",
+      "area_scope": "subarea",
+      "node_type": "substage_entrance",
+      "source": "EntranceDB",
+      "entrance_id": "pyramid02",
+      "side": "sub_near",
+      "obj_id": "obj76",
+      "display_name": "Substage near side: pyramid02",
+      "x": "7000.000",
+      "y": "2900.000",
+      "z": "-4600.000",
+      "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
+      "notes": "Vanilla door SandWorldHomeStage<->SandWorldPyramid000Stage (fixed): 2D pipe on the pyramid's outer wall.",
+      "status": ""
+    },
+    {
       "node_id": "SandWorldPyramid000Stage::entrance::pyramid02::sub_far",
       "kingdom": "Sand Kingdom",
       "stage": "SandWorldPyramid000Stage",
@@ -125,7 +144,7 @@
       "y": "2900.000",
       "z": "-4600.000",
       "scenario_indices": "0;1;2;3;4;5;6;7;8;9;10;11;12;13;14",
-      "notes": "One-way transition from the lower interior to the Sand Kingdom overworld 2D section. StageData anchor UnitConfigName=DokanStageChange2D.",
+      "notes": "2D pipe from the lower interior out onto the pyramid's outer wall (SandWorldHomeStage pyramid02). StageData anchor UnitConfigName=DokanStageChange2D.",
       "status": ""
     }
   ],
@@ -246,6 +265,23 @@
       "x": "-1750.000",
       "y": "-1700.000",
       "z": "1950.000",
+      "source": "EntranceDB",
+      "status": "",
+      "notes": "Runtime/stable anchor for graph initialization or event checks."
+    },
+    {
+      "anchor_id": "SandWorldPyramid000Stage::entrance::pyramid02::sub_near",
+      "node_id": "SandWorldPyramid000Stage::entrance::pyramid02::sub_near",
+      "anchor_kind": "entrance_side",
+      "kingdom": "Sand Kingdom",
+      "stage": "SandWorldPyramid000Stage",
+      "area_scope": "subarea",
+      "change_stage_id": "pyramid02",
+      "entrance_side": "sub_near",
+      "obj_id": "obj76",
+      "x": "7000.000",
+      "y": "2900.000",
+      "z": "-4600.000",
       "source": "EntranceDB",
       "status": "",
       "notes": "Runtime/stable anchor for graph initialization or event checks."
