@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -11172,13 +11172,14 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       const nm = m => String((m && (m.name || m.label)) || "");
       const sig = g2 => (g2 || []).slice().map(String).sort().join("+") + "|" + ((g2 && g2.origin) || "") + "|" + ((g2 && g2.scenarios) ? g2.scenarios.slice().sort().join(",") : "");
       const preMoon = pre.moon || moons[0];
-      const pool = items.filter(x => x.lane.tier === pre.tier && (moons.length < 2 || nm(x.moon) === nm(preMoon)));
+      const pool = items.filter(x => (!pre.tier || x.lane.tier === pre.tier) && (moons.length < 2 || !pre.moon || nm(x.moon) === nm(preMoon)));
       const wantSig = sig(pre.g);
-      let f = pool.find(x => x.g === pre.g)
+      let f = pre.title ? pool.find(x => { try{ return videoHoverTitle(x.moon, x.lane.tier, x.g) === pre.title; }catch(e){ return false; } }) : null;
+      if(!f && pre.g) f = pool.find(x => x.g === pre.g)
         || pool.find(x => sig(x.g) === wantSig && (!pre.slot || slotOf(x.g, x.i) === pre.slot))
         || pool.find(x => x.g[0] === pre.g[0] && x.g.slot && x.g.slot === pre.g.slot)
         || pool.find(x => sig(x.g) === wantSig);
-      if(!f){
+      if(!f && pre.g){
         // Chips drawn from a different group object (e.g. node-route chips): match by the video titles the clicked method builds.
         const tOf = (m, t, g2) => { const v = videoOptionsFor(m, t, g2); return v ? v.map(o => o.title) : [videoTitleFor(m, t, g2 || [])]; };
         const want = tOf(preMoon, pre.tier, pre.g);
@@ -11186,7 +11187,10 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       }
       if(f) start = f;
     }
+    const hasVidSync = x => { const vo = videoOptionsFor(x.moon, x.lane.tier, x.g); return (vo ? vo.map(o => o.title) : [videoTitleFor(x.moon, x.lane.tier, x.g)]).some(t => ytIdSync(t)); };
+    if(!pre){ const fv = items.find(hasVidSync); if(fv) start = fv; }
     if(start){ showRight(start, src0 || { first: true }); }
+    if(!pre && !_ytIdxVal) ytIndex().then(() => { if(!ov.isConnected || curIt !== start) return; const fv = items.find(hasVidSync); if(fv && fv !== curIt) showRight(fv, { first: true }); });
     requestAnimationFrame(fitAll);
     if(!window._vtResizeFit){ window._vtResizeFit = 1; window.addEventListener("resize", () => { const o = document.getElementById("vtMenuOverlay"); if(o && o._fit) o._fit(); }); }
   };
@@ -11223,8 +11227,10 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     if(!moons.length) return;
     e.stopPropagation(); e.preventDefault();
     // Remember which method chip was clicked so the menu opens on it instead of the first method.
-    const chip = e.target.closest(".option-chip, .free-tag, .free-chip");
-    const pre = (chip && chip._ytArgs) ? { moon: chip._ytArgs[0], tier: chip._ytArgs[1], g: chip._ytArgs[2] || [], slot: chip.dataset.slot ? Number(chip.dataset.slot) : null } : null;
+    const chip = e.target.closest(".option-chip, .free-tag, .free-chip, .cp-req-name");
+    let pre = null;
+    if(chip && chip._ytArgs) pre = { moon: chip._ytArgs[0], tier: chip._ytArgs[1], g: chip._ytArgs[2] || [], slot: chip.dataset.slot ? Number(chip.dataset.slot) : null, title: chip.dataset.videoTitle || null };
+    else if(chip && chip.dataset.videoTitle) pre = { title: chip.dataset.videoTitle };
     window.__vtSrc = chip ? { el: chip, t: Date.now() } : window.__vtSrc;
     openMoonMenu(moons, pre);
   }, true);
