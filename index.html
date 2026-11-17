@@ -8900,7 +8900,7 @@ function buildMoonCard(moon, opts){
 // ===== SETTING: Classic Viewing lazy loading =====
 // true  = moon cards / node panels are only built when you click their dropdown arrow (much less lag)
 // false = everything is built up front like the original (slow, but all content is immediately present)
-const LAZY_CLASSIC_NODES = true;
+const LAZY_CLASSIC_NODES = false;
 const LAZY_OPEN = new Set();
 function buildLazyMoonCard(moon){
   const key = moon.kingdom + "|" + moon.name;
