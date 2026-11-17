@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10085,11 +10085,24 @@ function renderGrid(){
     }
     const cn = document.getElementById("customNodeReqs");
     if(cn) cn.style.display = "";
-    renderPaintingReqs(name);
-    renderCheckpointReqs(name);
-    renderSubareaReqs(name);
-    renderCheckpointReqs(name, "custom_place");
+    // Access panels (paintings / checkpoints / subareas / custom nodes) are heavy on big kingdoms, so they are
+    // NOT built up front. They render once the moon grid has finished filling and the reader scrolls near them
+    // (or a jump/flush asks for them). Access-only view has no moon grid to scroll, so it renders right away.
+    const renderAccessNow = () => {
+      window.__flushAccessRender = null;
+      renderPaintingReqs(name);
+      renderCheckpointReqs(name);
+      renderSubareaReqs(name);
+      renderCheckpointReqs(name, "custom_place");
+    };
+    if(viewScope === "access") renderAccessNow();
+    else {
+      ["paintingReqs", "checkpointReqs", "subareaReqs", "customNodeReqs"].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = ""; });
+      window.__accessPending = renderAccessNow;
+      window.__flushAccessRender = () => { if(window.__accessPending === renderAccessNow){ window.__accessPending = null; renderAccessNow(); } };
+    }
   } else {
+    window.__accessPending = null; window.__flushAccessRender = null;
     ["paintingReqs", "checkpointReqs", "subareaReqs", "customNodeReqs"].forEach(id => {
       const el = document.getElementById(id);
       if(el){ el.innerHTML = ""; el.style.display = "none"; }
@@ -10166,6 +10179,7 @@ function renderGrid(){
     } else {
       emptyState.textContent = "No moons left to show with this filter.";
     }
+    if(window.__flushAccessRender) window.__flushAccessRender(); // nothing to scroll past, so build access panels now
     return;
   }
 
@@ -10174,14 +10188,21 @@ function renderGrid(){
     grid.style.display = "none";
     checkpointGroups.style.display = "grid";
     renderCheckpointGroups(moons);
+    if(window.__flushAccessRender) window.__flushAccessRender(); // no progressive grid here, so build access panels now
   } else {
     grid.style.display = "";
     checkpointGroups.style.display = "none";
-    // Big kingdoms (Cascade) have a lot of cards. Building them all in one go froze the page, so the first few are
-    // built right away and the rest follow in small batches, one per animation frame. Nothing is skipped or lazy:
-    // every card still gets fully built. A newer render cancels the old fill; goToMoon flushes it on demand.
-    const fillToken = grid.__fillToken, FIRST = 6, BATCH = 6;
+    // Big kingdoms (Cascade) have a lot of cards. Only the first few are built immediately; the rest are built in
+    // batches as the reader scrolls toward the bottom of the grid (IntersectionObserver on a sentinel below it).
+    // Once every card exists, the access panels are allowed to render the same way. goToMoon flushes on demand.
+    const fillToken = grid.__fillToken, FIRST = 8, BATCH = 8;
     let gi = 0;
+    if(window.__gridIO){ window.__gridIO.disconnect(); window.__gridIO = null; }
+    let sentinel = document.getElementById("gridSentinel");
+    if(!sentinel){
+      sentinel = document.createElement("div"); sentinel.id = "gridSentinel"; sentinel.style.cssText = "height:1px;width:100%;pointer-events:none;";
+      grid.insertAdjacentElement("afterend", sentinel);
+    }
     const gStep = n => {
       const frag = document.createDocumentFragment();
       for(const end = Math.min(moons.length, gi + n); gi < end; gi++) frag.appendChild(LAZY_CLASSIC_NODES ? buildLazyMoonCard(moons[gi]) : buildMoonCard(moons[gi]));
@@ -10189,15 +10210,38 @@ function renderGrid(){
       measureOptionsCollapsiblesIn(grid);
       applyFilterMatchHighlight();
     };
+    const watchAccess = () => {
+      const pend = window.__accessPending;
+      if(!pend) return;
+      const io2 = new IntersectionObserver(es => {
+        if(grid.__fillToken !== fillToken){ io2.disconnect(); return; }
+        if(es.some(e => e.isIntersecting)){ io2.disconnect(); if(window.__flushAccessRender) window.__flushAccessRender(); }
+      }, { rootMargin: "600px 0px" });
+      io2.observe(sentinel);
+      window.__accessIO = io2;
+    };
+    if(window.__accessIO){ window.__accessIO.disconnect(); window.__accessIO = null; }
     gStep(FIRST);
     if(gi < moons.length){
-      window.__flushGridFill = () => { if(grid.__fillToken !== fillToken) return; while(gi < moons.length) gStep(BATCH); window.__flushGridFill = null; };
-      const next = () => {
-        if(grid.__fillToken !== fillToken || !grid.isConnected) return;
-        gStep(BATCH);
-        if(gi < moons.length) requestAnimationFrame(next); else window.__flushGridFill = null;
+      window.__flushGridFill = () => {
+        if(grid.__fillToken !== fillToken) return;
+        while(gi < moons.length) gStep(BATCH);
+        window.__flushGridFill = null;
+        if(window.__gridIO){ window.__gridIO.disconnect(); window.__gridIO = null; }
+        watchAccess();
       };
-      requestAnimationFrame(next);
+      const io = new IntersectionObserver(es => {
+        if(grid.__fillToken !== fillToken || !grid.isConnected){ io.disconnect(); return; }
+        if(!es.some(e => e.isIntersecting)) return;
+        gStep(BATCH);
+        io.unobserve(sentinel);
+        if(gi < moons.length) requestAnimationFrame(() => io.observe(sentinel)); // re-check: still near the bottom?
+        else { io.disconnect(); window.__gridIO = null; window.__flushGridFill = null; watchAccess(); }
+      }, { rootMargin: "600px 0px" });
+      window.__gridIO = io;
+      io.observe(sentinel);
+    } else {
+      watchAccess();
     }
   }
   applyFilterMatchHighlight();
@@ -13943,6 +13987,7 @@ init();
   }
   rail.addEventListener("click", e => {
     const b = e.target.closest(".nr-node"); if(!b) return;
+    if(b.dataset.target !== "moons"){ if(window.__flushGridFill) window.__flushGridFill(); if(window.__flushAccessRender) window.__flushAccessRender(); }
     const { m, a } = measure();
     if(b.dataset.target === "moons") glideTo(m ? absTop(m) - 20 : 0);
     else if(a.length) glideTo(absTop(a[0]) - 20);
