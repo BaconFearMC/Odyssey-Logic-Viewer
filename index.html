@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityNeutralThrow.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -6671,7 +6671,9 @@ function subareaSourceContext(data, sn){
   const homeStage = (data.subCtx && data.subCtx.homeStage) || null;
   const exempt = (data.subCtx && data.subCtx.exemptStages) || null;
   let target = null; // the node INSIDE the subarea that this source corresponds to
+  let isExitLanding = false;
   if(sn.node_type === "home_entrance" && sn.side === "home_out" && sn.entrance_id){
+    isExitLanding = true;
     // overworld landing of an exit -> the exit pipe on the subarea side
     target = (data.nodes || []).find(n => n.node_type === "substage_entrance" && n.entrance_id === sn.entrance_id
       && n.side === "sub_far" && n.stage && n.stage !== sn.stage) || null;
@@ -6691,6 +6693,10 @@ function subareaSourceContext(data, sn){
       if(r) br = br.concat(r);
     });
     if(nears.length) out = { stageName: target.stage_display_name || target.stage, branches: br.length ? br : null };
+    // The overworld landing of an exit is a place you simply ARE once you are standing on it: routes that start
+    // there are costed by their own edge only. Crossing the subarea (e.g. Freezing Waterway's Gushen swim) is the
+    // cost of reaching the exit from inside, and must not be charged to routes leaving the overworld side.
+    if(isExitLanding && out) out = { stageName: out.stageName, branches: [{ group: [], scenarios: null, tier: "casual" }] };
   }
   data._srcCtxMemo[sn.node_id] = out;
   return out;
