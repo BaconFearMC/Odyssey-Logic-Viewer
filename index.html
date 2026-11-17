@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityWallet.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -6856,6 +6856,13 @@ function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoo
       const t = document.createElement("span"); t.className = "impossible-tag"; t.textContent = "Impossible"; row.appendChild(t);
     } else if(r.free){
       const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; row.appendChild(t);
+      if(titleMoon && /^(Entrance|Exit) Pipe\b/.test(String(r.label || ""))){
+        // Free from this pipe: still a method with its own video, titled with the pipe it starts from ("In Pipe" / "Out Pipe").
+        const fg = Object.assign([], { origin: String(r.label), scenarios: null });
+        t.style.cursor = "pointer"; t.dataset.videoTitle = videoTitleFor(titleMoon, "free", fg);
+        attachYtBadge(t, titleMoon, "free", fg);
+        t.addEventListener("click", () => handleNodeClick(titleMoon, "free", "Free", fg, 1));
+      }
       if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); row.appendChild(ot); }
     } else {
       row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName, titleMoon, /^(Entrance|Exit) Pipe\b/.test(String(r.label || "")) ? String(r.label) : null));
