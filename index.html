@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilitySpinThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -11057,7 +11057,34 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     const pk = mk("div"); pk.className = "vm-pk"; pk.style.display = "none";
     left.append(cur, chg); reqs.appendChild(pk); left.classList.add("single");
     // Shared ("Besides X") requirements: their icon is listed first on every method card and slides down into place.
+    // Shared ("Besides X") requirements: their icon is listed first on every method card and slides down into place.
     const hoistOf = new Map();
+    const laneLabel = lane => (lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier);
+    const flip = fn => {
+      const els = [left.firstElementChild, cur, chg].filter(e => e && e.style.display !== "none");
+      const b = els.map(e => e.getBoundingClientRect().top);
+      fn();
+      els.forEach((e, i) => { const d = b[i] - e.getBoundingClientRect().top; if(d) e.animate([{ transform: "translateY(" + d + "px)" }, { transform: "none" }], { duration: 440, easing: "cubic-bezier(.2,.9,.25,1.08)" }); });
+    };
+    const hidePk = () => { pk.style.display = "none"; pk.classList.remove("out"); chg.classList.remove("open"); };
+    const closePk = instant => {
+      if(instant === true){ left.classList.remove("picking"); hidePk(); return; }
+      if(pk.style.display === "none" || pk.classList.contains("out")) return;
+      pk.style.animationDelay = "0ms"; pk.classList.add("out");
+      flip(() => left.classList.remove("picking"));
+      setTimeout(hidePk, 160);
+    };
+    const openPk = () => {
+      if(pk.style.display !== "none") return closePk();
+      flip(() => {
+        left.classList.add("picking");
+        pk.style.top = (chg.getBoundingClientRect().bottom - reqs.getBoundingClientRect().top + 10) + "px";
+      });
+      pk.style.display = "block"; pk.classList.remove("out"); chg.classList.add("open");
+      pk.style.animation = "none"; void pk.offsetWidth; pk.style.animation = ""; pk.style.animationDelay = "120ms"; pk.scrollTop = 0;
+    };
+    chg.addEventListener("click", ev => { ev.stopPropagation(); openPk(); });
+    reqs.addEventListener("mousedown", ev => { if(!pk.contains(ev.target) && !chg.contains(ev.target) && !cur.contains(ev.target)) closePk(); });
     const renderCur = it => {
       cur.innerHTML = "";
       if(!it) return;
@@ -11235,7 +11262,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   };
   // Click on a method: open the menu if a YouTube video exists for it, otherwise "Nothing yet...".
   const NY_GAP_MS = 4000; // clicks must come within this gap to count as one streak
-  const nyClicks = () => { try{ return window.__nyClicks ? window.__nyClicks() : 5; }catch(e){ return 5; } }; // 0 = override off let _nyKey = null, _nyCount = 0, _nyLast = 0;
+  const nyClicks = () => { try{ return window.__nyClicks ? window.__nyClicks() : 5; }catch(e){ return 5; } }; // 0 = override off
+  let _nyKey = null, _nyCount = 0, _nyLast = 0;
   document.addEventListener("click", e => { const t = e.target; if(!t || !t.closest || t.closest("#vtMenuOverlay")) return; const el = t.closest(".option-chip, .free-tag, .free-chip, .cp-req-name, .moon-card, .cp-req"); window.__vtSrc = el ? { el, t: Date.now() } : null; }, true);
   window.ytOpenFor = async (moon, tier, group, slot, tierLabel) => {
     const vo = videoOptionsFor(moon, tier, group);
