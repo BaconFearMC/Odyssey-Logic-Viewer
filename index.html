@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityNeutralThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3438,6 +3438,31 @@ function videoTokenLabel(t){
   const m = ICON_MANIFEST[k] || ICON_MANIFEST[t];
   return (m && m.label) ? m.label : String(t);
 }
+// "<Moon> Free" custom nodes are bookkeeping, not places: a video title must name the real checkpoint (or the kingdom
+// start) that the node hangs off. Walks back through custom nodes to that anchor; null when it is not unambiguous.
+function videoFreeNodeAnchor(moon, name){
+  try{
+    if(!moon || !name || !/(^|\s)free\s*$/i.test(String(name))) return null;
+    const data = (typeof KINGDOM_NODE_DATA !== "undefined") && KINGDOM_NODE_DATA[moon.kingdom];
+    if(!data || !data.nodeMap) return null;
+    const clean = x => String(x || "").replace(/\s*\([^)]*\)\s*$/, "").trim();
+    let start = (moon.checkpointNodeId && data.nodeMap[moon.checkpointNodeId] && clean(data.nodeMap[moon.checkpointNodeId].display_name) === clean(name)) ? moon.checkpointNodeId : null;
+    if(!start){ const hit = (data.nodes || []).find(n => n.node_type === "custom_place" && clean(n.display_name) === clean(name)); start = hit ? hit.node_id : null; }
+    if(!start) return null;
+    const seen = new Set([start]), found = [];
+    const walk = id => directedInbound(data, id).forEach(({ src }) => {
+      if(seen.has(src)) return; seen.add(src);
+      const n = data.nodeMap[src]; if(!n) return;
+      if(n.node_type === "checkpoint" || n.node_type === "stage_start") found.push(n);
+      else if(n.node_type === "custom_place") walk(src);
+    });
+    walk(start);
+    const cps = found.filter(n => n.node_type === "checkpoint");
+    const pick = cps.length === 1 ? cps[0] : (found.length === 1 ? found[0] : null);
+    if(!pick) return null;
+    return pick.node_type === "stage_start" ? "Kingdom Start" : clean(pick.display_name);
+  }catch(e){ return null; }
+}
 function videoTitleFor(moon, tierKey, group, opts){
   const kingdom = (moon && moon.kingdom) || "";
   let nm = String((moon && (moon.name || moon.label)) || "").trim();
@@ -3461,7 +3486,8 @@ function videoTitleFor(moon, tierKey, group, opts){
         + others.map(t => " & " + videoTokenLabel(t)).join("");
   }
   // Node the route starts from: the method's own origin, else the checkpoint/custom node the moon is tracked from.
-  const node = (group && group.origin) || (moon && !moon.isCheckpointNode && !moon.isAccessPoint && moon.checkpoint) || "";
+  let node = (group && group.origin) || (moon && !moon.isCheckpointNode && !moon.isAccessPoint && moon.checkpoint) || "";
+  if(node && /(^|\s)free\s*$/i.test(String(node))) node = videoFreeNodeAnchor(moon, node) || node;
   // Short title: no "Kingdom" suffix, "Checkpoint" -> "CP".
   const head = kingdom ? kingdom.replace(/\s+Kingdom$/i, "") + (node ? " (from " + String(node).replace(/^from\s+/i, "").replace(/\bCheckpoint\b/gi, "CP") + ")" : "") : "";
   // Logic level (Unrated shows as Casual, like on the cards; "free" routes have no level).
@@ -10901,7 +10927,10 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   }
   if(!document.getElementById("vtMenuCss4")){
     const st = document.createElement("style"); st.id = "vtMenuCss4";
-    st.textContent = "#vtMenuOverlay .vm-card.vm-split .vm-cell{animation:none}"
+    st.textContent = "@keyframes vmBesidesDown{0%{opacity:0;transform:translateY(-38px) scaleY(.55);clip-path:inset(0 0 100% 0);filter:brightness(1.9) drop-shadow(0 0 0 rgba(47,180,201,0))}45%{opacity:1;clip-path:inset(0 0 0 0)}80%{transform:translateY(3px) scaleY(1.02);filter:brightness(1.25) drop-shadow(0 6px 14px rgba(47,180,201,.55))}100%{opacity:1;transform:none;clip-path:inset(0 0 0 0);filter:none}}"
+      + "#vtMenuOverlay .vm-besides{align-self:center;margin:0 0 12px;transform-origin:top center;animation:vmBesidesDown 1.25s cubic-bezier(.22,.7,.2,1) both}"
+      + "#vtMenuOverlay .vm-pk .vm-besides{align-self:flex-start;margin:0 0 10px}"
+      + "#vtMenuOverlay .vm-card.vm-split .vm-cell{animation:none}"
       + "#vtMenuOverlay .vm-card.vm-splitting{overflow:visible}"
       + "#vtMenuOverlay .vm-core{position:absolute;left:50%;top:50%;z-index:3;pointer-events:none;filter:drop-shadow(0 0 12px rgba(230,194,0,.9))}"
       + "#vtMenuOverlay .vm-ring{position:absolute;left:50%;top:50%;width:80px;height:80px;margin:-40px 0 0 -40px;border:3px solid var(--gold);border-radius:50%;z-index:2;pointer-events:none;box-shadow:0 0 18px rgba(230,194,0,.8)}";
@@ -11014,6 +11043,17 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     const chg = mk("button"); chg.type = "button"; chg.className = "vm-change";
     const pk = mk("div"); pk.className = "vm-pk"; pk.style.display = "none";
     left.append(cur, chg); reqs.appendChild(pk); left.classList.add("single");
+    // "Besides X": the requirement every method of the moon shares sits first in the list, revealed by a slow slide-down.
+    const hoistOf = new Map(); let besMoon = null;
+    const besHost = mk("div", "display:none;width:100%;display:none;justify-content:center;"); besHost.className = "vm-bes-host";
+    left.insertBefore(besHost, cur);
+    const syncBesides = it => {
+      const hs = it && hoistOf.get(it.moon), key = (hs && hs.length) ? it.moon : null;
+      if(key === besMoon) return;
+      besMoon = key; besHost.innerHTML = "";
+      if(!key){ besHost.style.display = "none"; return; }
+      const bh = buildHoistHeader(hs); bh.classList.add("vm-besides"); besHost.appendChild(bh); besHost.style.display = "flex";
+    };
     const laneLabel = lane => (lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier);
     const flip = fn => {
       const els = [left.firstElementChild, cur, chg].filter(e => e && e.style.display !== "none");
@@ -11042,6 +11082,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     reqs.addEventListener("mousedown", ev => { if(!pk.contains(ev.target) && !chg.contains(ev.target) && !cur.contains(ev.target)) closePk(); });
     const renderCur = it => {
       cur.innerHTML = "";
+      syncBesides(it);
       if(!it) return;
       const h = mk("div"); h.className = "vm-curhead";
       if(moons.length > 1){ const n = mk("div"); n.className = "vm-nodehead"; n.textContent = it.moon.name || it.moon.label; h.appendChild(n); }
@@ -11154,6 +11195,10 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       }
       const sec = mk("div"); sec.className = "vm-node"; pk.appendChild(sec);
       if(moons.length > 1){ const nh = mk("div"); nh.className = "vm-nodehead"; nh.textContent = moon.name || moon.label; sec.appendChild(nh); }
+      try{
+        const hs = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(lanes, moon.name, (moon.isCheckpointNode || moon.isAccessPoint) ? 2 : undefined);
+        if(hs.length){ hoistOf.set(moon, hs); const bh = buildHoistHeader(hs); bh.classList.add("vm-besides"); sec.appendChild(bh); }
+      }catch(e){}
       lanes.forEach(lane => {
         const th = mk("div"); th.className = "vm-tier";
         const dot = mk("i"); dot.style.background = "var(--tier-" + lane.tier + ", var(--text-dim))";
