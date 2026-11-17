@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDoubleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -11495,6 +11495,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     // Shared ("Besides X") requirements: their icon is listed first on every method card and slides down into place.
     // Shared ("Besides X") requirements: their icon is listed first on every method card and slides down into place.
     const hoistOf = new Map();
+    const menuHoist = new Map(); // group -> Besides tokens of the clicked chip, when the menu matched it to a moon-lane group
+    const hoistFor = (g, m) => (g && (menuHoist.get(g) || g.hoistedForms)) || hoistOf.get(m);
     const laneLabel = lane => (lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier);
     const flip = fn => {
       const els = [left.firstElementChild, cur, chg].filter(e => e && e.style.display !== "none");
@@ -11602,7 +11604,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         if(gh){ const gc = mk("div", "display:flex;align-items:center;gap:12px;margin:0 0 10px;font-size:18px;font-weight:800;"); gc.appendChild(ico(gh, 56)); gc.appendChild(mk("span", "", videoTokenLabel(gh))); side.appendChild(gc); }
         if(g.capStar) side.appendChild(mk("div", "margin:0 0 10px;font-size:12px;font-weight:600;color:var(--text-dim);line-height:1.35;", "* " + g.capStar.note));
         vo.forEach((o, k) => {
-          const c = card(strip(o.tokens || [], 44, true, hoistOf.get(it.moon)), o.label || ((o.tokens && o.tokens.length) ? "" : "Free"));
+          const c = card(strip(o.tokens || [], 44, true, hoistFor(it.g, it.moon)), o.label || ((o.tokens && o.tokens.length) ? "" : "Free"));
           c.style.animationDelay = (k * 80 + 120) + "ms";
           window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(vidIcon()); });
           const pick = () => { side.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); };
@@ -11648,7 +11650,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         lane.groups.forEach((g, i) => {
           const gh = g.find && g.find(isGhToken), sp = splitInfo(g), fixed = sp ? sp.toks : g.slice();
           const nVar = (gh || g.mergedEntrances) ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
-          const mkCard = sz => card(fixed.length ? strip(fixed, sz, true, hoistOf.get(moon)) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
+          const mkCard = sz => card(fixed.length ? strip(fixed, sz, true, hoistFor(g, moon)) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
           const el = mkCard(60); el.style.setProperty("--i", String(Math.min(items.length, 14)));
           const it = { moon, lane, g, i, el, mk: mkCard, split: sp }; items.push(it);
           const hasVid = async () => {
@@ -11689,6 +11691,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         f = pool.find(x => tOf(x.moon, x.lane.tier, x.g).some(t => want.indexOf(t) !== -1));
       }
       if(f) start = f;
+      if(f && pre.g && pre.g.hoistedForms && f.g !== pre.g) menuHoist.set(f.g, pre.g.hoistedForms);
     }
     const hasVidSync = x => { const vo = videoOptionsFor(x.moon, x.lane.tier, x.g); return (vo ? vo.map(o => o.title) : [videoTitleFor(x.moon, x.lane.tier, x.g)]).some(t => ytIdSync(t)); };
     if(!pre){ const fv = items.find(hasVidSync); if(fv) start = fv; }
@@ -12785,6 +12788,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleM
         otag.title = "This route starts from the " + andGroup.origin + " node";
         chip.appendChild(otag);
       }
+      if(hoistSet.size) andGroup.hoistedForms = hoistSet; // video menu: these icons slide into the "Besides" spot, same as on the card
       if(mergedEntrances && mergedEntrances.length > 1) andGroup.mergedEntrances = mergedEntrances; // video menu: pick which merged entrance
       if(pipeTitleOrigin && !andGroup.origin) andGroup.titleOrigin = pipeTitleOrigin; // title only: names the pipe without adding a "From" tag
       if(titleMoon){
