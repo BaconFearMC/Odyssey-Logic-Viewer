@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/SandKingdomAccess.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2303,6 +2303,12 @@
   .icon-wrap.any-height-gp, .icon-wrap.any-jump-gp{ --any-acc:var(--any-amber); }
   .icon-wrap.any-jump, .icon-wrap.any-jump-ct, .icon-wrap.any-nocrj{ --any-acc:var(--any-purple); }
   .icon-wrap.any-vault, .icon-wrap.any-capthrow{ --any-acc:var(--any-green); }
+  .icon-wrap.any-sand{ --any-acc:#2fa84f; }
+  .icon-wrap.any-sand::after{ color:#fff; }
+  .gh-kingdom-badge{ position:absolute; right:-9px; bottom:-9px; width:22px; height:22px; z-index:4; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
+  .gh-kingdom-badge img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .gh-cap-badge{ position:absolute; bottom:-8px; z-index:4; width:20px; height:20px; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
+  .gh-cap-badge .prog-icon, .gh-cap-badge .prog-fallback{ width:20px; height:20px; margin:0; border-width:2px; border-radius:5px; }
   .icon-wrap.any-jump::after, .icon-wrap.any-jump-ct::after, .icon-wrap.any-nocrj::after{ color:#fff; }
   .prog-badge.prog-plus .prog-icon{ border-color:var(--any-amber); }
   .prog-badge.prog-plus .prog-arrow{ background:var(--any-amber); font-size:14px; }
@@ -3731,6 +3737,7 @@ let ICON_MANIFEST = {
   AnyVault: { filenames:["AbilityVault.png"], label:"Any Vault", color:"#2fa85a", category:"Movement", tokenType:"ability" },
   AnyCapThrowJump: { filenames:["AbilityCapReturnJump.png"], label:"Any Cap Throw Jump", color:"#2fa85a", category:"Movement", tokenType:"ability" },
   GroundedNoCRJ: { filenames:["AbilityJump.png"], label:"Any Grounded Height without Cap Return Jump", color:"#8d5be0", category:"Movement", tokenType:"ability" },
+  SandHeight: { filenames:["AbilityJump.png"], label:"Any Sand Kingdom Height", color:"#2f9e4f", category:"Movement", tokenType:"ability" },
 };
 
 // Movement/CapThrow ("ability") icon sets found in the wild are commonly
@@ -3820,7 +3827,7 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Seed: true,
   GroundedHeight: true, GroundedNormal: true, GroundedHigh: true, // display-only merges; never filter tiles
   GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true, GroundedJumpCT: true, NormalJump: true, ClassicCapJump: true, TortureCapJump: true, AnnoyingCapJump: true, Trickjumping: true, ShopMoons: true,
-  AnyVault: true, AnyCapThrowJump: true, GroundedNoCRJ: true,
+  AnyVault: true, AnyCapThrowJump: true, GroundedNoCRJ: true, SandHeight: true,
   // AnyThrow is a real filter tile now (shown next to the four Cap throws); selecting it acts like selecting all four.
 };
 
@@ -3886,6 +3893,18 @@ const GH_TIERS = [
     methods: [_CRJ, _NV, _DV] },
   { token: "GroundedNoCRJ", label: "Any Grounded Height without Cap Return Jump", cls: "any-nocrj", cycle: "cycle-7", badge: "NO CRJ", seconds: 8.75, crossed: "CapReturnJump",
     methods: [_SJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
+  // ---- KINGDOM-SPECIFIC GROUP FILTERS ----------------------------------------------------------------------
+  // Same as any other group, plus:  kingdom  -> only merges / shows on that kingdom's page
+  //                                 fromNode -> only for routes starting from a node matching this pattern
+  //                                 capBadges -> capture icons drawn tilted on the bottom-left of the icon (names resolved
+  //                                              against the loaded tokens; they are also real members of `methods`)
+  //                                 iconMethods -> frames the icon cycles through (defaults to `methods`)
+  // To add another one, copy this entry, change kingdom/fromNode/methods and add its colour class in the CSS.
+  { token: "SandHeight", label: "Any Sand Kingdom Height", cls: "any-sand", cycle: "cycle-8", badge: "SAND", seconds: 10, iconFirst: "LongJump",
+    kingdom: "Sand Kingdom", fromNode: /round\s*tower/i,
+    capBadges: [{ name: "Goomba", tilt: 10 }, { name: "Glydon", tilt: -10 }],
+    iconMethods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV],
+    methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV, ["Goomba"], ["Glydon"]] },
 ];
 // ---- Jump Group on/off switches: 1 = enabled, 0 = disabled ----------------------------------
 // A disabled group is never merged on moon cards and never gets a Jump Group Filter tile.
@@ -3906,6 +3925,7 @@ const JUMP_GROUP_ENABLED = {
   AnyVault:         1,   // Any Vault
   AnyCapThrowJump:  0,   // Any Cap Throw Jump
   GroundedNoCRJ:    0,   // Any Grounded Height without Cap Return Jump
+  SandHeight:       1,   // Any Sand Kingdom Height (Sand Kingdom only: Any Grounded Height + Goomba + Glydon)
 };
 for(let i = GH_TIERS.length - 1; i >= 0; i--){
   if(JUMP_GROUP_ENABLED[GH_TIERS[i].token] === 0) GH_TIERS.splice(i, 1);
@@ -3915,11 +3935,29 @@ GH_TIERS.forEach(t => { t.allTokens = Array.from(new Set(t.methods.reduce((a, m)
 // covers are used up before a smaller one is tried and a lane never gets two chips for the same moves.
 const GH_MERGE_ORDER = GH_TIERS.map((t, i) => ({ t, i })).sort((a, b) => (b.t.methods.length - a.t.methods.length) || (Math.max(...b.t.methods.map(m => m.length)) - Math.max(...a.t.methods.map(m => m.length))) || (a.i - b.i)).map(x => x.t);
 const GH_METHODS = GH_TIERS.find(t => t.token === GH_TOKEN).methods; // kept for older references
+// Kingdom-specific groups name captures by display name ("Goomba", "Glydon"); the real token keys only exist once the
+// kingdom files are loaded, so this swaps the names for the loaded keys (call again after every load).
+const CAPTURE_NAME_ALIASES = { goomba: ["kuribo"], glydon: ["kakku"] };
+function resolveCaptureToken(name){
+  const n = x => String(x || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const want = [n(name)].concat(CAPTURE_NAME_ALIASES[n(name)] || []);
+  const keys = Object.keys(ICON_MANIFEST);
+  return keys.find(k => want.indexOf(n(k)) !== -1) || keys.find(k => want.indexOf(n(ICON_MANIFEST[k] && ICON_MANIFEST[k].label)) !== -1) || null;
+}
+function resolveKingdomGhTiers(){
+  GH_TIERS.forEach(t => {
+    if(!t.capBadges) return;
+    t.capBadges.forEach(cb => { const k = resolveCaptureToken(cb.name); if(k){ cb.token = k; t.methods = t.methods.map(m => (m.length === 1 && m[0] === cb.name) ? [k] : m); } });
+    t.allTokens = Array.from(new Set(t.methods.reduce((a, m) => a.concat(m), [])));
+  });
+}
+resolveKingdomGhTiers();
 function ghTier(token){ return GH_TIERS.find(t => t.token === token) || null; }
 function isGhToken(token){ return !!ghTier(token); }
 // Frames for the icon (static mode shows only the first one).
 function ghIconFrames(t){
   if(t.iconPair) return t.iconPair; // one frame showing both icons together
+  if(t.iconMethods) t = Object.assign({}, t, { methods: t.iconMethods });
   if(!t.iconFirst) return t.methods;
   const i = t.methods.findIndex(m => m.length === 1 && m[0] === t.iconFirst);
   return i > 0 ? [t.methods[i]].concat(t.methods.slice(0, i), t.methods.slice(i + 1)) : t.methods;
@@ -3939,6 +3977,7 @@ function ghAnySelected(tier){
 function ghKingdomActive(kingdomName, tier){
   const k = kingdomName || KINGDOM_ORDER[currentKingdomIndex];
   const t = tier || ghTier(GH_TOKEN);
+  if(t.kingdom && t.kingdom !== k) return false; // kingdom-specific group
   if(t.allTokens.indexOf("SingleJump") !== -1 && isTokenIncompleteOn("SingleJump", k)) return false;
   if(t.allTokens.indexOf("CapReturnJump") !== -1 && isTokenIncompleteOn("CapReturnJump", k)) return false;
   return true;
@@ -4027,10 +4066,10 @@ function starCapReturn(tierLanes){
   });
   return changed ? out : tierLanes;
 }
-function withGroundedMerge(tierLanes, kingdomName){
+function withGroundedMerge(tierLanes, kingdomName, moon){
   if(!tierLanes || submitMode) return tierLanes;
   let cur = addImpliedCapReturn(tierLanes);
-  GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t); });
+  GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t, moon); });
   return starCapReturn(stripImpliedGroups(cur));
 }
 // A selected Group Filter (Trickjumping, Any Vault, ...) moves its merged chip to the front of its lane.
@@ -4044,13 +4083,16 @@ function promoteGroupFilters(lanes){
     return Object.assign({}, lane, { groups: groups.filter(isSel).concat(groups.filter(g => !isSel(g))) });
   });
 }
-function mergeGroundedTier(tierLanes, tier){
+function mergeGroundedTier(tierLanes, tier, moon){
   const GH_METHODS = tier.methods;
+  // fromNode: only routes that start at that node (its own origin, or the moon's tracked checkpoint when it has none).
+  const fromOk = g => !tier.fromNode || (g.origin ? tier.fromNode.test(g.origin) : !!(moon && moon.checkpoint && tier.fromNode.test(moon.checkpoint)));
   let changed = false;
   const out = tierLanes.map(lane => {
     // Every way a group can be "one Grounded Height method + extra tokens".
     const clusters = {}; // key (extras|scenarios|origin) -> { extras, byMethod:{specIdx:[pos]} }
     lane.groups.forEach((g, pos) => {
+      if(!fromOk(g)) return;
       const keys = g.map(ghTokenKey);
       GH_METHODS.forEach((m, si) => {
         if(!m.every(t => keys.indexOf(t) !== -1)) return;
@@ -6902,6 +6944,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   // field says. Manual file-picker loads fall back to the file's own field.
   const kingdomName = forcedName || fileData.kingdom || sourceLabel;
   mergeTokensIntoManifest(ws.logicTokens);
+  resolveKingdomGhTiers();
   syncBonusFreeState();
   KINGDOM_SOURCES[kingdomName] = { fileData, sourceLabel, forcedName };
 
@@ -8420,6 +8463,18 @@ function makeIcon(token, opts){
       const ar = document.createElement("span"); ar.className = "prog-arrow"; ar.textContent = "\u25B2"; cb.appendChild(ar);
       wrap.appendChild(cb);
     }
+    if(ghT.kingdom){
+      const kb = document.createElement("span"); kb.className = "gh-kingdom-badge"; kb.title = ghT.kingdom;
+      const ki = document.createElement("img"); ki.alt = ghT.kingdom; ki.src = "icon/" + (KINGDOM_ICON_FILENAME[ghT.kingdom] || "") + ".png";
+      ki.onerror = function(){ kb.style.display = "none"; };
+      kb.appendChild(ki); wrap.appendChild(kb);
+    }
+    (ghT.capBadges || []).forEach((cb, i) => {
+      const k = cb.token || resolveCaptureToken(cb.name); if(!k) return;
+      const b = document.createElement("span"); b.className = "gh-cap-badge"; b.title = (ICON_MANIFEST[k] && ICON_MANIFEST[k].label) || cb.name;
+      b.style.left = (-9 + i * 15) + "px"; b.style.transform = "rotate(" + cb.tilt + "deg)";
+      b.appendChild(makeProgImg(k)); wrap.appendChild(b);
+    });
     if(ghT.plusGP){
       const pb = document.createElement("span");
       pb.className = "prog-badge prog-plus";
@@ -9022,22 +9077,34 @@ function replayChipEntrance(chip, staggerIndex){
 // Safe to call while the box is hidden inside a closed moon-panel/
 // checkpoint-group/node-info popup: a zero-height read just leaves it
 // unmeasured so the open handlers below retry once it's actually visible.
-function measureOptionsCollapsible(wrap){
-  if(wrap.dataset.measured === "1") return;
+// Reads first, writes second: measuring boxes one at a time (read, write, read, write...) made the browser redo the
+// whole layout for every box, which is what froze big kingdoms. measureOptionsCollapsiblesIn now reads every box
+// before touching any of them.
+function readOptionsCollapsible(wrap){
+  if(wrap.dataset.measured === "1") return null;
   const chips = wrap.querySelectorAll(".option-chip");
-  if(chips.length < 2){ wrap.dataset.measured = "1"; return; }
+  if(chips.length < 2) return { done: true };
   const wrapTop = wrap.getBoundingClientRect().top;
   const secondRect = chips[1].getBoundingClientRect();
-  if(secondRect.height === 0) return; // still hidden behind a closed ancestor
+  if(secondRect.height === 0) return null; // still hidden behind a closed ancestor
   const peek = secondRect.height * 0.55;
   const collapsedH = Math.round((secondRect.top - wrapTop) + peek);
   const fadeH = Math.round(Math.min(Math.max(peek + 22, 42), collapsedH * 0.7));
-  wrap.style.setProperty("--collapsed-h", Math.max(collapsedH, 56) + "px");
-  wrap.style.setProperty("--fade-h", fadeH + "px");
+  return { collapsedH, fadeH };
+}
+function writeOptionsCollapsible(wrap, m){
+  if(!m) return;
+  if(!m.done){
+    wrap.style.setProperty("--collapsed-h", Math.max(m.collapsedH, 56) + "px");
+    wrap.style.setProperty("--fade-h", m.fadeH + "px");
+  }
   wrap.dataset.measured = "1";
 }
+function measureOptionsCollapsible(wrap){ writeOptionsCollapsible(wrap, readOptionsCollapsible(wrap)); }
 function measureOptionsCollapsiblesIn(root){
-  (root || document).querySelectorAll(".options-collapsible:not([data-measured='1'])").forEach(measureOptionsCollapsible);
+  const boxes = Array.from((root || document).querySelectorAll(".options-collapsible:not([data-measured='1'])"));
+  const reads = boxes.map(readOptionsCollapsible);
+  boxes.forEach((b, k) => writeOptionsCollapsible(b, reads[k]));
 }
 
 // Shared by every place that renders a .tier-stack of OR/AND requirement
@@ -9140,7 +9207,7 @@ function buildMovementOptions_impl(moon, boxed){
   const stack = document.createElement("div");
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
   // Darker Side moons never use the shared "This moon requires X. Beyond this…" header.
-  const mLanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes, moon.kingdom));
+  const mLanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes, moon.kingdom, moon));
   // Access Point cards (Checkpoints / Paintings / Subarea Entrances) use the same rule, with 2+ methods.
   const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(mLanes, moon.name, (moon.isCheckpointNode || moon.isAccessPoint) ? 2 : undefined);
   const hoistSet = hoistedFormSet(hoisted);
@@ -9674,7 +9741,7 @@ function moonMatchesUnlocks(moon){
   // Jump Group tokens: a moon has one only when that merged chip is shown on it.
   if(GH_TIERS.some(t => selectedAbilities.has(t.token))){
     try{
-      (withGroundedMerge(moon.tierLanes, moon.kingdom) || []).forEach(l => (l.groups || []).forEach(g => { if(g && isGhToken(g[0])) toks.add(g[0]); }));
+      (withGroundedMerge(moon.tierLanes, moon.kingdom, moon) || []).forEach(l => (l.groups || []).forEach(g => { if(g && isGhToken(g[0])) toks.add(g[0]); }));
     }catch(e){}
   }
   // Selecting Any Cap Throw acts like selecting all four throws; any throw (or the tile) also unlocks Cap Return Jump.
@@ -9987,6 +10054,8 @@ function renderGrid(){
   const checkpointGroups = document.getElementById("checkpointGroups");
   const emptyState = document.getElementById("emptyState");
   grid.innerHTML = "";
+  grid.__fillToken = (grid.__fillToken || 0) + 1; // cancels any half-finished progressive fill from the previous render
+  window.__flushGridFill = null;
 
   const showMoons = viewScope !== "access";
   const accessOn = viewScope !== "moons" && (moonFilters.overworld || viewScope === "access");
@@ -10092,8 +10161,28 @@ function renderGrid(){
   } else {
     grid.style.display = "";
     checkpointGroups.style.display = "none";
-    moons.forEach(moon => grid.appendChild(LAZY_CLASSIC_NODES ? buildLazyMoonCard(moon) : buildMoonCard(moon)));
-    measureOptionsCollapsiblesIn(grid);
+    // Big kingdoms (Cascade) have a lot of cards. Building them all in one go froze the page, so the first few are
+    // built right away and the rest follow in small batches, one per animation frame. Nothing is skipped or lazy:
+    // every card still gets fully built. A newer render cancels the old fill; goToMoon flushes it on demand.
+    const fillToken = grid.__fillToken, FIRST = 6, BATCH = 6;
+    let gi = 0;
+    const gStep = n => {
+      const frag = document.createDocumentFragment();
+      for(const end = Math.min(moons.length, gi + n); gi < end; gi++) frag.appendChild(LAZY_CLASSIC_NODES ? buildLazyMoonCard(moons[gi]) : buildMoonCard(moons[gi]));
+      grid.appendChild(frag);
+      measureOptionsCollapsiblesIn(grid);
+      applyFilterMatchHighlight();
+    };
+    gStep(FIRST);
+    if(gi < moons.length){
+      window.__flushGridFill = () => { if(grid.__fillToken !== fillToken) return; while(gi < moons.length) gStep(BATCH); window.__flushGridFill = null; };
+      const next = () => {
+        if(grid.__fillToken !== fillToken || !grid.isConnected) return;
+        gStep(BATCH);
+        if(gi < moons.length) requestAnimationFrame(next); else window.__flushGridFill = null;
+      };
+      requestAnimationFrame(next);
+    }
   }
   applyFilterMatchHighlight();
 }
@@ -11302,7 +11391,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     };
     moons.forEach(moon => {
       let lanes = [];
-      try{ lanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes || [], moon.kingdom)) || []; if(hideAdvanced || hideExpert) lanes = visLanes(lanes); }catch(e){}
+      try{ lanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes || [], moon.kingdom, moon)) || []; if(hideAdvanced || hideExpert) lanes = visLanes(lanes); }catch(e){}
       if(!lanes.length) lanes = [{ tier: "free", label: "Free", groups: [[]] }];
       // The clicked method must always be in the menu: chips from node popups are built from reach lanes that are
       // not part of the moon's own lanes, so without this the menu could not find them and fell back to the first.
@@ -12341,6 +12430,7 @@ function goToMoon(kingdomName, moonName){
       return;
     }
 
+    if(window.__flushGridFill) window.__flushGridFill(); // make sure a progressively-built grid has reached this card
     const card = document.querySelector('.moon-card[data-moon-name="' + escaped + '"]');
     if(!card) return;
     if(card._lazyOpen) card._lazyOpen(true);
@@ -12664,7 +12754,7 @@ function videoMethodLabel(group){
 function openVideoPicker(moon, tierKey, tierLabel, andGroup){
   if(!videoOptionsFor(moon, tierKey, andGroup)) return false;
   const old = document.getElementById("videoPicker"); if(old) old.remove();
-  const lanes = withGroundedMerge(moon.tierLanes || [], moon.kingdom);
+  const lanes = withGroundedMerge(moon.tierLanes || [], moon.kingdom, moon);
   const lane = lanes.find(l => l.tier === tierKey);
   const groups = lane ? lane.groups : [andGroup];
   let cur = groups.findIndex(g => g === andGroup || (g.slot && g.slot === andGroup.slot && g[0] === andGroup[0]));
