@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1868,7 +1868,7 @@
      Paintings / Odyssey Travel sit bottom-left, Death / Health Up bottom-right. */
   .ability-bottom-row{
     margin-top:18px; padding:8px 12px 12px;
-    border:2px dashed var(--border); background:rgba(242,194,0,0.04);
+    border:2px dashed var(--border);
   }
   .ability-bottom-row .filter-section-heading{ margin:0; }
   .bonus-note{ margin:4px 0 8px 12px; font-size:12px; color:var(--text-dim); text-align:left; }
@@ -2853,6 +2853,9 @@
   .gf-grid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; }
   .gf-vaults .gf-grid{ justify-content:flex-start; }
   .gf-extras{ margin-left:auto; }
+  /* Kingdom-specific Group Filters: their own box, right next to Vaults (Extras stays pinned far right) */
+  .gf-kingdom{ padding:6px 10px 10px; border:1px solid rgba(25,184,166,0.55); background:rgba(25,184,166,0.08); }
+  .gf-kingdom .gf-grid{ justify-content:flex-start; }
   .gf-extras .gf-grid{ justify-content:flex-end; }
   #jumpGroupToggle.active{ background:#3f9d3f; border-color:#2c7a2c; color:#fff; }
   /* Moon-style grouped icons: native moon size so the chips match the main filter chips */
@@ -3264,6 +3267,7 @@ const PAGE_SOUNDS_ENABLED = 1;
         <div class="gf-row gf-jumps" id="gfJumpsRow"><div class="gf-label">Jumps</div><div class="gf-grid" id="gfJumpsGrid"></div></div>
         <div class="gf-split">
           <div class="gf-row gf-vaults"><div class="gf-label">Vaults</div><div class="gf-grid" id="gfVaultsGrid"></div></div>
+          <div class="gf-row gf-kingdom" id="gfKingdomRow" hidden><div class="gf-label" id="gfKingdomLabel">Kingdom</div><div class="gf-grid" id="gfKingdomGrid"></div></div>
           <div class="gf-row gf-extras"><div class="gf-label">Extras</div><div class="gf-grid" id="gfExtrasGrid"></div></div>
         </div>
       </div>
@@ -6893,6 +6897,50 @@ function inboundEdgeBranches(data, nodeId, e, src){
   return { branches: crossBranches(edgeBranches(e), sb), folded: true };
 }
 
+/* =========================================================
+   CUSTOM NODES THAT MERGE IDENTICAL ENTRANCES
+   Opt-in list. A Custom Node listed here shows ONE row for all of its entrances that
+   have exactly the same requirements ("From A, B, C: Swim") instead of one row per entrance.
+   Nodes NOT listed keep the original one-row-per-entrance display.
+   To enable/disable a node, add/remove one line:
+     { kingdom: "Lake Kingdom", nodeId: "<node_id from the kingdom's JSON>" }   // most reliable
+     { kingdom: "Lake Kingdom", name: "Underwater Moons" }                     // matched by node name (case-insensitive)
+   If both are given, nodeId wins.
+   ========================================================= */
+const CUSTOM_NODES_MERGE_ENTRANCES = [
+  { kingdom: "Lake Kingdom", name: "Underwater Moons" },
+];
+function customNodeMergesEntrances(kingdomName, nodeId){
+  if(!nodeId || !CUSTOM_NODES_MERGE_ENTRANCES.length) return false;
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  const node = data && data.nodeMap ? data.nodeMap[nodeId] : null;
+  if(!node || node.node_type !== "custom_place") return false;
+  const nm = normalizeMergeName(cleanCheckpointName(node.display_name));
+  return CUSTOM_NODES_MERGE_ENTRANCES.some(c => normalizeMergeName(c.kingdom) === normalizeMergeName(kingdomName)
+    && (c.nodeId ? c.nodeId === nodeId : (c.name && normalizeMergeName(cleanCheckpointName(c.name)) === nm)));
+}
+// Full-requirement signature: tier, tokens (abilities AND captures), scenario tags, per-route origin, free-from.
+function entranceReqFullSignature(r){
+  if(r.impossible) return "IMPOSSIBLE";
+  if(r.free) return "FREE|" + (r.freeFrom ? r.freeFrom.slice().sort().join(",") : "");
+  return "L|" + (r.lanes || []).map(l => l.tier + ":" + l.groups.map(g =>
+    g.slice().sort().join("+") + "@" + ((g.scenarios && g.scenarios.length) ? g.scenarios.slice().sort().join(",") : "") + "#" + (g.origin || "")
+  ).sort().join("|")).sort().join(";");
+}
+// rows: [{ label: "From X", entrance: "X", ...requirement }] -> same shape, identical requirements merged
+// (first-appearance order kept; label lists every entrance).
+function mergeIdenticalEntranceRows(rows){
+  const groups = [], bySig = new Map();
+  rows.forEach(r => {
+    const sig = entranceReqFullSignature(r);
+    let g = bySig.get(sig);
+    if(!g){ g = { row: r, names: [] }; bySig.set(sig, g); groups.push(g); }
+    const nm = r.entrance != null ? r.entrance : String(r.label || "").replace(/^From\s+/, "");
+    if(g.names.indexOf(nm) < 0) g.names.push(nm);
+  });
+  return groups.map(g => g.names.length < 2 ? g.row : Object.assign({}, g.row, { label: "From " + g.names.join(", "), entrance: g.names.join(", ") }));
+}
+
 function computeNodeSourceReqs(kingdomName, nodeId, scopeMoon){
   const data = KINGDOM_NODE_DATA[kingdomName];
   if(!data || !nodeId) return null;
@@ -6912,11 +6960,13 @@ function computeNodeSourceReqsRaw(kingdomName, nodeId, scopeMoon, data){
     const srcNode = data.nodeMap[src];
     const rawLabel = (srcNode && srcNode.display_name) || src;
     const label = subareaSourceLabel(data, srcNode) || rawLabel.replace(/\s*\([^)]*\)\s*$/, "");
-    rows.push(Object.assign({ label: "From " + label }, summarizeBranches(scopeBranchesToMoon(r.branches, scopeMoon), kingdomName)));
+    rows.push(Object.assign({ label: "From " + label, entrance: label }, summarizeBranches(scopeBranchesToMoon(r.branches, scopeMoon), kingdomName)));
   });
   if(rows.length < 2 && !anyFolded) return null; // plain single-source case: flat reach path handles it
   const trimmed = rows.filter(r => !r.impossible);
-  return trimmed.length ? trimmed : (rows.length ? rows : null);
+  const result = trimmed.length ? trimmed : (rows.length ? rows : null);
+  // Opt-in (CUSTOM_NODES_MERGE_ENTRANCES): fold entrances with identical requirements into one row.
+  return (result && customNodeMergesEntrances(kingdomName, nodeId)) ? mergeIdenticalEntranceRows(result) : result;
 }
 
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
@@ -8773,8 +8823,10 @@ function customNodeRoutesFor(moon){
         if(keys.length >= 2){
           keys.sort((a, b) => (a === "" ? -1 : b === "" ? 1 : a.localeCompare(b)));
           route.rows = keys.map(k => Object.assign(
-            { label: k ? "From " + k : "From anywhere (Odyssey)" },
+            { label: k ? "From " + k : "From anywhere (Odyssey)", entrance: k || "anywhere (Odyssey)" },
             summarizeBranches(pruned.filter(b => (b.origin || "") === k).map(b => Object.assign({}, b, { origin: null })), n.kingdom)));
+          // Opt-in (CUSTOM_NODES_MERGE_ENTRANCES): fold entrances with identical requirements into one row.
+          if(n.kind === "custom" && customNodeMergesEntrances(n.kingdom, n.id)) route.rows = mergeIdenticalEntranceRows(route.rows);
         }
       }
       out.push(route);
@@ -12089,9 +12141,11 @@ function setupMergedFilterBar(tokens){
         const kName = KINGDOM_ORDER[currentKingdomIndex];
         // The JUMPS row is hidden on kingdoms where Jump or Cap Return Jump is still Incomplete (the grouped icons themselves still show on moons).
         const jumpsOk = ghKingdomActive(kName, { allTokens: ["SingleJump", "CapReturnJump"] });
-        [["jumps", "gfJumpsGrid"], ["vaults", "gfVaultsGrid"], ["extras", "gfExtrasGrid"]].forEach(([row, gid]) => {
+        [["jumps", "gfJumpsGrid"], ["vaults", "gfVaultsGrid"], ["kingdom", "gfKingdomGrid"], ["extras", "gfExtrasGrid"]].forEach(([row, gid]) => {
           const grid = document.getElementById(gid); if(!grid) return;
-          const toks = GH_TIERS.filter(t => (t.row || "jumps") === row).map(t => t.token).filter(t => ICON_MANIFEST[t]);
+          // Kingdom-specific groups (tier.kingdom) live in the "kingdom" box and only on their own kingdom's page.
+          const toks = GH_TIERS.filter(t => t.kingdom ? (row === "kingdom" && t.kingdom === kName) : (t.row || "jumps") === row).map(t => t.token).filter(t => ICON_MANIFEST[t]);
+          if(row === "kingdom"){ const kl = document.getElementById("gfKingdomLabel"); if(kl) kl.textContent = kName; }
           renderOptions("ability", toks, selectedAbilities, grid, abilitySearchEl.value);
           grid.querySelectorAll(".filter-bar-none").forEach(n => n.remove());
           const box = grid.closest(".gf-row");
