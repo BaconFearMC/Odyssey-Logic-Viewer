@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDoubleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -720,6 +720,7 @@
 
   /* ---- Custom Node routes on the moon ---------------------------------- */
   .moon-card.has-node-routes .moon-base-req{ display:none; }
+  body.submit-mode .moon-card.has-node-routes[data-submittable="1"] .routes-hoist{ display:none; }
   body.submit-mode .moon-card.has-node-routes[data-submittable="1"] .moon-base-req{ display:block; }
   body.submit-mode .moon-card.has-node-routes[data-submittable="1"] .node-route-body,
   body.submit-mode .moon-card.has-node-routes[data-submittable="1"] .node-routes-or,
@@ -6996,7 +6997,7 @@ function computeNodeSourceReqsRaw(kingdomName, nodeId, scopeMoon, data){
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
 // disableCollapse is forwarded straight through to renderReachTierLanes/
 // wrapOptionsIfCollapsible — see the note there.
-function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoon){
+function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoon, sharedHoist){
   const wrap = document.createElement("div");
   wrap.className = className || "entrance-reqs";
   list.forEach(r => {
@@ -7020,7 +7021,7 @@ function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoo
       }
       if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); row.appendChild(ot); }
     } else {
-      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName, titleMoon, /^(Entrance|Exit) Pipe\b/.test(String(r.label || "")) ? String(r.label) : null, r.entrances));
+      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName, titleMoon, /^(Entrance|Exit) Pipe\b/.test(String(r.label || "")) ? String(r.label) : null, r.entrances, sharedHoist));
     }
     wrap.appendChild(row);
   });
@@ -9090,6 +9091,7 @@ function buildMoonCard(moon, opts){
   const strips = routes ? Array.from(card.querySelectorAll(".node-strip:not(.ns-subarea)")) : [];
   if(routes && strips.length === routes.length){
     card.classList.add("has-node-routes");
+    const sharedHoist = sharedHoistAcrossRoutes(routes, moon); // "Besides X" for requirements every location shares
     const wrap = document.createElement("div");
     wrap.className = "node-routes";
     routes.forEach((r, i) => { if(r.hidden && strips[i]) strips[i].remove(); });
@@ -9124,19 +9126,21 @@ function buildMoonCard(moon, opts){
       if(r.impossible){
         const t = document.createElement("span"); t.className = "impossible-tag"; t.textContent = "Impossible"; body.appendChild(t);
       } else if(r.rows){
-        body.appendChild(renderEntranceReqs(r.rows, "entrance-reqs", false, moon.name, routeMoon));
+        body.appendChild(renderEntranceReqs(r.rows, "entrance-reqs", false, moon.name, routeMoon, sharedHoist));
       } else if(r.free){
         const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; body.appendChild(t);
         t.dataset.videoTitle = videoTitleFor(routeMoon, "free", []); attachYtBadge(t, routeMoon, "free", []);
         t.style.cursor = "pointer"; t.addEventListener("click", () => handleNodeClick(routeMoon, "free", "Free", [], 1));
         if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); body.appendChild(ot); }
       } else {
-        body.appendChild(renderReachTierLanes(r.lanes, false, "entrance", moon.name, routeMoon));
+        body.appendChild(renderReachTierLanes(r.lanes, false, "entrance", moon.name, routeMoon, null, null, sharedHoist));
       }
       block.appendChild(body);
       wrap.appendChild(block);
     });
-    card.insertBefore(wrap, baseReq);
+    const routesEl = sharedHoist.length ? wrapWithHoistHeader(wrap, sharedHoist, "moon") : wrap;
+    if(routesEl !== wrap) routesEl.classList.add("routes-hoist");
+    card.insertBefore(routesEl, baseReq);
   }
   return card;
 }
@@ -10011,9 +10015,9 @@ const HOIST_TOKENS = ["PSwitch", "CappyFlower", "Scarecrow", "Notes", "NpcTalk",
 // Needs at least this many total methods before a shared requirement is pulled out;
 // with only 1-2 methods the plain chips are clearer than a header.
 const HOIST_MIN_METHODS = 3;
-// Paintings, Binoculars, Goomba and Mini Rocket join the shared-requirement ("Besides ...") rule.
+// Paintings, Binoculars, Goomba, Paragoomba, Zipper and Mini Rocket join the shared-requirement ("Besides ...") rule.
 // Matched by display name / token so the exact token ids in the data don't matter.
-const HOIST_EXTRA_RE = /^(paintings?( access)?|binoculars?|goombas?|mini[\s_-]*rocket)$/i;
+const HOIST_EXTRA_RE = /^(paintings?( access)?|binoculars?|goombas?|para[\s_-]*goombas?|zippers?|mini[\s_-]*rocket)$/i;
 function hoistCandidates(){
   const out = HOIST_TOKENS.slice();
   Object.keys(ICON_MANIFEST).forEach(t => {
@@ -10061,6 +10065,28 @@ function hoistedTokensFor(tierLanes, moonName, minMethods){
     out.push("SingleJump");
   }
   return out;
+}
+// "Besides X" ACROSS LOCATIONS: a moon with several Custom Node / Checkpoint routes (or several "From <entrance>" rows)
+// has only a few methods per location, so the per-location rule never fired. Pool the methods of every shown location:
+// a token needed by ALL of them (every single method requires it) is stated once above the routes and dropped from the chips.
+// A location that is Free (or has any method without the token) correctly blocks it.
+function sharedHoistAcrossRoutes(routes, moon){
+  if(!routes || !moon || moon.kingdom === "Darker Side") return [];
+  const groups = []; let locations = 0;
+  const addLanes = lanes => {
+    if(hideAdvanced || hideExpert) lanes = visLanes(lanes);
+    if(!lanes || !lanes.length) return; // fully hidden at this difficulty setting: not displayed, so it can't block
+    promoteGroupFilters(withGroundedMerge(lanes)).forEach(l => (l.groups || []).forEach(g => groups.push(g)));
+    locations++;
+  };
+  routes.forEach(r => {
+    if(r.hidden || r.impossible) return;
+    if(r.rows){ r.rows.forEach(row => { if(row.impossible) return; if(row.free){ groups.push([]); locations++; } else addLanes(row.lanes); }); }
+    else if(r.free){ groups.push([]); locations++; }
+    else addLanes(r.lanes);
+  });
+  if(locations < 2 || !groups.length) return []; // one location: its own per-location rule already applies
+  return hoistedTokensFor([{ groups }], moon.name, undefined);
 }
 function hoistedFormSet(hoisted){
   const set = new Set();
@@ -12701,13 +12727,16 @@ function buildTierLanesFromBranches(branches){
 // .tier-stack/.tier-lane/.tier-pill/.option-chip classes the moon cards
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
-function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleMoon, pipeTitleOrigin, mergedEntrances){
+function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleMoon, pipeTitleOrigin, mergedEntrances, sharedHoist){
   if(hideAdvanced || hideExpert){ tierLanes = visLanes(tierLanes); if(!tierLanes.length) return document.createElement("div"); }
   tierLanes = promoteGroupFilters(withGroundedMerge(tierLanes));
   const stack = document.createElement("div");
   stack.className = "tier-stack";
-  const hoisted = hoistedTokensFor(tierLanes, moonName, noun === "entrance" ? undefined : 2);
-  const hoistSet = hoistedFormSet(hoisted);
+  // sharedHoist: tokens already stated once for ALL locations of the card (see sharedHoistAcrossRoutes): stripped from the
+  // chips here without a second header; anything extra that only THIS location shares still gets its own header.
+  const sharedH = sharedHoist || [];
+  const hoisted = hoistedTokensFor(tierLanes, moonName, noun === "entrance" ? undefined : 2).filter(t => sharedH.indexOf(t) === -1);
+  const hoistSet = hoistedFormSet(sharedH.concat(hoisted));
   const sharedOrigin = sharedOriginOf(tierLanes);
   tierLanes.forEach(lane => {
     const laneEl = document.createElement("div");
