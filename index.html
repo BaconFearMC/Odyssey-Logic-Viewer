@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityPurpleWallet.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -954,7 +954,7 @@
   /* Generously high rather than "none" so the open/close transition still
      animates, but high enough that no real moveset, however long, ever
      gets clipped once expanded. */
-  .options-collapsible.expanded{ max-height:20000px; }
+  .options-collapsible.expanded{ max-height:20000px; overflow:visible; }
   .options-fade{
     position:absolute;
     left:0; right:0; bottom:0;
@@ -2618,9 +2618,7 @@
   .gh-star{ color:var(--gold); font-weight:bold; margin-left:2px; align-self:flex-start; }
   .option-chip.has-cap-star{ position:relative; }
   .cap-star{ position:absolute; top:-8px; right:-8px; width:22px; height:22px; border-radius:50%; background:var(--gold); color:#1a1a1a; border:2px solid #1a1a1a; font-weight:900; font-size:18px; line-height:24px; text-align:center; pointer-events:none; box-shadow:0 1px 0 rgba(0,0,0,.5); z-index:2; }
-  .cap-star-tip{ position:absolute; left:calc(100% + 12px); top:50%; transform:translateY(-50%); width:240px; z-index:40; padding:6px 9px; background:#525252; color:#fff; border:1px solid var(--border); box-shadow:1px 2px 0 rgba(0,0,0,.4); font:600 11.5px/1.35 system-ui,sans-serif; white-space:normal; text-align:left; opacity:0; visibility:hidden; transition:opacity .1s ease; pointer-events:none; }
-  .option-chip.has-cap-star.tip-left .cap-star-tip{ left:auto; right:calc(100% + 12px); }
-  .option-chip.has-cap-star:hover .cap-star-tip, .option-chip.has-cap-star:focus-visible .cap-star-tip{ opacity:1; visibility:visible; }
+  #capStarTip{ position:fixed; display:none; width:240px; z-index:2147483647; padding:7px 10px; background:#525252; color:#fff; border:1px solid var(--border); box-shadow:2px 3px 0 rgba(0,0,0,.45); font:600 12px/1.4 system-ui,sans-serif; white-space:normal; text-align:left; pointer-events:none; }
   .gh-star-note{ display:flex; flex-direction:column; align-items:center; gap:4px; width:100%; box-sizing:border-box; margin-top:6px; padding-top:6px;
     border-top:1px dashed rgba(230,194,0,.35); font-size:10px; color:var(--text-dim); }
   .gh-ex{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:3px 6px; }
@@ -7481,6 +7479,17 @@ function applyOverrideNodeToMoon(moon, nodeName, kingdomName, data, replace, sam
 // requirement (taken once, the first time this runs for that moon) rather
 // than compounding a merge on top of a previous merge.
 
+// A moon INSIDE a subarea (it has per-pipe entrance rows) never folds the cost of getting into that subarea into its
+// own requirement: that cost already has its own place (the per-pipe "Entrance Pipe / Exit Pipe" rows and the subarea
+// info below the card). Folding it in as well listed it twice, and flattened the moon so its video titles no longer
+// knew it was a subarea moon (no "In Pipe" / "Out Pipe"). Applies to every subarea, whether the rule names the subarea
+// itself or the node the moon is tracked from inside it.
+function keepsSubareaRows(moon, rule){
+  if(!moon || !moon.subarea || !moon._baseEntranceReqs || !moon._baseEntranceReqs.length) return false;
+  if(rule && normalizeMergeName(rule.node) === normalizeMergeName(moon.subarea)) return true;
+  return !!(moon.checkpointNodeId && moon.checkpointNodeId === moon.fromNodeId);
+}
+
 function applyNodeMergeRules(kingdomName){
   const moons = KINGDOMS[kingdomName];
   if(!moons) return;
@@ -7574,7 +7583,7 @@ function applyNodeMergeRules(kingdomName){
     if(replaceRule){
       const src = resolveOverrideSource(moon, replaceRule, kingdomName);
       if(src) applyOverrideNodeToMoon(moon, replaceRule.node, src.kingdomName, src.data, /*replace=*/true, src.sameKingdom);
-    } else if(plainRule){
+    } else if(plainRule && !keepsSubareaRows(moon, plainRule)){
       if(moon.subarea && normalizeMergeName(plainRule.node) === normalizeMergeName(moon.subarea)){
         if(!moon._baseEntranceReqs){
           console.warn(`[merge] "${moon.name}": no entrance data available for "${moon.subarea}" — nothing to merge.`);
@@ -8060,12 +8069,24 @@ let ICON_ROW_MAX = 3; // icons per row inside a requirement chip (Access Point c
 function appendCapStar(chip, andGroup){
   if(!andGroup || !andGroup.capStar || chip.querySelector(":scope > .cap-star")) return;
   const star = document.createElement("span"); star.className = "cap-star"; star.textContent = "*";
-  const tip = document.createElement("span"); tip.className = "cap-star-tip"; tip.textContent = andGroup.capStar.note;
   chip.classList.add("has-cap-star"); chip.tabIndex = 0;
-  chip.appendChild(star); chip.appendChild(tip);
-  // Hover note sits beside the chip: to the right, or to the left when there is no room on the right.
-  const side = () => { const r = chip.getBoundingClientRect(); chip.classList.toggle("tip-left", r.right + 270 > window.innerWidth && r.left > 270); };
-  chip.addEventListener("mouseenter", side); chip.addEventListener("focus", side);
+  chip.appendChild(star);
+  // The note lives on <body> (position:fixed, top z-index) so no card, clipped box or neighbouring chip can cover or crop it.
+  // It sits to the right of the chip, or to the left when the right side has no room.
+  const show = () => {
+    let tip = document.getElementById("capStarTip");
+    if(!tip){ tip = document.createElement("div"); tip.id = "capStarTip"; document.body.appendChild(tip); }
+    tip.textContent = andGroup.capStar.note; tip.style.visibility = "hidden"; tip.style.display = "block";
+    const r = chip.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight, gap = 12, m = 8;
+    let left = r.right + gap;
+    if(left + w > window.innerWidth - m) left = r.left - gap - w;
+    left = Math.max(m, Math.min(left, window.innerWidth - w - m));
+    const top = Math.max(m, Math.min(r.top + r.height / 2 - h / 2, window.innerHeight - h - m));
+    tip.style.left = left + "px"; tip.style.top = top + "px"; tip.style.visibility = "visible";
+  };
+  const hide = () => { const tip = document.getElementById("capStarTip"); if(tip) tip.style.display = "none"; };
+  chip.addEventListener("mouseenter", show); chip.addEventListener("mouseleave", hide);
+  chip.addEventListener("focus", show); chip.addEventListener("blur", hide);
 }
 function appendGhStar(chip, andGroup){
   appendCapStar(chip, andGroup);
@@ -11031,7 +11052,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   }
   if(!document.getElementById("vtMenuCss4")){
     const st = document.createElement("style"); st.id = "vtMenuCss4";
-    st.textContent = "@keyframes vmHoistDown{0%{opacity:0;transform:translateY(-40px);clip-path:inset(0 0 100% 0);filter:brightness(1.8)}50%{opacity:1;clip-path:inset(0 0 0 0)}82%{transform:translateY(3px);filter:brightness(1.2) drop-shadow(0 5px 10px rgba(47,180,201,.5))}100%{opacity:1;transform:none;clip-path:inset(0 0 0 0);filter:none}}"
+    st.textContent = "@keyframes vmHoistDown{0%{opacity:0;transform:translateY(-40px);clip-path:inset(-60px -60px calc(100% + 60px) -60px);filter:brightness(1.8)}50%{opacity:1;clip-path:inset(-60px)}82%{transform:translateY(3px);clip-path:inset(-60px);filter:brightness(1.2) drop-shadow(0 5px 10px rgba(47,180,201,.5))}100%{opacity:1;transform:none;clip-path:inset(-60px);filter:none}}"
       + "#vtMenuOverlay .vm-curcard.vm-landing:not(.vm-split) .vm-cell.vm-hoisted{animation:vmHoistDown 1.15s cubic-bezier(.22,.7,.2,1) both}"
       + "#vtMenuOverlay .vm-card.vm-split .vm-cell{animation:none}"
       + "#vtMenuOverlay .vm-card.vm-splitting{overflow:visible}"
