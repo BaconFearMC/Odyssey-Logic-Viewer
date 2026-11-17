@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityNeutralThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -11135,6 +11135,17 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       let lanes = [];
       try{ lanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes || [], moon.kingdom)) || []; if(hideAdvanced || hideExpert) lanes = visLanes(lanes); }catch(e){}
       if(!lanes.length) lanes = [{ tier: "free", label: "Free", groups: [[]] }];
+      // The clicked method must always be in the menu: chips from node popups are built from reach lanes that are
+      // not part of the moon's own lanes, so without this the menu could not find them and fell back to the first.
+      if(pre && pre.g && pre.tier && moon === (pre.moon && moons.find(m => (m.name || m.label) === (pre.moon.name || pre.moon.label)) || moons[0])){
+        const sg = g2 => (g2 || []).slice().map(String).sort().join("+") + "|" + ((g2 && g2.origin) || "") + "|" + ((g2 && g2.scenarios) ? g2.scenarios.slice().sort().join(",") : "");
+        const has = lanes.some(l => l.tier === pre.tier && l.groups.some(g2 => g2 === pre.g || sg(g2) === sg(pre.g)));
+        if(!has){
+          const li = lanes.findIndex(l => l.tier === pre.tier);
+          if(li >= 0) lanes = lanes.map((l, k) => k === li ? Object.assign({}, l, { groups: l.groups.concat([pre.g]) }) : l);
+          else lanes = lanes.concat([{ tier: pre.tier, label: pre.tierLabel || (typeof TIER_LABEL !== "undefined" && TIER_LABEL[pre.tier]) || pre.tier, groups: [pre.g] }]);
+        }
+      }
       const sec = mk("div"); sec.className = "vm-node"; pk.appendChild(sec);
       if(moons.length > 1){ const nh = mk("div"); nh.className = "vm-nodehead"; nh.textContent = moon.name || moon.label; sec.appendChild(nh); }
       lanes.forEach(lane => {
@@ -11198,7 +11209,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   const NY_GAP_MS = 4000; // clicks must come within this gap to count as one streak
   const nyClicks = () => { try{ return window.__nyClicks ? window.__nyClicks() : 5; }catch(e){ return 5; } }; // 0 = override off let _nyKey = null, _nyCount = 0, _nyLast = 0;
   document.addEventListener("click", e => { const t = e.target; if(!t || !t.closest || t.closest("#vtMenuOverlay")) return; const el = t.closest(".option-chip, .free-tag, .free-chip, .cp-req-name, .moon-card, .cp-req"); window.__vtSrc = el ? { el, t: Date.now() } : null; }, true);
-  window.ytOpenFor = async (moon, tier, group, slot) => {
+  window.ytOpenFor = async (moon, tier, group, slot, tierLabel) => {
     const vo = videoOptionsFor(moon, tier, group);
     const titles = vo ? vo.map(o => o.title) : [videoTitleFor(moon, tier, group || [])];
     const ids = await Promise.all(titles.map(t => window.ytVideoIdFor(t).catch(() => null)));
@@ -11211,12 +11222,12 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       if(_nyKey !== key || now - _nyLast > NY_GAP_MS) _nyCount = 0;
       _nyKey = key; _nyLast = now; _nyCount++;
       const left = NY_CLICKS - _nyCount;
-      if(left <= 0){ _nyCount = 0; _nyKey = null; openMoonMenu([moon], { tier, g: group, slot, moon }); return; }
+      if(left <= 0){ _nyCount = 0; _nyKey = null; openMoonMenu([moon], { tier, g: group, slot, moon, tierLabel }); return; }
       nodeNothingYet(null, left <= 3 ? (left + (left === 1 ? " more click" : " more clicks")) : "");
       return;
     }
     _nyCount = 0; _nyKey = null;
-    openMoonMenu([moon], { tier, g: group, slot, moon });
+    openMoonMenu([moon], { tier, g: group, slot, moon, tierLabel });
   };
   document.addEventListener("click", e => {
     if(!on || !e.target.closest) return;
@@ -11229,7 +11240,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     // Remember which method chip was clicked so the menu opens on it instead of the first method.
     const chip = e.target.closest(".option-chip, .free-tag, .free-chip, .cp-req-name");
     let pre = null;
-    if(chip && chip._ytArgs) pre = { moon: chip._ytArgs[0], tier: chip._ytArgs[1], g: chip._ytArgs[2] || [], slot: chip.dataset.slot ? Number(chip.dataset.slot) : null, title: chip.dataset.videoTitle || null };
+    if(chip && chip._ytArgs) pre = { moon: chip._ytArgs[0], tier: chip._ytArgs[1], g: chip._ytArgs[2] || [], slot: chip.dataset.slot ? Number(chip.dataset.slot) : null, title: chip.dataset.videoTitle || null, tierLabel: (typeof TIER_LABEL !== "undefined" && TIER_LABEL[chip._ytArgs[1]]) || null };
     else if(chip && chip.dataset.videoTitle) pre = { title: chip.dataset.videoTitle };
     window.__vtSrc = chip ? { el: chip, t: Date.now() } : window.__vtSrc;
     openMoonMenu(moons, pre);
@@ -12551,7 +12562,7 @@ function handleNodeClick(moon, tierKey, tierLabel, andGroup, indexInTier, picked
     });
     return;
   }
-  if(window.ytOpenFor) window.ytOpenFor(moon, tierKey, andGroup || [], indexInTier);
+  if(window.ytOpenFor) window.ytOpenFor(moon, tierKey, andGroup || [], indexInTier, tierLabel);
 }
 
 // Tries assets/logicvideos/<baseName>.mp4, then .webp, then gives up.
