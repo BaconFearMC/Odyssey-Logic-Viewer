@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/SandKingdomAccess.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -8046,15 +8046,30 @@ async function tryAutoload(){
   // filename and its story order. Just try each one; missing files (404,
   // not-yet-added kingdoms, or file:// with no server) are skipped quietly.
   let loaded = 0;
+  const failed = [];
   for(const entry of KINGDOM_MANIFEST){
+    const url = "logic/graph-editor/saves/kingdoms/" + entry.file + ".json";
+    let data;
     try{
-      const res = await fetch("logic/graph-editor/saves/kingdoms/" + entry.file + ".json");
-      if(!res.ok) continue;
-      const data = await res.json();
+      const res = await fetch(url);
+      if(!res.ok){ failed.push(entry.name + " (HTTP " + res.status + " for " + url + ")"); console.error("[load] " + url + " -> HTTP " + res.status); continue; }
+      data = await res.json();
+    }catch(err){
+      failed.push(entry.name + " (fetch/JSON error: " + err.message + ")");
+      console.error("[load] could not fetch/parse " + url, err);
+      continue;
+    }
+    // Parsing/building is isolated so one kingdom throwing can never take the others down,
+    // and the error is no longer swallowed silently.
+    try{
       loadKingdomFile(data, entry.file + ".json", entry.name);
       loaded++;
-    }catch(err){ /* not reachable yet (file:// or missing file) — skip */ }
+    }catch(err){
+      failed.push(entry.name + " (build error: " + err.message + ")");
+      console.error("[load] " + entry.name + " failed while building", err);
+    }
   }
+  window.__kingdomLoadFailures = failed;
   // Optional embedded-data fallback, only used when `logic/*.json` isn't
   // reachable (e.g. this preview build, opened without a server). Harmless
   // no-op in the real deployment, where window.__EMBEDDED_KINGDOMS is never set.
@@ -8071,7 +8086,8 @@ async function tryAutoload(){
   // is loaded, picks those up without needing a particular load order.
   if(loaded > 0) applyNodeMergeRulesToAllLoadedKingdoms();
   if(loaded > 0){
-    setStatus(`Auto-loaded ${loaded} kingdom file${loaded===1?"":"s"} from /logic/`);
+    if(failed.length) setStatus("Some kingdoms failed to load: " + failed.join("; "), true);
+    else setStatus(`Auto-loaded ${loaded} kingdom file${loaded===1?"":"s"} from /logic/`);
     rebuildKingdomTabs();
     // Search and Select Mode is the default: no kingdom page is drawn until one is opened.
     if(!document.body.classList.contains("ss-mode")) renderKingdom(KINGDOM_ORDER[0]);
