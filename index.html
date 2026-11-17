@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -4885,6 +4885,39 @@ function parseScenarioList(str){
   if(!trimmed) return null;
   return Array.from(new Set(trimmed.split(",").map(s => parseInt(s.trim(), 10)).filter(n => !Number.isNaN(n)))).sort((x, y) => x - y);
 }
+/* Valid Scenario numbers per Kingdom. Kingdoms do NOT all share the same count, so
+   a Scenario list is only redundant when it covers THIS Kingdom's full set.
+   Explicit entries win; any Kingdom not listed falls back to the Scenarios actually
+   used by its own loaded data (see inferKingdomScenarios), never a global default.
+   Add/adjust entries here: "Some Kingdom": [1,2,3,...]. */
+const KINGDOM_VALID_SCENARIOS = {
+  "Lake Kingdom": [1, 2, 3, 4],
+  "Sand Kingdom": [1, 2, 3, 4, 5],
+};
+const INFERRED_KINGDOM_SCENARIOS = {}; // kingdom -> sorted [n,...] (from data), filled by inferKingdomScenarios
+function inferKingdomScenarios(kingdomName, ws){
+  const seen = new Set();
+  const add = str => String(str || "").split(/[;,]/).forEach(x => { const n = parseInt(x.trim(), 10); if(!Number.isNaN(n)) seen.add(n); });
+  ((ws && ws.routeEdges) || []).forEach(e => add(e.option_scenarios));
+  ((ws && ws.moonAccess) || []).forEach(r => add(r.option_scenarios));
+  INFERRED_KINGDOM_SCENARIOS[kingdomName] = seen.size ? Array.from(seen).sort((a, b) => a - b) : null;
+}
+function kingdomValidScenarios(kingdomName){
+  if(kingdomName && KINGDOM_VALID_SCENARIOS[kingdomName]) return KINGDOM_VALID_SCENARIOS[kingdomName];
+  return (kingdomName && INFERRED_KINGDOM_SCENARIOS[kingdomName]) || null;
+}
+// Compares actual values (not counts): a list covering every valid Scenario of the Kingdom
+// is "no restriction" (null). Partial lists are returned untouched. Unknown Kingdom -> untouched.
+function normalizeScenarioList(list, kingdomName){
+  if(!list || !list.length) return null;
+  const valid = kingdomValidScenarios(kingdomName);
+  if(valid && valid.length && valid.every(n => list.includes(n))) return null;
+  return list;
+}
+// Stamp a Kingdom onto raw edges (non-enumerable, so it never leaks into exports).
+function stampKingdom(items, kingdomName){
+  (items || []).forEach(it => { if(it && typeof it === "object") Object.defineProperty(it, "__kingdom", { value: kingdomName, enumerable: false, configurable: true, writable: true }); });
+}
 function scenarioListLabel(list){
   if(!list || !list.length) return null;
   // Render a contiguous run as "N-M", otherwise comma-join. Sorted first
@@ -4902,7 +4935,7 @@ function scenarioListLabel(list){
    for every branch if option_scenarios is empty/missing or its branch count
    doesn't match the expression's top-level OR count (a data gap) — same
    fail-open pattern tiersForGroups uses for a difficulty-count mismatch. */
-function exprToScenarioDNF(expr, optionScenarios){
+function exprToScenarioDNF(expr, optionScenarios, kingdomName){
   const dnf = exprToDNF(expr);
   const topLevelCount = splitTopLevelOrBranches(expr);
   const raw = (optionScenarios || "").split(";").map(s => s.trim());
@@ -4932,7 +4965,7 @@ function exprToScenarioDNF(expr, optionScenarios){
   if(!optionScenarios || raw.length !== topLevelCount || dnf.length !== topLevelCount){
     return dnf.map(group => ({ group, scenarios: null }));
   }
-  return dnf.map((group, i) => ({ group, scenarios: parseScenarioList(raw[i]) }));
+  return dnf.map((group, i) => ({ group, scenarios: normalizeScenarioList(parseScenarioList(raw[i]), kingdomName) }));
 }
 
 /* =========================================================
@@ -5329,7 +5362,7 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
   // ONLY from the structured option_scenarios field — never from
   // legacy_requirement_notes, which is raw free-text kept purely for
   // human cross-reference and is not parsed anywhere in this file.
-  const seeded = exprToScenarioDNF(row.requirement_expr, row.option_scenarios);
+  const seeded = exprToScenarioDNF(row.requirement_expr, row.option_scenarios, kingdomName);
   let dnf = seeded.map(b => b.group);
   let scenarios = seeded.map(b => b.scenarios);
   let tiers = tiersForGroups(dnf, row.difficulty);
@@ -6440,7 +6473,7 @@ function buildNodeReachIndex(nodes, edges){
     // even after being concatenated with other edges' branches below.
     const dnf = exprToDNF(req);
     const tiers = tiersForGroups(dnf, e.difficulty);
-    const taggedBranches = exprToScenarioDNF(req, e.option_scenarios)
+    const taggedBranches = exprToScenarioDNF(req, e.option_scenarios, e.__kingdom)
       .map((b, i) => Object.assign({}, b, { tier: tiers[i] || "unrated", fromNodeId: e.from_node_id, edgeId: e.edge_id, origin: originLabelFor(e) }));
     reachBranches[e.to_node_id] = (reachBranches[e.to_node_id] || []).concat(taggedBranches);
   });
@@ -6610,9 +6643,9 @@ function edgeBranches(e){
   const req = (e.requirement_expr || "").trim();
   // A Free edge can still be limited to some Scenarios (option_scenarios, e.g. "2,3,4"):
   // it is only free THERE, so it must not read as free everywhere.
-  if(!req || req.toLowerCase() === "free") return [{ group: [], scenarios: parseScenarioList(e.option_scenarios), tier: "casual" }];
+  if(!req || req.toLowerCase() === "free") return [{ group: [], scenarios: normalizeScenarioList(parseScenarioList(e.option_scenarios), e.__kingdom), tier: "casual" }];
   const tiers = tiersForGroups(exprToDNF(req), e.difficulty);
-  return exprToScenarioDNF(req, e.option_scenarios).map((b, i) => ({ group: b.group.slice(), scenarios: b.scenarios || null, tier: tiers[i] || "unrated" }));
+  return exprToScenarioDNF(req, e.option_scenarios, e.__kingdom).map((b, i) => ({ group: b.group.slice(), scenarios: b.scenarios || null, tier: tiers[i] || "unrated" }));
 }
 
 // Branches (or null = impossible) for walking fromId -> toId inside one stage.
@@ -7059,6 +7092,8 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   // "cap_kingdom.json" is Cap Kingdom regardless of what the file's own "kingdom"
   // field says. Manual file-picker loads fall back to the file's own field.
   const kingdomName = forcedName || fileData.kingdom || sourceLabel;
+  inferKingdomScenarios(kingdomName, ws);
+  stampKingdom(ws.routeEdges, kingdomName);
   mergeTokensIntoManifest(ws.logicTokens);
   resolveKingdomGhTiers();
   syncBonusFreeState();
