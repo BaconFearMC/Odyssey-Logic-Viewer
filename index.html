@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityWallet.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -7485,9 +7485,9 @@ function applyOverrideNodeToMoon(moon, nodeName, kingdomName, data, replace, sam
 // knew it was a subarea moon (no "In Pipe" / "Out Pipe"). Applies to every subarea, whether the rule names the subarea
 // itself or the node the moon is tracked from inside it.
 function keepsSubareaRows(moon, rule){
-  if(!moon || !moon.subarea || !moon._baseEntranceReqs || !moon._baseEntranceReqs.length) return false;
-  if(rule && normalizeMergeName(rule.node) === normalizeMergeName(moon.subarea)) return true;
-  return !!(moon.checkpointNodeId && moon.checkpointNodeId === moon.fromNodeId);
+  // Any moon whose tracked node sits inside a subarea. Judged from the moon's ORIGINAL data (before an automatic
+  // "<Moon> Free" rule re-points its node), and whether or not per-pipe rows could be built for it.
+  return !!(moon && moon.subarea);
 }
 
 function applyNodeMergeRules(kingdomName){
