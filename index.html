@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10935,9 +10935,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   }
   if(!document.getElementById("vtMenuCss4")){
     const st = document.createElement("style"); st.id = "vtMenuCss4";
-    st.textContent = "@keyframes vmBesidesDown{0%{opacity:0;transform:translateY(-38px) scaleY(.55);clip-path:inset(0 0 100% 0);filter:brightness(1.9) drop-shadow(0 0 0 rgba(47,180,201,0))}45%{opacity:1;clip-path:inset(0 0 0 0)}80%{transform:translateY(3px) scaleY(1.02);filter:brightness(1.25) drop-shadow(0 6px 14px rgba(47,180,201,.55))}100%{opacity:1;transform:none;clip-path:inset(0 0 0 0);filter:none}}"
-      + "#vtMenuOverlay .vm-besides{align-self:center;margin:0 0 12px;transform-origin:top center;animation:vmBesidesDown 1.25s cubic-bezier(.22,.7,.2,1) both}"
-      + "#vtMenuOverlay .vm-pk .vm-besides{align-self:flex-start;margin:0 0 10px}"
+    st.textContent = "@keyframes vmHoistDown{0%{opacity:0;transform:translateY(-40px);clip-path:inset(0 0 100% 0);filter:brightness(1.8)}50%{opacity:1;clip-path:inset(0 0 0 0)}82%{transform:translateY(3px);filter:brightness(1.2) drop-shadow(0 5px 10px rgba(47,180,201,.5))}100%{opacity:1;transform:none;clip-path:inset(0 0 0 0);filter:none}}"
+      + "#vtMenuOverlay .vm-curcard.vm-landing:not(.vm-split) .vm-cell.vm-hoisted{animation:vmHoistDown 1.15s cubic-bezier(.22,.7,.2,1) both}"
       + "#vtMenuOverlay .vm-card.vm-split .vm-cell{animation:none}"
       + "#vtMenuOverlay .vm-card.vm-splitting{overflow:visible}"
       + "#vtMenuOverlay .vm-core{position:absolute;left:50%;top:50%;z-index:3;pointer-events:none;filter:drop-shadow(0 0 12px rgba(230,194,0,.9))}"
@@ -10949,7 +10948,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     try{ const i = makeIcon(tok); i.tabIndex = -1; i.style.zoom = String(sz / 48.6); w.appendChild(i); }catch(e){ w.textContent = String(tok).slice(0, 2); }
     return w;
   };
-  const strip = (toks, sz, labeled) => {
+  const strip = (toks, sz, labeled, hoist) => {
     const d = mk("span"); d.className = "vm-icons" + (labeled ? " vm-labeled" : "");
     if(!labeled){ toks.forEach((t, i) => { if(i) d.appendChild(mk("span", "opacity:.5;font-size:20px;", "+")); d.appendChild(ico(t, sz)); }); return d; }
     // Same layout rules as the moon-card chips: hide moves already shown as a progression icon, sort for display,
@@ -10962,6 +10961,8 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       const vis = toks.filter(t => !covered.has(t));
       show = sortedTokensForDisplay(vis.length ? vis : toks);
     }catch(e){ show = toks.slice(); }
+    const isH = t => !!(hoist && hoist.size && hoist.has(t));
+    if(hoist && hoist.size) show = show.filter(isH).concat(show.filter(t => !isH(t)));
     const rows = balancedRowCounts(show.length, 3);
     const twoD = toks.indexOf("SingleJump") !== -1 && toks.indexOf("Pipe2D") !== -1;
     let idx = 0;
@@ -10970,7 +10971,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       for(let k = 0; k < n; k++, idx++){
         const t = show[idx];
         if(k){ const pl = mk("span", "opacity:.5;font-size:20px;", "+"); pl.className = "vm-plus"; row.appendChild(pl); }
-        const c = mk("span"); c.className = "vm-cell";
+        const c = mk("span"); c.className = "vm-cell" + (isH(t) ? " vm-hoisted" : "");
         const w = mk("span", "width:" + sz + "px;height:" + sz + "px;"); w.className = "vm-ico";
         try{ const ic = makeIcon(t, { twoDJump: twoD && t === "SingleJump", progChain: dynamicProgChain(t, toks) }); ic.tabIndex = -1; ic.style.zoom = String(sz / 48.6); w.appendChild(ic); }catch(e){ w.textContent = String(t).slice(0, 2); }
         c.appendChild(w);
@@ -11016,6 +11017,10 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     ], { duration: 560, easing: "ease-in-out", fill: "forwards" });
     ring.animate([{ transform: "translate(-50%,-50%) scale(.2)", opacity: .9 }, { transform: "translate(-50%,-50%) scale(5)", opacity: 0 }], { duration: 620, delay: 380, easing: "ease-out", fill: "both" });
     cells.forEach((cell, i) => {
+      if(cell.classList.contains("vm-hoisted")){
+        cell.animate([{ transform: "translateY(-40px)", opacity: 0 }, { transform: "translateY(3px)", opacity: 1, offset: .8 }, { transform: "none", opacity: 1 }], { duration: 1100, delay: 420, easing: "cubic-bezier(.22,.7,.2,1)", fill: "backwards" });
+        return;
+      }
       const r = cell.getBoundingClientRect(), dx = cx - (r.left + r.width / 2), dy = cy - (r.top + r.height / 2);
       const sgn = (i % 2 ? 1 : -1) * (12 + i * 5);
       cell.animate([
@@ -11051,46 +11056,10 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     const chg = mk("button"); chg.type = "button"; chg.className = "vm-change";
     const pk = mk("div"); pk.className = "vm-pk"; pk.style.display = "none";
     left.append(cur, chg); reqs.appendChild(pk); left.classList.add("single");
-    // "Besides X": the requirement every method of the moon shares sits first in the list, revealed by a slow slide-down.
-    const hoistOf = new Map(); let besMoon = null;
-    const besHost = mk("div", "display:none;width:100%;display:none;justify-content:center;"); besHost.className = "vm-bes-host";
-    left.insertBefore(besHost, cur);
-    const syncBesides = it => {
-      const hs = it && hoistOf.get(it.moon), key = (hs && hs.length) ? it.moon : null;
-      if(key === besMoon) return;
-      besMoon = key; besHost.innerHTML = "";
-      if(!key){ besHost.style.display = "none"; return; }
-      const bh = buildHoistHeader(hs); bh.classList.add("vm-besides"); besHost.appendChild(bh); besHost.style.display = "flex";
-    };
-    const laneLabel = lane => (lane.tier === "unrated" && !unmarkedDebugOn()) ? TIER_LABEL.casual : (lane.label || lane.tier);
-    const flip = fn => {
-      const els = [left.firstElementChild, cur, chg].filter(e => e && e.style.display !== "none");
-      const b = els.map(e => e.getBoundingClientRect().top);
-      fn();
-      els.forEach((e, i) => { const d = b[i] - e.getBoundingClientRect().top; if(d) e.animate([{ transform: "translateY(" + d + "px)" }, { transform: "none" }], { duration: 440, easing: "cubic-bezier(.2,.9,.25,1.08)" }); });
-    };
-    const hidePk = () => { pk.style.display = "none"; pk.classList.remove("out"); chg.classList.remove("open"); };
-    const closePk = instant => {
-      if(instant === true){ left.classList.remove("picking"); hidePk(); return; }
-      if(pk.style.display === "none" || pk.classList.contains("out")) return;
-      pk.style.animationDelay = "0ms"; pk.classList.add("out");
-      flip(() => left.classList.remove("picking"));
-      setTimeout(hidePk, 160);
-    };
-    const openPk = () => {
-      if(pk.style.display !== "none") return closePk();
-      flip(() => {
-        left.classList.add("picking");
-        pk.style.top = (chg.getBoundingClientRect().bottom - reqs.getBoundingClientRect().top + 10) + "px";
-      });
-      pk.style.display = "block"; pk.classList.remove("out"); chg.classList.add("open");
-      pk.style.animation = "none"; void pk.offsetWidth; pk.style.animation = ""; pk.style.animationDelay = "120ms"; pk.scrollTop = 0;
-    };
-    chg.addEventListener("click", ev => { ev.stopPropagation(); openPk(); });
-    reqs.addEventListener("mousedown", ev => { if(!pk.contains(ev.target) && !chg.contains(ev.target) && !cur.contains(ev.target)) closePk(); });
+    // Shared ("Besides X") requirements: their icon is listed first on every method card and slides down into place.
+    const hoistOf = new Map();
     const renderCur = it => {
       cur.innerHTML = "";
-      syncBesides(it);
       if(!it) return;
       const h = mk("div"); h.className = "vm-curhead";
       if(moons.length > 1){ const n = mk("div"); n.className = "vm-nodehead"; n.textContent = it.moon.name || it.moon.label; h.appendChild(n); }
@@ -11169,7 +11138,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         const lab = mk("div"); lab.className = "vm-label"; lab.textContent = "Pick the variation"; side.appendChild(lab);
         if(gh){ const gc = mk("div", "display:flex;align-items:center;gap:12px;margin:0 0 10px;font-size:18px;font-weight:800;"); gc.appendChild(ico(gh, 56)); gc.appendChild(mk("span", "", videoTokenLabel(gh))); side.appendChild(gc); }
         vo.forEach((o, k) => {
-          const c = card(strip(o.tokens || [], 44, true), (o.tokens && o.tokens.length) ? "" : "Free");
+          const c = card(strip(o.tokens || [], 44, true, hoistOf.get(it.moon)), (o.tokens && o.tokens.length) ? "" : "Free");
           c.style.animationDelay = (k * 80 + 120) + "ms";
           window.ytVideoIdFor(o.title).then(id => { if(id) c.appendChild(vidIcon()); });
           const pick = () => { side.querySelectorAll(".vm-card").forEach(x => x.classList.remove("sel")); c.classList.add("sel"); pop(c); watch(host, it, o); };
@@ -11205,7 +11174,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
       if(moons.length > 1){ const nh = mk("div"); nh.className = "vm-nodehead"; nh.textContent = moon.name || moon.label; sec.appendChild(nh); }
       try{
         const hs = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(lanes, moon.name, (moon.isCheckpointNode || moon.isAccessPoint) ? 2 : undefined);
-        if(hs.length){ hoistOf.set(moon, hs); const bh = buildHoistHeader(hs); bh.classList.add("vm-besides"); sec.appendChild(bh); }
+        if(hs.length) hoistOf.set(moon, hoistedFormSet(hs));
       }catch(e){}
       lanes.forEach(lane => {
         const th = mk("div"); th.className = "vm-tier";
@@ -11215,7 +11184,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         lane.groups.forEach((g, i) => {
           const gh = g.find && g.find(isGhToken), sp = splitInfo(g), fixed = sp ? sp.toks : g.slice();
           const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
-          const mkCard = sz => card(fixed.length ? strip(fixed, sz, true) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
+          const mkCard = sz => card(fixed.length ? strip(fixed, sz, true, hoistOf.get(moon)) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
           const el = mkCard(30); el.style.setProperty("--i", String(Math.min(items.length, 14)));
           const it = { moon, lane, g, i, el, mk: mkCard, split: sp }; items.push(it);
           const hasVid = async () => {
