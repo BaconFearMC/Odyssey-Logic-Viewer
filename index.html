@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityWallet.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3519,7 +3519,7 @@ function videoTitleFor(moon, tierKey, group, opts){
         + others.map(t => " & " + videoTokenLabel(t)).join("");
   }
   // Node the route starts from: the method's own origin, else the checkpoint/custom node the moon is tracked from.
-  let node = (group && group.origin) || (moon && !moon.isCheckpointNode && !moon.isAccessPoint && moon.checkpoint) || "";
+  let node = (group && (group.origin || group.titleOrigin)) || (moon && !moon.isCheckpointNode && !moon.isAccessPoint && moon.checkpoint) || "";
   if(node && /(^|\s)free\s*$/i.test(String(node))) node = videoFreeNodeAnchor(moon, node, group) || node;
   // Short title: no "Kingdom" suffix, "Checkpoint" -> "CP".
   const head = kingdom ? kingdom.replace(/\s+Kingdom$/i, "") + (node ? " (from " + String(node).replace(/^from\s+/i, "").replace(/\bCheckpoint\b/gi, "CP").replace(/\b(Entrance|Exit)(\s+Pipe)?(\s*\([^)]*\))?\s*$/i, (m, k, pipe, id) => (/^entrance$/i.test(k) ? "In" : "Out") + (pipe ? " Pipe" : "") + (id || "")) + ")" : "") : "";
@@ -3539,7 +3539,7 @@ function videoOptionsFor(moon, tierKey, group){
   if(!group || !group.methodSlots || !group.ghMethods || group.ghMethods.length < 2) return null; // one method = no variations
   const extras = group.slice(1).filter(t => !isGhToken(t));
   // Methods that were only implied (e.g. a Cap Return Jump branch that is not in the node's logic) are not listed.
-  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: group.origin || null })), slot: group.methodSlots[si], tokens: m, implied: !!(group.methodImplied && group.methodImplied[si]) })).filter(o => !o.implied);
+  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: group.origin || group.titleOrigin || null })), slot: group.methodSlots[si], tokens: m, implied: !!(group.methodImplied && group.methodImplied[si]) })).filter(o => !o.implied);
 }
 function addYtBadge(nodeEl){
   if(nodeEl.querySelector(":scope > .has-video-badge")) return;
@@ -6857,7 +6857,7 @@ function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoo
       const t = document.createElement("span"); t.className = "free-tag"; t.textContent = "Free"; row.appendChild(t);
       if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); row.appendChild(ot); }
     } else {
-      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName, titleMoon));
+      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName, titleMoon, /^(Entrance|Exit) Pipe\b/.test(String(r.label || "")) ? String(r.label) : null));
     }
     wrap.appendChild(row);
   });
@@ -11003,13 +11003,13 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 @media(min-width:901px){#vtMenuOverlay .vm-wrap{align-items:center}#vtMenuOverlay .vm-wrap>.vm-main,#vtMenuOverlay .vm-wrap>.vm-side{align-self:center}#vtMenuOverlay .vm-reqs{align-self:stretch;min-height:min(620px,88vh)}}
 #vtMenuOverlay .vm-reqs .vm-left.picking>:first-child{margin-top:0}
 #vtMenuOverlay .vm-reqs .vm-left.single{justify-content:center!important}#vtMenuOverlay .vm-reqs .vm-left.single>*{margin-top:0!important;margin-bottom:0!important}#vtMenuOverlay .vm-reqs .vm-left.single>.vm-label{margin-bottom:10px!important}
-#vtMenuOverlay .vm-pk .vm-card,#vtMenuOverlay .vm-ghost-pk .vm-card{margin:6px 0;padding:10px 12px;font-size:15px;border-left-width:4px}
+#vtMenuOverlay .vm-pk .vm-card,#vtMenuOverlay .vm-ghost-pk .vm-card{margin:8px 0;padding:14px 14px;font-size:16px;border-left-width:4px}
 #vtMenuOverlay .vm-pk .vm-card{animation:vmSlide .3s both;animation-delay:calc(var(--i,0)*28ms)}
-#vtMenuOverlay .vm-pk .vm-cell,#vtMenuOverlay .vm-ghost-pk .vm-cell{width:84px;gap:5px}
-#vtMenuOverlay .vm-pk .vm-cap,#vtMenuOverlay .vm-ghost-pk .vm-cap{font-size:11px}
-#vtMenuOverlay .vm-pk .vm-plus,#vtMenuOverlay .vm-ghost-pk .vm-plus{margin-top:24px;font-size:22px}
-#vtMenuOverlay .vm-pk .vm-labeled,#vtMenuOverlay .vm-ghost-pk .vm-labeled{gap:12px}
-#vtMenuOverlay .vm-pk .vm-hint,#vtMenuOverlay .vm-ghost-pk .vm-hint{font-size:11px;margin-top:3px}
+#vtMenuOverlay .vm-pk .vm-cell,#vtMenuOverlay .vm-ghost-pk .vm-cell{width:104px;gap:7px}
+#vtMenuOverlay .vm-pk .vm-cap,#vtMenuOverlay .vm-ghost-pk .vm-cap{font-size:13px;line-height:1.2}
+#vtMenuOverlay .vm-pk .vm-plus,#vtMenuOverlay .vm-ghost-pk .vm-plus{margin-top:30px;font-size:26px}
+#vtMenuOverlay .vm-pk .vm-labeled,#vtMenuOverlay .vm-ghost-pk .vm-labeled{gap:16px}
+#vtMenuOverlay .vm-pk .vm-hint,#vtMenuOverlay .vm-ghost-pk .vm-hint{font-size:13px;margin-top:4px}
 #vtMenuOverlay .vm-side .vm-card{animation:vmFizzle .6s both}
 #vtMenuOverlay .vm-side .vm-card.vm-pop{animation:vmPop .55s ease-out}
 #vtMenuOverlay .vm-curcard.vm-landing{animation:vmLand .7s ease-out}
@@ -11298,7 +11298,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
           const gh = g.find && g.find(isGhToken), sp = splitInfo(g), fixed = sp ? sp.toks : g.slice();
           const nVar = gh ? (videoOptionsFor(moon, lane.tier, g) || []).length : 0;
           const mkCard = sz => card(fixed.length ? strip(fixed, sz, true, hoistOf.get(moon)) : null, fixed.length ? "" : "Free", nVar ? "\u25B8 " + nVar + " variations" : null);
-          const el = mkCard(44); el.style.setProperty("--i", String(Math.min(items.length, 14)));
+          const el = mkCard(60); el.style.setProperty("--i", String(Math.min(items.length, 14)));
           const it = { moon, lane, g, i, el, mk: mkCard, split: sp }; items.push(it);
           const hasVid = async () => {
             const vo2 = videoOptionsFor(moon, lane.tier, g);
@@ -12373,7 +12373,7 @@ function buildTierLanesFromBranches(branches){
 // .tier-stack/.tier-lane/.tier-pill/.option-chip classes the moon cards
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
-function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleMoon){
+function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleMoon, pipeTitleOrigin){
   if(hideAdvanced || hideExpert){ tierLanes = visLanes(tierLanes); if(!tierLanes.length) return document.createElement("div"); }
   tierLanes = promoteGroupFilters(withGroundedMerge(tierLanes));
   const stack = document.createElement("div");
@@ -12428,6 +12428,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleM
         otag.title = "This route starts from the " + andGroup.origin + " node";
         chip.appendChild(otag);
       }
+      if(pipeTitleOrigin && !andGroup.origin) andGroup.titleOrigin = pipeTitleOrigin; // title only: names the pipe without adding a "From" tag
       if(titleMoon){
         // Moon-card route chip: same title builder + same badge check as every other method chip.
         chip.dataset.videoTitle = videoHoverTitle(titleMoon, lane.tier, andGroup); attachYtBadge(chip, titleMoon, lane.tier, andGroup);
