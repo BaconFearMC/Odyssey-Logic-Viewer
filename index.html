@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilitySpinThrow.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2616,6 +2616,10 @@
   .cp-req-compact .cp-req-source{ flex:1 1 auto; min-width:0; max-width:100%; }
   .cp-req .cp-req-name, .cp-req .cp-req-name span{ white-space:normal; }
   .gh-star{ color:var(--gold); font-weight:bold; margin-left:2px; align-self:flex-start; }
+  .option-chip.has-cap-star{ position:relative; }
+  .cap-star{ position:absolute; top:1px; right:6px; color:var(--gold); font-weight:bold; font-size:20px; line-height:1; pointer-events:none; }
+  .cap-star-tip{ position:absolute; left:50%; bottom:calc(100% + 6px); transform:translateX(-50%); width:240px; z-index:40; padding:6px 9px; background:#525252; color:#fff; border:1px solid var(--border); box-shadow:1px 2px 0 rgba(0,0,0,.4); font:600 11.5px/1.35 system-ui,sans-serif; white-space:normal; text-align:left; opacity:0; visibility:hidden; transition:opacity .1s ease; pointer-events:none; }
+  .option-chip.has-cap-star:hover .cap-star-tip, .option-chip.has-cap-star:focus-visible .cap-star-tip{ opacity:1; visibility:visible; }
   .gh-star-note{ display:flex; flex-direction:column; align-items:center; gap:4px; width:100%; box-sizing:border-box; margin-top:6px; padding-top:6px;
     border-top:1px dashed rgba(230,194,0,.35); font-size:10px; color:var(--text-dim); }
   .gh-ex{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:3px 6px; }
@@ -3974,11 +3978,40 @@ function stripImpliedGroups(tierLanes){
     return g;
   }) }));
 }
+// "Any Grounded Jump (No Cap Throw)" in one level while Any Throw sits in a HIGHER level: Cap Return Jump (which needs
+// that throw) is not an option at this level. The chip is shown as "Any Grounded Jump*" with a note, but keeps its five
+// methods (no Cap Return Jump), so the video menu still never offers it.
+function starCapReturn(tierLanes){
+  if(!tierLanes || !ghTier("GroundedJumpCT") || !ghTier("GroundedJump")) return tierLanes;
+  const rk = t => (TIER_RANK[t === "unrated" ? "casual" : t] || 0);
+  const isThrow = t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1;
+  let changed = false;
+  const out = tierLanes.map(lane => {
+    if(!lane.groups.some(g => g[0] === "GroundedJump" && g.methodSlots)) return lane;
+    const groups = lane.groups.map(g => {
+      if(g[0] !== "GroundedJump" || !g.methodSlots) return g;
+      const extras = g.slice(1);
+      let hit = null;
+      tierLanes.forEach(l2 => { if(rk(l2.tier) > rk(lane.tier)) l2.groups.forEach(h => {
+        if(hit || h.implied) return;
+        if(h.some(isThrow) && h.every(t => isThrow(t) || extras.indexOf(t) !== -1) && (h.origin || null) === (g.origin || null)) hit = l2;
+      }); });
+      if(!hit) return g;
+      const n = Object.assign(g.slice(), g);
+      n[0] = "GroundedJumpCT";
+      n.capStar = { tier: hit.tier, note: "Cap Return Jump is not an option at this level: it needs Any Throw, which this route only lists under " + (TIER_LABEL[hit.tier] || hit.tier) + ". Every other grounded jump works here." };
+      changed = true;
+      return n;
+    });
+    return Object.assign({}, lane, { groups });
+  });
+  return changed ? out : tierLanes;
+}
 function withGroundedMerge(tierLanes, kingdomName){
   if(!tierLanes || submitMode) return tierLanes;
   let cur = addImpliedCapReturn(tierLanes);
   GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t); });
-  return stripImpliedGroups(cur);
+  return starCapReturn(stripImpliedGroups(cur));
 }
 // A selected Group Filter (Trickjumping, Any Vault, ...) moves its merged chip to the front of its lane.
 // Only the display order changes: each group keeps its own slot, so video lookups are unaffected.
@@ -7995,7 +8028,15 @@ function balancedRowCounts(total, max){
 let ICON_ROW_MAX = 3; // icons per row inside a requirement chip (Access Point cards widen this)
 // "Any Grounded High Jump*": one or more of the merged methods needs something extra
 // (e.g. Long Jump also needs Any Throw). Adds the star + a plain-language note to the chip.
+function appendCapStar(chip, andGroup){
+  if(!andGroup || !andGroup.capStar || chip.querySelector(":scope > .cap-star")) return;
+  const star = document.createElement("span"); star.className = "cap-star"; star.textContent = "*";
+  const tip = document.createElement("span"); tip.className = "cap-star-tip"; tip.textContent = andGroup.capStar.note;
+  chip.classList.add("has-cap-star"); chip.tabIndex = 0;
+  chip.appendChild(star); chip.appendChild(tip);
+}
 function appendGhStar(chip, andGroup){
+  appendCapStar(chip, andGroup);
   return; // disabled: no "*" and no "X method needs Y" note on merged Group Filter chips
   if(!andGroup || !andGroup.ghStar || !andGroup.ghStar.length) return;
   const lab = toks => toks.map(t => (typeof filterLabelFor === "function" ? filterLabelFor(t) : t) || t).join(" + ");
@@ -11164,6 +11205,7 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
         side.style.display = ""; side.style.animation = "none"; void side.offsetWidth; side.style.animation = (from && from.first) ? "vmSideIn .5s cubic-bezier(.2,.9,.3,1.1) both" : "";
         const lab = mk("div"); lab.className = "vm-label"; lab.textContent = "Pick the variation"; side.appendChild(lab);
         if(gh){ const gc = mk("div", "display:flex;align-items:center;gap:12px;margin:0 0 10px;font-size:18px;font-weight:800;"); gc.appendChild(ico(gh, 56)); gc.appendChild(mk("span", "", videoTokenLabel(gh))); side.appendChild(gc); }
+        if(g.capStar) side.appendChild(mk("div", "margin:0 0 10px;font-size:12px;font-weight:600;color:var(--text-dim);line-height:1.35;", "* " + g.capStar.note));
         vo.forEach((o, k) => {
           const c = card(strip(o.tokens || [], 44, true, hoistOf.get(it.moon)), (o.tokens && o.tokens.length) ? "" : "Free");
           c.style.animationDelay = (k * 80 + 120) + "ms";
