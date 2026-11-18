@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityVault.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2306,6 +2306,8 @@
   .icon-wrap.any-vault, .icon-wrap.any-capthrow{ --any-acc:var(--any-green); }
   .icon-wrap.any-sand{ --any-acc:#2fa84f; }
   .icon-wrap.any-sand::after{ color:#fff; }
+  .icon-wrap.any-badged.any-throwex{ --any-acc:#ff9a9a; }
+  .icon-wrap.any-throwex::after{ color:#1b1c1f; }
   .gh-kingdom-badge{ position:absolute; right:-9px; bottom:-9px; width:22px; height:22px; z-index:4; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
   .gh-kingdom-badge img{ width:100%; height:100%; object-fit:contain; display:block; }
   .gh-cap-badge{ position:absolute; top:-10px; z-index:4; width:26px; height:26px; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
@@ -3779,6 +3781,10 @@ let ICON_MANIFEST = {
   AnyVault: { filenames:["AbilityVault.png"], label:"Any Vault", color:"#2fa85a", category:"Movement", tokenType:"ability" },
   AnyCapThrowJump: { filenames:["AbilityCapReturnJump.png"], label:"Any Cap Throw Jump", color:"#2fa85a", category:"Movement", tokenType:"ability" },
   GroundedNoCRJ: { filenames:["AbilityJump.png"], label:"Any Grounded Height without Cap Return Jump", color:"#8d5be0", category:"Movement", tokenType:"ability" },
+  AnyThrowNoNeutral: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw except Neutral Throw", color:"#ff9a9a", category:"Movement", tokenType:"ability" },
+  AnyThrowNoUp: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw except Up Throw", color:"#ff9a9a", category:"Movement", tokenType:"ability" },
+  AnyThrowNoDown: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw except Down Throw", color:"#ff9a9a", category:"Movement", tokenType:"ability" },
+  AnyThrowNoSpin: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw except Spin Throw", color:"#ff9a9a", category:"Movement", tokenType:"ability" },
   SandHeight: { filenames:["AbilityJump.png"], label:"Any Sand Kingdom Height", color:"#2f9e4f", category:"Movement", tokenType:"ability" },
 };
 
@@ -3870,6 +3876,7 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   GroundedHeight: true, GroundedNormal: true, GroundedHigh: true, // display-only merges; never filter tiles
   GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true, GroundedJumpCT: true, NormalJump: true, ClassicCapJump: true, TortureCapJump: true, AnnoyingCapJump: true, Trickjumping: true, ShopMoons: true,
   AnyVault: true, AnyCapThrowJump: true, GroundedNoCRJ: true, SandHeight: true,
+  AnyThrowNoNeutral: true, AnyThrowNoUp: true, AnyThrowNoDown: true, AnyThrowNoSpin: true, // display-only "Any Cap Throw except X" groups
   // AnyThrow is a real filter tile now (shown next to the four Cap throws); selecting it acts like selecting all four.
 };
 
@@ -3935,6 +3942,14 @@ const GH_TIERS = [
     methods: [_CRJ, _NV, _DV] },
   { token: "GroundedNoCRJ", label: "Any Grounded Height without Cap Return Jump", cls: "any-nocrj", cycle: "cycle-7", badge: "NO CRJ", seconds: 8.75, crossed: "CapReturnJump",
     methods: [_SJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
+  { token: "AnyThrowNoNeutral", label: "Any Cap Throw except Neutral Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO NEUTRAL", seconds: 4.5, crossed: "NeutralThrow", crossedLeft: true, noTile: true, exclude: "NeutralThrow",
+    methods: [["UpThrow"], ["SpinThrow"], ["DownThrow"]] },
+  { token: "AnyThrowNoUp", label: "Any Cap Throw except Up Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO UP", seconds: 4.5, crossed: "UpThrow", crossedLeft: true, noTile: true, exclude: "UpThrow",
+    methods: [["NeutralThrow"], ["SpinThrow"], ["DownThrow"]] },
+  { token: "AnyThrowNoDown", label: "Any Cap Throw except Down Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO DOWN", seconds: 4.5, crossed: "DownThrow", crossedLeft: true, noTile: true, exclude: "DownThrow",
+    methods: [["NeutralThrow"], ["UpThrow"], ["SpinThrow"]] },
+  { token: "AnyThrowNoSpin", label: "Any Cap Throw except Spin Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO SPIN", seconds: 4.5, crossed: "SpinThrow", crossedLeft: true, noTile: true, exclude: "SpinThrow",
+    methods: [["NeutralThrow"], ["UpThrow"], ["DownThrow"]] },
   // ---- KINGDOM-SPECIFIC GROUP FILTERS ----------------------------------------------------------------------
   // Same as any other group, plus:  kingdom  -> only merges / shows on that kingdom's page
   //                                 fromNode -> only for routes starting from a node matching this pattern
@@ -3967,6 +3982,7 @@ const JUMP_GROUP_ENABLED = {
   AnyVault:         1,   // Any Vault
   AnyCapThrowJump:  0,   // Any Cap Throw Jump
   GroundedNoCRJ:    0,   // Any Grounded Height without Cap Return Jump
+  AnyThrowNoNeutral: 1, AnyThrowNoUp: 1, AnyThrowNoDown: 1, AnyThrowNoSpin: 1, // Any Cap Throw except X (display only)
   SandHeight:       1,   // Any Sand Kingdom Height (Sand Kingdom only: Any Grounded Height + Goomba + Glydon)
 };
 for(let i = GH_TIERS.length - 1; i >= 0; i--){
@@ -4163,8 +4179,17 @@ function mergeGroundedTier(tierLanes, tier, moon){
       });
     });
     const used = new Set(), merges = [];
+    const exKeys = new Set();
+    if(tier.exclude) lane.groups.forEach(g => {
+      if(!fromOk(g)) return;
+      const keys = g.map(ghTokenKey);
+      if(keys.indexOf(tier.exclude) === -1) return;
+      const extras = g.filter((t, k) => keys[k] !== tier.exclude);
+      exKeys.add(extras.slice().sort().join("+") + "|" + (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || ""));
+    });
     Object.keys(clusters).sort((a, b) => clusters[a].extras.length - clusters[b].extras.length).forEach(key => {
       const c = clusters[key];
+      if(exKeys.has(key)) return; // the excluded throw is also listed here: that is plain Any Cap Throw, not "except"
       const picked = {};
       GH_METHODS.forEach((m, si) => {
         const pos = (c.byMethod[si] || []).filter(x => !used.has(x));
@@ -8387,11 +8412,11 @@ function dynamicProgChain(token, andGroup){
   if(crj){
     if(filterMode === "cando" && anyThrowSelected()) return null;
     const grp = andGroup || [];
-    return grp.some(t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1) ? null : [ANY_THROW_TOKEN];
+    return grp.some(t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1 || (isGhToken(t) && ghTier(t).exclude)) ? null : [ANY_THROW_TOKEN];
   }
   if(!info || info.tokenType !== "capture") return null;
   const chain = [];
-  const hasThrow = andGroup.some(t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1);
+  const hasThrow = andGroup.some(t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1 || (isGhToken(t) && ghTier(t).exclude));
   if(!hasThrow) chain.push(ANY_THROW_TOKEN);
   if(_tokLabelMatch(token, COIN_COFFER_RE)){
     const w = andGroup.find(t => _tokLabelMatch(t, WALLET_RE));
@@ -9749,7 +9774,7 @@ function withTiersHidden(moon){
 // Cap Return Jump is covered by an "Any Cap Throw" method listed at a higher logic level: show icons only.
 function laneHasAnyThrow(l){
   // Any Cap Throw, or any single plain throw, listed on its own: a Cap Return Jump works off any throw.
-  return l.groups.some(g => g.length === 1 && (ghTokenKey(g[0]) === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(ghTokenKey(g[0])) !== -1));
+  return l.groups.some(g => g.length === 1 && (ghTokenKey(g[0]) === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(ghTokenKey(g[0])) !== -1 || (isGhToken(g[0]) && !!ghTier(g[0]).exclude)));
 }
 function crjListedHigherNote(lanes, lane){
   if(!lanes || !lane || !(lane.groups || []).length) return null;
@@ -12242,7 +12267,7 @@ function setupMergedFilterBar(tokens){
         [["jumps", "gfJumpsGrid"], ["vaults", "gfVaultsGrid"], ["kingdom", "gfKingdomGrid"], ["extras", "gfExtrasGrid"]].forEach(([row, gid]) => {
           const grid = document.getElementById(gid); if(!grid) return;
           // Kingdom-specific groups (tier.kingdom) live in the "kingdom" box and only on their own kingdom's page.
-          const toks = GH_TIERS.filter(t => t.kingdom ? (row === "kingdom" && t.kingdom === kName) : (t.row || "jumps") === row).map(t => t.token).filter(t => ICON_MANIFEST[t]);
+          const toks = GH_TIERS.filter(t => !t.noTile).filter(t => t.kingdom ? (row === "kingdom" && t.kingdom === kName) : (t.row || "jumps") === row).map(t => t.token).filter(t => ICON_MANIFEST[t]);
           if(row === "kingdom"){ const kl = document.getElementById("gfKingdomLabel"); if(kl) kl.textContent = kName; }
           renderOptions("ability", toks, selectedAbilities, grid, abilitySearchEl.value);
           grid.querySelectorAll(".filter-bar-none").forEach(n => n.remove());
