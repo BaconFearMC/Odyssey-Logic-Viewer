@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityVault.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -6614,6 +6614,15 @@ function buildNodeReachIndex(nodes, edges){
     if(n.node_type !== "custom_place" && n.node_type !== "checkpoint") return;
     const r = customReach(n.node_id, new Set());
     if(r) reachBranches[n.node_id] = r;
+  });
+  // The kingdom's own (overworld) stage start is a place you simply ARE on entering. An edge INTO it
+  // (e.g. Come Painting -> Start needing Paintings) only describes how a painting returns you there;
+  // it is not a cost of standing at the start, so it must never be folded into the moons tracked from it.
+  (nodes || []).forEach(n => {
+    if(n.node_type === "stage_start" && n.area_scope !== "subarea"){
+      delete reachBranches[n.node_id];
+      delete reachExprs[n.node_id];
+    }
   });
   return { reachExprs, reachBranches };
 }
