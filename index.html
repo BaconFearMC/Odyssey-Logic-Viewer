@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3591,7 +3591,7 @@ function videoHoverTitle(moon, tierKey, group){
   let t = videoTitleFor(moon, tierKey, group, { showGroups: true });
   if(group && group.mergedEntrances && group.mergedEntrances.length > 1) t += "\nEntrances: " + group.mergedEntrances.map(e => e.name).join(" / ");
   if(group && group.ghMeta) t += "\n" + ghMetaLines(group).join("\n");
-  if(group && group.ghMethods && group.methodSlots) return t + "\nBuilds as: " + group.ghMethods.filter((m, si) => !(group.methodImplied && group.methodImplied[si])).map(m => m.map(videoTokenLabel).join(" + ")).join(" / ");
+  if(group && group.ghMethods && group.methodSlots) return t + "\nBuilds as: " + group.ghMethods.map((m, si) => m.concat((group.ghMethodExtras && group.ghMethodExtras[si]) || [])).filter((m, si) => !(group.methodImplied && group.methodImplied[si])).map(m => m.map(videoTokenLabel).join(" + ")).join(" / ");
   return t;
 }
 function videoOptionsFor(moon, tierKey, group, skipEntrances){
@@ -3611,7 +3611,7 @@ function videoMethodOptionsFor(moon, tierKey, group){
   if(!group || !group.methodSlots || !group.ghMethods || group.ghMethods.length < 2) return null; // one method = no variations
   const extras = group.slice(1).filter(t => !isGhToken(t));
   // Methods that were only implied (e.g. a Cap Return Jump branch that is not in the node's logic) are not listed.
-  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: (group.methodOrigins && group.methodOrigins[si]) || group.origin || group.titleOrigin || null })), slot: group.methodSlots[si], tier: (group.methodTiers && group.methodTiers[si]) || null, tokens: m, implied: !!(group.methodImplied && group.methodImplied[si]) })).filter(o => !o.implied);
+  return group.ghMethods.map((m0, si) => { const m = m0.concat((group.ghMethodExtras && group.ghMethodExtras[si]) || []); return ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: (group.methodOrigins && group.methodOrigins[si]) || group.origin || group.titleOrigin || null })), slot: group.methodSlots[si], tier: (group.methodTiers && group.methodTiers[si]) || null, tokens: m, implied: !!(group.methodImplied && group.methodImplied[si]) }); }).filter(o => !o.implied);
 }
 function addYtBadge(nodeEl){
   if(nodeEl.querySelector(":scope > .has-video-badge")) return;
@@ -4019,7 +4019,7 @@ const JUMP_GROUP_ENABLED = {
   GroundedNoCRJ:    0,   // Any Grounded Height without Cap Return Jump
   ChestOpener: 0, ChestOpenerCapless: 0, // disabled for now
   AnyThrowNoNeutral: 1, AnyThrowNoUp: 1, AnyThrowNoDown: 1, AnyThrowNoSpin: 1, // Any Cap Throw except X (display only)
-  SandHeight:       1,   // Any Sand Kingdom Height (Sand Kingdom only: Any Grounded Height + Goomba + Glydon)
+  SandHeight:       0,   // Any Sand Kingdom Height (Sand Kingdom only). Set to 0 to remove it from the whole page: no chip on moon cards or access points, no filter tile, no hover/video entries.
 };
 for(let i = GH_TIERS.length - 1; i >= 0; i--){
   if(JUMP_GROUP_ENABLED[GH_TIERS[i].token] === 0) GH_TIERS.splice(i, 1);
@@ -4328,7 +4328,7 @@ function mergeCrossLaneTier(tierLanes, tier, moon){
       methodOrigins: meta.map(m => m.origin), methodTiers: meta.map(m => m.tier), ghMeta: meta,
       slot: slotOf(home.g, home.gi), mergedSlots: mg.picks.map(p => slotOf(lanes[p.e.li].groups[p.e.gi], p.e.gi)).sort((a, b) => a - b),
       ghStar: null, methodSlots: mg.picks.map(p => slotOf(lanes[p.e.li].groups[p.e.gi], p.e.gi)),
-      ghMethods: M.map(m => m.slice()), methodImplied: null
+      ghMethods: M.map(m => m.slice()), ghMethodExtras: meta.map(m => m.extras.slice()), methodImplied: null
     });
     at[eKey(home)] = merged;
     mg.picks.forEach(p => drop.add(eKey(p.e)));
@@ -8694,7 +8694,7 @@ function appendAndGroupIcons(chip, andGroup, extra){
         plus.textContent = "+";
         rowEl.appendChild(plus);
       }
-      rowEl.appendChild(makeIcon(tokens[idx], { twoDJump: needsTwoDJump && tokens[idx] === "SingleJump", progChain: dynamicProgChain(tokens[idx], andGroup) }));
+      rowEl.appendChild(makeIcon(tokens[idx], { twoDJump: needsTwoDJump && tokens[idx] === "SingleJump", progChain: dynamicProgChain(tokens[idx], andGroup), ghGroup: andGroup }));
       idx++;
     }
     chip.appendChild(rowEl);
@@ -8793,11 +8793,11 @@ function makeTwoDJumpBadge(){
 // Hover list for the two merged "Any ..." icons: shows every applicable option.
 let anyPopEl = null;
 function hideAnyPop(){ if(anyPopEl){ anyPopEl.remove(); anyPopEl = null; } }
-function showAnyPop(anchor, token){
+function showAnyPop(anchor, token, group){
   hideAnyPop();
   const isThrow = token === ANY_THROW_TOKEN;
   const ghT = isThrow ? null : (ghTier(token) || ghTier(GH_TOKEN));
-  const options = isThrow ? ANY_THROW_MEMBERS.map(m => [m]) : ghT.methods;
+  const options = isThrow ? ANY_THROW_MEMBERS.map(m => [m]) : ((group && group.ghMeta && group.ghMeta.length) ? group.ghMeta.map(m => m.tokens.concat(m.extras)) : ghT.methods);
   const el = document.createElement("div");
   el.className = "any-pop " + (isThrow ? "pop-throw" : "pop-grounded");
   const title = document.createElement("div");
@@ -8838,9 +8838,9 @@ function showAnyPop(anchor, token){
   el.style.visibility = "";
   anyPopEl = el;
 }
-function attachAnyPop(el, token){
-  el.addEventListener("mouseenter", () => showAnyPop(el, token));
-  el.addEventListener("focus", () => showAnyPop(el, token));
+function attachAnyPop(el, token, group){
+  el.addEventListener("mouseenter", () => showAnyPop(el, token, group));
+  el.addEventListener("focus", () => showAnyPop(el, token, group));
   el.addEventListener("mouseleave", hideAnyPop);
   el.addEventListener("blur", hideAnyPop);
 }
@@ -9016,7 +9016,7 @@ function makeIcon(token, opts){
     tip.textContent = label + ((opts && opts.twoDJump) ? " (2D Jump)" : "");
   }
   if(hpMatch) wrap.setAttribute("aria-label", "Requires 1 Damage; Needs " + hpMatch[1] + " or More Total Health");
-  if(token === ANY_THROW_TOKEN || isGhToken(token)) attachAnyPop(wrap, token);
+  if(token === ANY_THROW_TOKEN || isGhToken(token)) attachAnyPop(wrap, token, opts && opts.ghGroup);
   wrap.appendChild(tip);
 
   return wrap;
