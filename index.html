@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityVault.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2306,6 +2306,10 @@
   .icon-wrap.any-vault, .icon-wrap.any-capthrow{ --any-acc:var(--any-green); }
   .icon-wrap.any-sand{ --any-acc:#2fa84f; }
   .icon-wrap.any-sand::after{ color:#fff; }
+  .icon-wrap.any-badged.any-chest{ --any-acc:#e0ac2b; }
+  .icon-wrap.any-chest::after{ color:#1b1c1f; }
+  .gh-chest-badge{ position:absolute; top:-11px; left:-9px; z-index:4; width:28px; height:28px; pointer-events:none; filter:drop-shadow(0 1px 2px rgba(0,0,0,.8)); transform:rotate(-8deg); }
+  .gh-chest-badge .prog-icon, .gh-chest-badge .prog-fallback{ width:28px; height:28px; margin:0; border:0; border-radius:0; background:transparent; object-fit:contain; }
   .icon-wrap.any-badged.any-throwex{ --any-acc:#ff9a9a; }
   .icon-wrap.any-throwex::after{ color:#1b1c1f; }
   .gh-kingdom-badge{ position:absolute; right:-9px; bottom:-9px; width:22px; height:22px; z-index:4; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
@@ -3781,6 +3785,8 @@ let ICON_MANIFEST = {
   AnyVault: { filenames:["AbilityVault.png"], label:"Any Vault", color:"#2fa85a", category:"Movement", tokenType:"ability" },
   AnyCapThrowJump: { filenames:["AbilityCapReturnJump.png"], label:"Any Cap Throw Jump", color:"#2fa85a", category:"Movement", tokenType:"ability" },
   GroundedNoCRJ: { filenames:["AbilityJump.png"], label:"Any Grounded Height without Cap Return Jump", color:"#8d5be0", category:"Movement", tokenType:"ability" },
+  ChestOpener: { filenames:["extras/chest.png"], label:"Chest Opener (Ground Pound, Roll or any Cap Throw)", color:"#d9a521", category:"Movement", tokenType:"ability" },
+  ChestOpenerCapless: { filenames:["extras/chest.png"], label:"Chest Opener, Capless (Ground Pound or Roll)", color:"#d9a521", category:"Movement", tokenType:"ability" },
   AnyThrowNoNeutral: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw except Neutral Throw", color:"#ff9a9a", category:"Movement", tokenType:"ability" },
   AnyThrowNoUp: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw except Up Throw", color:"#ff9a9a", category:"Movement", tokenType:"ability" },
   AnyThrowNoDown: { filenames:["AbilityAnyThrow.png","AbilityNeutralThrow.png"], label:"Any Cap Throw except Down Throw", color:"#ff9a9a", category:"Movement", tokenType:"ability" },
@@ -3876,6 +3882,7 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   GroundedHeight: true, GroundedNormal: true, GroundedHigh: true, // display-only merges; never filter tiles
   GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true, GroundedJumpCT: true, NormalJump: true, ClassicCapJump: true, TortureCapJump: true, AnnoyingCapJump: true, Trickjumping: true, ShopMoons: true,
   AnyVault: true, AnyCapThrowJump: true, GroundedNoCRJ: true, SandHeight: true,
+  ChestOpener: true, ChestOpenerCapless: true,
   AnyThrowNoNeutral: true, AnyThrowNoUp: true, AnyThrowNoDown: true, AnyThrowNoSpin: true, // display-only "Any Cap Throw except X" groups
   // AnyThrow is a real filter tile now (shown next to the four Cap throws); selecting it acts like selecting all four.
 };
@@ -3942,6 +3949,11 @@ const GH_TIERS = [
     methods: [_CRJ, _NV, _DV] },
   { token: "GroundedNoCRJ", label: "Any Grounded Height without Cap Return Jump", cls: "any-nocrj", cycle: "cycle-7", badge: "NO CRJ", seconds: 8.75, crossed: "CapReturnJump",
     methods: [_SJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
+  // Chest Opener: the only moves that open a chest. Ground Pound, Roll or ANY Cap Throw (the Any Throw chip or any single throw).
+  { token: "ChestOpener", label: "Chest Opener", cls: "any-chest", cycle: "cycle-3", badge: "CHEST", seconds: 4.5, chestBadge: true, noTile: true,
+    methods: [["GroundPound"], ["Roll"], ["AnyThrow"]], methodAlts: { 2: ["AnyThrow", "NeutralThrow", "UpThrow", "SpinThrow", "DownThrow"] } },
+  { token: "ChestOpenerCapless", label: "Chest Opener (Capless)", cls: "any-chest", cycle: "cycle-2", badge: "CAPLESS", seconds: 3, chestBadge: true, noTile: true,
+    methods: [["GroundPound"], ["Roll"]] },
   { token: "AnyThrowNoNeutral", label: "Any Cap Throw except Neutral Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO NEUTRAL", seconds: 4.5, crossed: "NeutralThrow", crossedLeft: true, noTile: true, exclude: "NeutralThrow",
     methods: [["UpThrow"], ["SpinThrow"], ["DownThrow"]] },
   { token: "AnyThrowNoUp", label: "Any Cap Throw except Up Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO UP", seconds: 4.5, crossed: "UpThrow", crossedLeft: true, noTile: true, exclude: "UpThrow",
@@ -3982,6 +3994,7 @@ const JUMP_GROUP_ENABLED = {
   AnyVault:         1,   // Any Vault
   AnyCapThrowJump:  0,   // Any Cap Throw Jump
   GroundedNoCRJ:    0,   // Any Grounded Height without Cap Return Jump
+  ChestOpener: 1, ChestOpenerCapless: 1,
   AnyThrowNoNeutral: 1, AnyThrowNoUp: 1, AnyThrowNoDown: 1, AnyThrowNoSpin: 1, // Any Cap Throw except X (display only)
   SandHeight:       1,   // Any Sand Kingdom Height (Sand Kingdom only: Any Grounded Height + Goomba + Glydon)
 };
@@ -4171,8 +4184,13 @@ function mergeGroundedTier(tierLanes, tier, moon){
       if(!fromOk(g)) return;
       const keys = g.map(ghTokenKey);
       GH_METHODS.forEach((m, si) => {
-        if(!m.every(t => keys.indexOf(t) !== -1)) return;
-        const extras = g.filter((t, k) => m.indexOf(keys[k]) === -1);
+        let hit = m;
+        if(!m.every(t => keys.indexOf(t) !== -1)){
+          const alt = tier.methodAlts && tier.methodAlts[si] && tier.methodAlts[si].find(t => keys.indexOf(t) !== -1);
+          if(!alt) return;
+          hit = [alt];
+        }
+        const extras = g.filter((t, k) => hit.indexOf(keys[k]) === -1);
         const key = extras.slice().sort().join("+") + "|" + (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || "");
         const c = clusters[key] || (clusters[key] = { extras, byMethod: {} });
         (c.byMethod[si] = c.byMethod[si] || []).push(pos);
@@ -4198,7 +4216,10 @@ function mergeGroundedTier(tierLanes, tier, moon){
       if(Object.keys(picked).length !== GH_METHODS.length) return;
       const all = [].concat(...Object.values(picked));
       all.forEach(x => used.add(x));
-      merges.push({ all, extras: c.extras, first: lane.groups[all[0]], picks: GH_METHODS.map((m, si) => picked[si][0]) });
+      const _picks = GH_METHODS.map((m, si) => picked[si][0]);
+      // Alternate tokens (a single throw standing in for "Any Throw") keep their real token in the video variations.
+      const _ghM = GH_METHODS.map((m, si) => { const ks = lane.groups[_picks[si]].map(ghTokenKey); if(m.every(t => ks.indexOf(t) !== -1)) return m; const a = tier.methodAlts && tier.methodAlts[si] && tier.methodAlts[si].find(t => ks.indexOf(t) !== -1); return a ? [a] : m; });
+      merges.push({ all, extras: c.extras, first: lane.groups[all[0]], picks: _picks, ghM: _ghM });
     });
     // Set to true to bring back the condensed "*" merge. Off: methods that need something extra stay listed
     // on their own, so every requirement still shows in the logic (just less condensed).
@@ -4246,7 +4267,7 @@ function mergeGroundedTier(tierLanes, tier, moon){
     const at = {}, drop = new Set();
     merges.forEach(mg => {
       const slots = mg.all.filter(i => !lane.groups[i].implied).map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
-      const merged = Object.assign([tier.token].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null, methodSlots: mg.picks ? mg.picks.map(i => slotOf(lane.groups[i], i)) : null, ghMethods: tier.methods, methodImplied: mg.picks ? mg.picks.map(i => !!lane.groups[i].implied) : null });
+      const merged = Object.assign([tier.token].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null, methodSlots: mg.picks ? mg.picks.map(i => slotOf(lane.groups[i], i)) : null, ghMethods: mg.ghM || tier.methods, methodImplied: mg.picks ? mg.picks.map(i => !!lane.groups[i].implied) : null });
       at[Math.min(...mg.all)] = merged;
       mg.all.forEach(i => drop.add(i));
     });
@@ -7990,7 +8011,7 @@ const PYRAMID_LOGIC = {
 };
 // Kakku (Glydon) routes are only shown for these moons; hidden everywhere else in the Pyramid logic.
 const PYRAMID_KAKKU_MOONS = ["On the Lone Pillar"];
-const PYRAMID_ROW_ORDER = ["Climb through the Inverted Pyramid", "Wire from the Round Tower", "Kakku from the Round Tower"];
+const PYRAMID_ROW_ORDER = ["Climb through the Inverted Pyramid", "Wire from the Round Tower", "Kakku from the Round Tower", "Kakku from the Round Tower, hopping via the Sand Pillar"];
 
 function pyramidBranchCovers(a, b){ // does a's scenario coverage include all of b's?
   if(!a.scenarios) return true;
@@ -8709,6 +8730,10 @@ function makeIcon(token, opts){
       b.style.left = (-10 + i * 21) + "px"; b.style.transform = "rotate(" + cb.tilt + "deg)"; // top-left, tilted, slightly overlapping
       b.appendChild(makeProgImg(k)); wrap.appendChild(b);
     });
+    if(ghT.chestBadge){
+      const ch = document.createElement("span"); ch.className = "gh-chest-badge"; ch.title = "Opens chests";
+      ch.appendChild(makeProgImg(ghT.token)); wrap.appendChild(ch);
+    }
     if(ghT.plusGP){
       const pb = document.createElement("span");
       pb.className = "prog-badge prog-plus";
