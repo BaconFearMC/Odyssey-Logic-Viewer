@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -4168,7 +4168,9 @@ function mergeAnyThrowGroups(tierLanes){
       const keys = g.map(ghTokenKey);
       const th = keys.filter(k => ANY_THROW_MEMBERS.indexOf(k) !== -1);
       if(th.length !== 1) return; // exactly one throw in the method
-      const extras = g.filter((t, k) => keys[k] !== th[0]);
+      // A plain "Any Throw" listed beside the specific throw is redundant (the display already hides it), so it is
+      // not an "extra": otherwise the merged chip would carry Any Throw twice.
+      const extras = g.filter((t, k) => keys[k] !== th[0] && keys[k] !== ANY_THROW_TOKEN);
       const key = extras.slice().sort().join("+") + "|" + (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || "");
       const c = clusters[key] || (clusters[key] = { extras, by: {} });
       (c.by[th[0]] = c.by[th[0]] || []).push(pos);
