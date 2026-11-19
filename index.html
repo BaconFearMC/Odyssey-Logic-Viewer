@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -4233,7 +4233,8 @@ function mergeGroundedTier(tierLanes, tier, moon){
           if(!alt) return;
           hit = [alt];
         }
-        const extras = g.filter((t, k) => hit.indexOf(keys[k]) === -1);
+        // Any Throw-except-X groups: a plain Any Throw beside the specific throws is redundant, never an "extra".
+        const extras = g.filter((t, k) => hit.indexOf(keys[k]) === -1 && !(tier.exclude && keys[k] === ANY_THROW_TOKEN));
         const key = extras.slice().sort().join("+") + "|" + (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || "");
         const c = clusters[key] || (clusters[key] = { extras, byMethod: {} });
         (c.byMethod[si] = c.byMethod[si] || []).push(pos);
@@ -4245,7 +4246,7 @@ function mergeGroundedTier(tierLanes, tier, moon){
       if(!fromOk(g)) return;
       const keys = g.map(ghTokenKey);
       if(keys.indexOf(tier.exclude) === -1) return;
-      const extras = g.filter((t, k) => keys[k] !== tier.exclude);
+      const extras = g.filter((t, k) => keys[k] !== tier.exclude && keys[k] !== ANY_THROW_TOKEN);
       exKeys.add(extras.slice().sort().join("+") + "|" + (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || ""));
     });
     Object.keys(clusters).sort((a, b) => clusters[a].extras.length - clusters[b].extras.length).forEach(key => {
@@ -4772,6 +4773,10 @@ function sortedTokensForDisplay(tokens){
   const labelOf = token => (ICON_MANIFEST[token] ? ICON_MANIFEST[token].label : token);
   // "Any Cap Throw" is redundant when a specific Cap Throw (Neutral/Up/Down/Spin) is already in the same method.
   if(tokens.indexOf(ANY_THROW_TOKEN) !== -1 && tokens.some(t => ANY_THROW_MEMBERS.indexOf(t) !== -1)){
+    tokens = tokens.filter(t => t !== ANY_THROW_TOKEN);
+  }
+  // ...and redundant beside an "Any Cap Throw except X" group, which already says which throws count.
+  if(tokens.indexOf(ANY_THROW_TOKEN) !== -1 && tokens.some(t => isGhToken(t) && ghTier(t).exclude)){
     tokens = tokens.filter(t => t !== ANY_THROW_TOKEN);
   }
   return tokens.slice().sort((a, b) => {
