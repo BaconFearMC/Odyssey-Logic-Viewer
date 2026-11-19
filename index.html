@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDownThrow.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3582,7 +3582,7 @@ function ghMethodDetail(group, si){
   const bits = [(m.tier === "unrated" ? TIER_LABEL.casual : (TIER_LABEL[m.tier] || m.tier))];
   bits.push(m.scenarios ? scenarioListLabel(m.scenarios) : "All scenarios");
   if(m.origin) bits.push("from " + m.origin);
-  return { name: m.fromNode ? name + " (from the Round Tower Checkpoint)" : name, bits };
+  return { name: m.fromNode ? name + " (from the " + m.fromLabel + " Checkpoint)" : name, bits };
 }
 function ghMetaLines(group){ return group.ghMeta.map((m, si) => { const d = ghMethodDetail(group, si); return d.name + ": " + d.bits.join(" \u00B7 "); }); }
 function videoHoverTitle(moon, tierKey, group){
@@ -3987,8 +3987,11 @@ const GH_TIERS = [
   //                                 iconMethods -> frames the icon cycles through (defaults to `methods`)
   // To add another one, copy this entry, change kingdom/fromNode/methods and add its colour class in the CSS.
   { token: "SandHeight", label: "Any Sand Kingdom Height", cls: "any-sand", cycle: "cycle-8", badge: "SAND", seconds: 10, iconFirst: "LongJump",
-    kingdom: "Sand Kingdom", fromNode: /round\s*tower/i, fromMethodNames: ["Glydon"], fromLabel: "Round Tower",
-    desc: "Any Grounded Height, Goomba, or Glydon \u2014 Glydon only counts when it starts from the Round Tower Checkpoint.",
+    kingdom: "Sand Kingdom",
+    // Per-method starting checkpoint: Goomba only counts from the Ruins Entrance Checkpoint, Glydon only from the Round Tower Checkpoint.
+    // Every other method may start anywhere and keeps its own level / scenarios / checkpoint / extra requirements.
+    methodFrom: { Goomba: { re: /entrance/i, label: "Ruins Entrance" }, Glydon: { re: /round\s*tower/i, label: "Round Tower" } },
+    desc: "Any Grounded Height, Goomba (from the Ruins Entrance Checkpoint) or Glydon (from the Round Tower Checkpoint). Each method keeps its own logic level, scenarios and requirements.",
     capBadges: [{ name: "Goomba", tilt: 10 }, { name: "Glydon", tilt: -10 }],
     iconMethods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV],
     methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV, ["Goomba"], ["Glydon"]] },
@@ -4012,7 +4015,7 @@ const JUMP_GROUP_ENABLED = {
   AnyVault:         1,   // Any Vault
   AnyCapThrowJump:  0,   // Any Cap Throw Jump
   GroundedNoCRJ:    0,   // Any Grounded Height without Cap Return Jump
-  ChestOpener: 1, ChestOpenerCapless: 1,
+  ChestOpener: 0, ChestOpenerCapless: 0, // disabled for now
   AnyThrowNoNeutral: 1, AnyThrowNoUp: 1, AnyThrowNoDown: 1, AnyThrowNoSpin: 1, // Any Cap Throw except X (display only)
   SandHeight:       1,   // Any Sand Kingdom Height (Sand Kingdom only: Any Grounded Height + Goomba + Glydon)
 };
@@ -4039,9 +4042,19 @@ function resolveKingdomGhTiers(){
     t.capBadges.forEach(cb => { const k = resolveCaptureToken(cb.name); if(k){ cb.token = k; t.methods = t.methods.map(m => (m.length === 1 && m[0] === cb.name) ? [k] : m); } });
     t.allTokens = Array.from(new Set(t.methods.reduce((a, m) => a.concat(m), [])));
   });
-  GH_TIERS.forEach(t => { if(t.fromMethodNames) t.fromTokens = t.fromMethodNames.map(n => resolveCaptureToken(n) || n); });
+  GH_TIERS.forEach(t => {
+    if(!t.methodFrom) return;
+    t.fromMap = {};
+    Object.keys(t.methodFrom).forEach(n => { t.fromMap[resolveCaptureToken(n) || n] = t.methodFrom[n]; });
+    t.fromTokens = Object.keys(t.fromMap);
+  });
 }
 resolveKingdomGhTiers();
+// "Goomba from the Ruins Entrance Checkpoint / Glydon from the Round Tower Checkpoint"
+function ghFromNote(t){
+  if(!t || !t.fromMap) return null;
+  return t.fromTokens.map(k => ((ICON_MANIFEST[k] && ICON_MANIFEST[k].label) || k) + " from the " + t.fromMap[k].label + " Checkpoint").join(" / ");
+}
 function ghTier(token){ return GH_TIERS.find(t => t.token === token) || null; }
 function isGhToken(token){ return !!ghTier(token); }
 // Frames for the icon (static mode shows only the first one).
@@ -4219,9 +4232,21 @@ function mergeAnyThrowGroups(tierLanes){
 }
 function withGroundedMerge(tierLanes, kingdomName, moon){
   if(!tierLanes || submitMode) return tierLanes;
-  if(hideAdvanced || hideExpert) tierLanes = visLanes(tierLanes); // a hidden level must not hide inside a merged chip
-  let cur = addImpliedCapReturn(tierLanes);
-  GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t, moon); });
+  const hiding = hideAdvanced || hideExpert;
+  const crossTiers = GH_MERGE_ORDER.filter(t => t.fromMap && ghKingdomActive(kingdomName, t));
+  let cur;
+  if(hiding && crossTiers.length){
+    // Kingdom groups whose methods live on different levels (Goomba / Glydon are Advanced) merge against the moon's FULL
+    // route list first; the chip keeps each method's own level in its hover/detail rows. Hidden levels are dropped afterwards.
+    cur = addImpliedCapReturn((moon && moon._allLanes) || tierLanes);
+    crossTiers.forEach(t => { cur = mergeGroundedTier(cur, t, moon); });
+    cur = visLanes(cur);
+    GH_MERGE_ORDER.forEach(t => { if(!t.fromMap && ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t, moon); });
+  } else {
+    if(hiding) tierLanes = visLanes(tierLanes); // a hidden level must not hide inside a merged chip
+    cur = addImpliedCapReturn(tierLanes);
+    GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t, moon); });
+  }
   return starCapReturn(mergeAnyThrowGroups(stripImpliedGroups(cur)));
 }
 // A selected Group Filter (Trickjumping, Any Vault, ...) moves its merged chip to the front of its lane.
@@ -4241,8 +4266,9 @@ function promoteGroupFilters(lanes){
 function mergeCrossLaneTier(tierLanes, tier, moon){
   const M = tier.methods;
   const rk = t => (TIER_RANK[t === "unrated" ? "casual" : t] || 0);
-  const fromOk = g => g.origin ? tier.fromNode.test(g.origin) : !!(moon && moon.checkpoint && tier.fromNode.test(moon.checkpoint));
-  const isFromM = m => !!(tier.fromTokens && m.length === 1 && tier.fromTokens.indexOf(m[0]) !== -1);
+  const isFromM = m => !!(tier.fromMap && m.length === 1 && tier.fromMap[m[0]]);
+  // A route counts only when it starts at that method's own checkpoint (its origin, or the moon's tracked checkpoint when it has none).
+  const fromOk = (g, tok) => { const f = tier.fromMap[tok]; return !!f && (g.origin ? f.re.test(g.origin) : !!(moon && moon.checkpoint && f.re.test(moon.checkpoint))); };
   const isThr = t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1;
   const entries = [];
   tierLanes.forEach((lane, li) => lane.groups.forEach((g, gi) => {
@@ -4251,7 +4277,7 @@ function mergeCrossLaneTier(tierLanes, tier, moon){
     const hits = {};
     M.forEach((m, si) => {
       if(!m.every(t => keys.indexOf(t) !== -1)) return;
-      if(isFromM(m) && !(tier.fromNode ? fromOk(g) : true)) return;
+      if(isFromM(m) && !fromOk(g, m[0])) return;
       hits[si] = g.filter((t, k) => m.indexOf(keys[k]) === -1);
     });
     if(Object.keys(hits).length) entries.push({ li, gi, g, lane, hits });
@@ -4290,13 +4316,13 @@ function mergeCrossLaneTier(tierLanes, tier, moon){
   merges.forEach(mg => {
     const sorted = mg.picks.slice().sort((a, b) => rk(a.e.lane.tier) - rk(b.e.lane.tier) || a.e.gi - b.e.gi);
     const home = sorted[0].e;
-    const meta = mg.picks.map(p => ({ tier: p.e.lane.tier, scenarios: p.e.g.scenarios || null, origin: p.e.g.origin || null, extras: p.diff.slice(), tokens: M[p.si].slice(), fromNode: isFromM(M[p.si]) }));
+    const meta = mg.picks.map(p => ({ tier: p.e.lane.tier, scenarios: p.e.g.scenarios || null, origin: p.e.g.origin || null, extras: p.diff.slice(), tokens: M[p.si].slice(), fromNode: isFromM(M[p.si]), fromLabel: isFromM(M[p.si]) ? tier.fromMap[M[p.si][0]].label : null }));
     const sc = x => x ? x.slice().sort().join(",") : "";
     const sameSc = meta.every(m => sc(m.scenarios) === sc(meta[0].scenarios));
     const og = meta.filter(m => !m.fromNode).map(m => m.origin);
     const merged = Object.assign([tier.token].concat(mg.base), {
       scenarios: sameSc ? meta[0].scenarios : null, origin: og.every(o => o === og[0]) ? og[0] : null,
-      ghFrom: tier.fromTokens ? (tier.fromTokens.map(t => ICON_MANIFEST[t] ? ICON_MANIFEST[t].label : t).join(" / ") + " from the " + tier.fromLabel + " Checkpoint") : null,
+      ghFrom: ghFromNote(tier),
       methodOrigins: meta.map(m => m.origin), methodTiers: meta.map(m => m.tier), ghMeta: meta,
       slot: slotOf(home.g, home.gi), mergedSlots: mg.picks.map(p => slotOf(lanes[p.e.li].groups[p.e.gi], p.e.gi)).sort((a, b) => a - b),
       ghStar: null, methodSlots: mg.picks.map(p => slotOf(lanes[p.e.li].groups[p.e.gi], p.e.gi)),
@@ -4313,7 +4339,7 @@ function mergeCrossLaneTier(tierLanes, tier, moon){
   return out;
 }
 function mergeGroundedTier(tierLanes, tier, moon){
-  if(tier.fromTokens && tier.fromNode) return mergeCrossLaneTier(tierLanes, tier, moon);
+  if(tier.fromMap) return mergeCrossLaneTier(tierLanes, tier, moon);
   const GH_METHODS = tier.methods;
   // fromNode: only routes that start at that node (its own origin, or the moon's tracked checkpoint when it has none).
   const fromOk = g => !tier.fromNode || (g.origin ? tier.fromNode.test(g.origin) : !!(moon && moon.checkpoint && tier.fromNode.test(moon.checkpoint)));
@@ -8568,7 +8594,7 @@ function appendGhMeta(chip, andGroup){
     const row = document.createElement("div"); row.className = "gh-meta-row " + (m.tier === "unrated" ? "casual" : m.tier);
     const ic = document.createElement("span"); ic.className = "gh-meta-icons";
     m.tokens.concat(m.extras).forEach((t, i) => { if(i){ const pl = document.createElement("span"); pl.className = "and-plus"; pl.textContent = "+"; ic.appendChild(pl); } ic.appendChild(makeIcon(ICON_MANIFEST[t] ? t : (manifestKeyForGh(t) || t))); });
-    const tx = document.createElement("span"); tx.className = "gh-meta-text"; tx.textContent = d.bits.join(" \u00B7 ") + (m.fromNode ? " \u00B7 Round Tower Checkpoint" : "");
+    const tx = document.createElement("span"); tx.className = "gh-meta-text"; tx.textContent = d.bits.join(" \u00B7 ") + (m.fromNode ? " \u00B7 " + m.fromLabel + " Checkpoint" : "");
     row.title = d.name + ": " + d.bits.join(" \u00B7 "); row.appendChild(ic); row.appendChild(tx); box.appendChild(row);
   });
   if(box.childNodes.length) chip.appendChild(box);
@@ -8794,7 +8820,7 @@ function showAnyPop(anchor, token){
     });
     const name = document.createElement("span");
     name.className = "any-pop-name";
-    name.textContent = keys.map(k => filterLabelFor(k)).join(" + ") + ((ghT && ghT.fromTokens && toks.length === 1 && ghT.fromTokens.indexOf(toks[0]) !== -1) ? " (from the " + ghT.fromLabel + " Checkpoint)" : "");
+    name.textContent = keys.map(k => filterLabelFor(k)).join(" + ") + ((ghT && ghT.fromMap && toks.length === 1 && ghT.fromMap[toks[0]]) ? " (from the " + ghT.fromMap[toks[0]].label + " Checkpoint)" : "");
     row.appendChild(icons);
     row.appendChild(name);
     el.appendChild(row);
@@ -8917,7 +8943,7 @@ function makeIcon(token, opts){
     }
     (ghT.capBadges || []).forEach((cb, i) => {
       const k = cb.token || resolveCaptureToken(cb.name); if(!k) return;
-      const b = document.createElement("span"); b.className = "gh-cap-badge"; b.title = ((ICON_MANIFEST[k] && ICON_MANIFEST[k].label) || cb.name) + ((ghT.fromTokens && ghT.fromTokens.indexOf(k) !== -1) ? " (from the " + ghT.fromLabel + " Checkpoint)" : "");
+      const b = document.createElement("span"); b.className = "gh-cap-badge"; b.title = ((ICON_MANIFEST[k] && ICON_MANIFEST[k].label) || cb.name) + ((ghT.fromMap && ghT.fromMap[k]) ? " (from the " + ghT.fromMap[k].label + " Checkpoint)" : "");
       b.style.left = (-10 + i * 21) + "px"; b.style.transform = "rotate(" + cb.tilt + "deg)"; // top-left, tilted, slightly overlapping
       b.appendChild(makeProgImg(k)); wrap.appendChild(b);
     });
@@ -9658,7 +9684,7 @@ function buildMovementOptions_impl(moon, boxed){
   if(hideAdvanced || hideExpert){
     const vis = visLanes(moon.tierLanes);
     if(!vis.length) return document.createElement("div");
-    if(vis.length !== moon.tierLanes.length) moon = Object.assign({}, moon, { tierLanes: vis });
+    if(vis.length !== moon.tierLanes.length) moon = Object.assign({}, moon, { tierLanes: vis, _allLanes: moon.tierLanes });
   }
   const stack = document.createElement("div");
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
