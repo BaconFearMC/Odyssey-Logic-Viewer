@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDownThrow.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -799,7 +799,9 @@
   .gh-meta-row.casual{ border-left-color:var(--tier-casual); } .gh-meta-row.advanced{ border-left-color:var(--tier-advanced); }
   .gh-meta-row.expert{ border-left-color:#d9534f; }
   .gh-meta-icons{ display:inline-flex; align-items:center; gap:2px; transform:scale(.62); transform-origin:left center; margin-right:-26px; }
-  .gh-meta-text{ margin-left:30px; color:var(--text-dim,inherit); }
+  .gh-meta-text{ margin-left:30px; color:var(--text-dim,inherit); min-width:0; overflow-wrap:anywhere; }
+  .gh-meta-row{ min-width:0; }
+  .origin-tag.gh-from-tag{ white-space:normal; text-align:center; max-width:100%; flex:0 1 auto; overflow-wrap:anywhere; }
   .scenario-tag{
     flex:0 0 auto;
     font-size:8.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;
@@ -3988,10 +3990,10 @@ const GH_TIERS = [
   // To add another one, copy this entry, change kingdom/fromNode/methods and add its colour class in the CSS.
   { token: "SandHeight", label: "Any Sand Kingdom Height", cls: "any-sand", cycle: "cycle-8", badge: "SAND", seconds: 10, iconFirst: "LongJump",
     kingdom: "Sand Kingdom",
-    // Per-method starting checkpoint: Goomba only counts from the Ruins Entrance Checkpoint, Glydon only from the Round Tower Checkpoint.
+    // Per-method starting checkpoint: Goomba only counts from the Ruins Entrance or Town Checkpoint, Glydon only from the Round Tower Checkpoint.
     // Every other method may start anywhere and keeps its own level / scenarios / checkpoint / extra requirements.
-    methodFrom: { Goomba: { re: /entrance/i, label: "Ruins Entrance" }, Glydon: { re: /round\s*tower/i, label: "Round Tower" } },
-    desc: "Any Grounded Height, Goomba (from the Ruins Entrance Checkpoint) or Glydon (from the Round Tower Checkpoint). Each method keeps its own logic level, scenarios and requirements.",
+    methodFrom: { Goomba: { re: /entrance|town/i, label: "Ruins Entrance or Town" }, Glydon: { re: /round\s*tower/i, label: "Round Tower" } },
+    desc: "Any Grounded Height, Goomba (from the Ruins Entrance or Town Checkpoint) or Glydon (from the Round Tower Checkpoint). Each method keeps its own logic level, scenarios and requirements.",
     capBadges: [{ name: "Goomba", tilt: 10 }, { name: "Glydon", tilt: -10 }],
     iconMethods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV],
     methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV, ["Goomba"], ["Glydon"]] },
@@ -8601,7 +8603,7 @@ function appendGhMeta(chip, andGroup){
 }
 function appendGhStar(chip, andGroup){
   if(andGroup && andGroup.ghFrom){
-    const ft = document.createElement("span"); ft.className = "origin-tag"; ft.textContent = andGroup.ghFrom; ft.title = andGroup.ghFrom; chip.appendChild(ft);
+    const ft = document.createElement("span"); ft.className = "origin-tag gh-from-tag"; ft.textContent = andGroup.ghFrom; ft.title = andGroup.ghFrom; chip.appendChild(ft);
   }
   appendCapStar(chip, andGroup);
   appendGhMeta(chip, andGroup);
@@ -9173,10 +9175,57 @@ function customNodeRoutesFor(moon){
           if(n.kind === "custom" && customNodeMergesEntrances(n.kingdom, n.id)) route.rows = mergeIdenticalEntranceRows(route.rows);
         }
       }
+      if(!route.impossible) foldCrossLaneHeight(route, shown, n.kingdom, Object.assign({}, moon, { checkpoint: n.titleNode || moon.checkpoint }));
       out.push(route);
     }
   }
   return out;
+}
+
+// Kingdom group filters whose methods start at DIFFERENT places (Any Sand Kingdom Height: the grounded jumps, Goomba from the
+// Ruins Entrance, Glydon from the Round Tower) can never meet inside one "From <entrance>" row. Merge them across the whole node
+// route first (every method keeps its own level, scenarios, checkpoint and extras in the chip's ghMeta), then put the single chip
+// in the row where the group's own methods start and take the merged methods out of the other rows.
+function foldCrossLaneHeight(route, shown, kingdomName, titleMoon){
+  const tiers = GH_TIERS.filter(t => t.fromMap && ghKingdomActive(kingdomName, t));
+  if(!tiers.length || route.free || route.impossible || !shown || !shown.length) return;
+  const sb = summarizeBranches(pruneDominatedBranches(shown), kingdomName);
+  if(!sb.lanes) return;
+  const sc = x => x ? x.slice().sort().join(",") : "";
+  const key = (tier, origin, scenarios, toks) => tier + "|" + (origin || "") + "|" + sc(scenarios) + "|" + toks.slice().sort().join("+");
+  let lanes = sb.lanes, found = [];
+  tiers.forEach(t => {
+    const next = mergeCrossLaneTier(lanes, t, titleMoon);
+    if(next === lanes) return;
+    lanes = next;
+    lanes.forEach(l => l.groups.forEach(g => { if(g[0] === t.token && g.ghMeta) found.push({ g, tier: l.tier }); }));
+  });
+  if(!found.length) return;
+  if(!route.rows){ route.lanes = lanes; return; }
+  const consumed = new Set();
+  found.forEach(f => f.g.ghMeta.forEach(m => consumed.add(key(m.tier, m.origin, m.scenarios, m.tokens.concat(m.extras, f.g.slice(1))))));
+  const rowOrigin = r => String(r.label || "").replace(/^From\s+/, "");
+  route.rows.forEach(r => {
+    if(!r.lanes) return;
+    const o = rowOrigin(r);
+    r.lanes = r.lanes.map(l => Object.assign({}, l, { groups: l.groups.filter(g => !consumed.has(key(l.tier, o, g.scenarios, g))) })).filter(l => l.groups.length);
+  });
+  found.forEach(f => {
+    const base = f.g.ghMeta.find(m => !m.fromNode) || f.g.ghMeta[0];
+    const home = route.rows.find(r => r.lanes && rowOrigin(r) === (base.origin || "")) || route.rows.find(r => r.lanes) || route.rows[0];
+    if(!home) return;
+    if(!home.lanes) home.lanes = [];
+    let lane = home.lanes.find(l => l.tier === f.tier);
+    if(!lane){
+      lane = { tier: f.tier, label: TIER_LABEL[f.tier] || f.tier, groups: [] };
+      const at = home.lanes.findIndex(l => TIER_ORDER.indexOf(l.tier) > TIER_ORDER.indexOf(f.tier));
+      if(at === -1) home.lanes.push(lane); else home.lanes.splice(at, 0, lane);
+    }
+    const merged = Object.assign(f.g.slice(), f.g, { origin: null }); // the row heading already names where it starts
+    lane.groups.unshift(merged);
+    delete home.free; delete home.impossible;
+  });
+  route.rows = route.rows.filter(r => r.free || r.impossible || (r.lanes && r.lanes.length));
 }
 
 // Fills a card's "tracked from" strip: icon + kind label (CUSTOM NODE /
