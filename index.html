@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -794,6 +794,12 @@
      specific branch is only valid in certain in-game scenarios (e.g. only
      post-World Peace). Deliberately muted/neutral, not tier-colored — the
      tier color already belongs to the lane, this is an orthogonal axis. */
+  .gh-meta{ display:flex; flex-direction:column; gap:3px; margin-top:6px; width:100%; }
+  .gh-meta-row{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; line-height:1.2; padding:2px 4px; border-left:3px solid var(--border); background:rgba(255,255,255,.04); border-radius:2px; }
+  .gh-meta-row.casual{ border-left-color:var(--tier-casual); } .gh-meta-row.advanced{ border-left-color:var(--tier-advanced); }
+  .gh-meta-row.expert{ border-left-color:#d9534f; }
+  .gh-meta-icons{ display:inline-flex; align-items:center; gap:2px; transform:scale(.62); transform-origin:left center; margin-right:-26px; }
+  .gh-meta-text{ margin-left:30px; color:var(--text-dim,inherit); }
   .scenario-tag{
     flex:0 0 auto;
     font-size:8.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;
@@ -3569,9 +3575,20 @@ function videoTitleFor(moon, tierKey, group, opts){
 }
 // A merged Group Filter chip has no title of its own: it offers each member method's title to pick from.
 // Hover text: Group Filters shown by name (e.g. "Requires Any Grounded Height"), plus what it expands to when built.
+// Per-method detail of a cross-lane merged chip: level, scenarios, starting checkpoint, extra requirements.
+function ghMethodDetail(group, si){
+  const m = group.ghMeta[si], toks = m.tokens;
+  const name = toks.map(videoTokenLabel).join(" + ") + (m.extras.length ? " + " + m.extras.map(videoTokenLabel).join(" + ") : "");
+  const bits = [(m.tier === "unrated" ? TIER_LABEL.casual : (TIER_LABEL[m.tier] || m.tier))];
+  bits.push(m.scenarios ? scenarioListLabel(m.scenarios) : "All scenarios");
+  if(m.origin) bits.push("from " + m.origin);
+  return { name: m.fromNode ? name + " (from the Round Tower Checkpoint)" : name, bits };
+}
+function ghMetaLines(group){ return group.ghMeta.map((m, si) => { const d = ghMethodDetail(group, si); return d.name + ": " + d.bits.join(" \u00B7 "); }); }
 function videoHoverTitle(moon, tierKey, group){
   let t = videoTitleFor(moon, tierKey, group, { showGroups: true });
   if(group && group.mergedEntrances && group.mergedEntrances.length > 1) t += "\nEntrances: " + group.mergedEntrances.map(e => e.name).join(" / ");
+  if(group && group.ghMeta) t += "\n" + ghMetaLines(group).join("\n");
   if(group && group.ghMethods && group.methodSlots) return t + "\nBuilds as: " + group.ghMethods.filter((m, si) => !(group.methodImplied && group.methodImplied[si])).map(m => m.map(videoTokenLabel).join(" + ")).join(" / ");
   return t;
 }
@@ -3592,7 +3609,7 @@ function videoMethodOptionsFor(moon, tierKey, group){
   if(!group || !group.methodSlots || !group.ghMethods || group.ghMethods.length < 2) return null; // one method = no variations
   const extras = group.slice(1).filter(t => !isGhToken(t));
   // Methods that were only implied (e.g. a Cap Return Jump branch that is not in the node's logic) are not listed.
-  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: (group.methodOrigins && group.methodOrigins[si]) || group.origin || group.titleOrigin || null })), slot: group.methodSlots[si], tokens: m, implied: !!(group.methodImplied && group.methodImplied[si]) })).filter(o => !o.implied);
+  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: (group.methodOrigins && group.methodOrigins[si]) || group.origin || group.titleOrigin || null })), slot: group.methodSlots[si], tier: (group.methodTiers && group.methodTiers[si]) || null, tokens: m, implied: !!(group.methodImplied && group.methodImplied[si]) })).filter(o => !o.implied);
 }
 function addYtBadge(nodeEl){
   if(nodeEl.querySelector(":scope > .has-video-badge")) return;
@@ -4202,6 +4219,7 @@ function mergeAnyThrowGroups(tierLanes){
 }
 function withGroundedMerge(tierLanes, kingdomName, moon){
   if(!tierLanes || submitMode) return tierLanes;
+  if(hideAdvanced || hideExpert) tierLanes = visLanes(tierLanes); // a hidden level must not hide inside a merged chip
   let cur = addImpliedCapReturn(tierLanes);
   GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t, moon); });
   return starCapReturn(mergeAnyThrowGroups(stripImpliedGroups(cur)));
@@ -4217,7 +4235,85 @@ function promoteGroupFilters(lanes){
     return Object.assign({}, lane, { groups: groups.filter(isSel).concat(groups.filter(g => !isSel(g))) });
   });
 }
+// Kingdom group whose methods may live on different incoming edges: different logic level (lane), scenarios,
+// starting checkpoint and extra requirements. Every method keeps its own metadata in group.ghMeta; the chip sits in
+// the lowest-level lane that holds one of its methods. Methods in fromTokens (Glydon) only count from tier.fromNode.
+function mergeCrossLaneTier(tierLanes, tier, moon){
+  const M = tier.methods;
+  const rk = t => (TIER_RANK[t === "unrated" ? "casual" : t] || 0);
+  const fromOk = g => g.origin ? tier.fromNode.test(g.origin) : !!(moon && moon.checkpoint && tier.fromNode.test(moon.checkpoint));
+  const isFromM = m => !!(tier.fromTokens && m.length === 1 && tier.fromTokens.indexOf(m[0]) !== -1);
+  const isThr = t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1;
+  const entries = [];
+  tierLanes.forEach((lane, li) => lane.groups.forEach((g, gi) => {
+    if(g.implied) return;
+    const keys = g.map(ghTokenKey);
+    const hits = {};
+    M.forEach((m, si) => {
+      if(!m.every(t => keys.indexOf(t) !== -1)) return;
+      if(isFromM(m) && !(tier.fromNode ? fromOk(g) : true)) return;
+      hits[si] = g.filter((t, k) => m.indexOf(keys[k]) === -1);
+    });
+    if(Object.keys(hits).length) entries.push({ li, gi, g, lane, hits });
+  }));
+  if(!entries.length) return tierLanes;
+  const used = new Set(), merges = [];
+  const eKey = e => e.li + ":" + e.gi;
+  const bases = [];
+  entries.forEach(e => Object.values(e.hits).forEach(r => { const k = r.slice().sort().join("+"); if(!bases.some(b => b.k === k)) bases.push({ k, r }); }));
+  bases.sort((a, b) => a.r.length - b.r.length);
+  for(const b of bases){
+    for(;;){
+      const picks = [];
+      for(let si = 0; si < M.length; si++){
+        let best = null;
+        entries.forEach(e => {
+          if(used.has(eKey(e)) || !e.hits[si] || picks.some(p => p && p.e === e)) return;
+          const r = e.hits[si];
+          if(!b.r.every(t => r.indexOf(t) !== -1)) return;
+          const diff = r.filter(t => b.r.indexOf(t) === -1);
+          if(!diff.every(isThr)) return; // only a throw may ride along (Long Jump + Any Throw)
+          if(!best || diff.length < best.diff.length) best = { e, si, diff };
+        });
+        if(!best) break;
+        picks.push(best);
+      }
+      if(picks.length !== M.length) break;
+      picks.forEach(p => used.add(eKey(p.e)));
+      merges.push({ base: b.r, picks });
+    }
+  }
+  if(!merges.length) return tierLanes;
+  // Stamp each group's current slot so removing groups never shifts the video slots of the others.
+  const lanes = tierLanes.map(l => Object.assign({}, l, { groups: l.groups.map((g, i) => g.slot ? g : Object.assign(g.slice(), g, { slot: i + 1 })) }));
+  const drop = new Set(), at = {};
+  merges.forEach(mg => {
+    const sorted = mg.picks.slice().sort((a, b) => rk(a.e.lane.tier) - rk(b.e.lane.tier) || a.e.gi - b.e.gi);
+    const home = sorted[0].e;
+    const meta = mg.picks.map(p => ({ tier: p.e.lane.tier, scenarios: p.e.g.scenarios || null, origin: p.e.g.origin || null, extras: p.diff.slice(), tokens: M[p.si].slice(), fromNode: isFromM(M[p.si]) }));
+    const sc = x => x ? x.slice().sort().join(",") : "";
+    const sameSc = meta.every(m => sc(m.scenarios) === sc(meta[0].scenarios));
+    const og = meta.filter(m => !m.fromNode).map(m => m.origin);
+    const merged = Object.assign([tier.token].concat(mg.base), {
+      scenarios: sameSc ? meta[0].scenarios : null, origin: og.every(o => o === og[0]) ? og[0] : null,
+      ghFrom: tier.fromTokens ? (tier.fromTokens.map(t => ICON_MANIFEST[t] ? ICON_MANIFEST[t].label : t).join(" / ") + " from the " + tier.fromLabel + " Checkpoint") : null,
+      methodOrigins: meta.map(m => m.origin), methodTiers: meta.map(m => m.tier), ghMeta: meta,
+      slot: slotOf(home.g, home.gi), mergedSlots: mg.picks.map(p => slotOf(lanes[p.e.li].groups[p.e.gi], p.e.gi)).sort((a, b) => a - b),
+      ghStar: null, methodSlots: mg.picks.map(p => slotOf(lanes[p.e.li].groups[p.e.gi], p.e.gi)),
+      ghMethods: M.map(m => m.slice()), methodImplied: null
+    });
+    at[eKey(home)] = merged;
+    mg.picks.forEach(p => drop.add(eKey(p.e)));
+  });
+  const out = lanes.map((lane, li) => {
+    const groups = [];
+    lane.groups.forEach((g, gi) => { const k = li + ":" + gi; if(at[k]) groups.push(at[k]); else if(!drop.has(k)) groups.push(g); });
+    return Object.assign({}, lane, { groups });
+  }).filter(l => l.groups.length);
+  return out;
+}
 function mergeGroundedTier(tierLanes, tier, moon){
+  if(tier.fromTokens && tier.fromNode) return mergeCrossLaneTier(tierLanes, tier, moon);
   const GH_METHODS = tier.methods;
   // fromNode: only routes that start at that node (its own origin, or the moon's tracked checkpoint when it has none).
   const fromOk = g => !tier.fromNode || (g.origin ? tier.fromNode.test(g.origin) : !!(moon && moon.checkpoint && tier.fromNode.test(moon.checkpoint)));
@@ -4543,7 +4639,8 @@ const INCOMPLETE_GROUPS = {
 };
 const COMPLETE_ON_KINGDOM = {
   "Cap Kingdom": ["jump", "health"],
-  "Cascade Kingdom": ["jump", "health"]
+  "Cascade Kingdom": ["jump", "health"],
+  "Sand Kingdom": ["jump"]
 };
 function incompleteGroupOf(token){
   for(const g in INCOMPLETE_GROUPS) if(INCOMPLETE_GROUPS[g].indexOf(token) >= 0) return g;
@@ -8457,11 +8554,31 @@ function appendCapStar(chip, andGroup){
   chip.addEventListener("mouseenter", show); chip.addEventListener("mouseleave", hide);
   chip.addEventListener("focus", show); chip.addEventListener("blur", hide);
 }
+// Rows for the methods of a cross-lane merged chip whose level / scenarios / checkpoint / extras differ from the rest
+// (Goomba, Glydon, Long Jump + Any Throw): nothing the merge combines is hidden.
+function appendGhMeta(chip, andGroup){
+  if(!andGroup || !andGroup.ghMeta || chip.querySelector(":scope > .gh-meta")) return;
+  const sc = x => x ? x.slice().sort().join(",") : "";
+  const cnt = (f) => { const c = {}; andGroup.ghMeta.forEach(m => { const k = f(m); c[k] = (c[k] || 0) + 1; }); return Object.keys(c).sort((a, b) => c[b] - c[a])[0]; };
+  const bT = cnt(m => m.tier), bS = cnt(m => sc(m.scenarios)), bO = cnt(m => m.origin || "");
+  const box = document.createElement("div"); box.className = "gh-meta";
+  andGroup.ghMeta.forEach((m, si) => {
+    if(!(m.fromNode || m.extras.length || m.tier !== bT || sc(m.scenarios) !== bS || (m.origin || "") !== bO)) return;
+    const d = ghMethodDetail(andGroup, si);
+    const row = document.createElement("div"); row.className = "gh-meta-row " + (m.tier === "unrated" ? "casual" : m.tier);
+    const ic = document.createElement("span"); ic.className = "gh-meta-icons";
+    m.tokens.concat(m.extras).forEach((t, i) => { if(i){ const pl = document.createElement("span"); pl.className = "and-plus"; pl.textContent = "+"; ic.appendChild(pl); } ic.appendChild(makeIcon(ICON_MANIFEST[t] ? t : (manifestKeyForGh(t) || t))); });
+    const tx = document.createElement("span"); tx.className = "gh-meta-text"; tx.textContent = d.bits.join(" \u00B7 ") + (m.fromNode ? " \u00B7 Round Tower Checkpoint" : "");
+    row.title = d.name + ": " + d.bits.join(" \u00B7 "); row.appendChild(ic); row.appendChild(tx); box.appendChild(row);
+  });
+  if(box.childNodes.length) chip.appendChild(box);
+}
 function appendGhStar(chip, andGroup){
   if(andGroup && andGroup.ghFrom){
     const ft = document.createElement("span"); ft.className = "origin-tag"; ft.textContent = andGroup.ghFrom; ft.title = andGroup.ghFrom; chip.appendChild(ft);
   }
   appendCapStar(chip, andGroup);
+  appendGhMeta(chip, andGroup);
   return; // disabled: no "*" and no "X method needs Y" note on merged Group Filter chips
   if(!andGroup || !andGroup.ghStar || !andGroup.ghStar.length) return;
   const lab = toks => toks.map(t => (typeof filterLabelFor === "function" ? filterLabelFor(t) : t) || t).join(" + ");
@@ -8677,7 +8794,7 @@ function showAnyPop(anchor, token){
     });
     const name = document.createElement("span");
     name.className = "any-pop-name";
-    name.textContent = keys.map(k => filterLabelFor(k)).join(" + ");
+    name.textContent = keys.map(k => filterLabelFor(k)).join(" + ") + ((ghT && ghT.fromTokens && toks.length === 1 && ghT.fromTokens.indexOf(toks[0]) !== -1) ? " (from the " + ghT.fromLabel + " Checkpoint)" : "");
     row.appendChild(icons);
     row.appendChild(name);
     el.appendChild(row);
@@ -13240,14 +13357,14 @@ function openVideoPicker(moon, tierKey, tierLabel, andGroup){
     b.addEventListener("mouseleave", () => { b.style.background = bg; });
     return b;
   };
-  const choose = slot => { box.remove(); handleNodeClick(moon, tierKey, tierLabel, andGroup, slot, slot); };
+  const choose = (slot, tr) => { box.remove(); handleNodeClick(moon, tr || tierKey, tr ? (TIER_LABEL[tr] || tierLabel) : tierLabel, andGroup, slot, slot); };
   const renderRight = () => {
     right.innerHTML = "";
     const g = groups[cur];
     const opts = videoOptionsFor(moon, tierKey, g, true);
     if(opts){
       right.appendChild(colHead("Pick the " + videoTokenLabel(g[0])));
-      opts.forEach(o => { const b = btn(o.title, false); b.addEventListener("click", ev => { ev.stopPropagation(); choose(o.slot); }); right.appendChild(b); });
+      opts.forEach(o => { const b = btn(o.title, false); b.addEventListener("click", ev => { ev.stopPropagation(); choose(o.slot, o.tier); }); right.appendChild(b); });
     } else {
       right.appendChild(colHead("Video title"));
       const b = btn(videoTitleFor(moon, tierKey, g), false);
