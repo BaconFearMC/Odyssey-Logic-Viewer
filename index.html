@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityVault.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -4155,11 +4155,52 @@ function starCapReturn(tierLanes){
   });
   return changed ? out : tierLanes;
 }
+// All four Cap Throws (Neutral, Up, Spin, Down) listed with the SAME other tokens, scenarios and starting node
+// are one route: "Dive + Any Throw". Runs after the Group Filter merges, so tiers that name specific throws
+// (and the Any Throw-except-X groups) have already had their pick of the individual throws.
+function mergeAnyThrowGroups(tierLanes){
+  if(!tierLanes) return tierLanes;
+  let changed = false;
+  const out = tierLanes.map(lane => {
+    const clusters = {};
+    lane.groups.forEach((g, pos) => {
+      if(g.implied) return;
+      const keys = g.map(ghTokenKey);
+      const th = keys.filter(k => ANY_THROW_MEMBERS.indexOf(k) !== -1);
+      if(th.length !== 1) return; // exactly one throw in the method
+      const extras = g.filter((t, k) => keys[k] !== th[0]);
+      const key = extras.slice().sort().join("+") + "|" + (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || "");
+      const c = clusters[key] || (clusters[key] = { extras, by: {} });
+      (c.by[th[0]] = c.by[th[0]] || []).push(pos);
+    });
+    const at = {}, drop = new Set();
+    Object.keys(clusters).forEach(key => {
+      const c = clusters[key];
+      if(!ANY_THROW_MEMBERS.every(m => c.by[m] && c.by[m].length)) return;
+      const picks = ANY_THROW_MEMBERS.map(m => c.by[m][0]);
+      const all = [].concat(...ANY_THROW_MEMBERS.map(m => c.by[m]));
+      const first = lane.groups[Math.min(...all)];
+      const slots = all.map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
+      const merged = Object.assign([ANY_THROW_TOKEN].concat(c.extras), {
+        scenarios: first.scenarios || null, origin: first.origin || null, slot: slots[0], mergedSlots: slots,
+        methodSlots: picks.map(i => slotOf(lane.groups[i], i)), ghMethods: ANY_THROW_MEMBERS.map(m => [m]), methodImplied: null
+      });
+      at[Math.min(...all)] = merged;
+      all.forEach(i => drop.add(i));
+    });
+    if(!drop.size) return lane;
+    changed = true;
+    const groups = [];
+    lane.groups.forEach((g, i) => { if(at[i]) groups.push(at[i]); else if(!drop.has(i)) groups.push(g); });
+    return Object.assign({}, lane, { groups });
+  });
+  return changed ? out : tierLanes;
+}
 function withGroundedMerge(tierLanes, kingdomName, moon){
   if(!tierLanes || submitMode) return tierLanes;
   let cur = addImpliedCapReturn(tierLanes);
   GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t, moon); });
-  return starCapReturn(stripImpliedGroups(cur));
+  return starCapReturn(mergeAnyThrowGroups(stripImpliedGroups(cur)));
 }
 // A selected Group Filter (Trickjumping, Any Vault, ...) moves its merged chip to the front of its lane.
 // Only the display order changes: each group keeps its own slot, so video lookups are unaffected.
@@ -4396,6 +4437,15 @@ const KINGDOM_ACCESS_FILENAME_OVERRIDES = {
 // Kingdom name -> its own "Kingdom Access" icon filename (no .png), used to
 // show a small icon next to the kingdom's name in the pager and in search
 // results.
+// Real moon-card count per kingdom (unfiltered). The grid is built lazily as you scroll, so the page used to be
+// far shorter than its final size and the side rail jumped around. renderGrid now reserves the space for every
+// card that is still to come (it uses the live list length, so filters stay exact) and checks it against this table.
+const KINGDOM_MOON_COUNT = {
+  "Cap Kingdom": 31, "Cascade Kingdom": 40, "Sand Kingdom": 89, "Lake Kingdom": 42, "Wooded Kingdom": 76,
+  "Cloud Kingdom": 9, "Lost Kingdom": 35, "Metro Kingdom": 81, "Snow Kingdom": 55, "Seaside Kingdom": 71,
+  "Luncheon Kingdom": 68, "Ruined Kingdom": 10, "Bowser's Kingdom": 62, "Moon Kingdom": 38, "Mushroom Kingdom": 43,
+  "Dark Side": 24, "Darker Side": 1
+};
 const KINGDOM_ICON_FILENAME = {
   "Cap Kingdom": "capkingdomaccess",
   "Cascade Kingdom": "cascadekingdomaccess",
@@ -10457,6 +10507,7 @@ function renderGrid(){
   }
 
   emptyState.style.display = "none";
+  window.__gridTotal = null;
   if(viewMode === "checkpoint"){
     grid.style.display = "none";
     checkpointGroups.style.display = "grid";
@@ -10470,6 +10521,45 @@ function renderGrid(){
     // Once every card exists, the access panels are allowed to render the same way. goToMoon flushes on demand.
     const fillToken = grid.__fillToken, FIRST = 8, BATCH = 8;
     let gi = 0;
+    const total = moons.length;
+    window.__gridTotal = total;
+    try{
+      const kn = KINGDOM_ORDER[currentKingdomIndex];
+      if(!moonFiltersActive() && !tokenGridFiltering && !unmarkedMode && glitchMode === "hide" && videoMode === "all" && KINGDOM_MOON_COUNT[kn] !== undefined && KINGDOM_MOON_COUNT[kn] !== total)
+        console.warn("[grid] " + kn + ": expected " + KINGDOM_MOON_COUNT[kn] + " moons, data has " + total);
+    }catch(e){}
+    let spacer = null;
+    const gridCols = () => Math.max(1, getComputedStyle(grid).gridTemplateColumns.split(" ").filter(x => x && x !== "none").length);
+    // Reserve the height of every card that has not been built yet, so the page (and the side rail) is full size from the start.
+    const updateSpacer = () => {
+      const remaining = total - gi;
+      if(remaining <= 0){ if(spacer){ spacer.remove(); spacer = null; } return; }
+      if(!spacer){ spacer = document.createElement("div"); spacer.className = "grid-spacer"; spacer.setAttribute("aria-hidden", "true"); spacer.style.cssText = "grid-column:1 / -1;pointer-events:none;"; }
+      if(grid.lastElementChild !== spacer) grid.appendChild(spacer);
+      const cards = Array.from(grid.children).filter(c => c.classList.contains("moon-card"));
+      const gap = parseFloat(getComputedStyle(grid).rowGap) || 14;
+      const avg = cards.length ? cards.reduce((a, c) => a + c.offsetHeight, 0) / cards.length : 260;
+      const rows = Math.ceil(remaining / gridCols());
+      spacer.style.height = Math.max(0, rows * avg + (rows - 1) * gap) + "px";
+    };
+    // The last row of a grid rarely fills every column: centre its 1-3 cards horizontally.
+    const centerLast = () => {
+      const cards = Array.from(grid.children).filter(c => c.classList.contains("moon-card"));
+      cards.forEach(c => { c.style.translate = ""; });
+      if(spacer || !cards.length || grid.style.display === "none") return;
+      const cols = gridCols(), r = cards.length % cols;
+      if(!r || cols < 2) return;
+      const gapX = parseFloat(getComputedStyle(grid).columnGap) || 14;
+      const colW = cards[0].offsetWidth;
+      const shift = ((cols - r) * (colW + gapX)) / 2;
+      cards.slice(cards.length - r).forEach(c => { c.style.translate = shift + "px 0"; });
+    };
+    grid.__relayout = () => { updateSpacer(); centerLast(); };
+    if(!grid.__ro && typeof ResizeObserver !== "undefined"){
+      let lastW = 0;
+      grid.__ro = new ResizeObserver(() => { if(grid.clientWidth === lastW) return; lastW = grid.clientWidth; if(grid.__relayout) grid.__relayout(); });
+      grid.__ro.observe(grid);
+    }
     if(window.__gridIO){ window.__gridIO.disconnect(); window.__gridIO = null; }
     let sentinel = document.getElementById("gridSentinel");
     if(!sentinel){
@@ -10479,7 +10569,9 @@ function renderGrid(){
     const gStep = n => {
       const frag = document.createDocumentFragment();
       for(const end = Math.min(moons.length, gi + n); gi < end; gi++) frag.appendChild(LAZY_CLASSIC_NODES ? buildLazyMoonCard(moons[gi]) : buildMoonCard(moons[gi]));
-      grid.appendChild(frag);
+      grid.insertBefore(frag, spacer);
+      updateSpacer();
+      centerLast();
       measureOptionsCollapsiblesIn(grid);
       applyFilterMatchHighlight();
     };
@@ -10507,12 +10599,12 @@ function renderGrid(){
         if(grid.__fillToken !== fillToken || !grid.isConnected){ io.disconnect(); return; }
         if(!es.some(e => e.isIntersecting)) return;
         gStep(BATCH);
-        io.unobserve(sentinel);
-        if(gi < moons.length) requestAnimationFrame(() => io.observe(sentinel)); // re-check: still near the bottom?
+        io.disconnect();
+        if(gi < moons.length) requestAnimationFrame(() => { if(grid.__fillToken === fillToken) io.observe(spacer || sentinel); }); // re-check: still near the bottom?
         else { io.disconnect(); window.__gridIO = null; window.__flushGridFill = null; watchAccess(); }
       }, { rootMargin: "600px 0px" });
       window.__gridIO = io;
-      io.observe(sentinel);
+      io.observe(spacer || sentinel);
     } else {
       watchAccess();
     }
@@ -14202,8 +14294,9 @@ init();
 
   function measure(){
     const m = moonsEl(), a = accessEls();
-    nodes.moons.hidden = !m; nodes.access.hidden = !a.length;
-    rail.classList.toggle("ready", !!(m || a.length));
+    const accessSoon = !!window.__accessPending;
+    nodes.moons.hidden = !m; nodes.access.hidden = !(a.length || accessSoon);
+    rail.classList.toggle("ready", !!(m || a.length || accessSoon));
     const my = m ? Math.max(0, absTop(m) - 20) : 0;
     const ay = a.length ? Math.min(maxY(), Math.max(0, absTop(a[0]) - 20)) : maxY();
     A = my; B = Math.max(ay, my + 1);
@@ -14243,7 +14336,8 @@ init();
       else {
         let idx = cards.findIndex(c => c.getBoundingClientRect().bottom > 90);
         if(idx < 0) idx = cards.length - 1;
-        const lo = Math.floor(idx / CHUNK) * CHUNK, hi = Math.min(cards.length, lo + CHUNK);
+        const totalCards = Math.max(cards.length, window.__gridTotal || 0);
+        const lo = Math.floor(idx / CHUNK) * CHUNK, hi = Math.min(totalCards, lo + CHUNK);
         txt = hi - lo === 1 ? "Moon " + (lo + 1) : "Moons " + (lo + 1) + "\u2013" + hi;
       }
     }
