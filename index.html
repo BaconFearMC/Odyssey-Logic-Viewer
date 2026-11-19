@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3592,7 +3592,7 @@ function videoMethodOptionsFor(moon, tierKey, group){
   if(!group || !group.methodSlots || !group.ghMethods || group.ghMethods.length < 2) return null; // one method = no variations
   const extras = group.slice(1).filter(t => !isGhToken(t));
   // Methods that were only implied (e.g. a Cap Return Jump branch that is not in the node's logic) are not listed.
-  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: group.origin || group.titleOrigin || null })), slot: group.methodSlots[si], tokens: m, implied: !!(group.methodImplied && group.methodImplied[si]) })).filter(o => !o.implied);
+  return group.ghMethods.map((m, si) => ({ title: videoTitleFor(moon, tierKey, Object.assign(extras.concat(m), { origin: (group.methodOrigins && group.methodOrigins[si]) || group.origin || group.titleOrigin || null })), slot: group.methodSlots[si], tokens: m, implied: !!(group.methodImplied && group.methodImplied[si]) })).filter(o => !o.implied);
 }
 function addYtBadge(nodeEl){
   if(nodeEl.querySelector(":scope > .has-video-badge")) return;
@@ -3970,7 +3970,8 @@ const GH_TIERS = [
   //                                 iconMethods -> frames the icon cycles through (defaults to `methods`)
   // To add another one, copy this entry, change kingdom/fromNode/methods and add its colour class in the CSS.
   { token: "SandHeight", label: "Any Sand Kingdom Height", cls: "any-sand", cycle: "cycle-8", badge: "SAND", seconds: 10, iconFirst: "LongJump",
-    kingdom: "Sand Kingdom", fromNode: /round\s*tower/i,
+    kingdom: "Sand Kingdom", fromNode: /round\s*tower/i, fromMethodNames: ["Glydon"], fromLabel: "Round Tower",
+    desc: "Any Grounded Height, Goomba, or Glydon \u2014 Glydon only counts when it starts from the Round Tower Checkpoint.",
     capBadges: [{ name: "Goomba", tilt: 10 }, { name: "Glydon", tilt: -10 }],
     iconMethods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV],
     methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV, ["Goomba"], ["Glydon"]] },
@@ -4021,6 +4022,7 @@ function resolveKingdomGhTiers(){
     t.capBadges.forEach(cb => { const k = resolveCaptureToken(cb.name); if(k){ cb.token = k; t.methods = t.methods.map(m => (m.length === 1 && m[0] === cb.name) ? [k] : m); } });
     t.allTokens = Array.from(new Set(t.methods.reduce((a, m) => a.concat(m), [])));
   });
+  GH_TIERS.forEach(t => { if(t.fromMethodNames) t.fromTokens = t.fromMethodNames.map(n => resolveCaptureToken(n) || n); });
 }
 resolveKingdomGhTiers();
 function ghTier(token){ return GH_TIERS.find(t => t.token === token) || null; }
@@ -4219,14 +4221,19 @@ function mergeGroundedTier(tierLanes, tier, moon){
   const GH_METHODS = tier.methods;
   // fromNode: only routes that start at that node (its own origin, or the moon's tracked checkpoint when it has none).
   const fromOk = g => !tier.fromNode || (g.origin ? tier.fromNode.test(g.origin) : !!(moon && moon.checkpoint && tier.fromNode.test(moon.checkpoint)));
+  // With fromTokens, ONLY those methods (Glydon) must start from the node (Round Tower); every other method may start anywhere.
+  const isFromMethod = m => !!(tier.fromTokens && m.length === 1 && tier.fromTokens.indexOf(m[0]) !== -1);
+  const fromOkFor = (g, m) => !tier.fromNode || (tier.fromTokens && !isFromMethod(m)) || fromOk(g);
+  const keyOrigin = g => tier.fromTokens ? "" : (g.origin || "");
   let changed = false;
   const out = tierLanes.map(lane => {
     // Every way a group can be "one Grounded Height method + extra tokens".
     const clusters = {}; // key (extras|scenarios|origin) -> { extras, byMethod:{specIdx:[pos]} }
     lane.groups.forEach((g, pos) => {
-      if(!fromOk(g)) return;
+      if(!tier.fromNode ? false : (!tier.fromTokens && !fromOk(g))) return;
       const keys = g.map(ghTokenKey);
       GH_METHODS.forEach((m, si) => {
+        if(!fromOkFor(g, m)) return;
         let hit = m;
         if(!m.every(t => keys.indexOf(t) !== -1)){
           const alt = tier.methodAlts && tier.methodAlts[si] && tier.methodAlts[si].find(t => keys.indexOf(t) !== -1);
@@ -4235,7 +4242,7 @@ function mergeGroundedTier(tierLanes, tier, moon){
         }
         // Any Throw-except-X groups: a plain Any Throw beside the specific throws is redundant, never an "extra".
         const extras = g.filter((t, k) => hit.indexOf(keys[k]) === -1 && !(tier.exclude && keys[k] === ANY_THROW_TOKEN));
-        const key = extras.slice().sort().join("+") + "|" + (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || "");
+        const key = extras.slice().sort().join("+") + "|" + (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + keyOrigin(g);
         const c = clusters[key] || (clusters[key] = { extras, byMethod: {} });
         (c.byMethod[si] = c.byMethod[si] || []).push(pos);
       });
@@ -4264,6 +4271,13 @@ function mergeGroundedTier(tierLanes, tier, moon){
       // Alternate tokens (a single throw standing in for "Any Throw") keep their real token in the video variations.
       const _ghM = GH_METHODS.map((m, si) => { const ks = lane.groups[_picks[si]].map(ghTokenKey); if(m.every(t => ks.indexOf(t) !== -1)) return m; const a = tier.methodAlts && tier.methodAlts[si] && tier.methodAlts[si].find(t => ks.indexOf(t) !== -1); return a ? [a] : m; });
       merges.push({ all, extras: c.extras, first: lane.groups[all[0]], picks: _picks, ghM: _ghM });
+      if(tier.fromTokens){
+        const mg0 = merges[merges.length - 1];
+        const og = GH_METHODS.map((m, si) => isFromMethod(m) ? null : (lane.groups[_picks[si]].origin || null)).filter((o, si) => !isFromMethod(GH_METHODS[si]));
+        mg0.origin = og.every(o => o === og[0]) ? og[0] : null;
+        mg0.methodOrigins = GH_METHODS.map((m, si) => lane.groups[_picks[si]].origin || null);
+        mg0.fromNote = (tier.fromTokens.map(t => ICON_MANIFEST[t] ? ICON_MANIFEST[t].label : t).join(" / ")) + " from the " + tier.fromLabel + " Checkpoint";
+      }
     });
     // Set to true to bring back the condensed "*" merge. Off: methods that need something extra stay listed
     // on their own, so every requirement still shows in the logic (just less condensed).
@@ -4311,7 +4325,7 @@ function mergeGroundedTier(tierLanes, tier, moon){
     const at = {}, drop = new Set();
     merges.forEach(mg => {
       const slots = mg.all.filter(i => !lane.groups[i].implied).map(i => slotOf(lane.groups[i], i)).sort((a, b) => a - b);
-      const merged = Object.assign([tier.token].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: mg.first.origin || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null, methodSlots: mg.picks ? mg.picks.map(i => slotOf(lane.groups[i], i)) : null, ghMethods: mg.ghM || tier.methods, methodImplied: mg.picks ? mg.picks.map(i => !!lane.groups[i].implied) : null });
+      const merged = Object.assign([tier.token].concat(mg.extras), { scenarios: mg.first.scenarios || null, origin: ("origin" in mg ? mg.origin : (mg.first.origin || null)), ghFrom: mg.fromNote || null, methodOrigins: mg.methodOrigins || null, slot: slots[0], mergedSlots: slots, ghStar: mg.star || null, methodSlots: mg.picks ? mg.picks.map(i => slotOf(lane.groups[i], i)) : null, ghMethods: mg.ghM || tier.methods, methodImplied: mg.picks ? mg.picks.map(i => !!lane.groups[i].implied) : null });
       at[Math.min(...mg.all)] = merged;
       mg.all.forEach(i => drop.add(i));
     });
@@ -8444,6 +8458,9 @@ function appendCapStar(chip, andGroup){
   chip.addEventListener("focus", show); chip.addEventListener("blur", hide);
 }
 function appendGhStar(chip, andGroup){
+  if(andGroup && andGroup.ghFrom){
+    const ft = document.createElement("span"); ft.className = "origin-tag"; ft.textContent = andGroup.ghFrom; ft.title = andGroup.ghFrom; chip.appendChild(ft);
+  }
   appendCapStar(chip, andGroup);
   return; // disabled: no "*" and no "X method needs Y" note on merged Group Filter chips
   if(!andGroup || !andGroup.ghStar || !andGroup.ghStar.length) return;
@@ -8783,7 +8800,7 @@ function makeIcon(token, opts){
     }
     (ghT.capBadges || []).forEach((cb, i) => {
       const k = cb.token || resolveCaptureToken(cb.name); if(!k) return;
-      const b = document.createElement("span"); b.className = "gh-cap-badge"; b.title = (ICON_MANIFEST[k] && ICON_MANIFEST[k].label) || cb.name;
+      const b = document.createElement("span"); b.className = "gh-cap-badge"; b.title = ((ICON_MANIFEST[k] && ICON_MANIFEST[k].label) || cb.name) + ((ghT.fromTokens && ghT.fromTokens.indexOf(k) !== -1) ? " (from the " + ghT.fromLabel + " Checkpoint)" : "");
       b.style.left = (-10 + i * 21) + "px"; b.style.transform = "rotate(" + cb.tilt + "deg)"; // top-left, tilted, slightly overlapping
       b.appendChild(makeProgImg(k)); wrap.appendChild(b);
     });
