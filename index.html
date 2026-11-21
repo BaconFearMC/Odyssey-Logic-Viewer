@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2321,8 +2321,8 @@
   .icon-wrap.any-shop{ --any-acc:#f0c040; }
   /* Three overlapped icons (Neutral Throw + Vault + Dive): top-left, centre, bottom-right. */
   .cycle-frame.pair.trio > :nth-child(1){ width:58%; height:58%; top:0; left:0; right:auto; bottom:auto; z-index:1; }
-  .cycle-frame.pair.trio > :nth-child(2){ width:58%; height:58%; top:21%; left:21%; right:auto; bottom:auto; z-index:2; box-shadow:-1px -1px 0 var(--bg-panel); }
-  .cycle-frame.pair.trio > :nth-child(3){ width:58%; height:58%; top:auto; left:auto; right:0; bottom:0; z-index:3; box-shadow:-1px -1px 0 var(--bg-panel); }
+  .cycle-frame.pair.trio > :nth-child(2){ width:58%; height:58%; top:21%; left:21%; right:auto; bottom:auto; z-index:2; }
+  .cycle-frame.pair.trio > :nth-child(3){ width:58%; height:58%; top:auto; left:auto; right:0; bottom:0; z-index:3; }
   .icon-wrap.any-high{ --any-acc:#2347b5; }
   .icon-wrap.any-high::after{ color:#fff; }
   .icon-wrap.any-height-gp, .icon-wrap.any-jump-gp{ --any-acc:var(--any-amber); }
@@ -2380,7 +2380,7 @@
   }
   .cycle-frame > .icon, .cycle-frame > .icon-fallback{ position:absolute; width:100%; height:100%; top:0; left:0; clip-path:none; border:0; }
   .cycle-frame.pair > :first-child{ width:64%; height:64%; top:0; left:0; z-index:1; }
-  .cycle-frame.pair > :last-child{ width:64%; height:64%; top:auto; left:auto; right:0; bottom:0; z-index:2; box-shadow:-1px -1px 0 var(--bg-panel); }
+  .cycle-frame.pair > :last-child{ width:64%; height:64%; top:auto; left:auto; right:0; bottom:0; z-index:2; }
   .cycle-frame.static{ animation:none; opacity:1; }
   .cycle-4{ animation-name:cycle4; }
   .cycle-8{ animation-name:cycle8; }
@@ -2426,8 +2426,24 @@
   .any-pop-pair .pair-half{ position:absolute; width:64%; height:64%; }
   .any-pop-grid .any-pop-pair .pair-half .icon-wrap, .any-pop-grid .any-pop-pair .pair-half .icon, .any-pop-grid .any-pop-pair .pair-half .icon-fallback{ width:100%; height:100%; }
   .any-pop-pair .pair-0{ top:0; left:0; z-index:1; }
-  .any-pop-pair .pair-1{ bottom:0; right:0; z-index:2; box-shadow:-1px -1px 0 var(--bg-panel); }
+  .any-pop-pair .pair-1{ bottom:0; right:0; z-index:2; }
   .any-pop-caption{ margin-top:6px; min-height:16px; width:0; min-width:100%; text-align:center; font-size:12.5px; color:var(--text); white-space:normal; }
+
+  /* Group Filter grey plates (toggle: GROUP_FILTER_GREY_BG in the script) */
+  html.gf-grey .any-badged{ --any-acc:#808080 !important; }
+  html.gf-grey .filter-option.selected .filter-option-iconbox.any-badged::before, html.gf-grey .icon-wrap.any-badged.filter-match::before{ background:var(--gold); }
+  .any-badged .icon, .any-badged .icon-fallback, .any-badged .cycle-frame > *{ border:0 !important; outline:0 !important; box-shadow:none !important; }
+  /* Group Filter popup: icons fill the popup, no reserved dead space */
+  .any-pop-grid .icon-wrap, .any-pop-grid .icon, .any-pop-grid .icon-fallback{ width:64px; height:64px; }
+  .any-pop-opt{ padding:4px !important; align-self:stretch; }
+  .any-pop-pair{ width:72px !important; height:72px !important; }
+  .any-pop-caption{ min-height:0 !important; margin-top:4px !important; }
+  .any-pop{ padding-bottom:6px !important; }
+  /* Progressive chips (Triple Jump / Roll Boost) */
+  .prog-badge.prog-pair{ top:-19px !important; right:-6px !important; gap:5px !important; padding:2px 3px; background:var(--bg-panel); border:1px solid rgba(255,255,255,.18); box-shadow:0 2px 0 rgba(0,0,0,.45); clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px); }
+  .prog-badge.prog-pair .prog-icon, .prog-badge.prog-pair .prog-fallback{ width:24px !important; height:24px !important; border-radius:4px !important; }
+  .prog-badge.prog-pair .prog-arrow{ position:static !important; width:auto !important; height:auto !important; background:none !important; border:0 !important; color:var(--gold); font-size:11px !important; align-self:center; order:0; }
+  .filter-option-icon.moon-icon .prog-badge.prog-pair{ top:-22px !important; right:-10px !important; }
   .any-pop-name{ font-size:12.5px; color:var(--text); white-space:nowrap; }
   .prog-icon.prog-any{ position:relative; overflow:hidden; padding:0; }
   .prog-icon.prog-any .cycle-frame{ clip-path:none; border-radius:4px; }
@@ -3412,6 +3428,12 @@ if(!VIDEOS_ENABLED) document.documentElement.classList.add("videos-off");
    1 = they cycle through every option like a gif (old behavior). */
 const ANIMATED_ANY_ICONS = 0;
 
+// >>> QUICK TOGGLE: Group Filter plate backgrounds.
+//     1 = plain 50% grey plates (the page background colour comes through better)
+//     0 = old behavior: each Group Filter plate is tinted with its own accent colour
+const GROUP_FILTER_GREY_BG = 1;
+if(GROUP_FILTER_GREY_BG) document.documentElement.classList.add("gf-grey");
+
 // >>> 0 = a "<Moon> Free" node's own reach cost is crossed into the moon like any other node
 //     (a moon is only "Free" if getting to the node is genuinely free).
 //     1 = old behavior: a moon sitting on a Free node always reads plain "Free".
@@ -3517,7 +3539,30 @@ function nodeIsOtherMoonsFree(moon, name){
   }
   return b.some(x => _moonNameSet.has(x));
 }
+// "<X> KFR" custom nodes belong ONLY to "<X> Kingdom Regular Cup" and "<X> Kingdom Master Cup".
+function nodeKfrHiddenOnMoon(moon, name){
+  const m = /^\s*(.+?)\s+KFR\b/i.exec(String(name == null ? "" : name));
+  if(!m || !moon) return false;
+  const x = _nrmMoon(m[1]), mn = _nrmMoon(moon.name);
+  return !(mn === x + "kingdomregularcup" || mn === x + "kingdommastercup");
+}
+// If a moon has a Custom Node named after itself ("<Moon>" or "<Moon> Free"), ONLY that node shows on the moon.
+function moonOwnNamedNodes(moon){
+  if(!moon) return [];
+  const me = _nrmMoon(moon.name), out = [];
+  const chk = n => {
+    const raw = String(n == null ? "" : n).replace(/\s*\([^)]*\)\s*$/, "").trim();
+    const base = raw.replace(/\s+free\s*$/i, "").trim();
+    return _nrmMoon(base) === me || _nrmMoon(base.replace(/\s*moon\s*$/i, "")) === me;
+  };
+  if(moon.checkpoint && chk(moon.checkpoint)) out.push(moon.checkpoint);
+  (moon._extraNodes || []).forEach(x => { if(x && chk(x.name)) out.push(x.name); });
+  return out;
+}
 function nodeHiddenOnMoon(moon, nodeId, name, kingdom){
+  if(nodeKfrHiddenOnMoon(moon, name)) return true;
+  const own = moonOwnNamedNodes(moon);
+  if(own.length && own.indexOf(name) === -1) return true;
   return nodeOutsideMoonSubarea(moon, nodeId, kingdom) || nodeIsOtherMoonsFree(moon, name);
 }
 function nodeOutsideMoonSubarea(moon, nodeId, kingdom){
