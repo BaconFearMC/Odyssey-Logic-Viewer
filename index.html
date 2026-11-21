@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -644,6 +644,7 @@
     clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
   }
   .badge .icon-svg{ width:17.55px; height:17.55px; }
+  .badge.subareadoor{ background:var(--bg-chip); border-color:var(--border-hi, var(--border)); }
   .badge.moonrock{ background:var(--moonrock-bg); color:var(--moonrock); border-color:var(--moonrock-border);}
   .badge.worldpeace{ background:var(--worldpeace-bg); color:var(--worldpeace); border-color:var(--worldpeace-border);}
   /* Checkpoint icon and Subarea icon share the same slot/size (bottom-right
@@ -9445,6 +9446,31 @@ function nodeShownName(name, moonName){
   if(noMoon && norm(noMoon) === target) return noMoon;
   return raw;
 }
+// Top-right badge row: Subarea door icon (for "Inside · Subarea" moons) sits to the LEFT of the Moon Rock icon,
+// and the Moon Rock icon is always the right-most badge.
+function makeMoonBadgeRow(moon){
+  const list = (moon.badges || []).slice().sort((a, b) => (a === "moonRock") - (b === "moonRock"));
+  const hasDoor = !!(moon.subarea && SHOW_SUBAREA_ACCESS_ON_MOONS);
+  if(!list.length && !hasDoor) return null;
+  const row = document.createElement("div");
+  row.className = "badges";
+  if(hasDoor){
+    const el = document.createElement("div");
+    el.className = "badge subareadoor";
+    el.title = "Inside · " + String(moon.subarea).replace(/\s*Subarea\s*$/i, "");
+    el.innerHTML = '<img class="icon-svg" src="icon/infosubarea.png" alt="Subarea" onerror="this.style.display=\'none\'">';
+    row.appendChild(el);
+  }
+  list.forEach(b => {
+    const info = b === "moonRock" ? {label:"Moon Rock", file:"badge-moon-rock.png"} : {label:"World Peace", file:"badge-world-peace.png"};
+    const el = document.createElement("div");
+    el.className = "badge " + b.toLowerCase();
+    el.title = info.label;
+    el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '" onerror="this.style.display=\'none\'">';
+    row.appendChild(el);
+  });
+  return row;
+}
 function decorateNodeStrip(info, kind, kindLabel, name, merged){
   info.classList.add("node-strip", "ns-" + kind);
   const txt = document.createElement("span");
@@ -9475,19 +9501,7 @@ function buildMoonCard(moon, opts){
   name.textContent = moon.name;
   card.appendChild(name);
 
-  if(moon.badges && moon.badges.length){
-    const badgeRow = document.createElement("div");
-    badgeRow.className = "badges";
-    moon.badges.forEach(b=>{
-      const info = b === "moonRock" ? {label:"Moon Rock", file:"badge-moon-rock.png"} : {label:"World Peace", file:"badge-world-peace.png"};
-      const el = document.createElement("div");
-      el.className = "badge " + b.toLowerCase();
-      el.title = info.label;
-      el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '" onerror="this.style.display=\'none\'">';
-      badgeRow.appendChild(el);
-    });
-    card.appendChild(badgeRow);
-  }
+  { const badgeRow = makeMoonBadgeRow(moon); if(badgeRow) card.appendChild(badgeRow); }
 
   // Subarea and Checkpoint/Custom-Node are two DIFFERENT pieces of info and
   // both get their own slot when applicable (bottom-right of the card, same
@@ -9734,19 +9748,7 @@ function buildLazyMoonCard(moon){
   name.textContent = moon.name;
   shell.appendChild(name);
 
-  if(moon.badges && moon.badges.length){
-    const badgeRow = document.createElement("div");
-    badgeRow.className = "badges";
-    moon.badges.forEach(b => {
-      const info = b === "moonRock" ? {label:"Moon Rock", file:"badge-moon-rock.png"} : {label:"World Peace", file:"badge-world-peace.png"};
-      const el = document.createElement("div");
-      el.className = "badge " + b.toLowerCase();
-      el.title = info.label;
-      el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '" onerror="this.style.display=\'none\'">';
-      badgeRow.appendChild(el);
-    });
-    shell.appendChild(badgeRow);
-  }
+  { const badgeRow = makeMoonBadgeRow(moon); if(badgeRow) shell.appendChild(badgeRow); }
 
   const btn = document.createElement("button");
   btn.type = "button";
