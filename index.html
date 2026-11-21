@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2417,13 +2417,14 @@
   .any-pop .prog-badge, .any-pop .icon-tooltip{ display:none; }
 
   /* Group Filter hover: title, icons in a row, hovered name underneath */
-  .any-pop-grid{ display:flex; flex-wrap:nowrap; gap:6px; justify-content:space-evenly; }
-  .any-pop-opt{ display:inline-flex; align-items:center; gap:2px; padding:3px; border:2px solid transparent; cursor:default; }
+  .any-pop-grid{ display:flex; flex-wrap:nowrap; gap:6px; justify-content:stretch; }
+  .any-pop-grid .icon-wrap, .any-pop-grid .icon, .any-pop-grid .icon-fallback{ width:46px; height:46px; }
+  .any-pop-opt{ flex:1 1 0; justify-content:center; display:inline-flex; align-items:center; gap:2px; padding:6px 3px; border:2px solid transparent; cursor:default; }
   .any-pop-opt:hover{ border-color:var(--any-pop-acc); }
   .any-pop-opt.on{ background:var(--gold-light); border-color:var(--gold); }
-  .any-pop-pair{ position:relative; display:inline-block; width:34px; height:34px; }
+  .any-pop-pair{ position:relative; display:inline-block; width:52px; height:52px; }
   .any-pop-pair .pair-half{ position:absolute; width:64%; height:64%; }
-  .any-pop-pair .pair-half .icon-wrap, .any-pop-pair .pair-half .icon, .any-pop-pair .pair-half .icon-fallback{ width:100%; height:100%; }
+  .any-pop-grid .any-pop-pair .pair-half .icon-wrap, .any-pop-grid .any-pop-pair .pair-half .icon, .any-pop-grid .any-pop-pair .pair-half .icon-fallback{ width:100%; height:100%; }
   .any-pop-pair .pair-0{ top:0; left:0; z-index:1; }
   .any-pop-pair .pair-1{ bottom:0; right:0; z-index:2; box-shadow:-1px -1px 0 var(--bg-panel); }
   .any-pop-caption{ margin-top:6px; min-height:16px; width:0; min-width:100%; text-align:center; font-size:12.5px; color:var(--text); white-space:normal; }
