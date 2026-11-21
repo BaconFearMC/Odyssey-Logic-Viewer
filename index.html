@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2220,7 +2220,7 @@
   .filter-bar-search:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(230,194,0,.15); }
 
   /* ---- Single filter-mode button (lives at the top of the Filters panel) ---- */
-  .filter-mode-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:12px 0 2px; }
+  .filter-mode-row{ display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; padding:12px 0 2px; text-align:right; }
   .filter-mode-label{ font-size:12px; color:var(--text-dim); }
   .filter-mode-btn{
     background:var(--bg-panel); color:var(--worldpeace);
@@ -2353,13 +2353,13 @@
   .any-cycle-box{ position:relative; display:block; width:100%; height:100%; }
   .filter-option-iconbox.any-badged > .filter-option-icon{ position:relative; z-index:1; }
   .filter-option.selected .filter-option-iconbox.any-badged::before{ background:var(--gold); }
-  .any-pop-desc{ font-size:11px; color:var(--text-dim); margin:-4px 0 8px; max-width:300px; white-space:normal; }
+  .any-pop-desc{ font-size:11px; color:var(--text-dim); margin:-4px 0 8px; width:0; min-width:100%; white-space:normal; }
   .prog-badge.prog-crossed .prog-icon, .prog-badge.prog-crossed .prog-fallback{ border-color:#e0314b; filter:grayscale(.6) brightness(.8); }
   .prog-badge.prog-crossed{ position:absolute; }
   .prog-badge.prog-left, .filter-option-icon.moon-icon .prog-badge.prog-crossed.prog-left{ right:auto; left:-14px; top:-14px; }
   .prog-badge .prog-x{ position:absolute; left:2px; top:2px; width:29px; height:29px; pointer-events:none; z-index:4;
-    background:linear-gradient(to top right, transparent calc(50% - 2px), #ff2d4d calc(50% - 2px), #ff2d4d calc(50% + 2px), transparent calc(50% + 2px)),
-                linear-gradient(to top left, transparent calc(50% - 2px), #ff2d4d calc(50% - 2px), #ff2d4d calc(50% + 2px), transparent calc(50% + 2px)); }
+    background:linear-gradient(to top right, transparent calc(50% - 2.5px), #ff2d4d calc(50% - 2.5px), #ff2d4d calc(50% + 2.5px), transparent calc(50% + 2.5px));
+    filter:drop-shadow(0 0 1.5px #000) drop-shadow(0 0 1px #000); }
   .any-badged{ position:relative; }
   .any-badged::before{
     content:""; position:absolute; inset:-3px; z-index:0; background:var(--any-acc);
@@ -2374,7 +2374,7 @@
   }
   .hoist-token .icon-wrap.any-badged::after, .hoist-token .icon-wrap.any-badged::before{ display:none; }
   .cycle-frame{
-    position:absolute; inset:0; z-index:1; display:block; background:var(--bg-panel);
+    position:absolute; inset:0; z-index:1; display:block; background:rgba(35,36,39,0.5);
     animation-timing-function:linear; animation-iteration-count:infinite; animation-fill-mode:both;
     clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
   }
@@ -2401,7 +2401,7 @@
   .icon-wrap.any-badged > .icon-tooltip{ display:none; }
   .prog-badge.pink{ pointer-events:auto; }
   .any-pop{
-    position:fixed; z-index:400; pointer-events:auto; min-width:230px; max-width:calc(100vw - 16px);
+    position:fixed; z-index:400; pointer-events:auto; width:max-content; min-width:0; max-width:calc(100vw - 16px);
     background:var(--bg-panel); border:2px solid var(--any-pop-acc, var(--gold)); padding:10px 12px 8px;
     box-shadow:3px 4px 0 rgba(0,0,0,.45); text-align:left;
     clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
@@ -2417,18 +2417,16 @@
   .any-pop .prog-badge, .any-pop .icon-tooltip{ display:none; }
 
   /* Group Filter hover: title, icons in a row, hovered name underneath */
-  .any-pop-grid{ display:flex; flex-wrap:nowrap; gap:6px; }
+  .any-pop-grid{ display:flex; flex-wrap:nowrap; gap:6px; justify-content:space-evenly; }
   .any-pop-opt{ display:inline-flex; align-items:center; gap:2px; padding:3px; border:2px solid transparent; cursor:default; }
   .any-pop-opt:hover{ border-color:var(--any-pop-acc); }
   .any-pop-opt.on{ background:var(--gold-light); border-color:var(--gold); }
   .any-pop-pair{ position:relative; display:inline-block; width:34px; height:34px; }
-  .any-pop-pair .pair-half{ position:absolute; inset:0; }
-  .any-pop-pair .pair-half .icon-wrap, .any-pop-pair .pair-half .icon, .any-pop-pair .pair-half .icon-fallback{ width:34px; height:34px; }
-  .any-pop-pair .pair-0{ clip-path:polygon(0 0, 100% 0, 0 100%); }
-  .any-pop-pair .pair-1{ clip-path:polygon(100% 0, 100% 100%, 0 100%); }
-  .any-pop-pair::after{ content:""; position:absolute; inset:0; pointer-events:none;
-    background:linear-gradient(to bottom left, transparent calc(50% - 1px), var(--bg) calc(50% - 1px), var(--bg) calc(50% + 1px), transparent calc(50% + 1px)); }
-  .any-pop-caption{ margin-top:8px; min-height:16px; font-size:12.5px; color:var(--text); white-space:nowrap; }
+  .any-pop-pair .pair-half{ position:absolute; width:64%; height:64%; }
+  .any-pop-pair .pair-half .icon-wrap, .any-pop-pair .pair-half .icon, .any-pop-pair .pair-half .icon-fallback{ width:100%; height:100%; }
+  .any-pop-pair .pair-0{ top:0; left:0; z-index:1; }
+  .any-pop-pair .pair-1{ bottom:0; right:0; z-index:2; box-shadow:-1px -1px 0 var(--bg-panel); }
+  .any-pop-caption{ margin-top:6px; min-height:16px; width:0; min-width:100%; text-align:center; font-size:12.5px; color:var(--text); white-space:normal; }
   .any-pop-name{ font-size:12.5px; color:var(--text); white-space:nowrap; }
   .prog-icon.prog-any{ position:relative; overflow:hidden; padding:0; }
   .prog-icon.prog-any .cycle-frame{ clip-path:none; border-radius:4px; }
@@ -3290,8 +3288,8 @@ const PAGE_SOUNDS_ENABLED = 1;
     <div class="filter-bar-panel" id="tokenFilterPanel">
       <div class="filter-mode-row">
         <span class="filter-mode-label">Filter mode</span>
-        <button type="button" class="filter-mode-btn" id="filterModeToggle" data-mode="cando" title="Click to switch mode">I Have This!</button>
         <span class="filter-mode-hint" id="filterModeHint">Marks your picks as Free</span>
+        <button type="button" class="filter-mode-btn" id="filterModeToggle" data-mode="cando" title="Click to switch mode">I Have This!</button>
       </div>
       <div class="filter-section-heading">Abilities</div>
       <input type="text" class="filter-bar-search" id="abilityFilterSearch" placeholder="Search abilities…" autocomplete="off">
