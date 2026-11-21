@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityCapReturnJump.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2401,7 +2401,7 @@
   .icon-wrap.any-badged > .icon-tooltip{ display:none; }
   .prog-badge.pink{ pointer-events:auto; }
   .any-pop{
-    position:fixed; z-index:400; pointer-events:none; min-width:230px; max-width:calc(100vw - 16px);
+    position:fixed; z-index:400; pointer-events:auto; min-width:230px; max-width:calc(100vw - 16px);
     background:var(--bg-panel); border:2px solid var(--any-pop-acc, var(--gold)); padding:10px 12px 8px;
     box-shadow:3px 4px 0 rgba(0,0,0,.45); text-align:left;
     clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
@@ -2417,7 +2417,7 @@
   .any-pop .prog-badge, .any-pop .icon-tooltip{ display:none; }
 
   /* Group Filter hover: title, icons in a row, hovered name underneath */
-  .any-pop-grid{ display:flex; flex-wrap:wrap; gap:6px; max-width:320px; }
+  .any-pop-grid{ display:flex; flex-wrap:nowrap; gap:6px; }
   .any-pop-opt{ display:inline-flex; align-items:center; gap:2px; padding:3px; border:2px solid transparent; cursor:default; }
   .any-pop-opt:hover{ border-color:var(--any-pop-acc); }
   .any-pop-opt.on{ background:var(--gold-light); border-color:var(--gold); }
@@ -3487,10 +3487,18 @@ function videoTokenLabel(t){
   const m = ICON_MANIFEST[k] || ICON_MANIFEST[t];
   return (m && m.label) ? m.label : String(t);
 }
-// Subareas are randomized (Loading Zones), so how you normally enter one is not shown on its moons.
-// That info lives in Access Points at the bottom of the page. Set to true to bring the
-// "Inside . Subarea" strip and the Entrance/Exit Pipe rows back onto the moon cards.
-const SHOW_SUBAREA_ACCESS_ON_MOONS = false;
+// The "Inside . Subarea" strip and the Entrance/Exit Pipe rows stay on subarea moons.
+const SHOW_SUBAREA_ACCESS_ON_MOONS = true;
+// Subareas are randomized, so an overworld Custom Node that only describes how you normally get INTO the
+// subarea (e.g. "Paragoomba Capture from Plaza") is not shown on that subarea's moons. It stays in Access Points.
+// A Custom Node that sits inside the subarea itself (e.g. Rooftop) is still shown. false = show them all.
+const HIDE_OVERWORLD_NODES_ON_SUBAREA_MOONS = true;
+function nodeOutsideMoonSubarea(moon, nodeId, kingdom){
+  if(!HIDE_OVERWORLD_NODES_ON_SUBAREA_MOONS || !moon || !moon.subarea || !moon.subareaStage || !nodeId) return false;
+  const d = KINGDOM_NODE_DATA[kingdom || moon.kingdom];
+  const n = d && d.nodeMap && d.nodeMap[nodeId];
+  return !!(n && n.stage && n.stage !== moon.subareaStage);
+}
 
 // "<Moon> Free" custom nodes are bookkeeping, not places: a video title must name the real checkpoint (or the kingdom
 // start) that the node hangs off. Walks back through custom nodes to that anchor; null when it is not unambiguous.
@@ -7451,7 +7459,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
     moon._autoExtraNodes = findDirectCustom(row.from_node_id)
       .filter(n => n.node_id !== moon.checkpointNodeId)
       .slice(0, 6)
-      .map(n => ({ name: String(n.display_name || n.node_id).replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, ""), id: n.node_id, kingdom: kingdomName, merged: false }));
+      .map(n => ({ name: String(n.display_name || n.node_id).replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, ""), id: n.node_id, kingdom: kingdomName, merged: false, auto: true }));
     if(moon.subareaStage && SHOW_SUBAREA_ACCESS_ON_MOONS){
       const ownOnly = parseMoon(row, nodeMap, checkpointLookup, kingdomName, {}, {});
       moon.entranceReqs = computeEntranceReqs(row, ownOnly, ws, nodeMap, kingdomName);
@@ -8194,6 +8202,17 @@ function applyNodeMergeRules(kingdomName){
       if(id === moon.checkpointNodeId || moon._extraNodes.some(x => x.id === id)) return;
       moon._extraNodes.push({ name: r.node, id, kingdom: src.kingdomName, merged: true });
     });
+    // Auto-detected extra Custom Nodes that are only ever reached from the moon's own Checkpoint ("Always from
+    // <Checkpoint>") add nothing, so they are dropped.
+    if(data && data.reachBranches){
+      const nrm = t => String(t || "").toLowerCase().replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*checkpoint\s*$/i, "").replace(/[^a-z0-9]/g, "");
+      const cp = moon.checkpointType === "checkpoint" ? nrm(moon.checkpoint) : "";
+      if(cp) moon._extraNodes = moon._extraNodes.filter(x => {
+        if(!x.auto) return true;
+        const br = data.reachBranches[x.id] || [];
+        return !(br.length && br.every(b => b.origin && nrm(b.origin) === cp));
+      });
+    }
     // De-duplicate (auto-detected + rule-added) and never repeat the primary node.
     const seenIds = new Set([moon.checkpointNodeId]);
     moon._extraNodes = moon._extraNodes.filter(x => !seenIds.has(x.id) && seenIds.add(x.id));
@@ -8920,13 +8939,25 @@ function showAnyPop(anchor, token, group){
   el.style.visibility = "";
   anyPopEl = el;
 }
+// Hovering the group icon just names the group; clicking opens the option row, which stays open
+// (so the option icons can be hovered for their names) until you click again, click elsewhere or press Escape.
+let anyPopOwner = null;
 function attachAnyPop(el, token, group){
-  el.addEventListener("mouseenter", () => showAnyPop(el, token, group));
-  el.addEventListener("focus", () => showAnyPop(el, token, group));
-  el.addEventListener("mouseleave", hideAnyPop);
-  el.addEventListener("blur", hideAnyPop);
+  const gt = token === ANY_THROW_TOKEN ? null : (ghTier(token) || null);
+  el.title = token === ANY_THROW_TOKEN ? "Any Cap Throw" : (gt ? gt.label : filterLabelFor(token));
+  el.addEventListener("click", (e) => {
+    if(el.closest("#tokenFilterPanel, .filter-sel-pill")) return; // filter tiles keep their normal click (select/deselect)
+    if(anyPopEl && anyPopOwner === el){ hideAnyPop(); anyPopOwner = null; return; }
+    showAnyPop(el, token, group); anyPopOwner = el;
+  });
+  el.addEventListener("keydown", (e) => { if(e.key === "Escape") { hideAnyPop(); anyPopOwner = null; } });
 }
-window.addEventListener("scroll", hideAnyPop, true);
+document.addEventListener("click", (e) => {
+  if(!anyPopEl) return;
+  if(anyPopEl.contains(e.target) || (anyPopOwner && anyPopOwner.contains(e.target))) return;
+  hideAnyPop(); anyPopOwner = null;
+}, true);
+document.addEventListener("keydown", (e) => { if(e.key === "Escape" && anyPopEl){ hideAnyPop(); anyPopOwner = null; } });
 
 // Cross-fading icon frames on a shared wall-clock (every instance stays in
 // step). `frames` = list of token lists; two tokens render as an overlapped pair.
@@ -9226,9 +9257,9 @@ function customNodeRoutesFor(moon){
   // Same condition the card uses to draw the primary strip: a Custom Node
   // always counts; a plain Checkpoint counts unless the moon is in a subarea.
   if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && moon.checkpointNodeId
-     && (moon.checkpointType === "custom_place" || !moon.subarea))
+     && (moon.checkpointType === "custom_place" || !moon.subarea) && !nodeOutsideMoonSubarea(moon, moon.checkpointNodeId))
     nodes.push({ id: moon.checkpointNodeId, kingdom: moon.kingdom, kind: moon.checkpointType === "custom_place" ? "custom" : "checkpoint", name: moon.checkpoint.replace(/\s*Checkpoint\s*$/i, ""), titleNode: moon.checkpoint });
-  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name)).forEach(x => nodes.push({ id: x.id, kingdom: x.kingdom || moon.kingdom, kind: "custom", name: x.name, titleNode: x.name }));
+  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name) && !nodeOutsideMoonSubarea(moon, x.id, x.kingdom)).forEach(x => nodes.push({ id: x.id, kingdom: x.kingdom || moon.kingdom, kind: "custom", name: x.name, titleNode: x.name }));
   if(!nodes.length) return null;
   const own = ownBranchesFromTierLanes(moon._baseTierLanes || moon.tierLanes);
   const out = [];
@@ -9428,7 +9459,8 @@ function buildMoonCard(moon, opts){
 
     card.appendChild(info);
   }
-  if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && (moon.checkpointType === "custom_place" || !moon.subarea)){
+  if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && (moon.checkpointType === "custom_place" || !moon.subarea)
+     && !nodeOutsideMoonSubarea(moon, moon.checkpointNodeId)){
     // A plain Checkpoint (checkpointType === "checkpoint") is redundant once
     // a Subarea icon is already shown — the subarea already tells you where
     // the moon is, a generic overworld checkpoint doesn't add anything for
@@ -9496,7 +9528,7 @@ function buildMoonCard(moon, opts){
   }
 
   // Additional Custom Nodes (multiple nodes on one moon).
-  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name)).forEach(x => {
+  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name) && !nodeOutsideMoonSubarea(moon, x.id, x.kingdom)).forEach(x => {
     const xi = document.createElement("span");
     xi.className = "checkpoint-info";
     const xlabel = "Tracked from: " + nodeShownName(x.name, moon.name);
