@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2334,8 +2334,8 @@
   .icon-wrap.any-chest::after{ color:#1b1c1f; }
   .gh-chest-badge{ position:absolute; top:-11px; left:-9px; z-index:4; width:28px; height:28px; pointer-events:none; filter:drop-shadow(0 1px 2px rgba(0,0,0,.8)); transform:rotate(-8deg); }
   .gh-chest-badge .prog-icon, .gh-chest-badge .prog-fallback{ width:28px; height:28px; margin:0; border:0; border-radius:0; background:transparent; object-fit:contain; }
-  .icon-wrap.any-badged.any-throwex{ --any-acc:#ff9a9a; }
-  .icon-wrap.any-throwex::after{ color:#1b1c1f; }
+  .icon-wrap.any-badged.any-throwex{ --any-acc:#d11a3a; }
+  .icon-wrap.any-throwex::after{ color:#fff; }
   .gh-kingdom-badge{ position:absolute; right:-9px; bottom:-9px; width:22px; height:22px; z-index:4; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
   .gh-kingdom-badge img{ width:100%; height:100%; object-fit:contain; display:block; }
   .gh-cap-badge{ position:absolute; top:-10px; z-index:4; width:26px; height:26px; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
@@ -2897,7 +2897,12 @@
   .gf-split{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px 24px; }
   .gf-grid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; }
   .gf-vaults .gf-grid{ justify-content:flex-start; }
-  .gf-extras{ margin-left:auto; }
+  .gf-extras{ margin-left:0; }
+  .gf-grid{ justify-content:space-evenly; }
+  .gf-split{ flex-wrap:nowrap; gap:12px 16px; }
+  .gf-split > .gf-row{ flex:1 1 0; min-width:0; }
+  .gf-split .gf-grid, .gf-vaults .gf-grid, .gf-kingdom .gf-grid, .gf-extras .gf-grid{ justify-content:space-evenly; }
+  @media (max-width:760px){ .gf-split{ flex-wrap:wrap; } .gf-split > .gf-row{ flex:1 1 100%; } }
   /* Kingdom-specific Group Filters: their own box, right next to Vaults (Extras stays pinned far right) */
   .gf-kingdom{ padding:6px 10px 10px; border:1px solid rgba(25,184,166,0.55); background:rgba(25,184,166,0.08); }
   .gf-kingdom .gf-grid{ justify-content:flex-start; }
@@ -3493,6 +3498,29 @@ const SHOW_SUBAREA_ACCESS_ON_MOONS = true;
 // subarea (e.g. "Paragoomba Capture from Plaza") is not shown on that subarea's moons. It stays in Access Points.
 // A Custom Node that sits inside the subarea itself (e.g. Rooftop) is still shown. false = show them all.
 const HIDE_OVERWORLD_NODES_ON_SUBAREA_MOONS = true;
+const _nrmMoon = x => String(x == null ? "" : x).toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]/g, "").replace(/^the(?=.)/, "");
+function freeNodeBase(name){
+  const raw = String(name == null ? "" : name).replace(/\s*\([^)]*\)\s*$/, "").trim();
+  if(!/\s+free\s*$/i.test(raw)) return null;
+  const base = raw.replace(/\s*free\s*$/i, "").trim();
+  return [_nrmMoon(base), _nrmMoon(base.replace(/\s*moon\s*$/i, ""))];
+}
+// "<Moon> Free" custom node of THIS moon?
+function nodeIsOwnMoonFree(moon, name){ const b = freeNodeBase(name); return !!(b && moon && b.indexOf(_nrmMoon(moon.name)) !== -1); }
+let _moonNameSet = null, _moonNameSetSize = -1;
+// "<Other Moon> Free" custom node: only ever shown on that moon.
+function nodeIsOtherMoonsFree(moon, name){
+  const b = freeNodeBase(name); if(!b || nodeIsOwnMoonFree(moon, name)) return false;
+  let size = 0; KINGDOM_ORDER.forEach(k => { size += (KINGDOMS[k] || []).length; });
+  if(!_moonNameSet || size !== _moonNameSetSize){
+    _moonNameSet = new Set(); _moonNameSetSize = size;
+    KINGDOM_ORDER.forEach(k => (KINGDOMS[k] || []).forEach(m => _moonNameSet.add(_nrmMoon(m.name))));
+  }
+  return b.some(x => _moonNameSet.has(x));
+}
+function nodeHiddenOnMoon(moon, nodeId, name, kingdom){
+  return nodeOutsideMoonSubarea(moon, nodeId, kingdom) || nodeIsOtherMoonsFree(moon, name);
+}
 function nodeOutsideMoonSubarea(moon, nodeId, kingdom){
   if(!HIDE_OVERWORLD_NODES_ON_SUBAREA_MOONS || !moon || !moon.subarea || !moon.subareaStage || !nodeId) return false;
   const d = KINGDOM_NODE_DATA[kingdom || moon.kingdom];
@@ -4011,13 +4039,13 @@ const GH_TIERS = [
     methods: [["GroundPound"], ["Roll"], ["AnyThrow"]], methodAlts: { 2: ["AnyThrow", "NeutralThrow", "UpThrow", "SpinThrow", "DownThrow"] } },
   { token: "ChestOpenerCapless", label: "Chest Opener (Capless)", cls: "any-chest", cycle: "cycle-2", badge: "CAPLESS", seconds: 3, chestBadge: true, noTile: true,
     methods: [["GroundPound"], ["Roll"]] },
-  { token: "AnyThrowNoNeutral", label: "Any Cap Throw except Neutral Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO NEUTRAL", seconds: 4.5, crossed: "NeutralThrow", crossedLeft: true, noTile: true, exclude: "NeutralThrow",
+  { token: "AnyThrowNoNeutral", label: "Any Cap Throw except Neutral Throw", cls: "any-throwex", cycle: "cycle-3", badge: "ANY", seconds: 4.5, crossed: "NeutralThrow", crossedLeft: true, noTile: true, exclude: "NeutralThrow",
     methods: [["UpThrow"], ["SpinThrow"], ["DownThrow"]] },
-  { token: "AnyThrowNoUp", label: "Any Cap Throw except Up Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO UP", seconds: 4.5, crossed: "UpThrow", crossedLeft: true, noTile: true, exclude: "UpThrow",
+  { token: "AnyThrowNoUp", label: "Any Cap Throw except Up Throw", cls: "any-throwex", cycle: "cycle-3", badge: "ANY", seconds: 4.5, crossed: "UpThrow", crossedLeft: true, noTile: true, exclude: "UpThrow",
     methods: [["NeutralThrow"], ["SpinThrow"], ["DownThrow"]] },
-  { token: "AnyThrowNoDown", label: "Any Cap Throw except Down Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO DOWN", seconds: 4.5, crossed: "DownThrow", crossedLeft: true, noTile: true, exclude: "DownThrow",
+  { token: "AnyThrowNoDown", label: "Any Cap Throw except Down Throw", cls: "any-throwex", cycle: "cycle-3", badge: "ANY", seconds: 4.5, crossed: "DownThrow", crossedLeft: true, noTile: true, exclude: "DownThrow",
     methods: [["NeutralThrow"], ["UpThrow"], ["SpinThrow"]] },
-  { token: "AnyThrowNoSpin", label: "Any Cap Throw except Spin Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO SPIN", seconds: 4.5, crossed: "SpinThrow", crossedLeft: true, noTile: true, exclude: "SpinThrow",
+  { token: "AnyThrowNoSpin", label: "Any Cap Throw except Spin Throw", cls: "any-throwex", cycle: "cycle-3", badge: "ANY", seconds: 4.5, crossed: "SpinThrow", crossedLeft: true, noTile: true, exclude: "SpinThrow",
     methods: [["NeutralThrow"], ["UpThrow"], ["DownThrow"]] },
   // ---- KINGDOM-SPECIFIC GROUP FILTERS ----------------------------------------------------------------------
   // Same as any other group, plus:  kingdom  -> only merges / shows on that kingdom's page
@@ -8754,7 +8782,8 @@ function dynamicProgChain(token, andGroup){
   }
   if(!info || info.tokenType !== "capture") return null;
   const chain = [];
-  const hasThrow = andGroup.some(t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1 || (isGhToken(t) && ghTier(t).exclude));
+  // A plain Any Cap Throw listed beside a capture folds into that capture's chip; only a SPECIFIC throw stays separate.
+  const hasThrow = andGroup.some(t => ANY_THROW_MEMBERS.indexOf(t) !== -1 || (isGhToken(t) && ghTier(t).exclude));
   if(!hasThrow) chain.push(ANY_THROW_TOKEN);
   if(_tokLabelMatch(token, COIN_COFFER_RE)){
     const w = andGroup.find(t => _tokLabelMatch(t, WALLET_RE));
@@ -8768,6 +8797,7 @@ function appendAndGroupIcons(chip, andGroup, extra){
   const covered = new Set();
   andGroup.forEach(t => (ABILITY_PROGRESSION[t] || []).forEach(pt => covered.add(pt)));
   andGroup.forEach(t => { const c = dynamicProgChain(t, andGroup); if(c) c.forEach(pt => { if(pt !== ANY_THROW_TOKEN) covered.add(pt); }); });
+  if(andGroup.indexOf(ANY_THROW_TOKEN) !== -1 && andGroup.some(t => ICON_MANIFEST[t] && ICON_MANIFEST[t].tokenType === "capture")) covered.add(ANY_THROW_TOKEN);
   const visible = andGroup.filter(t => !covered.has(t));
   const tokens = sortedTokensForDisplay(visible.length ? visible : andGroup);
   const rows = balancedRowCounts(tokens.length, ICON_ROW_MAX);
@@ -9257,9 +9287,9 @@ function customNodeRoutesFor(moon){
   // Same condition the card uses to draw the primary strip: a Custom Node
   // always counts; a plain Checkpoint counts unless the moon is in a subarea.
   if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && moon.checkpointNodeId
-     && (moon.checkpointType === "custom_place" || !moon.subarea) && !nodeOutsideMoonSubarea(moon, moon.checkpointNodeId))
+     && (moon.checkpointType === "custom_place" || !moon.subarea) && !nodeHiddenOnMoon(moon, moon.checkpointNodeId, moon.checkpoint))
     nodes.push({ id: moon.checkpointNodeId, kingdom: moon.kingdom, kind: moon.checkpointType === "custom_place" ? "custom" : "checkpoint", name: moon.checkpoint.replace(/\s*Checkpoint\s*$/i, ""), titleNode: moon.checkpoint });
-  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name) && !nodeOutsideMoonSubarea(moon, x.id, x.kingdom)).forEach(x => nodes.push({ id: x.id, kingdom: x.kingdom || moon.kingdom, kind: "custom", name: x.name, titleNode: x.name }));
+  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name) && !nodeHiddenOnMoon(moon, x.id, x.name, x.kingdom)).forEach(x => nodes.push({ id: x.id, kingdom: x.kingdom || moon.kingdom, kind: "custom", name: x.name, titleNode: x.name }));
   if(!nodes.length) return null;
   const own = ownBranchesFromTierLanes(moon._baseTierLanes || moon.tierLanes);
   const out = [];
@@ -9272,7 +9302,7 @@ function customNodeRoutesFor(moon){
     const shown = (typeof glitchMode !== "undefined" && glitchMode === "hide") ? crossed.filter(b => b.tier !== "glitched") : crossed;
     if(!shown.length && crossed.length) out.push({ kind: n.kind, impossible: true, hidden: true });
     else {
-      const route = Object.assign({ kind: n.kind, titleNode: n.titleNode }, summarizeBranches(shown, n.kingdom));
+      const route = Object.assign({ kind: n.kind, titleNode: n.titleNode, nodeName: n.name }, summarizeBranches(shown, n.kingdom));
       // Several ways INTO the node (e.g. from the Stone Bridge vs. from anywhere via the
       // Odyssey): split them into one labelled row per source so it is clear which is which.
       if(!route.impossible){
@@ -9292,6 +9322,16 @@ function customNodeRoutesFor(moon){
       out.push(route);
     }
   }
+  // Nodes with exactly the same methods: when one of them is "<Moon> Free", show only that one.
+  const sigOf = r => r.impossible ? "IMP" : (r.rows ? r.rows.map(x => (x.label || "") + "|" + entrySignatureFromReqEntry(x)).join("//") : entrySignatureFromReqEntry(r));
+  const bySig = {};
+  out.forEach((r, i) => { if(r.hidden || r.impossible) return; (bySig[sigOf(r)] = bySig[sigOf(r)] || []).push(i); });
+  Object.values(bySig).forEach(idx => {
+    if(idx.length < 2) return;
+    const keep = idx.find(i => nodeIsOwnMoonFree(moon, out[i].nodeName));
+    if(keep === undefined) return;
+    idx.forEach(i => { if(i !== keep) out[i].hidden = true; });
+  });
   return out;
 }
 
@@ -9460,7 +9500,7 @@ function buildMoonCard(moon, opts){
     card.appendChild(info);
   }
   if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && (moon.checkpointType === "custom_place" || !moon.subarea)
-     && !nodeOutsideMoonSubarea(moon, moon.checkpointNodeId)){
+     && !nodeHiddenOnMoon(moon, moon.checkpointNodeId, moon.checkpoint)){
     // A plain Checkpoint (checkpointType === "checkpoint") is redundant once
     // a Subarea icon is already shown — the subarea already tells you where
     // the moon is, a generic overworld checkpoint doesn't add anything for
@@ -9528,7 +9568,7 @@ function buildMoonCard(moon, opts){
   }
 
   // Additional Custom Nodes (multiple nodes on one moon).
-  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name) && !nodeOutsideMoonSubarea(moon, x.id, x.kingdom)).forEach(x => {
+  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name) && !nodeHiddenOnMoon(moon, x.id, x.name, x.kingdom)).forEach(x => {
     const xi = document.createElement("span");
     xi.className = "checkpoint-info";
     const xlabel = "Tracked from: " + nodeShownName(x.name, moon.name);
