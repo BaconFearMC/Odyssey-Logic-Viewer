@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityCapReturnJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2218,6 +2218,20 @@
   .filter-bar-row{ transition:background .12s ease; }
   .filter-bar-search{ background:#1a1b1e; transition:border-color .12s ease, box-shadow .12s ease; }
   .filter-bar-search:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(230,194,0,.15); }
+
+  /* ---- Single filter-mode button (lives at the top of the Filters panel) ---- */
+  .filter-mode-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:12px 0 2px; }
+  .filter-mode-label{ font-size:12px; color:var(--text-dim); }
+  .filter-mode-btn{
+    background:var(--bg-panel); color:var(--worldpeace);
+    border:2px solid var(--worldpeace); border-bottom-width:3px;
+    padding:6px 14px; font-size:13px; cursor:pointer;
+    clip-path: polygon(var(--cut-sm) 0, 100% 0, 100% calc(100% - var(--cut-sm)), calc(100% - var(--cut-sm)) 100%, 0 100%, 0 var(--cut-sm));
+    transition:background .12s ease, border-color .12s ease, color .12s ease;
+  }
+  .filter-mode-btn[data-mode="unlocks"]{ color:var(--gold); border-color:var(--gold); }
+  .filter-mode-btn:hover{ background:rgba(255,255,255,0.06); }
+  .filter-mode-hint{ font-size:12px; color:var(--text-dim); }
   .filter-mode-tab{ transition:background .15s var(--ease), border-color .15s var(--ease), opacity .15s ease, transform .1s ease; }
   .filter-mode-tab:not(.active):hover{ opacity:.9; border-color:var(--border-hi); }
   .filter-mode-tab:active{ transform:translateY(1px); }
@@ -2294,6 +2308,8 @@
   .icon-wrap.any-throw::after{ color:#fff; }
   .icon-wrap.any-grounded{ --any-acc:#19b8a6; }
   .icon-wrap.any-normal{ --any-acc:#8fd0ff; }
+  .icon-wrap.any-normal-lj{ --any-acc:#5fb4ef; }
+  .icon-wrap.any-normal-lj::after{ color:#fff; }
   .icon-wrap.any-normaljump{ --any-acc:#e0679a; }
   .icon-wrap.any-normaljump::after{ color:#fff; }
   .icon-wrap.any-classic{ --any-acc:#e0862f; }
@@ -2399,6 +2415,20 @@
   .any-pop-icons{ display:inline-flex; align-items:center; gap:3px; flex:0 0 auto; min-width:68px; }
   .any-pop .icon-wrap, .any-pop .icon, .any-pop .icon-fallback{ width:30px; height:30px; font-size:11px; }
   .any-pop .prog-badge, .any-pop .icon-tooltip{ display:none; }
+
+  /* Group Filter hover: title, icons in a row, hovered name underneath */
+  .any-pop-grid{ display:flex; flex-wrap:wrap; gap:6px; max-width:320px; }
+  .any-pop-opt{ display:inline-flex; align-items:center; gap:2px; padding:3px; border:2px solid transparent; cursor:default; }
+  .any-pop-opt:hover{ border-color:var(--any-pop-acc); }
+  .any-pop-opt.on{ background:var(--gold-light); border-color:var(--gold); }
+  .any-pop-pair{ position:relative; display:inline-block; width:34px; height:34px; }
+  .any-pop-pair .pair-half{ position:absolute; inset:0; }
+  .any-pop-pair .pair-half .icon-wrap, .any-pop-pair .pair-half .icon, .any-pop-pair .pair-half .icon-fallback{ width:34px; height:34px; }
+  .any-pop-pair .pair-0{ clip-path:polygon(0 0, 100% 0, 0 100%); }
+  .any-pop-pair .pair-1{ clip-path:polygon(100% 0, 100% 100%, 0 100%); }
+  .any-pop-pair::after{ content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(to bottom left, transparent calc(50% - 1px), var(--bg) calc(50% - 1px), var(--bg) calc(50% + 1px), transparent calc(50% + 1px)); }
+  .any-pop-caption{ margin-top:8px; min-height:16px; font-size:12.5px; color:var(--text); white-space:nowrap; }
   .any-pop-name{ font-size:12.5px; color:var(--text); white-space:nowrap; }
   .prog-icon.prog-any{ position:relative; overflow:hidden; padding:0; }
   .prog-icon.prog-any .cycle-frame{ clip-path:none; border-radius:4px; }
@@ -3242,20 +3272,6 @@ const PAGE_SOUNDS_ENABLED = 1;
 
 <div id="filterWrap"><div id="filterWrapInner">
 <div class="filter-bars" id="filterBars">
-  <div class="filter-mode-tabs" id="filterModeTabs">
-    <button type="button" class="filter-mode-tab active" id="filterModeCanDo" data-mode="cando">
-      <span class="filter-mode-text">
-        <span class="filter-mode-title">I Have This!</span>
-        <span class="filter-mode-subtitle">Mark as Free</span>
-      </span>
-    </button>
-    <button type="button" class="filter-mode-tab" id="filterModeUnlocks" data-mode="unlocks">
-      <span class="filter-mode-text">
-        <span class="filter-mode-title">What Does This Unlock?</span>
-        <span class="filter-mode-subtitle">Moons that use your picks</span>
-      </span>
-    </button>
-  </div>
   <div class="filter-bar" id="tokenFilterBar">
     <div class="filter-bar-row" id="tokenFilterRow">
       <span class="filter-bar-label">
@@ -3267,6 +3283,11 @@ const PAGE_SOUNDS_ENABLED = 1;
       <button type="button" class="filter-bar-clear" id="tokenFilterClear" aria-label="Clear Ability/Capture filter" style="display:none;">&times;</button>
     </div>
     <div class="filter-bar-panel" id="tokenFilterPanel">
+      <div class="filter-mode-row">
+        <span class="filter-mode-label">Filter mode</span>
+        <button type="button" class="filter-mode-btn" id="filterModeToggle" data-mode="cando" title="Click to switch mode">I Have This!</button>
+        <span class="filter-mode-hint" id="filterModeHint">Marks your picks as Free</span>
+      </div>
       <div class="filter-section-heading">Abilities</div>
       <input type="text" class="filter-bar-search" id="abilityFilterSearch" placeholder="Search abilities…" autocomplete="off">
       <div class="filter-bar-grid" id="abilityFilterGrid"></div>
@@ -3466,6 +3487,11 @@ function videoTokenLabel(t){
   const m = ICON_MANIFEST[k] || ICON_MANIFEST[t];
   return (m && m.label) ? m.label : String(t);
 }
+// Subareas are randomized (Loading Zones), so how you normally enter one is not shown on its moons.
+// That info lives in Access Points at the bottom of the page. Set to true to bring the
+// "Inside . Subarea" strip and the Entrance/Exit Pipe rows back onto the moon cards.
+const SHOW_SUBAREA_ACCESS_ON_MOONS = false;
+
 // "<Moon> Free" custom nodes are bookkeeping, not places: a video title must name the real checkpoint (or the kingdom
 // start) that the node hangs off. Walks back through custom nodes to that anchor; null when it is not unambiguous.
 const __freeAnchorCache = new Map();
@@ -3795,6 +3821,7 @@ let ICON_MANIFEST = {
   ClassicCapJump: { filenames:["AbilityVault.png"], label:"Classic Cap Jump", color:"#e0862f", category:"Movement", tokenType:"ability" },
   NormalJump: { filenames:["AbilityJump.png"], label:"Normal Jump", color:"#e0679a", category:"Movement", tokenType:"ability" },
   GroundedNormal: { filenames:["AbilityJump.png"], label:"Any Grounded Normal Jump", color:"#5aa9e6", category:"Movement", tokenType:"ability" },
+  GroundedNormalLJ: { filenames:["AbilityJump.png"], label:"Any Grounded Normal Jump + Cap Long Jump", color:"#5aa9e6", category:"Movement", tokenType:"ability" },
   GroundedHigh: { filenames:["AbilitySideFlip.png"], label:"Any Grounded High Jump", color:"#1f3a8a", category:"Movement", tokenType:"ability" },
   // Further display-only grounded groupings (see GH_TIERS). Never filter tiles.
   GroundedHeightGP: { filenames:["AbilityJump.png"], label:"Any Grounded Height + Ground Pound Jump", color:"#d9901a", category:"Movement", tokenType:"ability" },
@@ -3898,7 +3925,7 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Turnip: true,
   Nut: true,
   Seed: true,
-  GroundedHeight: true, GroundedNormal: true, GroundedHigh: true, // display-only merges; never filter tiles
+  GroundedHeight: true, GroundedNormal: true, GroundedNormalLJ: true, GroundedHigh: true, // display-only merges; never filter tiles
   GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true, GroundedJumpCT: true, NormalJump: true, ClassicCapJump: true, TortureCapJump: true, AnnoyingCapJump: true, Trickjumping: true, ShopMoons: true,
   AnyVault: true, AnyCapThrowJump: true, GroundedNoCRJ: true, SandHeight: true,
   ChestOpener: true, ChestOpenerCapless: true,
@@ -3942,6 +3969,9 @@ const GH_TIERS = [
     methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
   { token: GH_NORMAL_TOKEN, label: "Any Grounded Normal Jump", cls: "any-normal", cycle: "cycle-7", badge: "NO LJ", seconds: 10, crossed: "LongJump",
     methods: [_SJ, _CRJ, _BF, _SP, _SF, _NV, _DV] },
+  // Same as Any Grounded Normal Jump, plus Long Jump combined with any Cap Throw. Rename the label/badge freely.
+  { token: "GroundedNormalLJ", label: "Any Grounded Normal Jump + Cap Long Jump", cls: "any-normal-lj", cycle: "cycle-8", badge: "+CLJ", seconds: 10,
+    methods: [_SJ, _CRJ, _BF, _SP, _SF, _NV, _DV, ["LongJump", "AnyThrow"]] },
   { token: GH_HIGH_TOKEN, label: "Any Grounded High Jump", cls: "any-high", cycle: "cycle-5", badge: "HIGH", seconds: 10, iconFirst: "SideFlip",
     methods: [_BF, _SP, _SF] },
   { token: "GroundedJumpGP", label: "Any Grounded Jump + Ground Pound Jump", cls: "any-jump-gp", cycle: "cycle-6", badge: "JUMP+GP", plusGP: true, seconds: 7.5, crossed: "AnyThrow", crossedLeft: true,
@@ -4004,6 +4034,7 @@ const JUMP_GROUP_ENABLED = {
   GroundedHeightGP: 0,   // Any Grounded Height + Ground Pound Jump
   GroundedHeight:   1,   // Any Grounded Height
   GroundedNormal:   1,   // Any Grounded Normal Jump
+  GroundedNormalLJ: 1,   // Any Grounded Normal Jump + Cap Long Jump (Long Jump + Any Cap Throw)
   GroundedHigh:     1,   // Any Grounded High Jump
   GroundedJumpGP:   0,   // Any Grounded Jump + Ground Pound Jump
   GroundedJumpCT:   1,   // Any Grounded Jump (includes Cap Throw Jump)
@@ -5258,6 +5289,37 @@ function exprToScenarioDNF(expr, optionScenarios, kingdomName){
    Custom Node in any of the 17 kingdoms (Outer Wall Area, etc.)
    is picked up the moment it's tagged node_type "custom_place".
    ========================================================= */
+/* Every Custom Node that leads DIRECTLY to a node (walking backward along edges, same stage only,
+   stopping at the first Custom Node / Checkpoint / stage start on each path). A moon reachable from
+   more than one Custom Node gets one strip per node. */
+function buildDirectCustomSourceFinder(nodes, edges){
+  const byId = {}; (nodes || []).forEach(n => { byId[n.node_id] = n; });
+  const rev = {};
+  const add = (from, to) => { if(from && to) (rev[to] = rev[to] || []).push(from); };
+  (edges || []).forEach(e => {
+    if(!e.from_node_id || !e.to_node_id) return;
+    if((e.requirement_expr || "").trim().toLowerCase() === "impossible") return;
+    add(e.from_node_id, e.to_node_id);
+    if(String(e.bidirectional).toLowerCase() === "true") add(e.to_node_id, e.from_node_id);
+  });
+  return startId => {
+    const start = byId[startId]; if(!start) return [];
+    const seen = new Set([startId]), queue = [startId], found = [];
+    let guard = 0;
+    while(queue.length && guard++ < 600){
+      const cur = queue.shift();
+      (rev[cur] || []).forEach(src => {
+        if(seen.has(src)) return; seen.add(src);
+        const n = byId[src]; if(!n || n.stage !== start.stage) return;
+        if(n.node_type === "custom_place"){ if(!/purples/i.test(n.display_name || "")) found.push(n); return; }
+        if(n.node_type === "checkpoint" || n.node_type === "stage_start") return;
+        queue.push(src);
+      });
+    }
+    return found;
+  };
+}
+
 function buildCheckpointLookup(nodes, edges){
   const displayNameOf = {};
   const nodeTypeOf = {};
@@ -7380,12 +7442,17 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
 
   buildSubareaContext(kingdomName, ws.logicNodes || [], ws.routeEdges || []);
   const __t2 = performance.now();
+  const findDirectCustom = buildDirectCustomSourceFinder(ws.logicNodes || [], ws.routeEdges || []);
   const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => {
     // A moon shows ONLY its own requirement. The cost of reaching its
     // checkpoint/custom node/subarea pipe is node info and lives in the
     // click-to-inspect popup, not folded into the moon (so {} , {} here).
     const moon = parseMoon(row, nodeMap, checkpointLookup, kingdomName, {}, {});
-    if(moon.subareaStage){
+    moon._autoExtraNodes = findDirectCustom(row.from_node_id)
+      .filter(n => n.node_id !== moon.checkpointNodeId)
+      .slice(0, 6)
+      .map(n => ({ name: String(n.display_name || n.node_id).replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, ""), id: n.node_id, kingdom: kingdomName, merged: false }));
+    if(moon.subareaStage && SHOW_SUBAREA_ACCESS_ON_MOONS){
       const ownOnly = parseMoon(row, nodeMap, checkpointLookup, kingdomName, {}, {});
       moon.entranceReqs = computeEntranceReqs(row, ownOnly, ws, nodeMap, kingdomName);
     }
@@ -7960,7 +8027,7 @@ function applyNodeMergeRules(kingdomName){
     moon.checkpoint = moon._baseTracked.checkpoint;
     moon.checkpointType = moon._baseTracked.checkpointType;
     moon.checkpointNodeId = moon._baseTracked.checkpointNodeId;
-    moon._extraNodes = [];
+    moon._extraNodes = (moon._autoExtraNodes || []).map(x => Object.assign({}, x));
 
     const rulesForMoon = NODE_MERGE_RULES
       .filter(r => normalizeMergeName(r.moon) === normalizeMergeName(moon.name))
@@ -8064,7 +8131,7 @@ function applyNodeMergeRules(kingdomName){
         // pipe -> node. branchesForNodeId only sees the node's DIRECT inbound
         // edges, so routes that pass through the other pipe (e.g. Entrance Pipe ->
         // Exit Pipe -> node) were dropped. Use the full per-pipe walk instead.
-        const pipeReach = (moon.subarea && nodeId && nodeId === moon.fromNodeId) ? subareaPipeReachBranches(data, nodeId, kingdomName) : null;
+        const pipeReach = (SHOW_SUBAREA_ACCESS_ON_MOONS && moon.subarea && nodeId && nodeId === moon.fromNodeId) ? subareaPipeReachBranches(data, nodeId, kingdomName) : null;
         const reachBranches = (FREE_NODE_SKIPS_REACH_COST && nodeIsFreeNode && (!!autoRule || (nodeId && nodeId === moon.fromNodeId)))
           ? [{ group: [], scenarios: null, tier: "casual" }]
           : (pipeReach || branchesForNodeId(data, nodeId));
@@ -8084,7 +8151,7 @@ function applyNodeMergeRules(kingdomName){
           // Subarea moon reached through its pipes: keep the "Entrance Pipe: / Exit Pipe:" sections
           // (same look as an ordinary subarea moon) instead of one flat list where every route is
           // tagged "From Entrance Pipe". Only when EVERY route came from a pipe.
-          if(moon.subarea && crossedAll.length && crossedAll.every(b => /\bPipe\b/.test(String(b.origin || "")))){
+          if(SHOW_SUBAREA_ACCESS_ON_MOONS && moon.subarea && crossedAll.length && crossedAll.every(b => /\bPipe\b/.test(String(b.origin || "")))){
             const order = [], by = {};
             crossedAll.forEach(b => {
               const key = String(b.origin);
@@ -8127,6 +8194,9 @@ function applyNodeMergeRules(kingdomName){
       if(id === moon.checkpointNodeId || moon._extraNodes.some(x => x.id === id)) return;
       moon._extraNodes.push({ name: r.node, id, kingdom: src.kingdomName, merged: true });
     });
+    // De-duplicate (auto-detected + rule-added) and never repeat the primary node.
+    const seenIds = new Set([moon.checkpointNodeId]);
+    moon._extraNodes = moon._extraNodes.filter(x => !seenIds.has(x.id) && seenIds.add(x.id));
   });
   applyPyramidLogic(kingdomName);
 }
@@ -8802,7 +8872,7 @@ function showAnyPop(anchor, token, group){
   el.className = "any-pop " + (isThrow ? "pop-throw" : "pop-grounded");
   const title = document.createElement("div");
   title.className = "any-pop-title";
-  title.textContent = (isThrow ? "Any Cap Throw" : ghT.label) + (options.length > 1 ? " \u2014 any one of:" : " \u2014 needs:");
+  title.textContent = isThrow ? "Any Cap Throw" : ghT.label;
   el.appendChild(title);
   if(ghT && ghT.desc){
     const d = document.createElement("div");
@@ -8810,23 +8880,35 @@ function showAnyPop(anchor, token, group){
     d.textContent = ghT.desc;
     el.appendChild(d);
   }
+  // Icons run left to right; the name of the hovered option shows in the caption underneath.
+  const rowEl = document.createElement("div");
+  rowEl.className = "any-pop-grid";
+  const caption = document.createElement("div");
+  caption.className = "any-pop-caption";
+  caption.innerHTML = "&nbsp;";
   options.forEach(toks => {
     const keys = toks.map(t => ICON_MANIFEST[t] ? t : (manifestKeyForGh(t) || t));
-    const row = document.createElement("div");
-    row.className = "any-pop-row" + (keys.every(k => tokenIsSelected(k)) ? " on" : "");
-    const icons = document.createElement("span");
-    icons.className = "any-pop-icons";
-    keys.forEach((k, i) => {
-      if(i){ const plus = document.createElement("span"); plus.className = "and-plus"; plus.textContent = "+"; icons.appendChild(plus); }
-      icons.appendChild(makeIcon(k));
-    });
-    const name = document.createElement("span");
-    name.className = "any-pop-name";
-    name.textContent = keys.map(k => filterLabelFor(k)).join(" + ") + ((ghT && ghT.fromMap && toks.length === 1 && ghT.fromMap[toks[0]]) ? " (from the " + ghT.fromMap[toks[0]].label + " Checkpoint)" : "");
-    row.appendChild(icons);
-    row.appendChild(name);
-    el.appendChild(row);
+    const opt = document.createElement("span");
+    opt.className = "any-pop-opt" + (keys.every(k => tokenIsSelected(k)) ? " on" : "");
+    const nm = keys.map(k => filterLabelFor(k)).join(" + ") + ((ghT && ghT.fromMap && toks.length === 1 && ghT.fromMap[toks[0]]) ? " (from the " + ghT.fromMap[toks[0]].label + " Checkpoint)" : "");
+    if(keys.length === 2){
+      // Two abilities that are needed together share one tile, split on the diagonal.
+      const pair = document.createElement("span");
+      pair.className = "any-pop-pair";
+      keys.forEach((k, i) => { const h = document.createElement("span"); h.className = "pair-half pair-" + i; h.appendChild(makeIcon(k)); pair.appendChild(h); });
+      opt.appendChild(pair);
+    } else {
+      keys.forEach((k, i) => {
+        if(i){ const plus = document.createElement("span"); plus.className = "and-plus"; plus.textContent = "+"; opt.appendChild(plus); }
+        opt.appendChild(makeIcon(k));
+      });
+    }
+    opt.addEventListener("mouseenter", () => { caption.textContent = nm; });
+    opt.addEventListener("mouseleave", () => { caption.innerHTML = "&nbsp;"; });
+    rowEl.appendChild(opt);
   });
+  el.appendChild(rowEl);
+  el.appendChild(caption);
   el.style.visibility = "hidden";
   document.body.appendChild(el);
   const r = anchor.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight;
@@ -9297,7 +9379,7 @@ function buildMoonCard(moon, opts){
   // one, silently dropping the custom node any time the moon was also in a
   // subarea. A moon with no subarea just shows the Checkpoint/Custom-Node
   // icon as before.
-  if(moon.subarea){
+  if(moon.subarea && SHOW_SUBAREA_ACCESS_ON_MOONS){
     const info = document.createElement("span");
     info.className = "checkpoint-info";
 
@@ -12647,8 +12729,8 @@ function setupMergedFilterBar(tokens){
       const empty = document.createElement("span");
       empty.className = "filter-bar-empty";
       empty.textContent = exempt
-        ? "Nothing yet — open Filters and pick what you already have."
-        : "Nothing yet — open Filters and pick Abilities/Captures to look up.";
+        ? "Nothing marked yet."
+        : "Nothing picked yet.";
       chipsEl.appendChild(empty);
       clearBtn.style.display = "none";
       return;
@@ -12941,21 +13023,24 @@ function setupMergedFilterBar(tokens){
 // the trailing sentence in filter-summary. It never touches the
 // selection itself.
 function setupFilterModeTabs(){
-  const tabs = document.querySelectorAll(".filter-mode-tab");
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      if(tab.dataset.mode === filterMode) return;
-      filterMode = tab.dataset.mode;
-      const fb = document.getElementById("filterBars"); if(fb) fb.dataset.filterMode = filterMode;
-      tabs.forEach(t => t.classList.toggle("active", t === tab));
-      // Incomplete abilities are only pickable in "What Does This Unlock?".
-      // (Incomplete abilities are now selectable in every mode.)
-      if(window.__refreshFilterPanels) window.__refreshFilterPanels();
-      if(window.__drawFilterChips) window.__drawFilterChips();
-      refreshImpliedTiles();
-      updateFilterSummary();
-      renderGrid();
-    });
+  const btn = document.getElementById("filterModeToggle");
+  if(!btn) return;
+  const hint = document.getElementById("filterModeHint");
+  const paint = () => {
+    btn.dataset.mode = filterMode;
+    btn.textContent = filterMode === "cando" ? "I Have This!" : "What Does This Unlock?";
+    if(hint) hint.textContent = filterMode === "cando" ? "Marks your picks as Free" : "Shows moons that use your picks";
+  };
+  paint();
+  btn.addEventListener("click", () => {
+    filterMode = filterMode === "cando" ? "unlocks" : "cando";
+    const fb = document.getElementById("filterBars"); if(fb) fb.dataset.filterMode = filterMode;
+    paint();
+    if(window.__refreshFilterPanels) window.__refreshFilterPanels();
+    if(window.__drawFilterChips) window.__drawFilterChips();
+    refreshImpliedTiles();
+    updateFilterSummary();
+    renderGrid();
   });
 }
 
