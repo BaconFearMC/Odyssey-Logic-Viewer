@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityPaintings.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2963,6 +2963,8 @@
 <script>
 /* LOGIC VIEWING DISCLAIMER — set to 1 to show a persistent banner at the top of the page, 0 to remove it. */
 const LOGIC_VIEWING_BROKEN = 1;
+/* 1 = list every method as its own chip (no Group-Filter / Any-Throw / Grounded-Height merging). 0 = old condensed chips. */
+const SHOW_EVERY_METHOD = 1;
 (function(){
   if(!LOGIC_VIEWING_BROKEN) return;
   const b = document.createElement("div");
@@ -4365,7 +4367,7 @@ function mergeAnyThrowGroups(tierLanes){
   return changed ? out : tierLanes;
 }
 function withGroundedMerge(tierLanes, kingdomName, moon){
-  if(!tierLanes || submitMode) return tierLanes;
+  if(!tierLanes || submitMode || SHOW_EVERY_METHOD) return tierLanes;
   const hiding = hideAdvanced || hideExpert;
   const crossTiers = GH_MERGE_ORDER.filter(t => t.fromMap && ghKingdomActive(kingdomName, t));
   let cur;
