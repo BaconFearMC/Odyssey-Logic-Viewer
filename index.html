@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityVault.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2963,14 +2963,29 @@
 <script>
 /* LOGIC VIEWING DISCLAIMER — set to 1 to show a persistent banner at the top of the page, 0 to remove it. */
 const LOGIC_VIEWING_BROKEN = 1;
-/* 1 = list every method as its own chip (no Group-Filter / Any-Throw / Grounded-Height merging). 0 = old condensed chips. */
+/* 1 = list every method as its own chip until a Group Filter is selected (selecting one merges its methods, as before). 0 = always merged. */
 const SHOW_EVERY_METHOD = 1;
 (function(){
   if(!LOGIC_VIEWING_BROKEN) return;
-  const b = document.createElement("div");
-  b.id = "logicBrokenBanner"; b.setAttribute("role", "alert");
-  b.textContent = "Logic viewing is temporarily broken! Assume it is fixed when this disclaimer no longer appears!";
-  document.body.insertBefore(b, document.body.firstChild);
+  const TEXT = "Logic viewing is temporarily broken! Assume it is fixed when this disclaimer no longer appears!";
+  const build = () => {
+    const b = document.createElement("div");
+    b.id = "logicBrokenBanner"; b.setAttribute("role", "alert"); b.textContent = TEXT;
+    b.setAttribute("style", "position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:2147483647!important;display:block!important;visibility:visible!important;opacity:1!important;background:#b3261e;color:#fff;font:700 14px/1.35 system-ui,sans-serif;text-align:center;padding:8px 12px;box-shadow:0 2px 6px rgba(0,0,0,.35);pointer-events:none");
+    return b;
+  };
+  // Persistent: always on top of every screen/overlay, and put back if anything removes or hides it.
+  const ensure = () => {
+    const root = document.documentElement;
+    let b = document.getElementById("logicBrokenBanner");
+    if(!b || b.parentNode !== root || b.textContent !== TEXT){ if(b) b.remove(); root.appendChild(build()); b = document.getElementById("logicBrokenBanner"); }
+    document.body && (document.body.style.paddingTop = (b.offsetHeight || 0) + "px");
+  };
+  ensure();
+  document.addEventListener("DOMContentLoaded", ensure);
+  window.addEventListener("resize", ensure);
+  new MutationObserver(ensure).observe(document.documentElement, { childList: true });
+  setInterval(ensure, 1500);
 })();
 </script>
 <script>
@@ -4367,7 +4382,10 @@ function mergeAnyThrowGroups(tierLanes){
   return changed ? out : tierLanes;
 }
 function withGroundedMerge(tierLanes, kingdomName, moon){
-  if(!tierLanes || submitMode || SHOW_EVERY_METHOD) return tierLanes;
+  if(!tierLanes || submitMode) return tierLanes;
+  // Default: every method is its own chip. The merged "Any Grounded Height" / "Any Throw" chips are what the
+  // Group Filters ask for, so merging happens as soon as one of them is selected (and always when SHOW_EVERY_METHOD = 0).
+  if(SHOW_EVERY_METHOD && !GH_TIERS.some(t => selectedAbilities.has(t.token))) return tierLanes;
   const hiding = hideAdvanced || hideExpert;
   const crossTiers = GH_MERGE_ORDER.filter(t => t.fromMap && ghKingdomActive(kingdomName, t));
   let cur;
