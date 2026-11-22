@@ -644,7 +644,6 @@
     clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
   }
   .badge .icon-svg{ width:17.55px; height:17.55px; }
-  .badge.subareadoor{ background:var(--bg-chip); border-color:var(--border-hi, var(--border)); }
   .badge.moonrock{ background:var(--moonrock-bg); color:var(--moonrock); border-color:var(--moonrock-border);}
   .badge.worldpeace{ background:var(--worldpeace-bg); color:var(--worldpeace); border-color:var(--worldpeace-border);}
   /* Checkpoint icon and Subarea icon share the same slot/size (bottom-right
@@ -823,7 +822,7 @@
      (flat tint, no diagonal gradient wash) so a route reads at a glance
      even scrolled away from its tier-pill label. */
   #hideAdvToggle.active{ background:#e2c13a !important; border-color:#b89a1c !important; color:#1a1500 !important; }
-  #hideAdvToggle.active.exp-only{ background:#d6455a !important; border-color:#a82d40 !important; color:#fff !important; }
+  #hideExpToggle.active{ background:#d6455a !important; border-color:#a82d40 !important; color:#fff !important; }
   .crj-note{ display:flex; align-items:center; gap:2px; margin:-2px 0 0 8px; font-size:11px !important; opacity:.9; padding:0 !important; background:none !important; border:0 !important; }
   .exempt-note{
     font-size:10px; font-style:italic; color:var(--text-dim, #8a8a8a);
@@ -1036,7 +1035,7 @@
   .prog-badge{
     position:absolute; top:-14px; right:-14px; z-index:3;
     display:flex; align-items:center; flex-direction:row-reverse;
-    pointer-events:auto; line-height:1; /* hoverable: hovering a chip counts as hovering its icon, so the icon's tooltip shows */
+    pointer-events:none; line-height:1;
     filter:drop-shadow(0 1px 2px rgba(0,0,0,0.7));
   }
   .prog-icon, .prog-fallback{
@@ -2219,20 +2218,6 @@
   .filter-bar-row{ transition:background .12s ease; }
   .filter-bar-search{ background:#1a1b1e; transition:border-color .12s ease, box-shadow .12s ease; }
   .filter-bar-search:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(230,194,0,.15); }
-
-  /* ---- Single filter-mode button (lives at the top of the Filters panel) ---- */
-  .filter-mode-row{ display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; padding:12px 0 2px; text-align:right; }
-  .filter-mode-label{ font-size:12px; color:var(--text-dim); }
-  .filter-mode-btn{
-    background:var(--bg-panel); color:var(--worldpeace);
-    border:2px solid var(--worldpeace); border-bottom-width:3px;
-    padding:6px 14px; font-size:13px; cursor:pointer;
-    clip-path: polygon(var(--cut-sm) 0, 100% 0, 100% calc(100% - var(--cut-sm)), calc(100% - var(--cut-sm)) 100%, 0 100%, 0 var(--cut-sm));
-    transition:background .12s ease, border-color .12s ease, color .12s ease;
-  }
-  .filter-mode-btn[data-mode="unlocks"]{ color:var(--gold); border-color:var(--gold); }
-  .filter-mode-btn:hover{ background:rgba(255,255,255,0.06); }
-  .filter-mode-hint{ font-size:12px; color:var(--text-dim); }
   .filter-mode-tab{ transition:background .15s var(--ease), border-color .15s var(--ease), opacity .15s ease, transform .1s ease; }
   .filter-mode-tab:not(.active):hover{ opacity:.9; border-color:var(--border-hi); }
   .filter-mode-tab:active{ transform:translateY(1px); }
@@ -2309,8 +2294,6 @@
   .icon-wrap.any-throw::after{ color:#fff; }
   .icon-wrap.any-grounded{ --any-acc:#19b8a6; }
   .icon-wrap.any-normal{ --any-acc:#8fd0ff; }
-  .icon-wrap.any-normal-lj{ --any-acc:#5fb4ef; }
-  .icon-wrap.any-normal-lj::after{ color:#fff; }
   .icon-wrap.any-normaljump{ --any-acc:#e0679a; }
   .icon-wrap.any-normaljump::after{ color:#fff; }
   .icon-wrap.any-classic{ --any-acc:#e0862f; }
@@ -2322,8 +2305,8 @@
   .icon-wrap.any-shop{ --any-acc:#f0c040; }
   /* Three overlapped icons (Neutral Throw + Vault + Dive): top-left, centre, bottom-right. */
   .cycle-frame.pair.trio > :nth-child(1){ width:58%; height:58%; top:0; left:0; right:auto; bottom:auto; z-index:1; }
-  .cycle-frame.pair.trio > :nth-child(2){ width:58%; height:58%; top:21%; left:21%; right:auto; bottom:auto; z-index:2; }
-  .cycle-frame.pair.trio > :nth-child(3){ width:58%; height:58%; top:auto; left:auto; right:0; bottom:0; z-index:3; }
+  .cycle-frame.pair.trio > :nth-child(2){ width:58%; height:58%; top:21%; left:21%; right:auto; bottom:auto; z-index:2; box-shadow:-1px -1px 0 var(--bg-panel); }
+  .cycle-frame.pair.trio > :nth-child(3){ width:58%; height:58%; top:auto; left:auto; right:0; bottom:0; z-index:3; box-shadow:-1px -1px 0 var(--bg-panel); }
   .icon-wrap.any-high{ --any-acc:#2347b5; }
   .icon-wrap.any-high::after{ color:#fff; }
   .icon-wrap.any-height-gp, .icon-wrap.any-jump-gp{ --any-acc:var(--any-amber); }
@@ -2335,8 +2318,8 @@
   .icon-wrap.any-chest::after{ color:#1b1c1f; }
   .gh-chest-badge{ position:absolute; top:-11px; left:-9px; z-index:4; width:28px; height:28px; pointer-events:none; filter:drop-shadow(0 1px 2px rgba(0,0,0,.8)); transform:rotate(-8deg); }
   .gh-chest-badge .prog-icon, .gh-chest-badge .prog-fallback{ width:28px; height:28px; margin:0; border:0; border-radius:0; background:transparent; object-fit:contain; }
-  .icon-wrap.any-badged.any-throwex{ --any-acc:#d11a3a; }
-  .icon-wrap.any-throwex::after{ color:#fff; }
+  .icon-wrap.any-badged.any-throwex{ --any-acc:#ff9a9a; }
+  .icon-wrap.any-throwex::after{ color:#1b1c1f; }
   .gh-kingdom-badge{ position:absolute; right:-9px; bottom:-9px; width:22px; height:22px; z-index:4; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
   .gh-kingdom-badge img{ width:100%; height:100%; object-fit:contain; display:block; }
   .gh-cap-badge{ position:absolute; top:-10px; z-index:4; width:26px; height:26px; pointer-events:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7)); }
@@ -2354,13 +2337,13 @@
   .any-cycle-box{ position:relative; display:block; width:100%; height:100%; }
   .filter-option-iconbox.any-badged > .filter-option-icon{ position:relative; z-index:1; }
   .filter-option.selected .filter-option-iconbox.any-badged::before{ background:var(--gold); }
-  .any-pop-desc{ font-size:11px; color:var(--text-dim); margin:-4px 0 8px; width:0; min-width:100%; white-space:normal; }
+  .any-pop-desc{ font-size:11px; color:var(--text-dim); margin:-4px 0 8px; max-width:300px; white-space:normal; }
   .prog-badge.prog-crossed .prog-icon, .prog-badge.prog-crossed .prog-fallback{ border-color:#e0314b; filter:grayscale(.6) brightness(.8); }
   .prog-badge.prog-crossed{ position:absolute; }
   .prog-badge.prog-left, .filter-option-icon.moon-icon .prog-badge.prog-crossed.prog-left{ right:auto; left:-14px; top:-14px; }
   .prog-badge .prog-x{ position:absolute; left:2px; top:2px; width:29px; height:29px; pointer-events:none; z-index:4;
-    background:linear-gradient(to top right, transparent calc(50% - 2.5px), #ff2d4d calc(50% - 2.5px), #ff2d4d calc(50% + 2.5px), transparent calc(50% + 2.5px));
-    filter:drop-shadow(0 0 1.5px #000) drop-shadow(0 0 1px #000); }
+    background:linear-gradient(to top right, transparent calc(50% - 2px), #ff2d4d calc(50% - 2px), #ff2d4d calc(50% + 2px), transparent calc(50% + 2px)),
+                linear-gradient(to top left, transparent calc(50% - 2px), #ff2d4d calc(50% - 2px), #ff2d4d calc(50% + 2px), transparent calc(50% + 2px)); }
   .any-badged{ position:relative; }
   .any-badged::before{
     content:""; position:absolute; inset:-3px; z-index:0; background:var(--any-acc);
@@ -2375,13 +2358,13 @@
   }
   .hoist-token .icon-wrap.any-badged::after, .hoist-token .icon-wrap.any-badged::before{ display:none; }
   .cycle-frame{
-    position:absolute; inset:0; z-index:1; display:block; background:rgba(35,36,39,0.5);
+    position:absolute; inset:0; z-index:1; display:block; background:var(--bg-panel);
     animation-timing-function:linear; animation-iteration-count:infinite; animation-fill-mode:both;
     clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
   }
   .cycle-frame > .icon, .cycle-frame > .icon-fallback{ position:absolute; width:100%; height:100%; top:0; left:0; clip-path:none; border:0; }
   .cycle-frame.pair > :first-child{ width:64%; height:64%; top:0; left:0; z-index:1; }
-  .cycle-frame.pair > :last-child{ width:64%; height:64%; top:auto; left:auto; right:0; bottom:0; z-index:2; }
+  .cycle-frame.pair > :last-child{ width:64%; height:64%; top:auto; left:auto; right:0; bottom:0; z-index:2; box-shadow:-1px -1px 0 var(--bg-panel); }
   .cycle-frame.static{ animation:none; opacity:1; }
   .cycle-4{ animation-name:cycle4; }
   .cycle-8{ animation-name:cycle8; }
@@ -2401,10 +2384,8 @@
   @keyframes cycle8{ 0%{opacity:1} 10%{opacity:1} 12.5%{opacity:0} 98%{opacity:0} 100%{opacity:1} }
   .icon-wrap.any-badged > .icon-tooltip{ display:none; }
   .prog-badge.pink{ pointer-events:auto; }
-  /* The Any Cap Throw chip has its own pop-up, so don't also show the main tooltip while it is hovered */
-  .icon-wrap:has(> .prog-badge.pink:hover) > .icon-tooltip{ opacity:0 !important; visibility:hidden !important; }
   .any-pop{
-    position:fixed; z-index:400; pointer-events:auto; width:max-content; min-width:0; max-width:calc(100vw - 16px);
+    position:fixed; z-index:400; pointer-events:none; min-width:230px; max-width:calc(100vw - 16px);
     background:var(--bg-panel); border:2px solid var(--any-pop-acc, var(--gold)); padding:10px 12px 8px;
     box-shadow:3px 4px 0 rgba(0,0,0,.45); text-align:left;
     clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
@@ -2418,39 +2399,6 @@
   .any-pop-icons{ display:inline-flex; align-items:center; gap:3px; flex:0 0 auto; min-width:68px; }
   .any-pop .icon-wrap, .any-pop .icon, .any-pop .icon-fallback{ width:30px; height:30px; font-size:11px; }
   .any-pop .prog-badge, .any-pop .icon-tooltip{ display:none; }
-
-  /* Group Filter hover: title, icons in a row, hovered name underneath */
-  .any-pop-grid{ display:flex; flex-wrap:nowrap; gap:6px; justify-content:stretch; }
-  .any-pop-grid .icon-wrap, .any-pop-grid .icon, .any-pop-grid .icon-fallback{ width:46px; height:46px; }
-  .any-pop-opt{ flex:1 1 0; justify-content:center; display:inline-flex; align-items:center; gap:2px; padding:6px 3px; border:2px solid transparent; cursor:default; }
-  .any-pop-opt:hover{ border-color:var(--any-pop-acc); }
-  .any-pop-opt.on{ background:var(--gold-light); border-color:var(--gold); }
-  .any-pop-pair{ position:relative; display:inline-block; width:52px; height:52px; }
-  .any-pop-pair .pair-half{ position:absolute; width:64%; height:64%; }
-  .any-pop-grid .any-pop-pair .pair-half .icon-wrap, .any-pop-grid .any-pop-pair .pair-half .icon, .any-pop-grid .any-pop-pair .pair-half .icon-fallback{ width:100%; height:100%; }
-  .any-pop-pair .pair-0{ top:0; left:0; z-index:1; }
-  .any-pop-pair .pair-1{ bottom:0; right:0; z-index:2; }
-  .any-pop-caption{ margin-top:6px; min-height:16px; width:0; min-width:100%; text-align:center; font-size:12.5px; color:var(--text); white-space:normal; }
-
-  /* Group Filter grey plates (toggle: GROUP_FILTER_GREY_BG in the script) */
-  /* Colour stays on the border ring; the inside is the panel grey at 50% so the logic-level colour behind shows through */
-  html.gf-grey .any-badged{ background:rgba(35,36,39,.5); }
-  html.gf-grey .any-badged::before{ padding:3px; box-sizing:border-box;
-    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor;
-    mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
-  html.gf-grey .any-badged .cycle-frame{ background:transparent; }
-  .any-badged .icon, .any-badged .icon-fallback, .any-badged .cycle-frame > *{ border:0 !important; outline:0 !important; box-shadow:none !important; }
-  /* Group Filter popup: icons fill the popup, no reserved dead space */
-  .any-pop-grid .icon-wrap, .any-pop-grid .icon, .any-pop-grid .icon-fallback{ width:46px; height:46px; }
-  .any-pop-opt{ padding:3px !important; align-self:stretch; }
-  .any-pop-pair{ width:50px !important; height:50px !important; }
-  .any-pop-caption{ min-height:0 !important; margin-top:4px !important; }
-  .any-pop{ padding-bottom:6px !important; }
-  /* Progressive chips (Triple Jump / Roll Boost) */
-  .prog-badge.prog-pair{ top:-18px !important; right:-3px !important; left:auto !important; gap:3px !important; padding:2px 3px; background:var(--bg-panel); border:1px solid rgba(255,255,255,.18); box-shadow:0 2px 0 rgba(0,0,0,.45); border-radius:6px; clip-path:none !important; overflow:visible; }
-  .prog-badge.prog-pair .prog-icon, .prog-badge.prog-pair .prog-fallback{ width:20px !important; height:20px !important; border-radius:4px !important; }
-  .prog-badge.prog-pair .prog-arrow{ position:absolute !important; right:-7px !important; bottom:-7px !important; width:14px !important; height:14px !important; font-size:8px !important; border-radius:50%; background:var(--gold) !important; color:#1b1b1b !important; border:1.5px solid #1b1b1b !important; }
-  .filter-option-icon.moon-icon .prog-badge.prog-pair{ top:-20px !important; right:-3px !important; left:auto !important; }
   .any-pop-name{ font-size:12.5px; color:var(--text); white-space:nowrap; }
   .prog-icon.prog-any{ position:relative; overflow:hidden; padding:0; }
   .prog-icon.prog-any .cycle-frame{ clip-path:none; border-radius:4px; }
@@ -2919,12 +2867,7 @@
   .gf-split{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px 24px; }
   .gf-grid{ display:flex; flex-wrap:wrap; gap:12px 10px; justify-content:center; max-height:none; overflow-y:visible; padding-right:0; }
   .gf-vaults .gf-grid{ justify-content:flex-start; }
-  .gf-extras{ margin-left:0; }
-  .gf-grid{ justify-content:space-evenly; }
-  .gf-split{ flex-wrap:nowrap; gap:12px 16px; }
-  .gf-split > .gf-row{ flex:1 1 0; min-width:0; }
-  .gf-split .gf-grid, .gf-vaults .gf-grid, .gf-kingdom .gf-grid, .gf-extras .gf-grid{ justify-content:space-evenly; }
-  @media (max-width:760px){ .gf-split{ flex-wrap:wrap; } .gf-split > .gf-row{ flex:1 1 100%; } }
+  .gf-extras{ margin-left:auto; }
   /* Kingdom-specific Group Filters: their own box, right next to Vaults (Extras stays pinned far right) */
   .gf-kingdom{ padding:6px 10px 10px; border:1px solid rgba(25,184,166,0.55); background:rgba(25,184,166,0.08); }
   .gf-kingdom .gf-grid{ justify-content:flex-start; }
@@ -2955,24 +2898,9 @@
   @keyframes bootSway{ 0%{ transform:rotate(0); } 25%{ transform:rotate(3deg); } 50%{ transform:rotate(0); } 75%{ transform:rotate(-3deg); } 100%{ transform:rotate(0); } }
   @keyframes bootRock{ 0%{ transform:rotate(0); } 25%{ transform:rotate(10deg); } 50%{ transform:rotate(0); } 75%{ transform:rotate(-10deg); } 100%{ transform:rotate(0); } }
   @media (prefers-reduced-motion:reduce){ #bootSpinWrap img{ animation-duration:60s; } }
-
-#logicBrokenBanner{position:sticky;top:0;z-index:99999;background:#b3261e;color:#fff;font:700 14px/1.35 system-ui,sans-serif;text-align:center;padding:8px 12px;box-shadow:0 2px 6px rgba(0,0,0,.35)}
 </style>
 </head>
 <body class="ss-mode ss-home">
-<script>
-/* LOGIC VIEWING DISCLAIMER — set to 1 to show a persistent banner at the top of the page, 0 to remove it. */
-const LOGIC_VIEWING_BROKEN = 1;
-/* 1 = list every method as its own chip (no Group-Filter / Any-Throw / Grounded-Height merging). 0 = old condensed chips. */
-const SHOW_EVERY_METHOD = 1;
-(function(){
-  if(!LOGIC_VIEWING_BROKEN) return;
-  const b = document.createElement("div");
-  b.id = "logicBrokenBanner"; b.setAttribute("role", "alert");
-  b.textContent = "Logic viewing is temporarily broken! Assume it is fixed when this disclaimer no longer appears!";
-  document.body.insertBefore(b, document.body.firstChild);
-})();
-</script>
 <script>
 /* ============ BOOT INTRO + PAGE SOUNDS SWITCHES ============
    1 = on the first visit (and whenever the <link rel="icon"> href changes) the Randomizer logo swings in
@@ -3172,17 +3100,19 @@ const PAGE_SOUNDS_ENABLED = 1;
 </div>
 
 <div class="dbg-item">
-  <button class="corner-btn" id="hideAdvToggle" type="button" aria-label="Hide Expert / Advanced">
+  <button class="corner-btn" id="hideAdvToggle" type="button" aria-label="Hide Advanced">
     <img class="btn-ic" src="icon/AbilitySwing.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9650;</span>'">
-    <span class="btn-txt"><b id="hideAdvToggleTitle">Hide Expert</b><small id="hideAdvToggleState">Off</small></span>
+    <span class="btn-txt"><b>Hide Advanced</b><small id="hideAdvToggleState">Off</small></span>
   </button>
-  <div class="dbg-tip" role="tooltip">
-    <b>Hide Expert / Advanced</b>
-    <span><b style="font-size:12px">1st click</b> &mdash; Hides the Expert logic level.</span>
-    <span><b style="font-size:12px">2nd click</b> &mdash; Hides Advanced (and Expert) too.</span>
-    <span><b style="font-size:12px">3rd click</b> &mdash; Shows both again.</span>
-    <em>Currently: <span id="hideAdvStateTip">Off</span></em>
-  </div>
+  <div class="dbg-tip" role="tooltip"><b>Hide Advanced</b><span>Hides the Advanced logic level. This hides Expert as well.</span></div>
+</div>
+
+<div class="dbg-item">
+  <button class="corner-btn" id="hideExpToggle" type="button" aria-label="Hide Expert">
+    <img class="btn-ic" src="icon/AbilityDive.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9650;</span>'">
+    <span class="btn-txt"><b>Hide Expert</b><small id="hideExpToggleState">Off</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip"><b>Hide Expert</b><span>Hides the Expert logic level only.</span></div>
 </div>
 
 <div class="dbg-item">
@@ -3312,6 +3242,20 @@ const PAGE_SOUNDS_ENABLED = 1;
 
 <div id="filterWrap"><div id="filterWrapInner">
 <div class="filter-bars" id="filterBars">
+  <div class="filter-mode-tabs" id="filterModeTabs">
+    <button type="button" class="filter-mode-tab active" id="filterModeCanDo" data-mode="cando">
+      <span class="filter-mode-text">
+        <span class="filter-mode-title">I Have This!</span>
+        <span class="filter-mode-subtitle">Mark as Free</span>
+      </span>
+    </button>
+    <button type="button" class="filter-mode-tab" id="filterModeUnlocks" data-mode="unlocks">
+      <span class="filter-mode-text">
+        <span class="filter-mode-title">What Does This Unlock?</span>
+        <span class="filter-mode-subtitle">Moons that use your picks</span>
+      </span>
+    </button>
+  </div>
   <div class="filter-bar" id="tokenFilterBar">
     <div class="filter-bar-row" id="tokenFilterRow">
       <span class="filter-bar-label">
@@ -3323,12 +3267,8 @@ const PAGE_SOUNDS_ENABLED = 1;
       <button type="button" class="filter-bar-clear" id="tokenFilterClear" aria-label="Clear Ability/Capture filter" style="display:none;">&times;</button>
     </div>
     <div class="filter-bar-panel" id="tokenFilterPanel">
-      <div class="filter-mode-row">
-        <span class="filter-mode-label">Filter mode</span>
-        <span class="filter-mode-hint" id="filterModeHint">Marks your picks as Free</span>
-        <button type="button" class="filter-mode-btn" id="filterModeToggle" data-mode="cando" title="Click to switch mode">I Have This!</button>
-      </div>
       <div class="filter-section-heading">Abilities</div>
+      <input type="text" class="filter-bar-search" id="abilityFilterSearch" placeholder="Search abilities…" autocomplete="off">
       <div class="filter-bar-grid" id="abilityFilterGrid"></div>
       <div class="ability-bottom-row" id="abilityBottomRow">
         <div class="filter-section-heading">Bonus Abilities</div>
@@ -3347,6 +3287,7 @@ const PAGE_SOUNDS_ENABLED = 1;
         </div>
       </div>
       <div class="filter-section-heading">Captures</div>
+      <input type="text" class="filter-bar-search" id="captureFilterSearch" placeholder="Search captures…" autocomplete="off">
       <div class="filter-bar-grid" id="captureFilterGrid"></div>
     </div>
   </div>
@@ -3446,17 +3387,6 @@ if(!VIDEOS_ENABLED) document.documentElement.classList.add("videos-off");
    1 = they cycle through every option like a gif (old behavior). */
 const ANIMATED_ANY_ICONS = 0;
 
-// >>> QUICK TOGGLE: Group Filter plate backgrounds.
-//     1 = coloured border only; inside is the panel grey at 50% opacity (logic-level colour shows through)
-//     0 = old behavior: the whole plate behind the icon is filled with the accent colour
-const GROUP_FILTER_GREY_BG = 1;
-
-// >>> QUICK TOGGLE: collapsing of individual moons' method lists.
-//     0 = default: a moon with more than 6 methods collapses to a peek with an expand button
-//     1 = never collapse: every moon always shows all of its methods
-const DISABLE_MOON_COLLAPSE = 0;
-if(GROUP_FILTER_GREY_BG) document.documentElement.classList.add("gf-grey");
-
 // >>> 0 = a "<Moon> Free" node's own reach cost is crossed into the moon like any other node
 //     (a moon is only "Free" if getting to the node is genuinely free).
 //     1 = old behavior: a moon sitting on a Free node always reads plain "Free".
@@ -3536,65 +3466,6 @@ function videoTokenLabel(t){
   const m = ICON_MANIFEST[k] || ICON_MANIFEST[t];
   return (m && m.label) ? m.label : String(t);
 }
-// The "Inside . Subarea" strip and the Entrance/Exit Pipe rows stay on subarea moons.
-const SHOW_SUBAREA_ACCESS_ON_MOONS = true;
-// Subareas are randomized, so an overworld Custom Node that only describes how you normally get INTO the
-// subarea (e.g. "Paragoomba Capture from Plaza") is not shown on that subarea's moons. It stays in Access Points.
-// A Custom Node that sits inside the subarea itself (e.g. Rooftop) is still shown. false = show them all.
-const HIDE_OVERWORLD_NODES_ON_SUBAREA_MOONS = true;
-const _nrmMoon = x => String(x == null ? "" : x).toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]/g, "").replace(/^the(?=.)/, "");
-function freeNodeBase(name){
-  const raw = String(name == null ? "" : name).replace(/\s*\([^)]*\)\s*$/, "").trim();
-  if(!/\s+free\s*$/i.test(raw)) return null;
-  const base = raw.replace(/\s*free\s*$/i, "").trim();
-  return [_nrmMoon(base), _nrmMoon(base.replace(/\s*moon\s*$/i, ""))];
-}
-// "<Moon> Free" custom node of THIS moon?
-function nodeIsOwnMoonFree(moon, name){ const b = freeNodeBase(name); return !!(b && moon && b.indexOf(_nrmMoon(moon.name)) !== -1); }
-let _moonNameSet = null, _moonNameSetSize = -1;
-// "<Other Moon> Free" custom node: only ever shown on that moon.
-function nodeIsOtherMoonsFree(moon, name){
-  const b = freeNodeBase(name); if(!b || nodeIsOwnMoonFree(moon, name)) return false;
-  let size = 0; KINGDOM_ORDER.forEach(k => { size += (KINGDOMS[k] || []).length; });
-  if(!_moonNameSet || size !== _moonNameSetSize){
-    _moonNameSet = new Set(); _moonNameSetSize = size;
-    KINGDOM_ORDER.forEach(k => (KINGDOMS[k] || []).forEach(m => _moonNameSet.add(_nrmMoon(m.name))));
-  }
-  return b.some(x => _moonNameSet.has(x));
-}
-// "<X> KFR" custom nodes belong ONLY to "<X> Kingdom Regular Cup" and "<X> Kingdom Master Cup".
-function nodeKfrHiddenOnMoon(moon, name){
-  const m = /^\s*(.+?)\s+KFR\b/i.exec(String(name == null ? "" : name));
-  if(!m || !moon) return false;
-  const x = _nrmMoon(m[1]), mn = _nrmMoon(moon.name);
-  return !(mn === x + "kingdomregularcup" || mn === x + "kingdommastercup");
-}
-// If a moon has a Custom Node named after itself ("<Moon>" or "<Moon> Free"), ONLY that node shows on the moon.
-function moonOwnNamedNodes(moon){
-  if(!moon) return [];
-  const me = _nrmMoon(moon.name), out = [];
-  const chk = n => {
-    const raw = String(n == null ? "" : n).replace(/\s*\([^)]*\)\s*$/, "").trim();
-    const base = raw.replace(/\s+free\s*$/i, "").trim();
-    return _nrmMoon(base) === me || _nrmMoon(base.replace(/\s*moon\s*$/i, "")) === me;
-  };
-  if(moon.checkpoint && chk(moon.checkpoint)) out.push(moon.checkpoint);
-  (moon._extraNodes || []).forEach(x => { if(x && chk(x.name)) out.push(x.name); });
-  return out;
-}
-function nodeHiddenOnMoon(moon, nodeId, name, kingdom){
-  if(nodeKfrHiddenOnMoon(moon, name)) return true;
-  const own = moonOwnNamedNodes(moon);
-  if(own.length && own.indexOf(name) === -1) return true;
-  return nodeOutsideMoonSubarea(moon, nodeId, kingdom) || nodeIsOtherMoonsFree(moon, name);
-}
-function nodeOutsideMoonSubarea(moon, nodeId, kingdom){
-  if(!HIDE_OVERWORLD_NODES_ON_SUBAREA_MOONS || !moon || !moon.subarea || !moon.subareaStage || !nodeId) return false;
-  const d = KINGDOM_NODE_DATA[kingdom || moon.kingdom];
-  const n = d && d.nodeMap && d.nodeMap[nodeId];
-  return !!(n && n.stage && n.stage !== moon.subareaStage);
-}
-
 // "<Moon> Free" custom nodes are bookkeeping, not places: a video title must name the real checkpoint (or the kingdom
 // start) that the node hangs off. Walks back through custom nodes to that anchor; null when it is not unambiguous.
 const __freeAnchorCache = new Map();
@@ -3924,7 +3795,6 @@ let ICON_MANIFEST = {
   ClassicCapJump: { filenames:["AbilityVault.png"], label:"Classic Cap Jump", color:"#e0862f", category:"Movement", tokenType:"ability" },
   NormalJump: { filenames:["AbilityJump.png"], label:"Normal Jump", color:"#e0679a", category:"Movement", tokenType:"ability" },
   GroundedNormal: { filenames:["AbilityJump.png"], label:"Any Grounded Normal Jump", color:"#5aa9e6", category:"Movement", tokenType:"ability" },
-  GroundedNormalLJ: { filenames:["AbilityJump.png"], label:"Any Grounded Normal Jump + Cap Long Jump", color:"#5aa9e6", category:"Movement", tokenType:"ability" },
   GroundedHigh: { filenames:["AbilitySideFlip.png"], label:"Any Grounded High Jump", color:"#1f3a8a", category:"Movement", tokenType:"ability" },
   // Further display-only grounded groupings (see GH_TIERS). Never filter tiles.
   GroundedHeightGP: { filenames:["AbilityJump.png"], label:"Any Grounded Height + Ground Pound Jump", color:"#d9901a", category:"Movement", tokenType:"ability" },
@@ -4028,7 +3898,7 @@ const ABILITY_FILTER_EXCLUDE_TOKENS = {
   Turnip: true,
   Nut: true,
   Seed: true,
-  GroundedHeight: true, GroundedNormal: true, GroundedNormalLJ: true, GroundedHigh: true, // display-only merges; never filter tiles
+  GroundedHeight: true, GroundedNormal: true, GroundedHigh: true, // display-only merges; never filter tiles
   GroundedHeightGP: true, GroundedJumpGP: true, GroundedJump: true, GroundedJumpCT: true, NormalJump: true, ClassicCapJump: true, TortureCapJump: true, AnnoyingCapJump: true, Trickjumping: true, ShopMoons: true,
   AnyVault: true, AnyCapThrowJump: true, GroundedNoCRJ: true, SandHeight: true,
   ChestOpener: true, ChestOpenerCapless: true,
@@ -4072,9 +3942,6 @@ const GH_TIERS = [
     methods: [_SJ, _CRJ, _LJ, _BF, _SP, _SF, _NV, _DV] },
   { token: GH_NORMAL_TOKEN, label: "Any Grounded Normal Jump", cls: "any-normal", cycle: "cycle-7", badge: "NO LJ", seconds: 10, crossed: "LongJump",
     methods: [_SJ, _CRJ, _BF, _SP, _SF, _NV, _DV] },
-  // Same as Any Grounded Normal Jump, plus Long Jump combined with any Cap Throw. Rename the label/badge freely.
-  { token: "GroundedNormalLJ", label: "Any Grounded Normal Jump + Cap Long Jump", cls: "any-normal-lj", cycle: "cycle-8", badge: "+CLJ", seconds: 10,
-    methods: [_SJ, _CRJ, _BF, _SP, _SF, _NV, _DV, ["LongJump", "AnyThrow"]] },
   { token: GH_HIGH_TOKEN, label: "Any Grounded High Jump", cls: "any-high", cycle: "cycle-5", badge: "HIGH", seconds: 10, iconFirst: "SideFlip",
     methods: [_BF, _SP, _SF] },
   { token: "GroundedJumpGP", label: "Any Grounded Jump + Ground Pound Jump", cls: "any-jump-gp", cycle: "cycle-6", badge: "JUMP+GP", plusGP: true, seconds: 7.5, crossed: "AnyThrow", crossedLeft: true,
@@ -4106,13 +3973,13 @@ const GH_TIERS = [
     methods: [["GroundPound"], ["Roll"], ["AnyThrow"]], methodAlts: { 2: ["AnyThrow", "NeutralThrow", "UpThrow", "SpinThrow", "DownThrow"] } },
   { token: "ChestOpenerCapless", label: "Chest Opener (Capless)", cls: "any-chest", cycle: "cycle-2", badge: "CAPLESS", seconds: 3, chestBadge: true, noTile: true,
     methods: [["GroundPound"], ["Roll"]] },
-  { token: "AnyThrowNoNeutral", label: "Any Cap Throw except Neutral Throw", cls: "any-throwex", cycle: "cycle-3", badge: "ANY", seconds: 4.5, crossed: "NeutralThrow", crossedLeft: true, noTile: true, exclude: "NeutralThrow",
+  { token: "AnyThrowNoNeutral", label: "Any Cap Throw except Neutral Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO NEUTRAL", seconds: 4.5, crossed: "NeutralThrow", crossedLeft: true, noTile: true, exclude: "NeutralThrow",
     methods: [["UpThrow"], ["SpinThrow"], ["DownThrow"]] },
-  { token: "AnyThrowNoUp", label: "Any Cap Throw except Up Throw", cls: "any-throwex", cycle: "cycle-3", badge: "ANY", seconds: 4.5, crossed: "UpThrow", crossedLeft: true, noTile: true, exclude: "UpThrow",
+  { token: "AnyThrowNoUp", label: "Any Cap Throw except Up Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO UP", seconds: 4.5, crossed: "UpThrow", crossedLeft: true, noTile: true, exclude: "UpThrow",
     methods: [["NeutralThrow"], ["SpinThrow"], ["DownThrow"]] },
-  { token: "AnyThrowNoDown", label: "Any Cap Throw except Down Throw", cls: "any-throwex", cycle: "cycle-3", badge: "ANY", seconds: 4.5, crossed: "DownThrow", crossedLeft: true, noTile: true, exclude: "DownThrow",
+  { token: "AnyThrowNoDown", label: "Any Cap Throw except Down Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO DOWN", seconds: 4.5, crossed: "DownThrow", crossedLeft: true, noTile: true, exclude: "DownThrow",
     methods: [["NeutralThrow"], ["UpThrow"], ["SpinThrow"]] },
-  { token: "AnyThrowNoSpin", label: "Any Cap Throw except Spin Throw", cls: "any-throwex", cycle: "cycle-3", badge: "ANY", seconds: 4.5, crossed: "SpinThrow", crossedLeft: true, noTile: true, exclude: "SpinThrow",
+  { token: "AnyThrowNoSpin", label: "Any Cap Throw except Spin Throw", cls: "any-throwex", cycle: "cycle-3", badge: "NO SPIN", seconds: 4.5, crossed: "SpinThrow", crossedLeft: true, noTile: true, exclude: "SpinThrow",
     methods: [["NeutralThrow"], ["UpThrow"], ["DownThrow"]] },
   // ---- KINGDOM-SPECIFIC GROUP FILTERS ----------------------------------------------------------------------
   // Same as any other group, plus:  kingdom  -> only merges / shows on that kingdom's page
@@ -4137,7 +4004,6 @@ const JUMP_GROUP_ENABLED = {
   GroundedHeightGP: 0,   // Any Grounded Height + Ground Pound Jump
   GroundedHeight:   1,   // Any Grounded Height
   GroundedNormal:   1,   // Any Grounded Normal Jump
-  GroundedNormalLJ: 1,   // Any Grounded Normal Jump + Cap Long Jump (Long Jump + Any Cap Throw)
   GroundedHigh:     1,   // Any Grounded High Jump
   GroundedJumpGP:   0,   // Any Grounded Jump + Ground Pound Jump
   GroundedJumpCT:   1,   // Any Grounded Jump (includes Cap Throw Jump)
@@ -4367,7 +4233,7 @@ function mergeAnyThrowGroups(tierLanes){
   return changed ? out : tierLanes;
 }
 function withGroundedMerge(tierLanes, kingdomName, moon){
-  if(!tierLanes || submitMode || SHOW_EVERY_METHOD) return tierLanes;
+  if(!tierLanes || submitMode) return tierLanes;
   const hiding = hideAdvanced || hideExpert;
   const crossTiers = GH_MERGE_ORDER.filter(t => t.fromMap && ghKingdomActive(kingdomName, t));
   let cur;
@@ -5392,37 +5258,6 @@ function exprToScenarioDNF(expr, optionScenarios, kingdomName){
    Custom Node in any of the 17 kingdoms (Outer Wall Area, etc.)
    is picked up the moment it's tagged node_type "custom_place".
    ========================================================= */
-/* Every Custom Node that leads DIRECTLY to a node (walking backward along edges, same stage only,
-   stopping at the first Custom Node / Checkpoint / stage start on each path). A moon reachable from
-   more than one Custom Node gets one strip per node. */
-function buildDirectCustomSourceFinder(nodes, edges){
-  const byId = {}; (nodes || []).forEach(n => { byId[n.node_id] = n; });
-  const rev = {};
-  const add = (from, to) => { if(from && to) (rev[to] = rev[to] || []).push(from); };
-  (edges || []).forEach(e => {
-    if(!e.from_node_id || !e.to_node_id) return;
-    if((e.requirement_expr || "").trim().toLowerCase() === "impossible") return;
-    add(e.from_node_id, e.to_node_id);
-    if(String(e.bidirectional).toLowerCase() === "true") add(e.to_node_id, e.from_node_id);
-  });
-  return startId => {
-    const start = byId[startId]; if(!start) return [];
-    const seen = new Set([startId]), queue = [startId], found = [];
-    let guard = 0;
-    while(queue.length && guard++ < 600){
-      const cur = queue.shift();
-      (rev[cur] || []).forEach(src => {
-        if(seen.has(src)) return; seen.add(src);
-        const n = byId[src]; if(!n || n.stage !== start.stage) return;
-        if(n.node_type === "custom_place"){ if(!/purples/i.test(n.display_name || "")) found.push(n); return; }
-        if(n.node_type === "checkpoint" || n.node_type === "stage_start") return;
-        queue.push(src);
-      });
-    }
-    return found;
-  };
-}
-
 function buildCheckpointLookup(nodes, edges){
   const displayNameOf = {};
   const nodeTypeOf = {};
@@ -5739,9 +5574,6 @@ function tiersForGroups(dnf, difficultyField){
     return dnf.map(() => t);
   }
   if(raw.length !== dnf.length){
-    // Counts disagree, so branch i can't be paired with entry i. If every entry is the SAME tier though,
-    // the pairing is irrelevant: every branch is that tier (instead of falling to "unrated", which shows as Casual).
-    if(raw.length > 1 && raw.every(t => t === raw[0]) && TIER_ORDER.includes(raw[0])) return dnf.map(() => raw[0]);
     return dnf.map(() => "unrated");
   }
   return raw.map(t => TIER_ORDER.includes(t) ? t : "unrated");
@@ -6933,20 +6765,12 @@ function buildNodeReachIndex(nodes, edges){
     const raw = (n.display_name || "").replace(/^Home (?:entrance|return):\s*/i, "").trim();
     return raw ? raw.charAt(0).toUpperCase() + raw.slice(1) + " Entrance" : null;
   };
-  // MEMO RULE: a result may only be cached when it does not depend on which nodes are already on the
-  // walk (`seen`). Caching a result that was cut short by a cycle guard / depth cap poisoned the cache:
-  // e.g. evaluating place_14 first walks the reverse of the two-way edge into place_19 with place_14
-  // already "seen", so place_19 was cached WITHOUT its place_14 routes and every later lookup of
-  // place_19 (the real one, from the top) silently lost them. `_crCuts` counts such cut-offs; only
-  // top-level calls (empty `seen`) or calls that triggered no cut-off are cached.
   const _crMemo = {};
-  let _crCuts = 0;
   const customReach = (id, seen) => {
     if(Object.prototype.hasOwnProperty.call(_crMemo, id)) return _crMemo[id];
-    if(seen && seen.size > 5){ _crCuts++; return null; } // depth cap: deeper chains only add redundant routes
-    const before = _crCuts;
+    if(seen && seen.size > 5){ return null; } // depth cap: deeper chains only add redundant routes
     const r = customReachRaw(id, seen);
-    if(!(seen && seen.size) || _crCuts === before) _crMemo[id] = r;
+    _crMemo[id] = r;
     return r;
   };
   const customReachRaw = (id, seen) => {
@@ -6960,8 +6784,7 @@ function buildNodeReachIndex(nodes, edges){
     const destIsAnchor = !!(_nodeById[id] && (_nodeById[id].node_type === "checkpoint" || _nodeById[id].node_type === "stage_start"));
     let res = [];
     list.forEach(({ e, src }) => {
-      if(seen.has(src)){ _crCuts++; return; }
-      if(res.length > 60) return;
+      if(seen.has(src) || res.length > 60) return;
       const sn = _nodeById[src];
       let sb, label = null, costedOnly = false;
       if(sn && sn.node_type === "custom_place" && destIsAnchor){
@@ -7287,19 +7110,16 @@ function directedInbound(data, nodeId){
 function customNodeReachBranches(data, nodeId, seen){
   data._cnrMemo = data._cnrMemo || {};
   if(Object.prototype.hasOwnProperty.call(data._cnrMemo, nodeId)) return data._cnrMemo[nodeId];
-  if(seen && seen.size > 5){ data._cnrCuts = (data._cnrCuts || 0) + 1; return null; }
-  const before = data._cnrCuts || 0;
+  if(seen && seen.size > 5) return null;
   const out = customNodeReachBranchesRaw(data, nodeId, seen);
-  // Same rule as buildNodeReachIndex's customReach: never cache a result that a cycle guard / depth cap cut short.
-  if(!(seen && seen.size) || (data._cnrCuts || 0) === before) data._cnrMemo[nodeId] = out;
+  data._cnrMemo[nodeId] = out;
   return out;
 }
 function customNodeReachBranchesRaw(data, nodeId, seen){
   seen = new Set(seen); seen.add(nodeId);
   let res = [];
   directedInbound(data, nodeId).forEach(({ e, src }) => {
-    if(seen.has(src)){ data._cnrCuts = (data._cnrCuts || 0) + 1; return; }
-    if(res.length > 60) return;
+    if(seen.has(src) || res.length > 60) return;
     const sn = data.nodeMap[src];
     let sb;
     if(!sn || sn.node_type !== "custom_place") sb = [{ group: [], scenarios: null, tier: "casual" }];
@@ -7560,17 +7380,12 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
 
   buildSubareaContext(kingdomName, ws.logicNodes || [], ws.routeEdges || []);
   const __t2 = performance.now();
-  const findDirectCustom = buildDirectCustomSourceFinder(ws.logicNodes || [], ws.routeEdges || []);
   const moons = sortMoonsByHintOrder((ws.moonAccess || []).map(row => {
     // A moon shows ONLY its own requirement. The cost of reaching its
     // checkpoint/custom node/subarea pipe is node info and lives in the
     // click-to-inspect popup, not folded into the moon (so {} , {} here).
     const moon = parseMoon(row, nodeMap, checkpointLookup, kingdomName, {}, {});
-    moon._autoExtraNodes = findDirectCustom(row.from_node_id)
-      .filter(n => n.node_id !== moon.checkpointNodeId)
-      .slice(0, 6)
-      .map(n => ({ name: String(n.display_name || n.node_id).replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*Checkpoint\s*$/i, ""), id: n.node_id, kingdom: kingdomName, merged: false, auto: true }));
-    if(moon.subareaStage && SHOW_SUBAREA_ACCESS_ON_MOONS){
+    if(moon.subareaStage){
       const ownOnly = parseMoon(row, nodeMap, checkpointLookup, kingdomName, {}, {});
       moon.entranceReqs = computeEntranceReqs(row, ownOnly, ws, nodeMap, kingdomName);
     }
@@ -8145,7 +7960,7 @@ function applyNodeMergeRules(kingdomName){
     moon.checkpoint = moon._baseTracked.checkpoint;
     moon.checkpointType = moon._baseTracked.checkpointType;
     moon.checkpointNodeId = moon._baseTracked.checkpointNodeId;
-    moon._extraNodes = (moon._autoExtraNodes || []).map(x => Object.assign({}, x));
+    moon._extraNodes = [];
 
     const rulesForMoon = NODE_MERGE_RULES
       .filter(r => normalizeMergeName(r.moon) === normalizeMergeName(moon.name))
@@ -8249,7 +8064,7 @@ function applyNodeMergeRules(kingdomName){
         // pipe -> node. branchesForNodeId only sees the node's DIRECT inbound
         // edges, so routes that pass through the other pipe (e.g. Entrance Pipe ->
         // Exit Pipe -> node) were dropped. Use the full per-pipe walk instead.
-        const pipeReach = (SHOW_SUBAREA_ACCESS_ON_MOONS && moon.subarea && nodeId && nodeId === moon.fromNodeId) ? subareaPipeReachBranches(data, nodeId, kingdomName) : null;
+        const pipeReach = (moon.subarea && nodeId && nodeId === moon.fromNodeId) ? subareaPipeReachBranches(data, nodeId, kingdomName) : null;
         const reachBranches = (FREE_NODE_SKIPS_REACH_COST && nodeIsFreeNode && (!!autoRule || (nodeId && nodeId === moon.fromNodeId)))
           ? [{ group: [], scenarios: null, tier: "casual" }]
           : (pipeReach || branchesForNodeId(data, nodeId));
@@ -8269,7 +8084,7 @@ function applyNodeMergeRules(kingdomName){
           // Subarea moon reached through its pipes: keep the "Entrance Pipe: / Exit Pipe:" sections
           // (same look as an ordinary subarea moon) instead of one flat list where every route is
           // tagged "From Entrance Pipe". Only when EVERY route came from a pipe.
-          if(SHOW_SUBAREA_ACCESS_ON_MOONS && moon.subarea && crossedAll.length && crossedAll.every(b => /\bPipe\b/.test(String(b.origin || "")))){
+          if(moon.subarea && crossedAll.length && crossedAll.every(b => /\bPipe\b/.test(String(b.origin || "")))){
             const order = [], by = {};
             crossedAll.forEach(b => {
               const key = String(b.origin);
@@ -8281,21 +8096,6 @@ function applyNodeMergeRules(kingdomName){
             moon.entranceReqs = order.map(k => Object.assign({ label: k }, summarizeBranches(by[k], kingdomName)));
           }
         }
-      }
-    }
-
-    // GENERIC RULE (no per-moon rule needed, every kingdom): a moon tracked from a Custom Node that no rule
-    // touched still costs "get to that node" + "the moon's own requirement". Without this a moon like
-    // Timer Challenge 1 (on "Top of Bridge") showed only its own fragment of the route and hid how to
-    // reach the spot. Checkpoints are warp points (free to stand on), and subarea moons keep their
-    // per-pipe rows, so only Custom Nodes outside subareas are folded.
-    if(!replaceRule && !plainRule && data && !moon.subarea && moon.checkpointType === "custom_place" && moon.checkpointNodeId
-       && !/purples/i.test(moon.checkpoint || "")){
-      const ownB = ownBranchesFromTierLanes(moon._baseTierLanes);
-      const crossed = crossBranches(ownB, branchesForNodeId(data, moon.checkpointNodeId));
-      if(crossed.length && applyMergedBranchesToMoon(moon, crossed, kingdomName)){
-        moon.entranceReqs = null;
-        moon._mergedNodeKind = "custom_place";
       }
     }
 
@@ -8327,20 +8127,6 @@ function applyNodeMergeRules(kingdomName){
       if(id === moon.checkpointNodeId || moon._extraNodes.some(x => x.id === id)) return;
       moon._extraNodes.push({ name: r.node, id, kingdom: src.kingdomName, merged: true });
     });
-    // Auto-detected extra Custom Nodes that are only ever reached from the moon's own Checkpoint ("Always from
-    // <Checkpoint>") add nothing, so they are dropped.
-    if(data && data.reachBranches){
-      const nrm = t => String(t || "").toLowerCase().replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*checkpoint\s*$/i, "").replace(/[^a-z0-9]/g, "");
-      const cp = moon.checkpointType === "checkpoint" ? nrm(moon.checkpoint) : "";
-      if(cp) moon._extraNodes = moon._extraNodes.filter(x => {
-        if(!x.auto) return true;
-        const br = data.reachBranches[x.id] || [];
-        return !(br.length && br.every(b => b.origin && nrm(b.origin) === cp));
-      });
-    }
-    // De-duplicate (auto-detected + rule-added) and never repeat the primary node.
-    const seenIds = new Set([moon.checkpointNodeId]);
-    moon._extraNodes = moon._extraNodes.filter(x => !seenIds.has(x.id) && seenIds.add(x.id));
   });
   applyPyramidLogic(kingdomName);
 }
@@ -8879,8 +8665,7 @@ function dynamicProgChain(token, andGroup){
   }
   if(!info || info.tokenType !== "capture") return null;
   const chain = [];
-  // A plain Any Cap Throw listed beside a capture folds into that capture's chip; only a SPECIFIC throw stays separate.
-  const hasThrow = andGroup.some(t => ANY_THROW_MEMBERS.indexOf(t) !== -1 || (isGhToken(t) && ghTier(t).exclude));
+  const hasThrow = andGroup.some(t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1 || (isGhToken(t) && ghTier(t).exclude));
   if(!hasThrow) chain.push(ANY_THROW_TOKEN);
   if(_tokLabelMatch(token, COIN_COFFER_RE)){
     const w = andGroup.find(t => _tokLabelMatch(t, WALLET_RE));
@@ -8894,7 +8679,6 @@ function appendAndGroupIcons(chip, andGroup, extra){
   const covered = new Set();
   andGroup.forEach(t => (ABILITY_PROGRESSION[t] || []).forEach(pt => covered.add(pt)));
   andGroup.forEach(t => { const c = dynamicProgChain(t, andGroup); if(c) c.forEach(pt => { if(pt !== ANY_THROW_TOKEN) covered.add(pt); }); });
-  if(andGroup.indexOf(ANY_THROW_TOKEN) !== -1 && andGroup.some(t => ICON_MANIFEST[t] && ICON_MANIFEST[t].tokenType === "capture")) covered.add(ANY_THROW_TOKEN);
   const visible = andGroup.filter(t => !covered.has(t));
   const tokens = sortedTokensForDisplay(visible.length ? visible : andGroup);
   const rows = balancedRowCounts(tokens.length, ICON_ROW_MAX);
@@ -9018,7 +8802,7 @@ function showAnyPop(anchor, token, group){
   el.className = "any-pop " + (isThrow ? "pop-throw" : "pop-grounded");
   const title = document.createElement("div");
   title.className = "any-pop-title";
-  title.textContent = isThrow ? "Any Cap Throw" : ghT.label;
+  title.textContent = (isThrow ? "Any Cap Throw" : ghT.label) + (options.length > 1 ? " \u2014 any one of:" : " \u2014 needs:");
   el.appendChild(title);
   if(ghT && ghT.desc){
     const d = document.createElement("div");
@@ -9026,35 +8810,23 @@ function showAnyPop(anchor, token, group){
     d.textContent = ghT.desc;
     el.appendChild(d);
   }
-  // Icons run left to right; the name of the hovered option shows in the caption underneath.
-  const rowEl = document.createElement("div");
-  rowEl.className = "any-pop-grid";
-  const caption = document.createElement("div");
-  caption.className = "any-pop-caption";
-  caption.innerHTML = "&nbsp;";
   options.forEach(toks => {
     const keys = toks.map(t => ICON_MANIFEST[t] ? t : (manifestKeyForGh(t) || t));
-    const opt = document.createElement("span");
-    opt.className = "any-pop-opt" + (keys.every(k => tokenIsSelected(k)) ? " on" : "");
-    const nm = keys.map(k => filterLabelFor(k)).join(" + ") + ((ghT && ghT.fromMap && toks.length === 1 && ghT.fromMap[toks[0]]) ? " (from the " + ghT.fromMap[toks[0]].label + " Checkpoint)" : "");
-    if(keys.length === 2){
-      // Two abilities that are needed together share one tile, split on the diagonal.
-      const pair = document.createElement("span");
-      pair.className = "any-pop-pair";
-      keys.forEach((k, i) => { const h = document.createElement("span"); h.className = "pair-half pair-" + i; h.appendChild(makeIcon(k)); pair.appendChild(h); });
-      opt.appendChild(pair);
-    } else {
-      keys.forEach((k, i) => {
-        if(i){ const plus = document.createElement("span"); plus.className = "and-plus"; plus.textContent = "+"; opt.appendChild(plus); }
-        opt.appendChild(makeIcon(k));
-      });
-    }
-    opt.addEventListener("mouseenter", () => { caption.textContent = nm; });
-    opt.addEventListener("mouseleave", () => { caption.innerHTML = "&nbsp;"; });
-    rowEl.appendChild(opt);
+    const row = document.createElement("div");
+    row.className = "any-pop-row" + (keys.every(k => tokenIsSelected(k)) ? " on" : "");
+    const icons = document.createElement("span");
+    icons.className = "any-pop-icons";
+    keys.forEach((k, i) => {
+      if(i){ const plus = document.createElement("span"); plus.className = "and-plus"; plus.textContent = "+"; icons.appendChild(plus); }
+      icons.appendChild(makeIcon(k));
+    });
+    const name = document.createElement("span");
+    name.className = "any-pop-name";
+    name.textContent = keys.map(k => filterLabelFor(k)).join(" + ") + ((ghT && ghT.fromMap && toks.length === 1 && ghT.fromMap[toks[0]]) ? " (from the " + ghT.fromMap[toks[0]].label + " Checkpoint)" : "");
+    row.appendChild(icons);
+    row.appendChild(name);
+    el.appendChild(row);
   });
-  el.appendChild(rowEl);
-  el.appendChild(caption);
   el.style.visibility = "hidden";
   document.body.appendChild(el);
   const r = anchor.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight;
@@ -9066,41 +8838,13 @@ function showAnyPop(anchor, token, group){
   el.style.visibility = "";
   anyPopEl = el;
 }
-// Hovering the group icon just names the group; clicking opens the option row, which stays open
-// (so the option icons can be hovered for their names) until you click again, click elsewhere or press Escape.
-let anyPopOwner = null;
 function attachAnyPop(el, token, group){
-  const gt = token === ANY_THROW_TOKEN ? null : (ghTier(token) || null);
-  el.title = token === ANY_THROW_TOKEN ? "Any Cap Throw" : (gt ? gt.label : filterLabelFor(token));
-  // Filter menu only: hovering a Group Filter tile lists all of its methods. (On moon cards it stays click-to-open.)
-  if(token !== ANY_THROW_TOKEN){
-    let hideTimer = null;
-    const cancelHide = () => { if(hideTimer){ clearTimeout(hideTimer); hideTimer = null; } };
-    const scheduleHide = () => { cancelHide(); hideTimer = setTimeout(() => { if(anyPopOwner === el){ hideAnyPop(); anyPopOwner = null; } }, 220); };
-    el.addEventListener("mouseenter", () => {
-      if(!el.closest("#tokenFilterPanel")) return;
-      el.removeAttribute("title"); // the pop-up names the group already
-      cancelHide();
-      if(anyPopEl && anyPopOwner === el) return;
-      showAnyPop(el, token, group); anyPopOwner = el;
-      if(anyPopEl){ anyPopEl.addEventListener("mouseenter", cancelHide); anyPopEl.addEventListener("mouseleave", scheduleHide); }
-    });
-    el.addEventListener("mouseleave", () => { if(el.closest("#tokenFilterPanel") && anyPopOwner === el) scheduleHide(); });
-    el.addEventListener("click", () => { if(el.closest("#tokenFilterPanel")){ cancelHide(); hideAnyPop(); anyPopOwner = null; } });
-  }
-  el.addEventListener("click", (e) => {
-    if(el.closest("#tokenFilterPanel, .filter-sel-pill")) return; // filter tiles keep their normal click (select/deselect)
-    if(anyPopEl && anyPopOwner === el){ hideAnyPop(); anyPopOwner = null; return; }
-    showAnyPop(el, token, group); anyPopOwner = el;
-  });
-  el.addEventListener("keydown", (e) => { if(e.key === "Escape") { hideAnyPop(); anyPopOwner = null; } });
+  el.addEventListener("mouseenter", () => showAnyPop(el, token, group));
+  el.addEventListener("focus", () => showAnyPop(el, token, group));
+  el.addEventListener("mouseleave", hideAnyPop);
+  el.addEventListener("blur", hideAnyPop);
 }
-document.addEventListener("click", (e) => {
-  if(!anyPopEl) return;
-  if(anyPopEl.contains(e.target) || (anyPopOwner && anyPopOwner.contains(e.target))) return;
-  hideAnyPop(); anyPopOwner = null;
-}, true);
-document.addEventListener("keydown", (e) => { if(e.key === "Escape" && anyPopEl){ hideAnyPop(); anyPopOwner = null; } });
+window.addEventListener("scroll", hideAnyPop, true);
 
 // Cross-fading icon frames on a shared wall-clock (every instance stays in
 // step). `frames` = list of token lists; two tokens render as an overlapped pair.
@@ -9400,9 +9144,9 @@ function customNodeRoutesFor(moon){
   // Same condition the card uses to draw the primary strip: a Custom Node
   // always counts; a plain Checkpoint counts unless the moon is in a subarea.
   if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && moon.checkpointNodeId
-     && (moon.checkpointType === "custom_place" || !moon.subarea) && !nodeHiddenOnMoon(moon, moon.checkpointNodeId, moon.checkpoint))
+     && (moon.checkpointType === "custom_place" || !moon.subarea))
     nodes.push({ id: moon.checkpointNodeId, kingdom: moon.kingdom, kind: moon.checkpointType === "custom_place" ? "custom" : "checkpoint", name: moon.checkpoint.replace(/\s*Checkpoint\s*$/i, ""), titleNode: moon.checkpoint });
-  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name) && !nodeHiddenOnMoon(moon, x.id, x.name, x.kingdom)).forEach(x => nodes.push({ id: x.id, kingdom: x.kingdom || moon.kingdom, kind: "custom", name: x.name, titleNode: x.name }));
+  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name)).forEach(x => nodes.push({ id: x.id, kingdom: x.kingdom || moon.kingdom, kind: "custom", name: x.name, titleNode: x.name }));
   if(!nodes.length) return null;
   const own = ownBranchesFromTierLanes(moon._baseTierLanes || moon.tierLanes);
   const out = [];
@@ -9415,7 +9159,7 @@ function customNodeRoutesFor(moon){
     const shown = (typeof glitchMode !== "undefined" && glitchMode === "hide") ? crossed.filter(b => b.tier !== "glitched") : crossed;
     if(!shown.length && crossed.length) out.push({ kind: n.kind, impossible: true, hidden: true });
     else {
-      const route = Object.assign({ kind: n.kind, titleNode: n.titleNode, nodeName: n.name }, summarizeBranches(shown, n.kingdom));
+      const route = Object.assign({ kind: n.kind, titleNode: n.titleNode }, summarizeBranches(shown, n.kingdom));
       // Several ways INTO the node (e.g. from the Stone Bridge vs. from anywhere via the
       // Odyssey): split them into one labelled row per source so it is clear which is which.
       if(!route.impossible){
@@ -9435,16 +9179,6 @@ function customNodeRoutesFor(moon){
       out.push(route);
     }
   }
-  // Nodes with exactly the same methods: when one of them is "<Moon> Free", show only that one.
-  const sigOf = r => r.impossible ? "IMP" : (r.rows ? r.rows.map(x => (x.label || "") + "|" + entrySignatureFromReqEntry(x)).join("//") : entrySignatureFromReqEntry(r));
-  const bySig = {};
-  out.forEach((r, i) => { if(r.hidden || r.impossible) return; (bySig[sigOf(r)] = bySig[sigOf(r)] || []).push(i); });
-  Object.values(bySig).forEach(idx => {
-    if(idx.length < 2) return;
-    const keep = idx.find(i => nodeIsOwnMoonFree(moon, out[i].nodeName));
-    if(keep === undefined) return;
-    idx.forEach(i => { if(i !== keep) out[i].hidden = true; });
-  });
   return out;
 }
 
@@ -9510,31 +9244,6 @@ function nodeShownName(name, moonName){
   if(noMoon && norm(noMoon) === target) return noMoon;
   return raw;
 }
-// Top-right badge row: Subarea door icon (for "Inside · Subarea" moons) sits to the LEFT of the Moon Rock icon,
-// and the Moon Rock icon is always the right-most badge.
-function makeMoonBadgeRow(moon){
-  const list = (moon.badges || []).slice().sort((a, b) => (a === "moonRock") - (b === "moonRock"));
-  const hasDoor = !!(moon.subarea && SHOW_SUBAREA_ACCESS_ON_MOONS);
-  if(!list.length && !hasDoor) return null;
-  const row = document.createElement("div");
-  row.className = "badges";
-  if(hasDoor){
-    const el = document.createElement("div");
-    el.className = "badge subareadoor";
-    el.title = "Inside · " + String(moon.subarea).replace(/\s*Subarea\s*$/i, "");
-    el.innerHTML = '<img class="icon-svg" src="icon/infosubarea.png" alt="Subarea" onerror="this.style.display=\'none\'">';
-    row.appendChild(el);
-  }
-  list.forEach(b => {
-    const info = b === "moonRock" ? {label:"Moon Rock", file:"badge-moon-rock.png"} : {label:"World Peace", file:"badge-world-peace.png"};
-    const el = document.createElement("div");
-    el.className = "badge " + b.toLowerCase();
-    el.title = info.label;
-    el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '" onerror="this.style.display=\'none\'">';
-    row.appendChild(el);
-  });
-  return row;
-}
 function decorateNodeStrip(info, kind, kindLabel, name, merged){
   info.classList.add("node-strip", "ns-" + kind);
   const txt = document.createElement("span");
@@ -9565,7 +9274,19 @@ function buildMoonCard(moon, opts){
   name.textContent = moon.name;
   card.appendChild(name);
 
-  { const badgeRow = makeMoonBadgeRow(moon); if(badgeRow) card.appendChild(badgeRow); }
+  if(moon.badges && moon.badges.length){
+    const badgeRow = document.createElement("div");
+    badgeRow.className = "badges";
+    moon.badges.forEach(b=>{
+      const info = b === "moonRock" ? {label:"Moon Rock", file:"badge-moon-rock.png"} : {label:"World Peace", file:"badge-world-peace.png"};
+      const el = document.createElement("div");
+      el.className = "badge " + b.toLowerCase();
+      el.title = info.label;
+      el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '" onerror="this.style.display=\'none\'">';
+      badgeRow.appendChild(el);
+    });
+    card.appendChild(badgeRow);
+  }
 
   // Subarea and Checkpoint/Custom-Node are two DIFFERENT pieces of info and
   // both get their own slot when applicable (bottom-right of the card, same
@@ -9576,7 +9297,7 @@ function buildMoonCard(moon, opts){
   // one, silently dropping the custom node any time the moon was also in a
   // subarea. A moon with no subarea just shows the Checkpoint/Custom-Node
   // icon as before.
-  if(moon.subarea && SHOW_SUBAREA_ACCESS_ON_MOONS){
+  if(moon.subarea){
     const info = document.createElement("span");
     info.className = "checkpoint-info";
 
@@ -9625,8 +9346,7 @@ function buildMoonCard(moon, opts){
 
     card.appendChild(info);
   }
-  if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && (moon.checkpointType === "custom_place" || !moon.subarea)
-     && !nodeHiddenOnMoon(moon, moon.checkpointNodeId, moon.checkpoint)){
+  if(moon.checkpoint && !/purples/i.test(moon.checkpoint) && (moon.checkpointType === "custom_place" || !moon.subarea)){
     // A plain Checkpoint (checkpointType === "checkpoint") is redundant once
     // a Subarea icon is already shown — the subarea already tells you where
     // the moon is, a generic overworld checkpoint doesn't add anything for
@@ -9694,7 +9414,7 @@ function buildMoonCard(moon, opts){
   }
 
   // Additional Custom Nodes (multiple nodes on one moon).
-  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name) && !nodeHiddenOnMoon(moon, x.id, x.name, x.kingdom)).forEach(x => {
+  (moon._extraNodes || []).filter(x => !/purples/i.test(x.name)).forEach(x => {
     const xi = document.createElement("span");
     xi.className = "checkpoint-info";
     const xlabel = "Tracked from: " + nodeShownName(x.name, moon.name);
@@ -9812,7 +9532,19 @@ function buildLazyMoonCard(moon){
   name.textContent = moon.name;
   shell.appendChild(name);
 
-  { const badgeRow = makeMoonBadgeRow(moon); if(badgeRow) shell.appendChild(badgeRow); }
+  if(moon.badges && moon.badges.length){
+    const badgeRow = document.createElement("div");
+    badgeRow.className = "badges";
+    moon.badges.forEach(b => {
+      const info = b === "moonRock" ? {label:"Moon Rock", file:"badge-moon-rock.png"} : {label:"World Peace", file:"badge-world-peace.png"};
+      const el = document.createElement("div");
+      el.className = "badge " + b.toLowerCase();
+      el.title = info.label;
+      el.innerHTML = '<img class="icon-svg" src="icon/' + info.file + '" alt="' + info.label + '" onerror="this.style.display=\'none\'">';
+      badgeRow.appendChild(el);
+    });
+    shell.appendChild(badgeRow);
+  }
 
   const btn = document.createElement("button");
   btn.type = "button";
@@ -10125,7 +9857,7 @@ function buildMovementOptions_impl(moon, boxed){
   // slice of the second under a fade, and an expand toggle pinned to the
   // box's own top-right corner.
   const totalOptions = mLanes.reduce((sum, lane) => sum + lane.groups.length - exemptHiddenCount(mLanes, lane), 0);
-  return wrapWithOriginHeader(wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions, !!DISABLE_MOON_COLLAPSE), hoisted, "moon"), sharedOrigin);
+  return wrapWithOriginHeader(wrapWithHoistHeader(wrapOptionsIfCollapsible(stack, totalOptions), hoisted, "moon"), sharedOrigin);
 }
 
 /* =========================================================
@@ -11770,13 +11502,13 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
 // ---- Jump Group Filters toggle (Settings menu) ----
 (function(){
   const b = document.getElementById("jumpGroupToggle"); if(!b) return;
-  try{ window.__jumpGroupMode = localStorage.getItem("jumpGroupFiltersV2") === "1"; }catch(e){ window.__jumpGroupMode = false; }
+  try{ window.__jumpGroupMode = localStorage.getItem("jumpGroupFiltersV1") === "1"; }catch(e){ window.__jumpGroupMode = false; }
   const st = document.getElementById("jumpGroupBtnState"), tp = document.getElementById("jumpGroupStateTip");
   const paint = () => { b.classList.toggle("active", !!window.__jumpGroupMode); const t = window.__jumpGroupMode ? "On" : "Off"; st.textContent = t; tp.textContent = t; };
   paint();
   b.addEventListener("click", () => {
     window.__jumpGroupMode = !window.__jumpGroupMode;
-    try{ localStorage.setItem("jumpGroupFiltersV2", window.__jumpGroupMode ? "1" : "0"); }catch(e){}
+    try{ localStorage.setItem("jumpGroupFiltersV1", window.__jumpGroupMode ? "1" : "0"); }catch(e){}
     if(!window.__jumpGroupMode){
       GH_TIERS.forEach(t => selectedAbilities.delete(t.token));
     }
@@ -11809,30 +11541,23 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   document.addEventListener("scroll", () => { tip.style.display = "none"; }, true);
 })();
 
-// ---- Hide Expert / Advanced: one button cycling  Off -> Expert hidden -> Advanced (+Expert) hidden -> Off ----
+// ---- Hide Advanced / Hide Expert toggles ----
 (function(){
-  const a = document.getElementById("hideAdvToggle");
-  if(!a) return;
+  const a = document.getElementById("hideAdvToggle"), x = document.getElementById("hideExpToggle");
+  if(!a || !x) return;
   const paint = () => {
-    const stage = hideAdvanced ? 2 : (hideExpert ? 1 : 0);
-    a.classList.toggle("active", stage > 0);
-    a.classList.toggle("exp-only", stage === 1);
-    document.getElementById("hideAdvToggleTitle").textContent = stage === 0 ? "Hide Expert" : (stage === 1 ? "Hide Advanced" : "Show All Logic");
-    const txt = stage === 0 ? "Off" : (stage === 1 ? "Expert Hidden" : "Advanced + Expert Hidden");
-    document.getElementById("hideAdvToggleState").textContent = txt;
-    const tp = document.getElementById("hideAdvStateTip"); if(tp) tp.textContent = txt;
+    a.classList.toggle("active", hideAdvanced);
+    x.classList.toggle("active", hideAdvanced || hideExpert);
+    document.getElementById("hideAdvToggleState").textContent = hideAdvanced ? "On" : "Off";
+    document.getElementById("hideExpToggleState").textContent = hideAdvanced ? "On (via Advanced)" : (hideExpert ? "On" : "Off");
   };
   const apply = () => {
     try{ localStorage.setItem("hideAdvancedV1", hideAdvanced ? "1" : "0"); localStorage.setItem("hideExpertV1", hideExpert ? "1" : "0"); }catch(e){}
     paint();
     try{ renderKingdom(KINGDOM_ORDER[currentKingdomIndex]); }catch(e){ console.error(e); }
   };
-  a.addEventListener("click", () => {
-    if(!hideAdvanced && !hideExpert){ hideExpert = true; }                 // 1st click: hide Expert
-    else if(!hideAdvanced){ hideAdvanced = true; hideExpert = false; }      // 2nd click: hide Advanced (which hides Expert too)
-    else { hideAdvanced = false; hideExpert = false; }                      // 3rd click: show both again
-    apply();
-  });
+  a.addEventListener("click", () => { hideAdvanced = !hideAdvanced; apply(); });
+  x.addEventListener("click", () => { if(hideAdvanced) return; hideExpert = !hideExpert; apply(); });
   paint();
 })();
 
@@ -12847,6 +12572,8 @@ function setupMergedFilterBar(tokens){
   const rowEl = document.getElementById("tokenFilterRow");
   const chipsEl = document.getElementById("tokenFilterChips");
   const clearBtn = document.getElementById("tokenFilterClear");
+  const abilitySearchEl = document.getElementById("abilityFilterSearch");
+  const captureSearchEl = document.getElementById("captureFilterSearch");
   const abilityGridEl = document.getElementById("abilityFilterGrid");
   const bonusRowEl = document.getElementById("abilityBottomRow");
   const bonusLeftEl = document.getElementById("bonusLeftGrid");
@@ -12858,7 +12585,7 @@ function setupMergedFilterBar(tokens){
   const rankBy = (list, t) => { const l = filterLabelFor(t).toLowerCase(); const i = list.findIndex(re => re.test(l)); return i < 0 ? list.length : i; };
   // Draws the main Abilities grid plus the bottom row (left / right groups).
   function renderAbilityGrids(){
-    renderOptions("ability", mainAbilities(), selectedAbilities, abilityGridEl, "");
+    renderOptions("ability", mainAbilities(), selectedAbilities, abilityGridEl, abilitySearchEl.value);
     const bonus = bonusAbilities().filter(t => !/odyssey/.test(filterLabelFor(t).toLowerCase())); // Odyssey Travel: info popup only
     const right = bonus.filter(t => BONUS_RIGHT_ORDER.some(re => re.test(filterLabelFor(t).toLowerCase())))
       .sort((a, b) => rankBy(BONUS_RIGHT_ORDER, a) - rankBy(BONUS_RIGHT_ORDER, b));
@@ -12868,8 +12595,8 @@ function setupMergedFilterBar(tokens){
       const ci = left.findIndex(t => isCapReturnToken(t) || /cap return/.test(filterLabelFor(t).toLowerCase()));
       left.splice(ci >= 0 ? ci + 1 : left.length, 0, ANY_THROW_TOKEN);
     }
-    renderOptions("ability", left, selectedAbilities, bonusLeftEl, "");
-    renderOptions("ability", right, selectedAbilities, bonusRightEl, "");
+    renderOptions("ability", left, selectedAbilities, bonusLeftEl, abilitySearchEl.value);
+    renderOptions("ability", right, selectedAbilities, bonusRightEl, abilitySearchEl.value);
     [bonusLeftEl, bonusRightEl].forEach(el => el.querySelectorAll(".filter-bar-none").forEach(n => n.remove()));
     bonusRowEl.hidden = !bonusLeftEl.children.length && !bonusRightEl.children.length;
     const jgRow = document.getElementById("jumpGroupRow");
@@ -12884,7 +12611,7 @@ function setupMergedFilterBar(tokens){
           // Kingdom-specific groups (tier.kingdom) live in the "kingdom" box and only on their own kingdom's page.
           const toks = GH_TIERS.filter(t => !t.noTile).filter(t => t.kingdom ? (row === "kingdom" && t.kingdom === kName) : (t.row || "jumps") === row).map(t => t.token).filter(t => ICON_MANIFEST[t]);
           if(row === "kingdom"){ const kl = document.getElementById("gfKingdomLabel"); if(kl) kl.textContent = kName; }
-          renderOptions("ability", toks, selectedAbilities, grid, "");
+          renderOptions("ability", toks, selectedAbilities, grid, abilitySearchEl.value);
           grid.querySelectorAll(".filter-bar-none").forEach(n => n.remove());
           const box = grid.closest(".gf-row");
           if(box) box.hidden = !grid.children.length || (row === "jumps" && !jumpsOk);
@@ -12920,8 +12647,8 @@ function setupMergedFilterBar(tokens){
       const empty = document.createElement("span");
       empty.className = "filter-bar-empty";
       empty.textContent = exempt
-        ? "Nothing marked yet."
-        : "Nothing picked yet.";
+        ? "Nothing yet — open Filters and pick what you already have."
+        : "Nothing yet — open Filters and pick Abilities/Captures to look up.";
       chipsEl.appendChild(empty);
       clearBtn.style.display = "none";
       return;
@@ -13107,7 +12834,7 @@ function setupMergedFilterBar(tokens){
   function refreshOpenPanels(){
     if(!barEl.classList.contains("open")) return;
     renderAbilityGrids();
-    renderOptions("capture", captures, selectedCaptures, captureGridEl, "");
+    renderOptions("capture", captures, selectedCaptures, captureGridEl, captureSearchEl.value);
   }
 
   window.__refreshFilterPanels = refreshOpenPanels;
@@ -13125,6 +12852,10 @@ function setupMergedFilterBar(tokens){
     updateFilterSummary();
     renderGrid();
   });
+  abilitySearchEl.addEventListener("input", renderAbilityGrids);
+  abilitySearchEl.addEventListener("click", (e) => e.stopPropagation());
+  captureSearchEl.addEventListener("input", () => renderOptions("capture", captures, selectedCaptures, captureGridEl, captureSearchEl.value));
+  captureSearchEl.addEventListener("click", (e) => e.stopPropagation());
 
 
   // ---- Presets (right side of the Filters row) ---------------------------
@@ -13210,24 +12941,21 @@ function setupMergedFilterBar(tokens){
 // the trailing sentence in filter-summary. It never touches the
 // selection itself.
 function setupFilterModeTabs(){
-  const btn = document.getElementById("filterModeToggle");
-  if(!btn) return;
-  const hint = document.getElementById("filterModeHint");
-  const paint = () => {
-    btn.dataset.mode = filterMode;
-    btn.textContent = filterMode === "cando" ? "I Have This!" : "What Does This Unlock?";
-    if(hint) hint.textContent = filterMode === "cando" ? "Marks your picks as Free" : "Shows moons that use your picks";
-  };
-  paint();
-  btn.addEventListener("click", () => {
-    filterMode = filterMode === "cando" ? "unlocks" : "cando";
-    const fb = document.getElementById("filterBars"); if(fb) fb.dataset.filterMode = filterMode;
-    paint();
-    if(window.__refreshFilterPanels) window.__refreshFilterPanels();
-    if(window.__drawFilterChips) window.__drawFilterChips();
-    refreshImpliedTiles();
-    updateFilterSummary();
-    renderGrid();
+  const tabs = document.querySelectorAll(".filter-mode-tab");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      if(tab.dataset.mode === filterMode) return;
+      filterMode = tab.dataset.mode;
+      const fb = document.getElementById("filterBars"); if(fb) fb.dataset.filterMode = filterMode;
+      tabs.forEach(t => t.classList.toggle("active", t === tab));
+      // Incomplete abilities are only pickable in "What Does This Unlock?".
+      // (Incomplete abilities are now selectable in every mode.)
+      if(window.__refreshFilterPanels) window.__refreshFilterPanels();
+      if(window.__drawFilterChips) window.__drawFilterChips();
+      refreshImpliedTiles();
+      updateFilterSummary();
+      renderGrid();
+    });
   });
 }
 
