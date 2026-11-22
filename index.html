@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2955,6 +2955,67 @@
   @keyframes bootSway{ 0%{ transform:rotate(0); } 25%{ transform:rotate(3deg); } 50%{ transform:rotate(0); } 75%{ transform:rotate(-3deg); } 100%{ transform:rotate(0); } }
   @keyframes bootRock{ 0%{ transform:rotate(0); } 25%{ transform:rotate(10deg); } 50%{ transform:rotate(0); } 75%{ transform:rotate(-10deg); } 100%{ transform:rotate(0); } }
   @media (prefers-reduced-motion:reduce){ #bootSpinWrap img{ animation-duration:60s; } }
+  /* ===================== PLAIN / FLAT PASS =====================
+     Strips the template-style effects (hover lifts, glows, gradients, soft shadows, tracked-out all-caps
+     labels, chamfers on every control) so menus read like a hand-built game screen instead of a UI kit. */
+  .filter-bar{ filter:none; border:1px solid var(--border-hi); background:var(--bg-panel); }
+  .filter-bar-row:hover{ background:rgba(255,255,255,.025); }
+  .filter-bar-label{ flex-direction:row; gap:8px; font-size:14px; color:var(--text); }
+  .filter-bar-label .icon-svg{ width:18px; height:18px; }
+  .filter-bar-panel{ border-top:1px solid var(--border); padding:6px 16px 16px; }
+  .filter-bar-chip{ clip-path:none; border-radius:0; width:44px; height:44px; }
+  .filter-bar-clear{ font-size:18px; }
+  .filter-bar-clear:hover{ transform:none; color:#fff; }
+
+  .filter-section-heading{
+    text-transform:none; letter-spacing:0; font-size:15px; color:var(--text);
+    border-left:0; padding:0 0 4px; margin:18px 0 8px; border-bottom:1px solid var(--border);
+  }
+  .filter-section-heading:first-child{ margin-top:6px; }
+  .filter-mode-row{ padding:10px 0 0; }
+  .filter-mode-label, .filter-mode-hint{ font-size:13px; }
+  .filter-mode-btn, .filter-preset{
+    clip-path:none; border-radius:0; border:1px solid var(--border-hi); border-bottom-width:1px;
+    background:var(--bg-chip); padding:5px 12px;
+  }
+  .filter-preset{ padding:4px 10px 4px 5px; }
+  .filter-mode-btn:hover, .filter-preset:hover{ background:#34353a; }
+  .filter-preset.active, .filter-mode-btn[data-mode="unlocks"]{ background:var(--gold-light); }
+
+  .filter-option{ border-radius:0; padding:4px 5px; }
+  .filter-option:hover, .filter-option.selected:hover{ transform:none; background:rgba(255,255,255,.06); }
+  .filter-option-icon{ clip-path:none; border-radius:0; border:1px solid var(--border-hi); }
+  .filter-option.selected .filter-option-icon{ border:2px solid var(--gold); box-shadow:none; }
+  .filter-option.selected{ background:rgba(230,194,0,.10); }
+  .filter-option-name{ font-size:12px; }
+  .filter-option.has-submenu::after{ box-shadow:none; border-radius:0; background:var(--gold); }
+
+  .filter-summary, .filter-summary[class]{ border:1px solid var(--border-hi); border-left:3px solid var(--mode-accent, var(--gold)); background:var(--bg-chip); font-size:13.5px; padding:10px 14px; }
+  .filter-sel-pill{ clip-path:none; border-radius:0; border:1px solid var(--border-hi); background:var(--bg-chip); }
+  .filter-sel-pill:hover{ background:#3a2326; border-color:var(--red); }
+
+  .groupfilters{ border:1px solid var(--border-hi); background:rgba(255,255,255,.02); padding:4px 12px 12px; margin-top:16px; }
+  .groupfilters > .filter-section-heading{ margin-top:8px; }
+  .gf-label{ text-transform:none; letter-spacing:0; font-size:13px; color:var(--text-dim); }
+
+  /* Everywhere else */
+  .filter-bar-search{ box-shadow:none !important; }
+  .vs-field select:focus, .vs-field input[type=text]:focus, .vs-field textarea:focus, .op-login .vs-field input:focus{ box-shadow:none; }
+  .search-input-row:focus-within{ background:none; }
+  .pager-dot.active{ box-shadow:none; }
+  .kingdom-pager{ background:var(--bg-panel); }
+  .pager-name{ letter-spacing:0; text-shadow:none; }
+  .moon-card{ background:var(--bg-panel); }
+  .moon-card:hover{ border-top-color:var(--border); border-color:#4a4b50; }
+  .badge:hover{ transform:none; }
+  .option-chip{ box-shadow:none; }
+  .option-chip:hover, .free-chip:hover{ transform:none; box-shadow:none; filter:brightness(1.12); }
+  .tier-pill{ letter-spacing:0; }
+  .node-strip .ns-kind{ text-transform:none; letter-spacing:0; font-size:11px; }
+  .node-route-label{ text-transform:none; letter-spacing:0; }
+  .node-routes-or{ letter-spacing:0; }
+  .moon-panel.open > .moon-panel-header{ background:rgba(255,255,255,.03); }
+  .checkpoint-info.node-strip, .node-route{ clip-path:none; }
 </style>
 </head>
 <body class="ss-mode ss-home">
@@ -3157,15 +3218,12 @@ const PAGE_SOUNDS_ENABLED = 1;
 </div>
 
 <div class="dbg-item">
-  <button class="corner-btn" id="hideAdvToggle" type="button" aria-label="Hide Expert / Advanced">
+  <button class="corner-btn" id="hideAdvToggle" type="button" aria-label="Toggle Logic Levels">
     <img class="btn-ic" src="icon/AbilitySwing.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#9650;</span>'">
-    <span class="btn-txt"><b id="hideAdvToggleTitle">Hide Expert</b><small id="hideAdvToggleState">Off</small></span>
+    <span class="btn-txt"><b>Toggle Logic Levels</b><small id="hideAdvToggleState">Off</small></span>
   </button>
   <div class="dbg-tip" role="tooltip">
-    <b>Hide Expert / Advanced</b>
-    <span><b style="font-size:12px">1st click</b> &mdash; Hides the Expert logic level.</span>
-    <span><b style="font-size:12px">2nd click</b> &mdash; Hides Advanced (and Expert) too.</span>
-    <span><b style="font-size:12px">3rd click</b> &mdash; Shows both again.</span>
+    <b>Toggle Logic Levels</b>
     <em>Currently: <span id="hideAdvStateTip">Off</span></em>
   </div>
 </div>
@@ -3439,7 +3497,7 @@ const GROUP_FILTER_GREY_BG = 1;
 // >>> QUICK TOGGLE: collapsing of individual moons' method lists.
 //     0 = default: a moon with more than 6 methods collapses to a peek with an expand button
 //     1 = never collapse: every moon always shows all of its methods
-const DISABLE_MOON_COLLAPSE = 0;
+const DISABLE_MOON_COLLAPSE = 1;
 if(GROUP_FILTER_GREY_BG) document.documentElement.classList.add("gf-grey");
 
 // >>> 0 = a "<Moon> Free" node's own reach cost is crossed into the moon like any other node
@@ -7575,6 +7633,8 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
   console.log(`[${kingdomName}] per-pipe subarea rows on ${moons.filter(m => m.entranceReqs).length} moon(s): ` + moons.filter(m => m.entranceReqs).map(m => m.name).join(", "));
   if(!KINGDOM_ORDER.includes(kingdomName)) KINGDOM_ORDER.push(kingdomName);
   KINGDOMS[kingdomName] = moons; // always overwrite; never merge with a stale prior entry
+  if(typeof KINGDOM_MOON_COUNT !== "undefined" && KINGDOM_MOON_COUNT[kingdomName] && KINGDOM_MOON_COUNT[kingdomName] !== moons.length)
+    console.warn(`[${kingdomName}] expected ${KINGDOM_MOON_COUNT[kingdomName]} moons but the data file has ${moons.length}. Use __whyHidden("Moon Name") in the console to check one.`);
 
   // Kept around (keyed by kingdom display name, same as moon.kingdom) so the
   // click-to-inspect node popup — triggered long after this load, from
@@ -9368,9 +9428,9 @@ function customNodeRoutesFor(moon){
     // "Glitched: Hidden" must apply here too: these routes are rebuilt from the
     // moon's base lanes, so drop glitched-tier branches ourselves.
     const shown = (typeof glitchMode !== "undefined" && glitchMode === "hide") ? crossed.filter(b => b.tier !== "glitched") : crossed;
-    if(!shown.length && crossed.length) out.push({ kind: n.kind, impossible: true, hidden: true });
+    if(!shown.length && crossed.length) out.push({ id: n.id, kind: n.kind, impossible: true, hidden: true });
     else {
-      const route = Object.assign({ kind: n.kind, titleNode: n.titleNode, nodeName: n.name }, summarizeBranches(shown, n.kingdom));
+      const route = Object.assign({ id: n.id, kind: n.kind, titleNode: n.titleNode, nodeName: n.name }, summarizeBranches(shown, n.kingdom));
       // Several ways INTO the node (e.g. from the Stone Bridge vs. from anywhere via the
       // Odyssey): split them into one labelled row per source so it is clear which is which.
       if(!route.impossible){
@@ -9630,6 +9690,7 @@ function buildMoonCard(moon, opts){
     info.appendChild(tip);
     decorateNodeStrip(info, moon.checkpointType === "custom_place" ? "custom" : "checkpoint",
       moon.checkpointType === "custom_place" ? "Custom Node" : "Checkpoint", shortName, merged);
+    if(moon.checkpointNodeId) info.dataset.nodeId = moon.checkpointNodeId;
 
     if(!merged){
       // Clicking (or Enter/Space while focused) opens the node-inspect popup
@@ -9670,6 +9731,7 @@ function buildMoonCard(moon, opts){
     xtip.textContent = xlabel + (x.merged ? " (included above)" : "");
     xi.appendChild(xtip);
     decorateNodeStrip(xi, "custom", "Custom Node", nodeShownName(x.name, moon.name), !!x.merged);
+    if(x.id) xi.dataset.nodeId = x.id;
     if(!x.merged){
       const open = () => openNodeInfo({ kind: "custom_place", kingdom: x.kingdom, nodeId: x.id, fallbackName: x.name, existScenarios: moon.existScenarios });
       xi.addEventListener("click", open);
@@ -9690,9 +9752,13 @@ function buildMoonCard(moon, opts){
   // moons with several nodes get an "any one works" header and OR dividers.
   let routes = opts.noNodeRoutes ? null : customNodeRoutesFor(moon);
   if(routes && routes.every(r => r.hidden)) routes = null; // only glitched routes exist -> fall back to the normal display
-  const strips = routes ? Array.from(card.querySelectorAll(".node-strip:not(.ns-subarea)")) : [];
-  if(routes && strips.length === routes.length){
-    card.classList.add("has-node-routes");
+  // Each route is matched to its strip by node id. (It used to require the strip count to equal the route
+  // count, and silently dropped EVERY node route from the card when they differed by one.)
+  const allStrips = routes ? Array.from(card.querySelectorAll(".node-strip:not(.ns-subarea)")) : [];
+  const strips = routes ? routes.map((r, i) => allStrips.find(sp => sp.dataset.nodeId && sp.dataset.nodeId === r.id) || null) : [];
+  if(routes && strips.length && strips.every(Boolean)){
+    // Only swap out the moon's own requirement when every strip got a route; otherwise keep it visible so nothing is lost.
+    if(allStrips.length === routes.length) card.classList.add("has-node-routes");
     const sharedHoist = sharedHoistAcrossRoutes(routes, moon); // "Besides X" for requirements every location shares
     const wrap = document.createElement("div");
     wrap.className = "node-routes";
@@ -10826,6 +10892,21 @@ function moonCategory(m){
 }
 function moonFiltersActive(){ return !(moonFilters.overworld && moonFilters.subarea && moonFilters.moonrock); }
 
+// Console helper: __whyHidden("Moon Name") says whether a moon is in the loaded data and which filter is hiding it.
+window.__whyHidden = function(moonName){
+  const out = [];
+  Object.keys(KINGDOMS).forEach(k => (KINGDOMS[k] || []).forEach(m => {
+    if(m.name !== moonName) return;
+    const lanes = (m.tierLanes || []).map(l => l.tier);
+    const why = [];
+    if(isFullyGlitched(m) && glitchMode === "hide") why.push("every route is glitched-tier and Glitch Bible is set to Hidden");
+    if(withTiersHidden(m) === null) why.push("every route is Advanced/Expert and those levels are hidden");
+    if(!why.length) why.push("not hidden by a logic filter (check the Filter Moons box, Unmarked, or the video filter)");
+    out.push({ kingdom: k, tiers: lanes, hiddenBecause: why });
+  }));
+  if(!out.length) out.push("\"" + moonName + "\" is not in any loaded kingdom file — it is missing from the data itself.");
+  console.log(out); return out;
+};
 function renderGrid(){
   const name = KINGDOM_ORDER[currentKingdomIndex];
   const grid = document.getElementById("grid");
@@ -10896,6 +10977,7 @@ function renderGrid(){
   // moon with a bonus glitch option alongside its legit one. Now it only
   // drops moons with NO legitimate route at all, and just strips the
   // glitched lane off everything else so the legit routes still show.
+  window.__lastGridDebug = { kingdom: name, all: (KINGDOMS[name] || []).map(m => m.name) };
   if(glitchMode === "hide") moons = moons.filter(m => !isFullyGlitched(m)).map(withGlitchedLanesStripped);
   else if(glitchMode === "only") moons = moons.filter(hasGlitchedLane);
   if(hideAdvanced || hideExpert) moons = moons.map(withTiersHidden).filter(Boolean);
@@ -11772,7 +11854,6 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
     const stage = hideAdvanced ? 2 : (hideExpert ? 1 : 0);
     a.classList.toggle("active", stage > 0);
     a.classList.toggle("exp-only", stage === 1);
-    document.getElementById("hideAdvToggleTitle").textContent = stage === 0 ? "Hide Expert" : (stage === 1 ? "Hide Advanced" : "Show All Logic");
     const txt = stage === 0 ? "Off" : (stage === 1 ? "Expert Hidden" : "Advanced + Expert Hidden");
     document.getElementById("hideAdvToggleState").textContent = txt;
     const tp = document.getElementById("hideAdvStateTip"); if(tp) tp.textContent = txt;
