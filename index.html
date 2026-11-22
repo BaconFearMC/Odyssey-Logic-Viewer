@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityPaintings.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -8281,6 +8281,21 @@ function applyNodeMergeRules(kingdomName){
             moon.entranceReqs = order.map(k => Object.assign({ label: k }, summarizeBranches(by[k], kingdomName)));
           }
         }
+      }
+    }
+
+    // GENERIC RULE (no per-moon rule needed, every kingdom): a moon tracked from a Custom Node that no rule
+    // touched still costs "get to that node" + "the moon's own requirement". Without this a moon like
+    // Timer Challenge 1 (on "Top of Bridge") showed only its own fragment of the route and hid how to
+    // reach the spot. Checkpoints are warp points (free to stand on), and subarea moons keep their
+    // per-pipe rows, so only Custom Nodes outside subareas are folded.
+    if(!replaceRule && !plainRule && data && !moon.subarea && moon.checkpointType === "custom_place" && moon.checkpointNodeId
+       && !/purples/i.test(moon.checkpoint || "")){
+      const ownB = ownBranchesFromTierLanes(moon._baseTierLanes);
+      const crossed = crossBranches(ownB, branchesForNodeId(data, moon.checkpointNodeId));
+      if(crossed.length && applyMergedBranchesToMoon(moon, crossed, kingdomName)){
+        moon.entranceReqs = null;
+        moon._mergedNodeKind = "custom_place";
       }
     }
 
