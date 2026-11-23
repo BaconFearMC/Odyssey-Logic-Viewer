@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -5167,7 +5167,10 @@ function sortedTokensForDisplay(tokens){
   if(tokens.indexOf(ANY_THROW_TOKEN) !== -1 && tokens.some(t => isGhToken(t) && ghTier(t).exclude)){
     tokens = tokens.filter(t => t !== ANY_THROW_TOKEN);
   }
+  // "Any Grounded Jump + Any Throw": the Any Throw token reads after the Any Grounded Jump grouping.
+  const ctAny = tokens.indexOf("GroundedJumpCT") !== -1 && tokens.indexOf(ANY_THROW_TOKEN) !== -1;
   return tokens.slice().sort((a, b) => {
+    if(ctAny && (a === ANY_THROW_TOKEN) !== (b === ANY_THROW_TOKEN)) return a === ANY_THROW_TOKEN ? 1 : -1;
     const ra = tokenGroupRank(a), rb = tokenGroupRank(b);
     if(ra !== rb) return ra - rb;
     // Kingdom Access tokens sort by real kingdom order, not alphabetically;
