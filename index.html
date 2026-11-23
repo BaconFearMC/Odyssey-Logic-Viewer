@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityVault.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -4425,6 +4425,27 @@ function tidyMergedChips(tierLanes){
       Object.keys(g).forEach(k => { if(!/^\d+$/.test(k)) n[k] = g[k]; }); // copy the props, not the old items
       return n;
     });
+    // "Any Grounded Jump (No Cap Throw)" listed next to a lone "Cap Return Jump" (same extras) is just "Any Grounded Jump".
+    if(ctT){
+      const drop = new Set();
+      groups = groups.map((a, i) => {
+        if((a[0] !== "GroundedJump" && a[0] !== "GroundedJumpCT") || a.capStar || (a.methodSlots && a.methodSlots.length === 6)) return a;
+        const j = groups.findIndex((b, k) => k !== i && !drop.has(k) && b.length >= 1 && ghTokenKey(b[0]) === "CapReturnJump" && !b.methodSlots && exKey(b.slice(1).length ? Object.assign(["x"].concat(b.slice(1))) : ["x"]) === exKey(a));
+        if(j < 0) return a;
+        const b = groups[j];
+        drop.add(j); changed = true;
+        const n = ["GroundedJumpCT"].concat(a.slice(1));
+        Object.keys(a).forEach(k => { if(!/^\d+$/.test(k)) n[k] = a[k]; });
+        const crjSlot = slotOf(b, j);
+        if(a.methodSlots && a.ghMethods && a.methodSlots.length === 5){
+          n.methodSlots = a.methodSlots.slice(); n.methodSlots.splice(1, 0, crjSlot);
+          n.ghMethods = a.ghMethods.map(m => m.slice()); n.ghMethods.splice(1, 0, ["CapReturnJump"]);
+          n.methodImplied = (a.methodImplied ? a.methodImplied.slice() : [false, false, false, false, false]); n.methodImplied.splice(1, 0, false);
+          n.mergedSlots = (a.mergedSlots || []).concat([crjSlot]).sort((x, y) => x - y);
+        }
+        return n;
+      }).filter((g, i) => !drop.has(i));
+    }
     if(heightT && ctT && vaultT){
       const used = new Set(), at = {};
       groups.forEach((a, i) => {
