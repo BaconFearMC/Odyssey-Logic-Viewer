@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityVault.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -3593,6 +3593,15 @@ function nodeKfrHiddenOnMoon(moon, name){
   const x = _nrmMoon(m[1]), mn = _nrmMoon(moon.name);
   return !(mn === x + "kingdomregularcup" || mn === x + "kingdommastercup");
 }
+// "<X> Peach" custom nodes belong ONLY to the moon "Peach in the <X> Kingdom" (e.g. "Cap Peach" -> "Peach in the Cap Kingdom").
+function nodePeachHiddenOnMoon(moon, name){
+  const m = /^\s*(.+?)\s+Peach\s*$/i.exec(String(name == null ? "" : name));
+  if(!m || !moon) return false;
+  const x = _nrmMoon(m[1]).replace(/kingdom$/, "").replace(/s$/, ""); // "Bowser's" / "Bowser" both match
+  const mn = _nrmMoon(moon.name).replace(/^peachin(the)?/, "").replace(/kingdom$/, "").replace(/s$/, "");
+  if(!/^peachin/.test(_nrmMoon(moon.name))) return true;
+  return mn !== x;
+}
 // If a moon has a Custom Node named after itself ("<Moon>" or "<Moon> Free"), ONLY that node shows on the moon.
 function moonOwnNamedNodes(moon){
   if(!moon) return [];
@@ -3607,7 +3616,7 @@ function moonOwnNamedNodes(moon){
   return out;
 }
 function nodeHiddenOnMoon(moon, nodeId, name, kingdom){
-  if(nodeKfrHiddenOnMoon(moon, name)) return true;
+  if(nodeKfrHiddenOnMoon(moon, name) || nodePeachHiddenOnMoon(moon, name)) return true;
   const own = moonOwnNamedNodes(moon);
   if(own.length && own.indexOf(name) === -1) return true;
   return nodeOutsideMoonSubarea(moon, nodeId, kingdom) || nodeIsOtherMoonsFree(moon, name);
@@ -4398,7 +4407,9 @@ function mergeAnyThrowGroups(tierLanes){
 function tidyMergedChips(tierLanes){
   if(!tierLanes) return tierLanes;
   const sc = g => g.scenarios ? g.scenarios.slice().sort().join(",") : "";
-  const exKey = g => g.slice(1).map(ghTokenKey).sort().join("+") + "|" + sc(g) + "|" + (g.origin || "");
+  // Vault methods already contain a Cap Throw, so a throw listed beside them is redundant: ignore it when comparing.
+  const isThr = t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1;
+  const exKey = g => g.slice(1).map(ghTokenKey).filter(t => !isThr(t)).sort().join("+");
   const heightT = ghTier(GH_TOKEN), ctT = ghTier("GroundedJumpCT"), vaultT = ghTier("AnyVault");
   let changed = false;
   const out = tierLanes.map(lane => {
@@ -4410,7 +4421,8 @@ function tidyMergedChips(tierLanes){
       const keep = g.slice(1).filter(x => !own.has(ghTokenKey(x)));
       if(keep.length === g.length - 1) return g;
       changed = true;
-      const n = Object.assign([g[0]].concat(keep), g);
+      const n = [g[0]].concat(keep);
+      Object.keys(g).forEach(k => { if(!/^\d+$/.test(k)) n[k] = g[k]; }); // copy the props, not the old items
       return n;
     });
     if(heightT && ctT && vaultT){
@@ -4427,8 +4439,11 @@ function tidyMergedChips(tierLanes){
         if(aSlots.length !== 6) return;
         used.add(i); used.add(j);
         const slots = (a.mergedSlots || []).concat(b.mergedSlots || []).sort((x, y) => x - y);
-        at[Math.min(i, j)] = Object.assign([GH_TOKEN].concat(a.slice(1)), {
-          scenarios: a.scenarios || null, origin: a.origin || null, ghFrom: null, methodOrigins: null,
+        const sameWhere = sc(a) === sc(b) && (a.origin || "") === (b.origin || "");
+        const nA = aSlots.length, nB = b.methodSlots.length;
+        at[Math.min(i, j)] = Object.assign([GH_TOKEN].concat(a.slice(1).filter(t => !isThr(ghTokenKey(t)))), {
+          scenarios: sameWhere ? (a.scenarios || null) : null, origin: sameWhere ? (a.origin || null) : null, ghFrom: null,
+          methodOrigins: sameWhere ? null : new Array(nA).fill(a.origin || null).concat(new Array(nB).fill(b.origin || null)),
           slot: slots.length ? slots[0] : a.slot, mergedSlots: slots, ghStar: null,
           methodSlots: aSlots.concat(b.methodSlots), ghMethods: aM.concat(b.ghMethods.map(m => m.slice())),
           methodImplied: aImp.concat(b.methodImplied ? b.methodImplied.slice() : [false, false])
@@ -4899,7 +4914,10 @@ function isTokenIncompleteOn(token, kingdomName){
   // Cap Return Jump always shares Jump's state (same "jump" group): both say Incomplete, or neither does.
   const done = COMPLETE_ON_KINGDOM[kingdomName];
   let grp = incompleteGroupOf(token);
-  if(grp === "death") grp = "health"; // Death follows Health: it only says Incomplete while Health does
+  // Health Up and Death are never marked Incomplete on a kingdom whose Jump is not marked Incomplete.
+  // (They can still be completed on their own: a kingdom listing "health" / "death" above.)
+  if(done && done.indexOf("jump") >= 0 && (grp === "death" || grp === "health")) return false;
+  if(grp === "death") grp = "health"; // Death also follows Health: it says Incomplete only while Health does
   return !(done && grp && done.indexOf(grp) >= 0);
 }
 function syncBonusFreeState(){
