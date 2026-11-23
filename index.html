@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -4303,53 +4303,35 @@ function addImpliedCapReturn(tierLanes){
         c.byMethod[si] = true;
       });
     });
-    const add = [], absorb = new Set();
-    // A plain Cap Return Jump (no throw of its own) listed in the same lane: it needs a Cap Throw, so beside
-    // "Any Throw + Any Grounded Jump (No Cap Throw)" it is the same route as "Any Throw + Any Grounded Jump".
-    const crjSolo = {};
-    lane.groups.forEach((g, pos) => {
-      if(g.implied) return;
-      const keys = g.map(ghTokenKey);
-      if(keys.indexOf("CapReturnJump") === -1 || keys.some(t => t === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(t) !== -1)) return;
-      const rest = g.filter((t, k) => keys[k] !== "CapReturnJump");
-      const w = (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || "");
-      const kk = rest.slice().sort().join("+") + "|" + w;
-      (crjSolo[kk] = crjSolo[kk] || []).push(pos);
-    });
+    const add = [], retag = new Map();
     Object.keys(clusters).forEach(key => {
       const c = clusters[key];
       if(Object.keys(c.byMethod).length !== M.length || hasCRJ[key]) return;
-      if(c.extras.length && c.extras.every(t => t === ANY_THROW_TOKEN)){
-        const kk = c.extras.filter(t => t !== ANY_THROW_TOKEN).sort().join("+") + key.slice(key.indexOf("|"));
-        const solo = (crjSolo[kk] || [])[0];
-        if(solo !== undefined){
-          const sg = lane.groups[solo];
-          absorb.add(solo);
-          add.push(Object.assign(["CapReturnJump"].concat(c.extras), { scenarios: sg.scenarios || null, origin: sg.origin || null, slot: slotOf(sg, solo), implied: true }));
-        }
+      // "Any Grounded Jump (No Cap Throw)" + Any Throw: Cap Return Jump needs that Any Throw, so a lone Cap Return Jump
+      // route (same scenarios/start) is the same route with Any Throw. Fold it in and KEEP the Any Throw token, so the
+      // chip reads "Any Grounded Jump + Any Throw" instead of a split chip + a separate Cap Return Jump chip.
+      if(c.extras.some(t => ghTokenKey(t) === ANY_THROW_TOKEN)){
+        const w = key.slice(key.indexOf("|"));
+        const pos = lane.groups.findIndex(g => g.length === 1 && ghTokenKey(g[0]) === "CapReturnJump" && !g.implied
+          && ((g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || "")) === w.slice(1));
+        if(pos >= 0 && !retag.has(pos)){ retag.set(pos, c.extras); return; }
+        if(pos < 0) add.push(Object.assign(["CapReturnJump"].concat(c.extras), { scenarios: c.g.scenarios || null, origin: c.g.origin || null, slot: slotOf(c.g, 0), implied: true }));
         return;
       }
       if(!c.extras.some(t => ICON_MANIFEST[t] && ICON_MANIFEST[t].tokenType === "capture") || c.extras.some(isThrowish)) return;
       add.push(Object.assign(["CapReturnJump"].concat(c.extras), { scenarios: c.g.scenarios || null, origin: c.g.origin || null, slot: slotOf(c.g, 0), implied: true }));
     });
-    if(!add.length) return lane;
+    if(!add.length && !retag.size) return lane;
     changed = true;
-    const base = absorb.size ? lane.groups.map((g, pos) => absorb.has(pos) ? Object.assign(g.slice(), g, { crjAbsorb: true }) : g) : lane.groups;
+    const base = lane.groups.map((g, i) => {
+      if(!retag.has(i)) return g;
+      const n = Object.assign(g.slice(), g); // keep slot/scenarios/origin so video slots are unchanged
+      retag.get(i).forEach(t => n.push(t));
+      return n;
+    });
     return Object.assign({}, lane, { groups: base.concat(add) });
   });
   return changed ? out : tierLanes;
-}
-// A standalone Cap Return Jump that addImpliedCapReturn folded into "Any Throw + Any Grounded Jump" is dropped once that
-// merged chip exists (its video slot lives on inside the chip). If the merge did not happen, it stays listed as before.
-function dropAbsorbedCRJ(tierLanes){
-  if(!tierLanes || !tierLanes.some(l => l.groups.some(g => g.crjAbsorb))) return tierLanes;
-  const sc = g => (g.scenarios ? g.scenarios.slice().sort().join(",") : "") + "|" + (g.origin || "");
-  return tierLanes.map(l => {
-    const hosts = l.groups.filter(g => g[0] === "GroundedJumpCT" && g.methodSlots && g.slice(1).some(t => ghTokenKey(t) === ANY_THROW_TOKEN));
-    if(!hosts.length) return l;
-    const groups = l.groups.filter(g => !(g.crjAbsorb && hosts.some(h => sc(h) === sc(g) && (h.mergedSlots || []).indexOf(slotOf(g, 0)) !== -1)));
-    return groups.length === l.groups.length ? l : Object.assign({}, l, { groups });
-  });
 }
 function stripImpliedGroups(tierLanes){
   const isCapExtra = t => ICON_MANIFEST[t] && ICON_MANIFEST[t].tokenType === "capture";
@@ -4513,7 +4495,7 @@ function withGroundedMerge(tierLanes, kingdomName, moon){
     cur = addImpliedCapReturn(tierLanes);
     GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t, moon); });
   }
-  return tidyMergedChips(starCapReturn(mergeAnyThrowGroups(dropAbsorbedCRJ(stripImpliedGroups(cur)))));
+  return tidyMergedChips(starCapReturn(mergeAnyThrowGroups(stripImpliedGroups(cur))));
 }
 // A selected Group Filter (Trickjumping, Any Vault, ...) moves its merged chip to the front of its lane.
 // Only the display order changes: each group keeps its own slot, so video lookups are unaffected.
