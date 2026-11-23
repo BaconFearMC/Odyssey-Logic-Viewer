@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityVault.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -7570,7 +7570,41 @@ function computeNodeSourceReqsRaw(kingdomName, nodeId, scopeMoon, data){
 // Renders "Free from the Exit Pipe" / "Impossible from ..." / chips rows.
 // disableCollapse is forwarded straight through to renderReachTierLanes/
 // wrapOptionsIfCollapsible — see the note there.
+// Display-time fold of "From <location>" rows that show exactly the same thing: "From A, B, C: <requirements once>".
+// Compares what is actually DRAWN (hidden levels dropped, Group Filters merged, tokens normalised, order ignored), so rows
+// whose raw data differs only in ordering, aliases or hidden/merged details still combine. Pipe rows keep their own rows.
+function foldIdenticalDisplayRows(rows){
+  if(!rows || rows.length < 2) return rows;
+  const isFrom = r => /^From\s/i.test(String(r.label || "")) && !/^(Entrance|Exit) Pipe\b/.test(String(r.label || ""));
+  const shownLanes = r => {
+    let l = r.lanes || [];
+    if(hideAdvanced || hideExpert) l = visLanes(l);
+    return withGroundedMerge(l) || l;
+  };
+  const sigOf = r => {
+    if(r.impossible) return "IMP";
+    if(r.free) return "FREE|" + (r.freeFrom ? r.freeFrom.slice().sort().join(",") : "");
+    return "L|" + shownLanes(r).map(l => l.tier + ":" + l.groups.map(g => {
+      const toks = Array.from(new Set(g.map(ghTokenKey))).sort().join("+");
+      const sc = (g.scenarios && g.scenarios.length) ? g.scenarios.slice().sort().join(",") : "";
+      return toks + "@" + sc + "#" + (g.origin || "");
+    }).sort().join("|")).sort().join(";");
+  };
+  const out = [], by = new Map();
+  rows.forEach(r => {
+    if(!isFrom(r) || (!r.free && !r.impossible && !(r.lanes && r.lanes.length))){ out.push({ row: r, solo: true }); return; }
+    const sig = sigOf(r);
+    let g = by.get(sig);
+    if(!g){ g = { row: r, ents: [], names: [] }; by.set(sig, g); out.push(g); }
+    const ents = r.entrances && r.entrances.length ? r.entrances
+      : [{ name: r.entrance != null ? r.entrance : String(r.label).replace(/^From\s+/i, ""), title: r.entranceTitle || (r.entrance != null ? r.entrance : String(r.label).replace(/^From\s+/i, "")) }];
+    ents.forEach(e => { if(g.names.indexOf(e.name) < 0){ g.names.push(e.name); g.ents.push(e); } });
+  });
+  return out.map(g => (g.solo || g.names.length < 2) ? g.row
+    : Object.assign({}, g.row, { label: "From " + g.names.join(", "), entrance: g.names.join(", "), entrances: g.ents }));
+}
 function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoon, sharedHoist){
+  list = foldIdenticalDisplayRows(list);
   // Several "From <entrance>" rows and no card-level pooling given: pool across the rows here, so "Besides X" needs X in every
   // method of every row (never just in one row).
   let ownHeader = null;
