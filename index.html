@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityVault.png">
+<link rel="icon" href="icon/AbilityDive.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -1683,6 +1683,15 @@
     gap:12px 10px;
     max-height:none;
     overflow-y:visible;
+  }
+  /* Capture tiles: fixed width so columns line up. Rows 1 & 3 align with each other; rows 2 & 4 align with each
+     other and sit half a column (49px) to the right. Row breaks are inserted every 13 tiles by renderOptions. */
+  #captureFilterGrid.cap-staggered .filter-option{ flex:0 0 88px; width:88px; min-width:0; padding-left:0; padding-right:0; }
+  #captureFilterGrid.cap-staggered .cap-row-break{ flex:0 0 100%; height:0; margin:0; }
+  #captureFilterGrid.cap-staggered .filter-option.cap-row-shift{ margin-left:98px; } /* centred line: 98px margin = 49px shift */
+  @media (max-width:1380px){
+    #captureFilterGrid.cap-staggered .cap-row-break{ display:none; }
+    #captureFilterGrid.cap-staggered .filter-option.cap-row-shift{ margin-left:0; }
   }
   /* Forced row break inside the ability grid (Swing sits right after Climb). */
   .filter-grid-break{ flex:0 0 100%; height:0; margin-top:-12px; }
@@ -4381,6 +4390,59 @@ function mergeAnyThrowGroups(tierLanes){
   });
   return changed ? out : tierLanes;
 }
+// Display tidy-ups run after every merge.
+//  1) A merged chip never repeats a move its own grouping already contains: "Any Grounded Jump + Cap Return Jump + T-Rex"
+//     is shown as "Any Grounded Jump + T-Rex" (Cap Return Jump is one of the Any Grounded Jump methods).
+//  2) "Any Grounded Jump + X" and "Any Vault + X" (same X, scenarios and start) are the 8 methods of Any Grounded
+//     Height, so they show as one "Any Grounded Height + X" chip.
+function tidyMergedChips(tierLanes){
+  if(!tierLanes) return tierLanes;
+  const sc = g => g.scenarios ? g.scenarios.slice().sort().join(",") : "";
+  const exKey = g => g.slice(1).map(ghTokenKey).sort().join("+") + "|" + sc(g) + "|" + (g.origin || "");
+  const heightT = ghTier(GH_TOKEN), ctT = ghTier("GroundedJumpCT"), vaultT = ghTier("AnyVault");
+  let changed = false;
+  const out = tierLanes.map(lane => {
+    let groups = lane.groups.map(g => {
+      const t = g && g[0] && ghTier(g[0]);
+      if(!t || !g.methodSlots) return g;
+      const own = new Set(t.methods.filter(m => m.length === 1).map(m => m[0]));
+      if(g.capStar) own.delete("CapReturnJump"); // that chip really does not offer Cap Return Jump
+      const keep = g.slice(1).filter(x => !own.has(ghTokenKey(x)));
+      if(keep.length === g.length - 1) return g;
+      changed = true;
+      const n = Object.assign([g[0]].concat(keep), g);
+      return n;
+    });
+    if(heightT && ctT && vaultT){
+      const used = new Set(), at = {};
+      groups.forEach((a, i) => {
+        if(used.has(i) || a[0] !== "GroundedJumpCT" || !a.methodSlots || a.capStar) return;
+        const j = groups.findIndex((b, k) => k !== i && !used.has(k) && b[0] === "AnyVault" && b.methodSlots && b.methodSlots.length === 2 && exKey(b) === exKey(a));
+        if(j < 0) return;
+        const b = groups[j];
+        let aSlots = a.methodSlots.slice(), aM = a.ghMethods.map(m => m.slice()), aImp = a.methodImplied ? a.methodImplied.slice() : aSlots.map(() => false);
+        if(aSlots.length === 5){ // Jump + capture: Cap Return Jump is implied by the capture
+          aSlots.splice(1, 0, aSlots[0]); aM.splice(1, 0, ["CapReturnJump"]); aImp.splice(1, 0, true);
+        }
+        if(aSlots.length !== 6) return;
+        used.add(i); used.add(j);
+        const slots = (a.mergedSlots || []).concat(b.mergedSlots || []).sort((x, y) => x - y);
+        at[Math.min(i, j)] = Object.assign([GH_TOKEN].concat(a.slice(1)), {
+          scenarios: a.scenarios || null, origin: a.origin || null, ghFrom: null, methodOrigins: null,
+          slot: slots.length ? slots[0] : a.slot, mergedSlots: slots, ghStar: null,
+          methodSlots: aSlots.concat(b.methodSlots), ghMethods: aM.concat(b.ghMethods.map(m => m.slice())),
+          methodImplied: aImp.concat(b.methodImplied ? b.methodImplied.slice() : [false, false])
+        });
+      });
+      if(used.size){
+        changed = true;
+        groups = groups.map((g, i) => at[i] || (used.has(i) ? null : g)).filter(Boolean);
+      }
+    }
+    return Object.assign({}, lane, { groups });
+  });
+  return changed ? out : tierLanes;
+}
 function withGroundedMerge(tierLanes, kingdomName, moon){
   if(!tierLanes || submitMode) return tierLanes;
   // Default: every method is its own chip. The merged "Any Grounded Height" / "Any Throw" chips are what the
@@ -4401,7 +4463,7 @@ function withGroundedMerge(tierLanes, kingdomName, moon){
     cur = addImpliedCapReturn(tierLanes);
     GH_MERGE_ORDER.forEach(t => { if(ghKingdomActive(kingdomName, t)) cur = mergeGroundedTier(cur, t, moon); });
   }
-  return starCapReturn(mergeAnyThrowGroups(stripImpliedGroups(cur)));
+  return tidyMergedChips(starCapReturn(mergeAnyThrowGroups(stripImpliedGroups(cur))));
 }
 // A selected Group Filter (Trickjumping, Any Vault, ...) moves its merged chip to the front of its lane.
 // Only the display order changes: each group keeps its own slot, so video lookups are unaffected.
@@ -13015,6 +13077,9 @@ function setupMergedFilterBar(tokens){
       gridEl.appendChild(none);
       return;
     }
+    let capIdx = 0;
+    const matchesCount = matches.filter(t => !(kind === "capture" && uselessFilterOn() && t === BIG_CHOMP_TOKEN)).length;
+    gridEl.classList.toggle("cap-staggered", kind === "capture" && !q);
     matches.forEach(token => {
       if(kind === "capture" && uselessFilterOn() && token === BIG_CHOMP_TOKEN) return; // grouped under Chain Chomp
       const label = filterLabelFor(token);
@@ -13131,6 +13196,15 @@ function setupMergedFilterBar(tokens){
         });
       }
       gridEl.appendChild(btn);
+      if(kind === "capture" && !q){
+        capIdx++;
+        if(capIdx % 13 === 1 && Math.floor(capIdx / 13) % 2 === 1) btn.classList.add("cap-row-shift"); // 2nd & 4th rows
+        if(capIdx % 13 === 0 && capIdx < matchesCount){
+          const rb = document.createElement("div");
+          rb.className = "cap-row-break";
+          gridEl.appendChild(rb);
+        }
+      }
       // Swing sits to the right of Climb: row 1 ends after Roll Boost, row 2
       // after Swing; every row stays centered.
       if(kind === "ability" && !q && (token === "RollBoost" || token === "Swing")){
