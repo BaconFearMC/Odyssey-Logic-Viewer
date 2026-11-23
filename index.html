@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDive.png">
+<link rel="icon" href="icon/AbilityVault.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -7407,7 +7407,11 @@ function inboundEdgeBranches(data, nodeId, e, src){
 const CUSTOM_NODES_MERGE_ENTRANCES = [
   { kingdom: "Lake Kingdom", name: "Underwater Moons" },
 ];
-function customNodeMergesEntrances(kingdomName, nodeId){
+// true  = EVERY Custom Node folds entrances with identical requirements into one row
+//         ("From A, B, C: Swim" instead of three identical rows).
+// false = only the nodes listed above do.
+const CUSTOM_NODES_MERGE_ALL = true;
+function customNodeIsListedForMerge(kingdomName, nodeId){
   if(!nodeId || !CUSTOM_NODES_MERGE_ENTRANCES.length) return false;
   const data = KINGDOM_NODE_DATA[kingdomName];
   const node = data && data.nodeMap ? data.nodeMap[nodeId] : null;
@@ -7415,6 +7419,13 @@ function customNodeMergesEntrances(kingdomName, nodeId){
   const nm = normalizeMergeName(cleanCheckpointName(node.display_name));
   return CUSTOM_NODES_MERGE_ENTRANCES.some(c => normalizeMergeName(c.kingdom) === normalizeMergeName(kingdomName)
     && (c.nodeId ? c.nodeId === nodeId : (c.name && normalizeMergeName(cleanCheckpointName(c.name)) === nm)));
+}
+function customNodeMergesEntrances(kingdomName, nodeId){
+  if(!nodeId) return false;
+  const data = KINGDOM_NODE_DATA[kingdomName];
+  const node = data && data.nodeMap ? data.nodeMap[nodeId] : null;
+  if(!node || node.node_type !== "custom_place") return false;
+  return CUSTOM_NODES_MERGE_ALL || customNodeIsListedForMerge(kingdomName, nodeId);
 }
 // Full-requirement signature: tier, tokens (abilities AND captures), scenario tags, per-route origin, free-from.
 function entranceReqFullSignature(r){
@@ -7472,7 +7483,7 @@ function computeNodeSourceReqsRaw(kingdomName, nodeId, scopeMoon, data){
   if(rows.length < 2 && !anyFolded) return null; // plain single-source case: flat reach path handles it
   const trimmed = rows.filter(r => !r.impossible);
   const result = trimmed.length ? trimmed : (rows.length ? rows : null);
-  // Opt-in (CUSTOM_NODES_MERGE_ENTRANCES): fold entrances with identical requirements into one row.
+  // (CUSTOM_NODES_MERGE_ALL / CUSTOM_NODES_MERGE_ENTRANCES): fold entrances with identical requirements into one row.
   return (result && customNodeMergesEntrances(kingdomName, nodeId)) ? mergeIdenticalEntranceRows(result) : result;
 }
 
@@ -9445,7 +9456,7 @@ function customNodeRoutesFor(moon){
             { label: k ? "From " + k : "From anywhere (Odyssey)", entrance: k || "anywhere (Odyssey)",
               entranceTitle: (() => { const fb = pruned.find(b => (b.origin || "") === k && b.fromNodeId); return fb ? entranceTitleName(data, fb.fromNodeId, k) : (k || "anywhere (Odyssey)"); })() },
             summarizeBranches(pruned.filter(b => (b.origin || "") === k).map(b => Object.assign({}, b, { origin: null })), n.kingdom)));
-          // Opt-in (CUSTOM_NODES_MERGE_ENTRANCES): fold entrances with identical requirements into one row.
+          // (CUSTOM_NODES_MERGE_ALL / CUSTOM_NODES_MERGE_ENTRANCES): fold entrances with identical requirements into one row.
           if(n.kind === "custom" && customNodeMergesEntrances(n.kingdom, n.id)) route.rows = mergeIdenticalEntranceRows(route.rows);
         }
       }
@@ -11164,7 +11175,15 @@ function getCheckpointVariants(kingdomName, nodeType){
     const sources = computeNodeSourceReqs(kingdomName, n.node_id);
     const variants = [];
     if(sources){
+      // Custom Nodes now fold identical entrances into one row for display; keep the submission/video file names
+      // per-entrance (as before) unless the node was explicitly opted in.
+      const srcRows = [];
       sources.forEach(r => {
+        if(isCustom && r.entrances && r.entrances.length > 1 && !customNodeIsListedForMerge(kingdomName, n.node_id))
+          r.entrances.forEach(e => srcRows.push(Object.assign({}, r, { label: "From " + e.name, entrance: e.name, entrances: null })));
+        else srcRows.push(r);
+      });
+      srcRows.forEach(r => {
         if(r.impossible) return;
         const from = r.label.replace(/^From\s+/i, "");
         variants.push({ sourceLabel: r.label, moon: mk(base + " from " + from + " Entry", shown + " (" + kindWord + ") — " + r.label, r.free ? [] : r.lanes) });
