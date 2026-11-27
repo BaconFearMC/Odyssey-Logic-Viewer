@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2967,37 +2967,16 @@
 
 #logicBrokenBanner{position:sticky;top:0;z-index:99999;background:#b3261e;color:#fff;font:700 14px/1.35 system-ui,sans-serif;text-align:center;padding:8px 12px;box-shadow:0 2px 6px rgba(0,0,0,.35)}
 
-  /* ================= Declutter pass ================= */
-  /* Node routes: one calm block per node, rows separated by a hairline instead of nested boxes. */
-  .node-routes{ gap:4px; }
-  .node-routes-head{ font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim); margin:0 0 2px 2px; }
-  .node-routes-or{ display:flex; align-items:center; gap:8px; align-self:stretch; font-size:9.5px; color:var(--text-dim); opacity:.7; }
-  .node-routes-or::before, .node-routes-or::after{ content:""; flex:1; height:1px; background:var(--panel-line); }
-  .node-route{ border-color:transparent; border-left-width:2px; background:rgba(180,148,240,.06); }
-  .node-route .checkpoint-info.node-strip{ padding:5px 8px 3px 8px; gap:8px; }
-  .node-route .checkpoint-info.node-strip img{ width:22px; height:22px; }
-  .node-route .node-strip .ns-kind{ font-size:9px; opacity:.8; }
-  .node-route .node-strip .ns-name{ font-size:12.5px; }
-  .node-route .node-strip .ns-hint:empty{ display:none; }
-  .node-route-body{ padding:0 8px 6px 8px; gap:0; }
-  .node-route-body .entrance-reqs{ margin:0; padding:0; border-top:none; gap:0; width:100%; }
-  .node-route-body .entrance-req-row{ flex-direction:column; align-items:flex-start; flex-wrap:nowrap; gap:4px; padding:6px 0 7px; border-top:1px solid var(--panel-line); }
-  .node-route-body .entrance-req-row:first-child{ border-top:none; padding-top:2px; }
-  .entrance-req-label{ font-size:10px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim); opacity:1; }
-  .impossible-tag{ font-size:11px; letter-spacing:.04em; text-transform:uppercase; opacity:.85; }
-  .free-tag{ font-size:11px; }
-  /* Lanes: one fixed-width, quieter level label so the chips line up in a column. */
-  .tier-stack{ gap:4px; }
-  .tier-options{ gap:4px; }
-  .tier-lane{ gap:6px; }
-  .tier-pill{ min-width:60px; text-align:center; padding:3px 6px 3px 10px; font-size:9px; letter-spacing:.06em; box-shadow:none; opacity:.92; }
-  /* Chips: flat, no entrance bounce, no drop shadow. */
-  .option-chip{ animation:none; box-shadow:none; padding:4px 7px 4px 5px; gap:3px; }
-  .option-chip:hover, .free-chip:hover{ transform:none; box-shadow:none; filter:brightness(1.14); }
-  .tier-lane .option-chip:hover{ box-shadow:none !important; }
-  .scenario-tag, .origin-tag{ font-size:8px; padding:1px 5px; letter-spacing:.2px; opacity:.85; }
-  .scenario-tag{ background:transparent; border-color:transparent; padding-left:0; padding-right:0; }
-  .options-fade{ height:calc(var(--fade-h, 48px) * .8); }
+
+  /* Collapse arrow colour = how many methods it is hiding (dark green 5-7, dark yellow 8-12, dark red 13+). */
+  .options-expand-btn.hid-low{ --hid:#2f8f55; }
+  .options-expand-btn.hid-mid{ --hid:#b8940f; }
+  .options-expand-btn.hid-high{ --hid:#b83a3a; }
+  .options-expand-btn.hid-low, .options-expand-btn.hid-mid, .options-expand-btn.hid-high{ border-color:var(--hid); color:var(--hid); }
+  .options-expand-btn.hid-low:hover, .options-expand-btn.hid-mid:hover, .options-expand-btn.hid-high:hover{ background:var(--hid); color:#fff; }
+  /* COLLAPSED_PEEK_STYLE = 1: while collapsed, show only the arrow bar. */
+  .options-collapsible.peek-none.collapsed{ max-height:44px; min-height:44px; }
+  .options-collapsible.peek-none.collapsed > .tier-stack{ visibility:hidden; }
 </style>
 </head>
 <body class="ss-mode ss-home">
@@ -10084,6 +10063,10 @@ function replayChipEntrance(chip, staggerIndex){
 // Reads first, writes second: measuring boxes one at a time (read, write, read, write...) made the browser redo the
 // whole layout for every box, which is what froze big kingdoms. measureOptionsCollapsiblesIn now reads every box
 // before touching any of them.
+// ===== SETTING: collapsed-box look (boxes with more than 6 methods) =====
+// 0 = current look: first method in full, then a cropped slice of the second slowly fading out underneath.
+// 1 = nothing of the methods is shown while collapsed (just the arrow); everything appears once the user expands it.
+const COLLAPSED_PEEK_STYLE = 0;
 function readOptionsCollapsible(wrap){
   if(wrap.dataset.measured === "1") return null;
   const chips = wrap.querySelectorAll(".option-chip");
@@ -10091,6 +10074,7 @@ function readOptionsCollapsible(wrap){
   const wrapTop = wrap.getBoundingClientRect().top;
   const secondRect = chips[1].getBoundingClientRect();
   if(secondRect.height === 0) return null; // still hidden behind a closed ancestor
+  if(COLLAPSED_PEEK_STYLE === 1) return { done: true };
   const peek = secondRect.height * 0.55;
   const collapsedH = Math.round((secondRect.top - wrapTop) + peek);
   const fadeH = Math.round(Math.min(Math.max(peek + 22, 42), collapsedH * 0.7));
@@ -10135,18 +10119,28 @@ function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse){
   if(disableCollapse || totalOptions <= 6) return stack;
 
   const wrap = document.createElement("div");
-  wrap.className = "options-collapsible collapsed";
+  wrap.className = "options-collapsible collapsed" + (COLLAPSED_PEEK_STYLE === 1 ? " peek-none" : "");
   wrap.dataset.measured = "0";
+  // Methods hidden while collapsed: all of them in style 1, all but the first in style 0.
+  const hiddenCount = COLLAPSED_PEEK_STYLE === 1 ? totalOptions : Math.max(totalOptions - 1, 0);
+  const hiddenLevel = hiddenCount >= 13 ? "hid-high" : hiddenCount >= 8 ? "hid-mid" : "hid-low";
   wrap.appendChild(stack);
 
-  const fade = document.createElement("div");
-  fade.className = "options-fade";
-  wrap.appendChild(fade);
+  if(COLLAPSED_PEEK_STYLE !== 1){
+    const fade = document.createElement("div");
+    fade.className = "options-fade";
+    wrap.appendChild(fade);
+  }
 
   const expandBtn = document.createElement("button");
   expandBtn.type = "button";
   expandBtn.className = "options-expand-btn";
-  expandBtn.setAttribute("aria-label", "Show all " + totalOptions + " options");
+  expandBtn.classList.add(hiddenLevel);
+  const plural = hiddenCount === 1 ? "method" : "methods";
+  const labelClosed = "Show " + hiddenCount + " hidden " + plural;
+  const labelOpen = "Hide " + hiddenCount + " " + plural + " again";
+  expandBtn.setAttribute("aria-label", labelClosed);
+  expandBtn.title = labelClosed;
   expandBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
   expandBtn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -10154,13 +10148,15 @@ function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse){
     wrap.classList.toggle("collapsed", !opening);
     wrap.classList.toggle("expanded", opening);
     expandBtn.classList.toggle("is-open", opening);
-    expandBtn.setAttribute("aria-label", opening ? "Show fewer options" : "Show all " + totalOptions + " options");
+    expandBtn.setAttribute("aria-label", opening ? labelOpen : labelClosed);
+    expandBtn.title = opening ? labelOpen : labelClosed;
     if(opening){
       // Replay the slide-down-into-pop entrance for every chip beyond the
       // peeked first two, staggered, so revealing them feels alive rather
       // than the box just snapping open on already-settled chips.
       const chips = stack.querySelectorAll(".option-chip");
-      chips.forEach((chip, i) => { if(i >= 2) replayChipEntrance(chip, i - 2); });
+      const from = COLLAPSED_PEEK_STYLE === 1 ? 0 : 2;
+      chips.forEach((chip, i) => { if(i >= from) replayChipEntrance(chip, i - from); });
     }
   });
   wrap.appendChild(expandBtn);
