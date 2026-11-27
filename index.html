@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityTripleJump.png">
+<link rel="icon" href="icon/AbilityJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2966,6 +2966,38 @@
   @media (prefers-reduced-motion:reduce){ #bootSpinWrap img{ animation-duration:60s; } }
 
 #logicBrokenBanner{position:sticky;top:0;z-index:99999;background:#b3261e;color:#fff;font:700 14px/1.35 system-ui,sans-serif;text-align:center;padding:8px 12px;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+
+  /* ================= Declutter pass ================= */
+  /* Node routes: one calm block per node, rows separated by a hairline instead of nested boxes. */
+  .node-routes{ gap:4px; }
+  .node-routes-head{ font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim); margin:0 0 2px 2px; }
+  .node-routes-or{ display:flex; align-items:center; gap:8px; align-self:stretch; font-size:9.5px; color:var(--text-dim); opacity:.7; }
+  .node-routes-or::before, .node-routes-or::after{ content:""; flex:1; height:1px; background:var(--panel-line); }
+  .node-route{ border-color:transparent; border-left-width:2px; background:rgba(180,148,240,.06); }
+  .node-route .checkpoint-info.node-strip{ padding:5px 8px 3px 8px; gap:8px; }
+  .node-route .checkpoint-info.node-strip img{ width:22px; height:22px; }
+  .node-route .node-strip .ns-kind{ font-size:9px; opacity:.8; }
+  .node-route .node-strip .ns-name{ font-size:12.5px; }
+  .node-route .node-strip .ns-hint:empty{ display:none; }
+  .node-route-body{ padding:0 8px 6px 8px; gap:0; }
+  .node-route-body .entrance-reqs{ margin:0; padding:0; border-top:none; gap:0; width:100%; }
+  .node-route-body .entrance-req-row{ flex-direction:column; align-items:flex-start; flex-wrap:nowrap; gap:4px; padding:6px 0 7px; border-top:1px solid var(--panel-line); }
+  .node-route-body .entrance-req-row:first-child{ border-top:none; padding-top:2px; }
+  .entrance-req-label{ font-size:10px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim); opacity:1; }
+  .impossible-tag{ font-size:11px; letter-spacing:.04em; text-transform:uppercase; opacity:.85; }
+  .free-tag{ font-size:11px; }
+  /* Lanes: one fixed-width, quieter level label so the chips line up in a column. */
+  .tier-stack{ gap:4px; }
+  .tier-options{ gap:4px; }
+  .tier-lane{ gap:6px; }
+  .tier-pill{ min-width:60px; text-align:center; padding:3px 6px 3px 10px; font-size:9px; letter-spacing:.06em; box-shadow:none; opacity:.92; }
+  /* Chips: flat, no entrance bounce, no drop shadow. */
+  .option-chip{ animation:none; box-shadow:none; padding:4px 7px 4px 5px; gap:3px; }
+  .option-chip:hover, .free-chip:hover{ transform:none; box-shadow:none; filter:brightness(1.14); }
+  .tier-lane .option-chip:hover{ box-shadow:none !important; }
+  .scenario-tag, .origin-tag{ font-size:8px; padding:1px 5px; letter-spacing:.2px; opacity:.85; }
+  .scenario-tag{ background:transparent; border-color:transparent; padding-left:0; padding-right:0; }
+  .options-fade{ height:calc(var(--fade-h, 48px) * .8); }
 </style>
 </head>
 <body class="ss-mode ss-home">
@@ -7573,6 +7605,7 @@ function computeNodeSourceReqsRaw(kingdomName, nodeId, scopeMoon, data){
 // Display-time fold of "From <location>" rows that show exactly the same thing: "From A, B, C: <requirements once>".
 // Compares what is actually DRAWN (hidden levels dropped, Group Filters merged, tokens normalised, order ignored), so rows
 // whose raw data differs only in ordering, aliases or hidden/merged details still combine. Pipe rows keep their own rows.
+const __foldTokCache = new Map();
 function foldIdenticalDisplayRows(rows){
   if(!rows || rows.length < 2) return rows;
   const isFrom = r => /^From\s/i.test(String(r.label || "")) && !/^(Entrance|Exit) Pipe\b/.test(String(r.label || ""));
@@ -7581,14 +7614,29 @@ function foldIdenticalDisplayRows(rows){
     if(hideAdvanced || hideExpert) l = visLanes(l);
     return withGroundedMerge(l) || l;
   };
+  const effTier = t => (t === "unrated" && !unmarkedDebugOn()) ? "casual" : t;   // Unmarked is DRAWN as Casual
+  const canonTok = t => {
+    const k = ghTokenKey(t);
+    if(__foldTokCache.has(k)) return __foldTokCache.get(k);
+    let c = k;
+    try{ const a = typeof k === "string" ? subTokenAliasFor(k) : null; if(a) c = a; }catch(e){}
+    __foldTokCache.set(k, c); return c;
+  };
+  const scSig = x => (x && x.length) ? Array.from(new Set(x)).sort((a, b) => a - b).join(",") : "";
   const sigOf = r => {
     if(r.impossible) return "IMP";
     if(r.free) return "FREE|" + (r.freeFrom ? r.freeFrom.slice().sort().join(",") : "");
-    return "L|" + shownLanes(r).map(l => l.tier + ":" + l.groups.map(g => {
-      const toks = Array.from(new Set(g.map(ghTokenKey))).sort().join("+");
-      const sc = (g.scenarios && g.scenarios.length) ? g.scenarios.slice().sort().join(",") : "";
-      return toks + "@" + sc + "#" + (g.origin || "");
-    }).sort().join("|")).sort().join(";");
+    const byTier = {};
+    shownLanes(r).forEach(l => {
+      const t = effTier(l.tier);
+      const set = byTier[t] || (byTier[t] = new Set());
+      l.groups.forEach(g => {
+        const toks = Array.from(new Set(g.map(canonTok))).sort().join("+");
+        const meta = g.ghMeta ? "~" + g.ghMeta.map(m => [m.tier, scSig(m.scenarios), m.origin || "", (m.tokens || []).concat(m.extras || []).map(canonTok).sort().join("+")].join(":")).sort().join(",") : "";
+        set.add(toks + "@" + scSig(g.scenarios) + "#" + (g.origin || "") + meta);
+      });
+    });
+    return "L|" + Object.keys(byTier).sort().map(t => t + ":" + Array.from(byTier[t]).sort().join("|")).join(";");
   };
   const out = [], by = new Map();
   rows.forEach(r => {
@@ -7604,6 +7652,16 @@ function foldIdenticalDisplayRows(rows){
     : Object.assign({}, g.row, { label: "From " + g.names.join(", "), entrance: g.names.join(", "), entrances: g.ents }));
 }
 function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoon, sharedHoist){
+  // Glitched: Hidden -> an entrance that can ONLY be done with a glitch reads as Impossible (it returns when Glitched is shown).
+  if(typeof glitchMode !== "undefined" && glitchMode === "hide"){
+    list = (list || []).map(r => {
+      if(r.impossible || r.free || !r.lanes || !r.lanes.length) return r;
+      const keep = r.lanes.filter(l => l.tier !== "glitched");
+      if(keep.length === r.lanes.length) return r;
+      if(!keep.length) return Object.assign({}, r, { lanes: null, impossible: true });
+      return Object.assign({}, r, { lanes: keep });
+    });
+  }
   list = foldIdenticalDisplayRows(list);
   // Several "From <entrance>" rows and no card-level pooling given: pool across the rows here, so "Besides X" needs X in every
   // method of every row (never just in one row).
@@ -9562,13 +9620,17 @@ function customNodeRoutesFor(moon){
       // Several ways INTO the node (e.g. from the Stone Bridge vs. from anywhere via the
       // Odyssey): split them into one labelled row per source so it is clear which is which.
       if(!route.impossible){
-        const pruned = pruneDominatedBranches(shown);
-        const keys = Array.from(new Set(pruned.map(b => b.origin || "")));
+        // Rows are keyed off ALL branches (glitched included) so an entrance whose only way in is a glitch still gets its
+        // row: with Glitched hidden it reads "Impossible", with Glitched visible it shows the glitched method.
+        const prunedAll = pruneDominatedBranches(crossed);
+        const hideG = (typeof glitchMode !== "undefined" && glitchMode === "hide");
+        const pruned = hideG ? prunedAll.filter(b => b.tier !== "glitched") : prunedAll;
+        const keys = Array.from(new Set(prunedAll.map(b => b.origin || "")));
         if(keys.length >= 2){
           keys.sort((a, b) => (a === "" ? -1 : b === "" ? 1 : a.localeCompare(b)));
           route.rows = keys.map(k => Object.assign(
             { label: k ? "From " + k : "From anywhere (Odyssey)", entrance: k || "anywhere (Odyssey)",
-              entranceTitle: (() => { const fb = pruned.find(b => (b.origin || "") === k && b.fromNodeId); return fb ? entranceTitleName(data, fb.fromNodeId, k) : (k || "anywhere (Odyssey)"); })() },
+              entranceTitle: (() => { const fb = prunedAll.find(b => (b.origin || "") === k && b.fromNodeId); return fb ? entranceTitleName(data, fb.fromNodeId, k) : (k || "anywhere (Odyssey)"); })() },
             summarizeBranches(pruned.filter(b => (b.origin || "") === k).map(b => Object.assign({}, b, { origin: null })), n.kingdom)));
           // (CUSTOM_NODES_MERGE_ALL / CUSTOM_NODES_MERGE_ENTRANCES): fold entrances with identical requirements into one row.
           if(n.kind === "custom" && customNodeMergesEntrances(n.kingdom, n.id)) route.rows = mergeIdenticalEntranceRows(route.rows);
@@ -10149,7 +10211,7 @@ function buildMovementOptions_impl(moon, boxed){
   const stack = document.createElement("div");
   stack.className = "tier-stack" + (boxed ? " boxed" : "");
   // Darker Side moons never use the shared "This moon requires X. Beyond this…" header.
-  const mLanes = promoteGroupFilters(withGroundedMerge(moon.tierLanes, moon.kingdom, moon));
+  const mLanes = sortLanesByScenario(promoteGroupFilters(withGroundedMerge(moon.tierLanes, moon.kingdom, moon)));
   // Access Point cards (Checkpoints / Paintings / Subarea Entrances) use the same rule, with 2+ methods.
   const hoisted = moon.kingdom === "Darker Side" ? [] : hoistedTokensFor(mLanes, moon.name, (moon.isCheckpointNode || moon.isAccessPoint) ? 2 : undefined);
   const hoistSet = hoistedFormSet(hoisted);
@@ -13576,9 +13638,27 @@ function buildTierLanesFromBranches(branches){
 // .tier-stack/.tier-lane/.tier-pill/.option-chip classes the moon cards
 // use, so it looks native without any popup-specific CSS for the chips
 // themselves.
+// Scenario ordering: inside one logic level, methods with Scenario data read in numerical order
+// (Scenario 1, then Scenario 2-5, ...). Un-tagged methods (valid everywhere) stay first, in their original order.
+// Video slot numbers are pinned BEFORE sorting so file names never shift.
+function scenarioSortKey(g){
+  const sc = g && g.scenarios;
+  if(!sc || !sc.length) return [0, 0, 0];
+  const a = sc.slice().sort((x, y) => x - y);
+  return [1, a[0], a.length];
+}
+function sortLanesByScenario(lanes){
+  if(!lanes) return lanes;
+  return lanes.map(lane => {
+    if(!lane || !lane.groups || lane.groups.length < 2 || !lane.groups.some(g => g.scenarios && g.scenarios.length)) return lane;
+    const t = lane.groups.map((g, i) => { if(!g.slot) g.slot = i + 1; return { g, i, k: scenarioSortKey(g) }; });
+    t.sort((x, y) => (x.k[0] - y.k[0]) || (x.k[1] - y.k[1]) || (x.k[2] - y.k[2]) || (x.i - y.i));
+    return Object.assign({}, lane, { groups: t.map(o => o.g) });
+  });
+}
 function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleMoon, pipeTitleOrigin, mergedEntrances, sharedHoist){
   if(hideAdvanced || hideExpert){ tierLanes = visLanes(tierLanes); if(!tierLanes.length) return document.createElement("div"); }
-  tierLanes = promoteGroupFilters(withGroundedMerge(tierLanes));
+  tierLanes = sortLanesByScenario(promoteGroupFilters(withGroundedMerge(tierLanes)));
   const stack = document.createElement("div");
   stack.className = "tier-stack";
   // sharedHoist: tokens already stated once for ALL locations of the card (see sharedHoistAcrossRoutes): stripped from the
