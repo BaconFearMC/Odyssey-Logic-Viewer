@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDeath.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2977,6 +2977,17 @@
   /* COLLAPSED_PEEK_STYLE = 1: while collapsed, show only the arrow bar. */
   .options-collapsible.peek-none.collapsed{ max-height:44px; min-height:44px; }
   .options-collapsible.peek-none.collapsed > .tier-stack{ visibility:hidden; }
+
+  .options-expand-btn.hid-glitch{ --hid:var(--tier-glitched); }
+  .options-expand-btn.hid-glitch:hover{ color:#1e1035; }
+  /* "Besides X" header stays hidden until its methods are uncollapsed. */
+  .hoist-wrap:has(> .options-collapsible.collapsed) > .hoist-head{ display:none; }
+  .options-collapse-note{
+    position:absolute; top:4px; right:42px; min-height:32px; z-index:3;
+    display:flex; align-items:center; padding:0 8px;
+    font-size:10.5px; color:var(--text-dim); background:var(--bg-panel); pointer-events:none; white-space:nowrap;
+  }
+  .options-collapsible.expanded .options-collapse-note{ display:none; }
 </style>
 </head>
 <body class="ss-mode ss-home">
@@ -10066,7 +10077,7 @@ function replayChipEntrance(chip, staggerIndex){
 // ===== SETTING: collapsed-box look (boxes with more than 6 methods) =====
 // 0 = current look: first method in full, then a cropped slice of the second slowly fading out underneath.
 // 1 = nothing of the methods is shown while collapsed (just the arrow); everything appears once the user expands it.
-const COLLAPSED_PEEK_STYLE = 1;
+const COLLAPSED_PEEK_STYLE = 0;
 function readOptionsCollapsible(wrap){
   if(wrap.dataset.measured === "1") return null;
   const chips = wrap.querySelectorAll(".option-chip");
@@ -10123,7 +10134,7 @@ function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse){
   wrap.dataset.measured = "0";
   // Methods hidden while collapsed: all of them in style 1, all but the first in style 0.
   const hiddenCount = COLLAPSED_PEEK_STYLE === 1 ? totalOptions : Math.max(totalOptions - 1, 0);
-  const hiddenLevel = hiddenCount >= 13 ? "hid-high" : hiddenCount >= 8 ? "hid-mid" : "hid-low";
+  const hiddenLevel = hiddenCount >= 20 ? "hid-glitch" : hiddenCount >= 14 ? "hid-high" : hiddenCount >= 8 ? "hid-mid" : "hid-low";
   wrap.appendChild(stack);
 
   if(COLLAPSED_PEEK_STYLE !== 1){
@@ -10160,6 +10171,11 @@ function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse){
     }
   });
   wrap.appendChild(expandBtn);
+  // Note to the left of the arrow while collapsed.
+  const note = document.createElement("div");
+  note.className = "options-collapse-note";
+  note.textContent = hiddenCount + (hiddenCount === 1 ? " Method" : " Methods") + " collapsed (for performance issues)";
+  wrap.appendChild(note);
 
   return wrap;
 }
