@@ -2511,21 +2511,6 @@
         "option_scenarios": ""
       },
       {
-        "edge_id": "edge_user_0204",
-        "kingdom": "Snow Kingdom",
-        "area_scope": "subarea",
-        "from_node_id": "SnowWorldLobby000Stage::entrance::RaceTrackExit::sub_far",
-        "to_node_id": "SnowWorldLobby000Stage::entrance::RaceTrackExit::sub_near",
-        "requirement_expr": "free",
-        "requirement_notes": "",
-        "edge_type": "human_route",
-        "difficulty": "casual",
-        "bidirectional": "true",
-        "source": "editor",
-        "notes": "Created in graph editor.",
-        "option_scenarios": ""
-      },
-      {
         "edge_id": "edge_user_0205",
         "kingdom": "Snow Kingdom",
         "area_scope": "subarea",
@@ -2544,7 +2529,7 @@
         "edge_id": "edge_user_0206",
         "kingdom": "Snow Kingdom",
         "area_scope": "subarea",
-        "from_node_id": "SnowWorldLobby000Stage::entrance::RaceTrackExit::sub_near",
+        "from_node_id": "SnowWorldLobby000Stage::entrance::RaceTrackExit::sub_far",
         "to_node_id": "SnowWorldLobby001Stage::place::new_place",
         "requirement_expr": "free",
         "requirement_notes": "",
