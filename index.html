@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDeath.png">
+<link rel="icon" href="icon/AbilityTripleJump.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2976,16 +2976,16 @@
   .options-expand-btn.hid-low:hover, .options-expand-btn.hid-mid:hover, .options-expand-btn.hid-high:hover{ background:var(--hid); color:#fff; }
   /* COLLAPSED_PEEK_STYLE = 1: while collapsed, show only the arrow bar. */
   .options-collapsible.peek-none.collapsed{ max-height:44px; min-height:44px; }
-  .options-collapsible.peek-none.collapsed > .tier-stack{ visibility:hidden; }
+  .options-collapsible.peek-none.collapsed > .tier-stack{ display:none !important; }
+  .options-collapsible.peek-none.collapsed > .options-fade{ display:none !important; }
 
   .options-expand-btn.hid-glitch{ --hid:var(--tier-glitched); }
   .options-expand-btn.hid-glitch:hover{ color:#1e1035; }
   /* "Besides X" header stays hidden until its methods are uncollapsed. */
   .hoist-wrap:has(> .options-collapsible.collapsed) > .hoist-head{ display:none; }
   .options-collapse-note{
-    position:absolute; top:4px; right:42px; min-height:32px; z-index:3;
-    display:flex; align-items:center; padding:0 8px;
-    font-size:10.5px; color:var(--text-dim); background:var(--bg-panel); pointer-events:none; white-space:nowrap;
+    display:flex; align-items:center; justify-content:flex-end; min-height:34px; padding:0 42px 0 0;
+    font-size:10.5px; color:var(--text-dim); pointer-events:none; white-space:normal; text-align:right;
   }
   .options-collapsible.expanded .options-collapse-note{ display:none; }
 </style>
@@ -10175,7 +10175,7 @@ function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse){
   const note = document.createElement("div");
   note.className = "options-collapse-note";
   note.textContent = hiddenCount + (hiddenCount === 1 ? " Method" : " Methods") + " collapsed (for performance issues)";
-  wrap.appendChild(note);
+  wrap.insertBefore(note, stack);   // in normal flow ABOVE the methods, so it never sits on top of them
 
   return wrap;
 }
