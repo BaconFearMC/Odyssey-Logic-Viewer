@@ -10066,7 +10066,7 @@ function replayChipEntrance(chip, staggerIndex){
 // ===== SETTING: collapsed-box look (boxes with more than 6 methods) =====
 // 0 = current look: first method in full, then a cropped slice of the second slowly fading out underneath.
 // 1 = nothing of the methods is shown while collapsed (just the arrow); everything appears once the user expands it.
-const COLLAPSED_PEEK_STYLE = 0;
+const COLLAPSED_PEEK_STYLE = 1;
 function readOptionsCollapsible(wrap){
   if(wrap.dataset.measured === "1") return null;
   const chips = wrap.querySelectorAll(".option-chip");
