@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityDeath.png">
+<link rel="icon" href="icon/AbilityHealthUp.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -7125,7 +7125,7 @@ function buildNodeReachIndex(nodes, edges){
       if(seen.has(src)){ _crCuts++; return; }
       if(res.length > 60) return;
       const sn = _nodeById[src];
-      let sb, label = null, costedOnly = false;
+      let sb, label = null, costedOnly = false, paintingSrc = false;
       if(sn && sn.node_type === "custom_place" && destIsAnchor){
         // Checkpoint destination: one hop, like the legacy index. A Custom Node is not a place
         // you can simply be, so its edges only ever contribute costed routes, never Free ones.
@@ -7150,11 +7150,20 @@ function buildNodeReachIndex(nodes, edges){
         costedOnly = true;
         // Only tagged when the node has 2+ sources (tagAll below); a lone source needs no label.
         if(sn && (sn.node_type === "home_entrance" || sn.node_type === "substage_entrance")) label = entranceLabel(sn);
+        // Come / Go warp paintings are their OWN origin. The "Paintings" ability on an edge out of one is
+        // the cost of arriving BY painting, so the branch must carry that origin ("Go Painting") for
+        // good. Without it the branch was unlabelled here and the next Custom Node it passed through
+        // (e.g. "Lower Area") stamped its own name on it, so every method standing at / leaving that
+        // node inherited Paintings even though none of them involve a painting.
+        if(sn && nodeSourceKind(sn) === "painting"){  // same definition the Painting cards / source tracking use
+          label = (/^come$/i.test(sn.entrance_id) ? "Come" : "Go") + " Painting";
+          paintingSrc = true;
+        }
       }
       const eBr = edgeBranches(e);
       crossBranches(eBr, sb).forEach(b => {
         if(costedOnly && b.group.length === 0) return;
-        const origin = b.origin || ((tagAll || b.group.length === 0) ? label : null);
+        const origin = b.origin || ((tagAll || paintingSrc || b.group.length === 0) ? label : null);
         res.push(Object.assign({}, b, { origin, fromNodeId: src, edgeId: e.edge_id }));
       });
     });
