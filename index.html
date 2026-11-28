@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityJump.png">
+<link rel="icon" href="icon/AbilityDeath.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -2972,8 +2972,11 @@
   .options-expand-btn.hid-low{ --hid:#2f8f55; }
   .options-expand-btn.hid-mid{ --hid:#b8940f; }
   .options-expand-btn.hid-high{ --hid:#b83a3a; }
-  .options-expand-btn.hid-low, .options-expand-btn.hid-mid, .options-expand-btn.hid-high{ border-color:var(--hid); color:var(--hid); }
-  .options-expand-btn.hid-low:hover, .options-expand-btn.hid-mid:hover, .options-expand-btn.hid-high:hover{ background:var(--hid); color:#fff; }
+  .options-expand-btn.hid-lime{ --hid:#9be21f; }
+  .options-expand-btn.hid-low, .options-expand-btn.hid-mid, .options-expand-btn.hid-high, .options-expand-btn.hid-glitch, .options-expand-btn.hid-lime{ border-color:var(--hid); color:var(--hid); }
+  .options-expand-btn.hid-low:hover, .options-expand-btn.hid-mid:hover, .options-expand-btn.hid-high:hover, .options-expand-btn.hid-lime:hover{ background:var(--hid); color:#fff; }
+  .options-expand-btn.hid-lime:hover{ color:#1b2a05; }
+  .options-expand-btn.hid-glitch:hover{ background:var(--hid); }
   /* COLLAPSED_PEEK_STYLE = 1: while collapsed, show only the arrow bar. */
   .options-collapsible.peek-none.collapsed{ max-height:44px; min-height:44px; }
   .options-collapsible.peek-none.collapsed > .tier-stack{ display:none !important; }
@@ -2984,9 +2987,20 @@
   /* "Besides X" header stays hidden until its methods are uncollapsed. */
   .hoist-wrap:has(> .options-collapsible.collapsed) > .hoist-head{ display:none; }
   .options-collapse-note{
-    display:flex; align-items:center; justify-content:flex-end; min-height:34px; padding:0 42px 0 0;
-    font-size:10.5px; color:var(--text-dim); pointer-events:none; white-space:normal; text-align:right;
+    display:flex; align-items:center; justify-content:flex-end; gap:6px; min-height:34px; padding:0 42px 0 0;
+    font-size:11px; color:var(--text-dim); pointer-events:none; white-space:normal; text-align:right;
   }
+  .options-collapse-note.hid-lime{ --hid:#9be21f; } .options-collapse-note.hid-low{ --hid:#2f8f55; } .options-collapse-note.hid-mid{ --hid:#b8940f; }
+  .options-collapse-note.hid-high{ --hid:#b83a3a; } .options-collapse-note.hid-glitch{ --hid:var(--tier-glitched); }
+  .options-collapse-note .ocn-pill{ display:inline-block; min-width:24px; padding:1px 7px; border:1px solid var(--hid,currentColor); border-radius:10px; color:var(--hid,currentColor); font-weight:800; font-size:11px; text-align:center; }
+  .options-collapse-note .ocn-txt{ font-weight:700; letter-spacing:.02em; }
+  .options-collapse-note .ocn-sub{ opacity:.6; font-size:9.5px; font-weight:500; }
+  /* Copy Methods (Settings) */
+  .copy-m-btn, .copy-m-sel{ display:none; }
+  body.copy-methods-on .copy-m-btn{ display:inline-flex; align-items:center; padding:1px 7px; margin-left:6px; font:700 10px/1.4 inherit; background:var(--bg-chip); color:var(--text-dim); border:1px solid var(--text-dim); border-radius:6px; cursor:pointer; }
+  body.copy-methods-on .copy-m-btn:hover{ color:var(--gold); border-color:var(--gold); }
+  body.copy-methods-on .copy-m-sel{ display:inline-block; margin:0 0 0 6px; vertical-align:middle; cursor:pointer; }
+  body.copy-methods-on .copy-m-card{ display:flex; margin:6px 0 2px; }
   .options-collapsible.expanded .options-collapse-note{ display:none; }
 </style>
 </head>
@@ -3280,6 +3294,18 @@ const PAGE_SOUNDS_ENABLED = 1;
   </div>
 </div>
 
+
+<div class="dbg-item">
+  <button class="corner-btn" id="copyMethodsToggle" type="button" aria-label="Copy methods">
+    <img class="btn-ic" src="icon/AbilityCapReturnJump.png" alt="" onerror="this.outerHTML='<span class=&quot;btn-ic btn-ic-fb&quot; aria-hidden=&quot;true&quot;>&#10064;</span>'">
+    <span class="btn-txt"><b>Copy Methods</b><small id="copyMethodsState">Off</small></span>
+  </button>
+  <div class="dbg-tip" role="tooltip">
+    <b>Copy Methods</b>
+    <span>Adds Copy buttons to moon cards (all methods) and to each "From ..." location. Tick locations to copy only those.</span>
+    <em>Currently: <span id="copyMethodsTip">Off</span> &middot; click to toggle</em>
+  </div>
+</div>
 
 <button id="videoToggle" type="button" hidden aria-hidden="true"><span id="videoToggleLabel">Video: All</span></button>
 <button class="corner-btn" id="approveToggle" type="button" aria-label="Approve videos" style="display:none;"><span>Approve Videos</span></button>
@@ -5882,6 +5908,21 @@ function nodeOriginLabel(nodeId, nodeMap){
   return m ? m[1] + " " + m[2] : nodeId;
 }
 
+// Display-name fixes for moons whose source name is wrong/garbled. Keyed by kingdom keyword + source name (compared
+// loosely: curly apostrophes, case and mojibake accents are ignored). Sort order (MOON_FIXED_ORDER) uses the fixed names.
+const MOON_NAME_OVERRIDES = [
+  { kingdom: /^sand/i,     from: /^test test$/i,                              to: "In the Skies Above the Canyon" },
+  { kingdom: /^metro/i,    from: /^left at the caf.{1,3}\?$/i,                to: "Left at the Cafe?" },
+  { kingdom: /^snow/i,     from: /^i'm not cold!$/i,                          to: "I'm Not Cold!" },
+  { kingdom: /^bowser/i,   from: /^bowser's kingdom time challenge 1$/i,     to: "Bowser's Kingdom Timer Challenge 1" },
+  { kingdom: /^mushroom/i, from: /^mushroom kingdom time challenge$/i,       to: "Mushroom Kingdom Timer Challenge" },
+];
+function fixMoonName(kingdomName, raw){
+  const nm = String(raw == null ? "" : raw).replace(/[\u2018\u2019]/g, "'").trim();
+  const k = String(kingdomName || "");
+  for(const o of MOON_NAME_OVERRIDES) if(o.kingdom.test(k) && o.from.test(nm)) return o.to;
+  return raw;
+}
 function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachExpr, customNodeReachBranches){
   // scenarios[i] = scenario-number array (or null = unrestricted) for
   // branch i, parallel to dnf/tiers. Populated from moonAccess's own
@@ -6090,7 +6131,8 @@ function parseMoon(row, nodeMap, checkpointLookup, kingdomName, customNodeReachE
   applyVideoSlotLock(row.moon_name, tierLanes);
 
   return {
-    name: row.moon_name,
+    name: fixMoonName(kingdomName, row.moon_name),
+    rawName: row.moon_name,
     kingdom: kingdomName,
     orGroups: isFree ? [] : dnf,
     tierLanes,
@@ -6232,7 +6274,7 @@ const MOON_FIXED_ORDER = [
   "Employees Only",
   "Sand Kingdom Slots",
   "Walking the Desert!",
-  "Upper Interior: Hidden Room in the Inverted Pyramid",
+  "Hidden Room in the Inverted Pyramid",
   "Underground Treasure Chest",
   "Goomba Tower Assembly",
   "Under the Mummy's Curse",
@@ -7662,6 +7704,7 @@ function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoo
   }
   const wrap = document.createElement("div");
   wrap.className = className || "entrance-reqs";
+  const _locEls = [];
   list.forEach(r => {
     if(!r.free && !r.impossible && (hideAdvanced || hideExpert) && r.lanes && r.lanes.length && !visLanes(r.lanes).length) return;
     const row = document.createElement("div");
@@ -7670,6 +7713,7 @@ function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoo
     lab.className = "entrance-req-label";
     lab.textContent = r.label + ":";
     row.appendChild(lab);
+    if(!disableCollapse) addLocationCopyControls(row, lab);
     if(r.impossible){
       const t = document.createElement("span"); t.className = "impossible-tag"; t.textContent = "Impossible"; row.appendChild(t);
     } else if(r.free){
@@ -7683,10 +7727,33 @@ function renderEntranceReqs(list, className, disableCollapse, moonName, titleMoo
       }
       if(r.freeFrom){ const ot = document.createElement("span"); ot.className = "origin-tag"; ot.textContent = "From " + r.freeFrom.join(" / "); row.appendChild(ot); }
     } else {
-      row.appendChild(renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName, titleMoon, /^(Entrance|Exit) Pipe\b/.test(String(r.label || "")) ? String(r.label) : null, r.entrances, sharedHoist));
+      const _el = renderReachTierLanes(r.lanes, disableCollapse, "entrance", moonName, titleMoon, /^(Entrance|Exit) Pipe\b/.test(String(r.label || "")) ? String(r.label) : null, r.entrances, sharedHoist);
+      row.appendChild(_el);
+      _locEls.push(_el);
     }
     wrap.appendChild(row);
   });
+  // 5th (lime) tier, COLLAPSED ENABLED 1 only: once at least half of this moon's methods are already collapsed, the
+  // locations left open (1-6 methods each) collapse too so the card doesn't end up half-open.
+  if(!disableCollapse && !DISABLE_MOON_COLLAPSE && COLLAPSED_PEEK_STYLE === 1 && _locEls.length > 1){
+    let tot = 0, col = 0;
+    const info = _locEls.map(el => {
+      const n = el.querySelectorAll(".option-chip").length;
+      const isCol = !!el.querySelector(".options-collapsible");
+      tot += n; if(isCol) col += n;
+      return { el, n, isCol };
+    });
+    if(col > 0 && col * 2 >= tot){
+      info.forEach(x => {
+        if(x.isCol || x.n < 1) return;
+        const st = x.el.classList && x.el.classList.contains("tier-stack") ? x.el : x.el.querySelector(".tier-stack");
+        if(!st || st.closest(".options-collapsible")) return;
+        const par = st.parentNode, ph = document.createComment("");
+        par.replaceChild(ph, st);
+        par.replaceChild(wrapOptionsIfCollapsible(st, x.n, false, "hid-lime"), ph);
+      });
+    }
+  }
   return ownHeader ? wrapWithHoistHeader(wrap, ownHeader, "moon") : wrap;
 }
 
@@ -7779,7 +7846,7 @@ function loadKingdomFile(fileData, sourceLabel, forcedName){
     const customs = (ws.logicNodes || []).filter(n => n.node_type === "custom_place" && !/purples/i.test(n.display_name || ""));
     moons.forEach(moon => {
       if(!moon.subarea) return;
-      const mn = nodeMap[(ws.moonAccess.find(r => r.moon_name === moon.name) || {}).from_node_id];
+      const mn = nodeMap[(ws.moonAccess.find(r => r.moon_name === (moon.rawName || moon.name)) || {}).from_node_id];
       const stage = mn && mn.stage;
       if(!stage) return;
       const key = normN(moon.name);
@@ -9640,7 +9707,45 @@ function customNodeRoutesFor(moon){
     if(keep === undefined) return;
     idx.forEach(i => { if(i !== keep) out[i].hidden = true; });
   });
+  dedupeRoutesAcrossNodes(out);
   return out;
+}
+// Origin-agnostic signature of what a route/row DRAWS (levels, tokens, scenarios): the same methods reached from a
+// different "From X" are still the same methods, so listing them twice in an "any one works" card only adds overflow.
+function routeContentSignature(r){
+  if(!r || r.impossible || r.free || !r.lanes || !r.lanes.length) return null;
+  const sc = x => (x && x.length) ? Array.from(new Set(x)).sort((p, q) => p - q).join(",") : "";
+  return (r.lanes || []).map(l => (l.tier === "unrated" ? "casual" : l.tier) + ":" + Array.from(new Set(l.groups.map(g => {
+    const toks = Array.from(new Set(g.map(t => ghTokenKey(t)))).sort().join("+");
+    const meta = g.ghMeta ? "~" + g.ghMeta.map(m => [m.tier, sc(m.scenarios), (m.tokens || []).concat(m.extras || []).map(t => ghTokenKey(t)).sort().join("+")].join(":")).sort().join(",") : "";
+    return toks + "@" + sc(g.scenarios) + meta;
+  }))).sort().join("|")).sort().join(";");
+}
+// Across all nodes a moon is tracked from: a row/route whose methods already appear in an earlier one is dropped
+// (a route left with nothing new is hidden). Impossible/Free rows are kept as they are.
+function dedupeRoutesAcrossNodes(out){
+  const seen = new Set();
+  out.forEach(r => {
+    if(r.hidden || r.impossible) return;
+    if(r.rows){
+      const kept = [];
+      let dropped = 0;
+      r.rows.forEach(row => {
+        const sg = routeContentSignature(row);
+        if(sg === null){ kept.push(row); return; }
+        if(seen.has(sg)){ dropped++; return; }
+        seen.add(sg); kept.push(row);
+      });
+      if(dropped){
+        r.rows = kept;
+        if(!kept.some(row => routeContentSignature(row) !== null)) r.hidden = true;
+      }
+    } else {
+      const sg = routeContentSignature(r);
+      if(sg === null) return;
+      if(seen.has(sg)) r.hidden = true; else seen.add(sg);
+    }
+  });
 }
 
 // Kingdom group filters whose methods start at DIFFERENT places (Any Sand Kingdom Height: the grounded jumps, Goomba from the
@@ -9984,6 +10089,7 @@ function buildMoonCard(moon, opts){
     if(routesEl !== wrap) routesEl.classList.add("routes-hoist");
     card.insertBefore(routesEl, baseReq);
   }
+  addMoonCopyControl(card, moon);
   return card;
 }
 
@@ -10114,7 +10220,7 @@ function measureOptionsCollapsiblesIn(root){
 // its fade + expand toggle. Centralizing this means the collapse behavior
 // can't silently go missing from one rendering path (e.g. subarea entrance
 // rows) while working on another.
-function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse){
+function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse, forceLevel){
   stack.querySelectorAll(".option-chip").forEach((chip, i) => {
     chip.style.animationDelay = (Math.min(i, 12) * 0.05) + "s";
   });
@@ -10127,14 +10233,14 @@ function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse){
   // straight through renderReachTierLanes/renderEntranceReqs/
   // appendReachRequirement so the arrow is never constructed for that
   // render path, rather than being built and then hidden with CSS.
-  if(disableCollapse || totalOptions <= 6) return stack;
+  if(disableCollapse || (totalOptions <= 6 && !forceLevel)) return stack;
 
   const wrap = document.createElement("div");
   wrap.className = "options-collapsible collapsed" + (COLLAPSED_PEEK_STYLE === 1 ? " peek-none" : "");
   wrap.dataset.measured = "0";
   // Methods hidden while collapsed: all of them in style 1, all but the first in style 0.
   const hiddenCount = COLLAPSED_PEEK_STYLE === 1 ? totalOptions : Math.max(totalOptions - 1, 0);
-  const hiddenLevel = hiddenCount >= 20 ? "hid-glitch" : hiddenCount >= 14 ? "hid-high" : hiddenCount >= 8 ? "hid-mid" : "hid-low";
+  const hiddenLevel = forceLevel ? forceLevel : hiddenCount >= 20 ? "hid-glitch" : hiddenCount >= 14 ? "hid-high" : hiddenCount >= 8 ? "hid-mid" : "hid-low";
   wrap.appendChild(stack);
 
   if(COLLAPSED_PEEK_STYLE !== 1){
@@ -10173,8 +10279,11 @@ function wrapOptionsIfCollapsible(stack, totalOptions, disableCollapse){
   wrap.appendChild(expandBtn);
   // Note to the left of the arrow while collapsed.
   const note = document.createElement("div");
-  note.className = "options-collapse-note";
-  note.textContent = hiddenCount + (hiddenCount === 1 ? " Method" : " Methods") + " collapsed (for performance issues)";
+  note.className = "options-collapse-note " + hiddenLevel;
+  const _pill = document.createElement("span"); _pill.className = "ocn-pill"; _pill.textContent = hiddenCount;
+  const _txt = document.createElement("span"); _txt.className = "ocn-txt"; _txt.textContent = hiddenCount === 1 ? "method hidden" : "methods hidden";
+  const _sub = document.createElement("span"); _sub.className = "ocn-sub"; _sub.textContent = forceLevel ? "\u00B7 collapsed with the other locations" : "\u00B7 collapsed for speed";
+  note.appendChild(_pill); note.appendChild(_txt); note.appendChild(_sub);
   wrap.insertBefore(note, stack);   // in normal flow ABOVE the methods, so it never sits on top of them
 
   return wrap;
@@ -10323,6 +10432,7 @@ function buildMovementOptions_impl(moon, boxed){
         chip.appendChild(otag);
       }
       if(andGroup[0] === "GroundedJump") chip.dataset.gj = "1";
+      chip._vtGroup = andGroup; chip._vtTier = lane.label;
       optsEl.appendChild(chip);
     });
 
@@ -12061,6 +12171,80 @@ document.getElementById("glitchToggle").addEventListener("click", () => {
   paint();
 })();
 
+// ---- Copy Methods (Settings): copy a moon's methods (or chosen locations') as plain text ----
+function methodChipText(chip){
+  const g = chip._vtGroup || [];
+  const toks = g.filter(t => t !== "" && t != null);
+  let t = toks.length ? toks.map(videoTokenLabel).join(" + ") : (chip.textContent.trim() || "Free");
+  const bits = [];
+  if(chip._vtTier) bits.push(chip._vtTier);
+  if(g.scenarios){ try{ bits.push(scenarioListLabel(g.scenarios)); }catch(e){} }
+  if(g.origin) bits.push("from " + g.origin);
+  let out = "- " + t + (bits.length ? "  [" + bits.join(" | ") + "]" : "");
+  if(g.ghMeta){ try{ ghMetaLines(g).forEach(l => { out += "\n    > " + l; }); }catch(e){} }
+  return out;
+}
+function locationText(row){
+  const lab = row.querySelector(".entrance-req-label");
+  const head = lab ? (lab.firstChild ? lab.firstChild.textContent : lab.textContent).trim() : "Location";
+  const chips = Array.from(row.querySelectorAll(".option-chip"));
+  let body;
+  if(chips.length) body = chips.map(methodChipText).join("\n");
+  else { const f = row.querySelector(".free-tag, .impossible-tag"); body = "- " + (f ? f.textContent.trim() : "(none)"); }
+  return head + "\n" + body;
+}
+function moonMethodsText(card, selectedOnly){
+  const nm = (card.querySelector(".moon-name") || {}).textContent || card.dataset.moonName || "Moon";
+  const parts = [];
+  const rows = Array.from(card.querySelectorAll(".entrance-req-row"));
+  let use = rows;
+  if(selectedOnly){ const sel = rows.filter(r => r.querySelector(".copy-m-sel:checked")); if(sel.length) use = sel; }
+  use.forEach(r => {
+    const blk = r.closest(".node-route");
+    const strip = blk && blk.querySelector(".node-strip");
+    const pre = strip ? "[" + strip.textContent.replace(/\s+/g, " ").replace(/Node details.*$/,"").trim() + "] " : "";
+    parts.push(pre + locationText(r));
+  });
+  if(!rows.length || !selectedOnly || use === rows){
+    const loose = Array.from(card.querySelectorAll(".option-chip")).filter(c => !c.closest(".entrance-req-row"));
+    if(loose.length) parts.push("Moon methods\n" + loose.map(methodChipText).join("\n"));
+  }
+  return nm + "\n" + "=".repeat(Math.min(nm.length, 40)) + "\n" + parts.join("\n\n");
+}
+function copyText(text, btn, label){
+  const done = () => { if(!btn) return; const o = label; btn.textContent = "Copied!"; setTimeout(() => { btn.textContent = o; }, 1100); };
+  const fb = () => { const ta = document.createElement("textarea"); ta.value = text; ta.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); }catch(e){} ta.remove(); done(); };
+  try{ navigator.clipboard.writeText(text).then(done, fb); }catch(e){ fb(); }
+}
+function addLocationCopyControls(row, lab){
+  const sel = document.createElement("input"); sel.type = "checkbox"; sel.className = "copy-m-sel"; sel.title = "Select this location for the card's Copy button";
+  sel.addEventListener("click", e => { e.stopPropagation(); const card = row.closest(".moon-card"); if(card && card._copyBtnRefresh) card._copyBtnRefresh(); });
+  const b = document.createElement("button"); b.type = "button"; b.className = "copy-m-btn"; b.textContent = "Copy";
+  b.addEventListener("click", e => { e.stopPropagation(); copyText(locationText(row), b, "Copy"); });
+  lab.appendChild(sel); lab.appendChild(b);
+}
+function addMoonCopyControl(card, moon){
+  const b = document.createElement("button"); b.type = "button"; b.className = "copy-m-btn copy-m-card";
+  const refresh = () => { const n = card.querySelectorAll(".copy-m-sel:checked").length; b.textContent = n ? "Copy " + n + " selected location" + (n > 1 ? "s" : "") : "Copy all methods"; b._lbl = b.textContent; };
+  card._copyBtnRefresh = refresh; refresh();
+  b.addEventListener("click", e => { e.stopPropagation(); copyText(moonMethodsText(card, true), b, b._lbl); });
+  const nm = card.querySelector(".moon-name");
+  if(nm && nm.nextSibling) card.insertBefore(b, nm.nextSibling); else card.appendChild(b);
+}
+(function(){
+  const b = document.getElementById("copyMethodsToggle"); if(!b) return;
+  let on = false;
+  try{ on = localStorage.getItem("copyMethodsV1") === "1"; }catch(e){}
+  const paint = () => {
+    document.body.classList.toggle("copy-methods-on", on);
+    b.classList.toggle("active", on);
+    const s = document.getElementById("copyMethodsState"); if(s) s.textContent = on ? "On" : "Off";
+    const t = document.getElementById("copyMethodsTip"); if(t) t.textContent = on ? "On" : "Off";
+  };
+  b.addEventListener("click", () => { on = !on; try{ localStorage.setItem("copyMethodsV1", on ? "1" : "0"); }catch(e){} paint(); });
+  paint();
+})();
+
 // ---- Video Title debugger (Settings): hover a method to see its video title ----
 (function(){
   const b = document.getElementById("videoTitleDbgToggle"); if(!b) return;
@@ -13736,6 +13920,7 @@ function renderReachTierLanes(tierLanes, disableCollapse, noun, moonName, titleM
         chip.addEventListener("click", () => handleNodeClick(titleMoon, lane.tier, lane.label, andGroup, slotOf(andGroup, i)));
       } else if(moonName) chip.dataset.videoTitle = videoHoverTitle({ name: moonName, kingdom: KINGDOM_ORDER[currentKingdomIndex] }, lane.tier, andGroup);
       if(andGroup[0] === "GroundedJump") chip.dataset.gj = "1";
+      chip._vtGroup = andGroup; chip._vtTier = lane.label;
       optsEl.appendChild(chip);
     });
 
