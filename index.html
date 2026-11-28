@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="font-setting.css">
-<link rel="icon" href="icon/AbilityHealthUp.png">
+<link rel="icon" href="icon/AbilityDeath.png">
 <style>
   :root{
     /* Dark mode is now the only mode — palette lifted from the SMO
@@ -10681,6 +10681,7 @@ function laneHasAnyThrow(l){
   return l.groups.some(g => g.length === 1 && (ghTokenKey(g[0]) === ANY_THROW_TOKEN || ANY_THROW_MEMBERS.indexOf(ghTokenKey(g[0])) !== -1 || (isGhToken(g[0]) && !!ghTier(g[0]).exclude)));
 }
 function crjListedHigherNote(lanes, lane){
+  return null; // disabled: the "\u21B3 Cap Return Jump + tier letter" cross-reference note is no longer shown
   if(!lanes || !lane || !(lane.groups || []).length) return null;
   const listsCRJ = g => g.some(t => isCapReturnToken(t) || (isGhToken(t) && ghTier(t).allTokens.indexOf("CapReturnJump") !== -1));
   if(lane.groups.some(listsCRJ)) return null;
